@@ -1,0 +1,32 @@
+.header {
+    background-color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 50px;
+&__left{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    .logo{
+        color: #e50914;
+    }
+    .search {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background-color: rgba(255,255,255,0.15);
+        input{
+            background-color: transparent;
+            border: none;
+            outline: none;
+            font-size: 20px;
+            color: white;
+        }
+    }
+}
+.icon{
+    color: #fff;
+    font-size: 30px;
+}
+}
