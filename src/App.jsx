@@ -1,6 +1,8 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
+import RegisterForm from "./pages/register-page";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -8,6 +10,11 @@ function App() {
       element: <LoginPage />,
       //  element: <HomePage />,
     },
+    {
+      path: "/register-page",
+      element: <RegisterForm />,
+    },
+
   ]);
 
   return <RouterProvider router={router} />;
