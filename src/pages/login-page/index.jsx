@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./index.scss";
-import { UserOutlined,LockOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 const LoginForm = () => {
   return (
     <div className="login">
@@ -8,11 +8,11 @@ const LoginForm = () => {
         <h1>Login</h1>
         <div className="input-box">
           <input type="text" placeholder="User name" required />
-          <UserOutlined className="icon"/>
+          <UserOutlined className="icon" />
         </div>
         <div className="input-box">
           <input type="password" placeholder="Password" required />
-          <LockOutlined className="icon"/>
+          <LockOutlined className="icon" />
         </div>
         <div className="remember-forgot">
           <label>
@@ -26,7 +26,7 @@ const LoginForm = () => {
         </div>
         <div className="register-link">
           <p>
-            Don't have an account?<Link className="register"> Register</Link>
+            Create new account?<Link className="register"> Register</Link>
           </p>
         </div>
       </form>
