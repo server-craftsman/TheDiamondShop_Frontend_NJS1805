@@ -7,11 +7,19 @@ const RegisterForm = () => {
   return (
     <div className="register">
       <form action="">
-        <h1>Register</h1>
-        <div className="input-box">
-          <input type="text" placeholder="Full Name" required />
+        <h1>Register in Here</h1>
+        <div className="input-box ">
+          <input className="box-1" type="text" placeholder="First Name" required />
           <UserOutlined className="icon" />
+
+          <input className="box-1" type="text" placeholder="Last Name" required />
+          <UserOutlined className="icon" />
+        </div>  
+        <div className="input-box">
+          <input  type="text" placeholder="Birthday" required />
+          <TableOutlined  className="icon" />
         </div>
+
         <div className="input-box">
           <input type="text" placeholder="Email..." required />
           <MailOutlined className="icon" />
@@ -20,10 +28,7 @@ const RegisterForm = () => {
           <input type="phone" placeholder="Phone" required />
           <PhoneOutlined className="icon" />
         </div>
-        <div className="input-box">
-          <input type="text" placeholder="Birthday" required />
-          <TableOutlined  className="icon" />
-        </div>
+        
         <div className="input-box">
           <input type="text" placeholder="Address" required />
           <HomeOutlined className="icon" />
