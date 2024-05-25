@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "./index.scss";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { UserOutlined,LockOutlined } from "@ant-design/icons";
+import "../register-page/index";
+
 const LoginForm = () => {
   return (
     <div className="login">
@@ -26,7 +28,7 @@ const LoginForm = () => {
         </div>
         <div className="register-link">
           <p>
-            Create new account?<Link className="register"> Register</Link>
+            Create new account?  <Link to="/register-page" className="register"> Register</Link>
           </p>
         </div>
       </form>
