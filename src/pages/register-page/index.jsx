@@ -3,55 +3,112 @@ import "./index.scss"
 import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, HomeOutlined, TableOutlined } from "@ant-design/icons";
 import "../login-page/index"
 
+//import logo diamong store
+import logo from "../../components/assets/logo.png";
+
 const RegisterForm = () => {
+
+
   return (
-    <div className="register">
-      <form action="">
-        <h1>Register in Here</h1>
-        <div className="input-box ">
-          <input className="box-1" type="text" placeholder="First Name" required />
-          <UserOutlined className="icon" />
 
-          <input className="box-1" type="text" placeholder="Last Name" required />
-          <UserOutlined className="icon" />
-        </div>  
-        <div className="input-box">
-          <input  type="text" placeholder="Birthday" required />
-          <TableOutlined  className="icon" />
-        </div>
+    <div className="register-form">
 
-        <div className="input-box">
-          <input type="text" placeholder="Email..." required />
-          <MailOutlined className="icon" />
-        </div>
-        <div className="input-box">
-          <input type="phone" placeholder="Phone" required />
-          <PhoneOutlined className="icon" />
-        </div>
-        
-        <div className="input-box">
-          <input type="text" placeholder="Address" required />
-          <HomeOutlined className="icon" />
-        </div>
-        <div className="input-box">
-          <input type="password" placeholder="Password" required />
-          <LockOutlined className="icon" />
-        </div>
-        <div className="input-box">
-          <input type="password" placeholder="Confirm Password" required />
-          <LockOutlined className="icon" />
-        </div>
-        <div>
-          <Link to='/'>
-            <button type="submit">Register</button>
-          </Link>
-        </div>
+      <div className="logo-bg">
+        <img width={550} src={logo} alt="" />
+      </div>
 
-      </form>
-      
+      <div className="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
+        <div className="wrapper wrapper--w680">
+          <div className="card card-4">
+            <div className="card-body">
+              <h2 className="title">Registration Form</h2>
+              <form method="POST">
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">First name</label>
+                      <input className="input--style-4" type="text" name="first_name" />
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Last name</label>
+                      <input className="input--style-4" type="text" name="last_name" />
+                    </div>
+                  </div>
+                </div>
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Birthday</label>
+                      <div className="input-group-icon">
+                        <input className="input--style-4 birthday" type="date" name="birthday" />
+                        <i className="zmdi zmdi-calendar-note input-icon js-btn-calendar" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Gender</label>
+                      <div className="p-t-10">
+                        <label className="radio-container m-r-45">Male
+                          <input type="radio" defaultChecked="checked" name="gender" />
+                          <span className="checkmark" />
+                        </label>
+                        <label className="radio-container">Female
+                          <input type="radio" name="gender" />
+                          <span className="checkmark" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Email</label>
+                      <input className="input--style-4" type="email" name="email" />
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Phone Number</label>
+                      <input className="input--style-4" type="text" name="phone" />
+                    </div>
+                  </div>
+                </div>
+                <div className="input-group">
+                  <label className="label">Address</label>
+                  <input className="input--style-4" type="text" name="Address" />
+                </div>
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Password</label>
+                      <input className="input--style-4" type="password" name="email" />
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Confirm Password</label>
+                      <input className="input--style-4" type="password" name="phone" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-t-15">
+
+                  <Link to='/login'>
+                    <button className="btn btn--radius-2 btn--blue" type="submit">Register</button>
+                  </Link>
+
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    
-    
   );
 };
 
