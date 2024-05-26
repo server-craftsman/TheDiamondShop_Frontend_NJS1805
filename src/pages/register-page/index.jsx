@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import "./index.scss"
-import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, HomeOutlined, TableOutlined } from "@ant-design/icons";
 import "../login-page/index"
-
-//import logo diamong store
 import logo from "../../components/assets/logo.png";
+//import logo diamong store
 
+// import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, HomeOutlined, TableOutlined } from "@ant-design/icons";
 const RegisterForm = () => {
 
 

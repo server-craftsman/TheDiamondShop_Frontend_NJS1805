@@ -1,15 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
-import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import "../register-page/index";
 import { useState } from "react";
 import axios from "axios";
-
-import videobg from "../../components/assets/videobg.mp4"
-
-//import logo diamong store
 import logo from "../../components/assets/logo.png";
-import { AiFillGoogleCircle, AiFillFacebook, AiOutlineWhatsApp, AiOutlineCaretDown } from "react-icons/ai";
+
+// import videobg from "../../components/assets/videobg.mp4"
+// import logo diamong store
+// import { AiFillGoogleCircle, AiFillFacebook, AiOutlineWhatsApp, AiOutlineCaretDown } from "react-icons/ai";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -51,11 +50,7 @@ function LoginForm() {
 
   //form login
   return (
-
     <div className="form-login">
-      
-
-
       <div className="logo-bg">
         <img width={550} src={logo} alt="" />
       </div>
@@ -85,17 +80,15 @@ function LoginForm() {
           </div>
           <div className="remember-forgot">
             <label>
-              <input type="checkbox" /> Remember me </label>
+              <input type="checkbox" /> Remember me{" "}
+            </label>
 
-              
             <Link className="forgot">Forgot password</Link>
           </div>
           <div>
             <button type="submit">Login</button>
           </div>
           <div className="register-link">
-
-
             {/* <p>-------------Or continue with------------</p>
             <br />
             <div className="social-media">
@@ -108,13 +101,12 @@ function LoginForm() {
             </div> */}
             <br />
             <p>
-              You don't have account? 
-               <Link to="/register-page" className="register">
+              You don't have account?
+              <Link to="/register-page" className="register">
                 {" "}
                 Register
               </Link>
             </p>
-
           </div>
         </form>
 
