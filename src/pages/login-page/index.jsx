@@ -38,6 +38,20 @@ function LoginForm() {
           );
           setMessage("Login successful as Manager!");
           navigate("/", { state: { message } });
+        } else if (response.data.CustomerInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.CustomerInformation)
+          );
+          setMessage("Login successful as Customer!");
+          navigate("/", { state: { message } });
+        } else if (response.data.SaleStaffInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.SaleStaffInformation)
+          );
+          setMessage("Login successful as Sale Staff!");
+          navigate("/", { state: { message } });
         }
       } else {
         setMessage("Invalid email or password");
