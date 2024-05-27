@@ -158,6 +158,11 @@
                 color: red;
             }
         }
+
+        & .message{
+            color: red;
+            font-size: 17px;
+        }
     }
 
 
@@ -185,4 +190,6 @@
         color: #4481eb;
         border-color: #4481eb;
     }
+
+    
 }

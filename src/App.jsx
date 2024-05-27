@@ -23,25 +23,14 @@ function App() {
           path: "/register-page",
           element: <RegisterForm />,
         },
+        {
+          path: "/password-page",
+          element: <PasswordForm />,
+        },
+    
       ],
     },
-    {
-      path: "/",
-      element: <HomePage />,
-    },
-    {
-      path: "/login",
-      element: <LoginPage />,
-    },
-    {
-      path: "/register-page",
-      element: <RegisterForm />,
-    },
-    {
-      path: "/password-page",
-      element: <PasswordForm />,
-    },
-
+    
   ]);
 
   return <RouterProvider router={router} />;

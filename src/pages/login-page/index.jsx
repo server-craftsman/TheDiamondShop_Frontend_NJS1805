@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined, WarningOutlined } from "@ant-design/icons";
 import "../register-page/index";
 import { useState } from "react";
 import axios from "axios";
@@ -59,7 +59,7 @@ function LoginForm() {
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      setMessage("An error occurred. Please try again.");
+      setMessage("An error occurred. Please try again.!");
     }
   };
 
@@ -123,9 +123,11 @@ function LoginForm() {
               </Link>
             </p>
           </div>
+
+          {message && <p className="message"><WarningOutlined /> {message}</p>}
         </form>
 
-        {message && <p className="message">{message}</p>}
+        
       </div>
     </div>
   );
