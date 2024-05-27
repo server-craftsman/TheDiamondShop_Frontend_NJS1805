@@ -29,7 +29,7 @@ export default function Carousel() {
         </SwiperSlide>
         <SwiperSlide>
           <img
-            src=""
+            src="https://www.withclarity.com/cdn/shop/articles/SOLITAIRE_ENGAGEMENT_RINGS.jpg?v=1697178742"
             alt=""
           />
         </SwiperSlide>
