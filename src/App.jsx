@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
 import RegisterForm from "./pages/register-page";
+import PasswordForm from "./pages/password-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,6 +17,10 @@ function App() {
     {
       path: "/register-page",
       element: <RegisterForm />,
+    },
+    {
+      path: "/password-page",
+      element: <PasswordForm />,
     },
 
   ]);

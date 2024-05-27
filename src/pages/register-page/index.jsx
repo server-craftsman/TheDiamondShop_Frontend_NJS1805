@@ -11,7 +11,6 @@ const RegisterForm = () => {
   return (
 
     <div className="register-form">
-
       <div className="logo-bg">
         <img width={550} src={logo} alt="" />
       </div>
@@ -78,7 +77,35 @@ const RegisterForm = () => {
                 </div>
                 <div className="input-group">
                   <label className="label">Address</label>
-                  <input className="input--style-4" type="text" name="Address" />
+                  <input className="input--style-4" type="text" name="address" />
+                </div>
+                <div className="input-group">
+                  <label className="label">Company Name</label>
+                  <input className="input--style-4" type="text" name="companyName" />
+                </div>
+
+                <div className="input-group">
+                  <label className="label">Country</label>
+                  <input className="input--style-4" type="text" name="country" />
+                </div>
+                <div className="input-group">
+                  <label className="label">City</label>
+                  <input className="input--style-4" type="text" name="city" />
+                </div>
+
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Province</label>
+                      <input className="input--style-4" type="text" name="province" />
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Postal Code</label>
+                      <input className="input--style-4" type="text" name="postalCode"/>
+                    </div>
+                  </div>
                 </div>
                 <div className="row row-space">
                   <div className="col-2">

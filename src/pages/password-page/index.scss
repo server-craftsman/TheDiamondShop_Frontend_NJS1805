@@ -1,4 +1,4 @@
-.register-form {
+.password-form {
 
 
     display: flex;
@@ -100,6 +100,8 @@
    */
    h2{
     text-align: center;
+    font-weight: bold;
+    font-size: 50%;
    }
 
     body,
@@ -291,6 +293,7 @@
      #BUTTON
      ========================================================================== */
     .btn {
+        align-items: center;
         display: inline-block;
         line-height: 50px;
         padding: 0 50px;
@@ -311,6 +314,7 @@
     }
 
     .btn--radius-2 {
+        align-items: center;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
@@ -331,6 +335,7 @@
     }
 
     .btn--blue {
+        align-items: center;
         background: #4272d7;
     }
 
@@ -665,7 +670,7 @@
      #CARD
      ========================================================================== */
     .card {
-        width: 120%;
+        width: 100%;
         -webkit-border-radius: 3px;
         -moz-border-radius: 3px;
         border-radius: 3px;
