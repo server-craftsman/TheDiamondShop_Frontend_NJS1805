@@ -14,7 +14,7 @@ export default function Carousel() {
   return (
     <>
       <Swiper
-        spaceBetween={30}
+        spaceBetween={10}
         pagination={{
           clickable: true,
         }}
@@ -30,6 +30,24 @@ export default function Carousel() {
         <SwiperSlide>
           <img
             src="https://www.withclarity.com/cdn/shop/articles/SOLITAIRE_ENGAGEMENT_RINGS.jpg?v=1697178742"
+            alt=""
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img
+            src="https://www.mydiamonds.com.au/cdn/shop/products/Love-1-Carat-White-Gold-Lab-Grown-Diamond-Ring-2.jpg?v=1683190135"
+            alt=""
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img
+            src="https://www.berrysjewellers.co.uk/cdn/shop/products/1558439715-97310600.png?v=1684851610&width=2048"
+            alt=""
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <img
+            src="https://images-cdn.ubuy.co.in/634d0ccb57b47c713b6a72d8-women-exquisite-full-diamond-ring.jpg"
             alt=""
           />
         </SwiperSlide>
