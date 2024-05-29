@@ -27,19 +27,22 @@ function Header() {
             <Link to="/">HOME</Link>
           </li>
           <li>
-            <Link to="/">BRIDAL</Link>
+            <Link to="/bridal-page">BRIDAL</Link>
           </li>
           <li>
-            <Link to="/">DIAMOND</Link>
+            <Link to="/diamond-page">DIAMOND</Link>
           </li>
           <li>
-            <Link to="/">JEWELRY</Link>
+            <Link to="/ring-page">RINGS</Link>
           </li>
           <li>
-            <Link to="/">TIMEPIECES</Link>
+            <Link to="/timepiece-page">TIMEPIECES</Link>
           </li>
           <li>
-            <Link to="/">DESIGNERS</Link>
+            <Link to="/designer-page">DESIGNERS</Link>
+          </li>
+          <li>
+            <Link to="/ourstore-page">OUR STORE</Link>
           </li>
 
           <li onClick={() => setShowSearch(true)}>
@@ -49,10 +52,14 @@ function Header() {
             <a>SIGN UP</a>
             <ul className="login-dropdown">
               <li>
-                <Button type="primary"><Link to="/login">Login</Link></Button>
+                <Button type="primary">
+                  <Link to="/login">Login</Link>
+                </Button>
               </li>
               <li>
-                <Button type="primary"><Link to="/register-page">Register</Link></Button>
+                <Button type="primary">
+                  <Link to="/register-page">Register</Link>
+                </Button>
               </li>
             </ul>
           </li>

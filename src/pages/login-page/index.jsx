@@ -5,7 +5,7 @@ import "../register-page/index";
 import { useState } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
-import "../password-page"
+import "../password-page";
 
 // import videobg from "../../components/assets/videobg.mp4"
 // import logo diamong store
@@ -98,7 +98,9 @@ function LoginForm() {
               <input type="checkbox" /> Remember me{" "}
             </label>
 
-            <Link to="/password-page" className="forgot">Forgot password</Link>
+            <Link to="/password-page" className="forgot">
+              Forgot password
+            </Link>
           </div>
           <div>
             <button type="submit">Login</button>
@@ -124,10 +126,12 @@ function LoginForm() {
             </p>
           </div>
 
-          {message && <p className="message"><WarningOutlined /> {message}</p>}
+          {message && (
+            <p className="message">
+              <WarningOutlined /> {message}
+            </p>
+          )}
         </form>
-
-        
       </div>
     </div>
   );

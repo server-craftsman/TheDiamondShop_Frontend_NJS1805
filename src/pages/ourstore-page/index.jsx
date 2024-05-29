@@ -2,21 +2,23 @@ import Carousel from "../../components/carousel";
 // import Header from "../../components/header";
 import "./index.scss";
 
-function HomePage() {
+function OurstorePage() {
   return (
-    <div className="homepage">
+    <div className="ourstorepage">
       {/* <Header /> */}
+      <h1>Product quality is our pride</h1>
+      <h1>It's a pleasure to be of service to you</h1>
       <Carousel />
       <h1>Trending</h1>
       <Carousel />
-      <h1>Timepiece</h1>
+      <h1>Best Sales</h1>
       <Carousel />
-      <h1>Elden ring</h1>
+      <h1>New Products</h1>
       <Carousel />
-      <h1>Bridal</h1>
+      <h1>New design</h1>
       <Carousel />
     </div>
   );
 }
 
-export default HomePage;
+export default OurstorePage;
