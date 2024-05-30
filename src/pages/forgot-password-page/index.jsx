@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
 import logo from "../../components/assets/logo.png";
-//import logo diamong store
 
-// import { UserOutlined, LockOutlined, PhoneOutlined, MailOutlined, HomeOutlined, TableOutlined } from "@ant-design/icons";
 const PasswordForm = () => {
   return (
     <div className="password-form">

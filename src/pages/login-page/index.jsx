@@ -5,7 +5,7 @@ import "../register-page/index";
 import { useState } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
-import "../password-page";
+import "../forgot-password-page";
 
 // import videobg from "../../components/assets/videobg.mp4"
 // import logo diamong store
