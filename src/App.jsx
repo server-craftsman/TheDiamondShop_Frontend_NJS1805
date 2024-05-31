@@ -3,7 +3,7 @@ import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
 import RegisterForm from "./pages/register-page";
 import Layout from "./components/layout";
-import PasswordForm from "./pages/password-page";
+import PasswordForm from "./pages/forgot-password-page/index";
 import BridalPage from "./pages/bridal-page";
 import DiamondPage from "./pages/diamond-page";
 import RingPage from "./pages/ring-page";
@@ -30,7 +30,7 @@ function App() {
           element: <RegisterForm />,
         },
         {
-          path: "/password-page",
+          path: "/forgot-password-page",
           element: <PasswordForm />,
         },
         {
