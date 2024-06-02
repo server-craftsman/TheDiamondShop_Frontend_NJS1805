@@ -46,20 +46,13 @@ function LoginForm() {
           );
           setMessage("Login successful as Customer!");
           navigate("/", { state: { message } });
-        } else if (response.data.SaleInformation) {
+        } else if (response.data.SaleStaffInformation) {
           localStorage.setItem(
             "user",
-            JSON.stringify(response.data.SaleInformation)
+            JSON.stringify(response.data.SaleStaffInformation)
           );
           setMessage("Login successful as Sale Staff!");
           navigate("/", { state: { message } });
-        } else if (response.data.DeliveryInformation){
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.DeliveryInformation)
-          );
-          setMessage("Login successful as Delivery Staff");
-          navigate("/", {state: { message} });
         }
       } else {
         setMessage("Invalid email or password");

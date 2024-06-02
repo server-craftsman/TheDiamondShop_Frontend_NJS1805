@@ -32,6 +32,9 @@ function TimepiecePage() {
   };
   return (
     <div className="timepiecepage">
+
+      <h1>Each timepiece represents each person's unique style.</h1>
+      <h1>Choose your style</h1>
       <Row gutter={16}>
         {currentPageData.map((item, index) => (
           <Col span={8} key={index}>
@@ -44,7 +47,6 @@ function TimepiecePage() {
                   alt={item.NameTimepieces}
                   src={item.ImageTimepieces}
                 />
-              
               }
             >
               <Card.Meta
