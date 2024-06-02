@@ -4,14 +4,12 @@ import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button } from "antd";
 
-
 function DesignerPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); 
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-   
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:8090/products/designer");
@@ -33,7 +31,7 @@ function DesignerPage() {
 
   return (
     <div className="designerpage">
-    <Row gutter={16}>
+      <Row gutter={16}>
         {currentPageData.map((item, index) => (
           <Col span={8} key={index}>
             <Card hoverable style={{ width: 240 }} className="designer-card">
@@ -58,11 +56,9 @@ function DesignerPage() {
       <Pagination
         current={currentPage}
         total={dataSource.length}
-        pageSize={itemsPerPage}        
+        pageSize={itemsPerPage}
         onChange={handlePageChange}
-        
       />
-    
     </div>
   );
 }
