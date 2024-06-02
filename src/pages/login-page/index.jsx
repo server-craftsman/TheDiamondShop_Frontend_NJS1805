@@ -20,7 +20,7 @@ function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8090/api/login", {
+      const response = await axios.post("http://localhost:8090/auth/login", {
         email,
         password,
       });
@@ -46,13 +46,20 @@ function LoginForm() {
           );
           setMessage("Login successful as Customer!");
           navigate("/", { state: { message } });
-        } else if (response.data.SaleStaffInformation) {
+        } else if (response.data.SaleInformation) {
           localStorage.setItem(
             "user",
-            JSON.stringify(response.data.SaleStaffInformation)
+            JSON.stringify(response.data.SaleInformation)
           );
           setMessage("Login successful as Sale Staff!");
           navigate("/", { state: { message } });
+        } else if (response.data.DeliveryInformation){
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.DeliveryInformation)
+          );
+          setMessage("Login successful as Delivery Staff");
+          navigate("/", {state: { message} });
         }
       } else {
         setMessage("Invalid email or password");
