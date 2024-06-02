@@ -4,53 +4,50 @@ import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-
+import "swiper/css/navigation";
 // import required modules
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay, Navigation } from "swiper/modules";
 
 import "./index.scss";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function Carousel() {
+export default function Carousel({
+  
+  numberOfSlide,
+  isUseNavigation = false,
+}) {
+  const [banner, setBanner] = useState([]);
+
+  const fetechBanner = async () => {
+    const response = await axios.get(
+      "http://localhost:8090/products/"
+    );
+    console.log(response.data);
+    setBanner(response.data);
+  };
+  useEffect(() => {
+    fetechBanner();
+  });
   return (
     <>
       <Swiper
-        spaceBetween={10}
-        pagination={{
-          clickable: true,
+        navigation={isUseNavigation}
+        slidesPerView={numberOfSlide}
+        spaceBetween={30}
+        autoplay={{
+          delay: 2300,
+          disableOnInteraction: false,
         }}
-        modules={[Pagination]}
+        pagination={true}
+        modules={[Pagination, Autoplay, Navigation]}
         className="carousel"
       >
-        <SwiperSlide>
-          <img
-            src="https://i5.walmartimages.com/seo/Women-s-Double-Layer-Micro-Inlaid-Zircon-Artificial-Diamond-Ring-Set_982efef2-d3aa-464a-99af-2fcf9bf356be.175f5939a7793421774a6cb59ae07d51.jpeg"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://www.withclarity.com/cdn/shop/articles/SOLITAIRE_ENGAGEMENT_RINGS.jpg?v=1697178742"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://www.mydiamonds.com.au/cdn/shop/products/Love-1-Carat-White-Gold-Lab-Grown-Diamond-Ring-2.jpg?v=1683190135"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://www.berrysjewellers.co.uk/cdn/shop/products/1558439715-97310600.png?v=1684851610&width=2048"
-            alt=""
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <img
-            src="https://images-cdn.ubuy.co.in/634d0ccb57b47c713b6a72d8-women-exquisite-full-diamond-ring.jpg"
-            alt=""
-          />
-        </SwiperSlide>
+        {banner.map((banners) => (
+          <SwiperSlide key={banners.BannerID}>
+            <img src={banners.ImageBanner} alt="" />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </>
   );

@@ -3,7 +3,7 @@ import "./index.scss";
 import "../login-page/index";
 import logo from "../../components/assets/logo.png";
 
-import {WarningOutlined } from "@ant-design/icons";
+import { WarningOutlined } from "@ant-design/icons";
 
 import { useState } from "react";
 import axios from "axios";
@@ -41,7 +41,10 @@ function RegisterForm() {
 
     try {
       console.log("Submitting form data:", data);
-      const response = await axios.post("http://localhost:8090/auth/register", data);
+      const response = await axios.post(
+        "http://localhost:8090/auth/register",
+        data
+      );
       if (response.data.status) {
         alert("Registration successful"); //có thể redirect tới trang nào đó khi register thành công
       } else {
@@ -80,8 +83,6 @@ function RegisterForm() {
                         value={formData.firstName}
                         onChange={handleChange}
                       />
-                      
-
                     </div>
                   </div>
                   <div className="col-2">
@@ -131,11 +132,13 @@ function RegisterForm() {
                         </label>
                         <label className="radio-container">
                           Female
-                          <input type="radio"
+                          <input
+                            type="radio"
                             name="gender"
                             value="Female"
                             checked={formData.gender === "Female"}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                          />
                           <span className="checkmark" />
                         </label>
                       </div>
@@ -170,58 +173,70 @@ function RegisterForm() {
                 </div>
                 <div className="input-group">
                   <label className="label">Address</label>
-                  <input className="input--style-4"
+                  <input
+                    className="input--style-4"
                     type="text"
                     name="address"
                     value={formData.address}
-                    onChange={handleChange} />
+                    onChange={handleChange}
+                  />
                 </div>
                 <div className="input-group">
                   <label className="label">Company Name</label>
-                  <input className="input--style-4"
+                  <input
+                    className="input--style-4"
                     type="text"
                     name="companyName"
                     value={formData.companyName}
-                    onChange={handleChange} />
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div className="input-group">
                   <label className="label">Country</label>
-                  <input className="input--style-4"
+                  <input
+                    className="input--style-4"
                     type="text"
                     name="country"
                     value={formData.country}
-                    onChange={handleChange} />
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div className="input-group">
                   <label className="label">City</label>
-                  <input className="input--style-4"
+                  <input
+                    className="input--style-4"
                     type="text"
                     name="city"
                     value={formData.city}
-                    onChange={handleChange} />
+                    onChange={handleChange}
+                  />
                 </div>
 
                 <div className="row row-space">
                   <div className="col-2">
                     <div className="input-group">
                       <label className="label">Province</label>
-                      <input className="input--style-4"
+                      <input
+                        className="input--style-4"
                         type="text"
                         name="province"
                         value={formData.province}
-                        onChange={handleChange} />
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
                   <div className="col-2">
                     <div className="input-group">
                       <label className="label">Postal Code</label>
-                      <input className="input--style-4"
+                      <input
+                        className="input--style-4"
                         type="text"
                         name="postalCode"
                         value={formData.postalCode}
-                        onChange={handleChange} />
+                        onChange={handleChange}
+                      />
                     </div>
                   </div>
                 </div>
@@ -261,11 +276,13 @@ function RegisterForm() {
                     Register
                   </button>
                   <Link to="/login">
-                    <button className="btn btn--radius-2 btn--blue" type="button">
+                    <button
+                      className="btn btn--radius-2 btn--blue"
+                      type="button"
+                    >
                       Login
                     </button>
                   </Link>
-
                 </div>
               </form>
             </div>
@@ -274,7 +291,6 @@ function RegisterForm() {
       </div>
     </div>
   );
-};
-
+}
 
 export default RegisterForm;

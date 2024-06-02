@@ -9,14 +9,7 @@ function DesignerPage() {
       <h1>Designer of the year</h1>
       <h1>Let's choose your supporter</h1>
       <Carousel />
-      <h1>Trending</h1>
-      <Carousel />
-      <h1>Best Sales</h1>
-      <Carousel />
-      <h1>New Products</h1>
-      <Carousel />
-      <h1>New design</h1>
-      <Carousel />
+    
     </div>
   );
 }
