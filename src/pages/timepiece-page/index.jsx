@@ -2,7 +2,7 @@
 // import Header from "../../components/header";
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Carousel } from "antd";
+import { Card, Image, Col, Row, Pagination } from "antd";
 
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
@@ -39,22 +39,12 @@ function TimepiecePage() {
               hoverable
               style={{ width: 240 }}
               cover={
-                // <Image
-                //   width="100%"
-                //   alt={item.NameTimepieces}
-                //   src={item.ImageTimepieces}
-                // />
-                Array.isArray(item.ImageTimepieces) ? (
-                  <Carousel autoplay>
-                    {item.ImageTimepieces.map((imageSrc, imageIndex) => (
-                      <div key={imageIndex}>
-                        <Image width="100%" alt={item.NameTimepieces} src={imageSrc} />
-                      </div>
-                    ))}
-                  </Carousel>
-                ) : (
-                  <Image width="100%" alt={item.NameTimepieces} src={item.ImageTimepieces} />
-                )
+                <Image
+                  width="100%"
+                  alt={item.NameTimepieces}
+                  src={item.ImageTimepieces}
+                />
+              
               }
             >
               <Card.Meta
