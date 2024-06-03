@@ -7,13 +7,14 @@ import { Card, Image, Col, Row, Pagination } from "antd";
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); 
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-   
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/timepieces");
+        const response = await fetch(
+          "http://localhost:8090/products/timepieces"
+        );
         const data = await response.json();
         setDataSource(data);
       } catch (error) {
@@ -32,7 +33,6 @@ function TimepiecePage() {
   };
   return (
     <div className="timepiecepage">
-
       <h1>Each timepiece represents each person's unique style.</h1>
       <h1>Choose your style</h1>
       <Row gutter={16}>
@@ -60,12 +60,14 @@ function TimepiecePage() {
       <Pagination
         current={currentPage}
         total={dataSource.length}
-        pageSize={itemsPerPage}        
+        pageSize={itemsPerPage}
         onChange={handlePageChange}
-        
-      />    
- 
- 
+        onShowSizeChange={(currentPage, size) => {
+          setItemsPerPage(size);
+        }}
+        showQuickJumper
+        showTotal={(total) => `Total ${total} item`}
+      />
     </div>
   );
 }

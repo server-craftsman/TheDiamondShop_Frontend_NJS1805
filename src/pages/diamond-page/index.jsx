@@ -62,7 +62,11 @@ function DiamondPage() {
         total={dataSource.length}
         pageSize={itemsPerPage}        
         onChange={handlePageChange}
-        
+        onShowSizeChange={(currentPage, size) => {
+          setItemsPerPage(size);
+        }}
+        showQuickJumper
+        showTotal={(total) => `Total ${total} item`}
       />    
     </div>
   );

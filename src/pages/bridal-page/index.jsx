@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-// import Carousel from "../../components/carousel";
-// import Header from "../../components/header";
 import "./index.scss";
 import { Card, Image, Col, Row, Pagination } from "antd";
 
@@ -27,10 +25,8 @@ function BridalPage() {
   // Calculate the index range for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
   // Slice the data for the current page
   const currentPageData = dataSource.slice(startIndex, endIndex);
-
   // Handle page change
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -61,12 +57,16 @@ function BridalPage() {
         ))}
       </Row>
       <Pagination
-        current={currentPage}
+        defaultCurrent={currentPage}
         total={dataSource.length}
-        pageSize={itemsPerPage}        
+        defaultPageSize={itemsPerPage}
         onChange={handlePageChange}
-        
-      />    
+        onShowSizeChange={(currentPage, size) => {
+          setItemsPerPage(size); // Cập nhật kích thước trang mới
+        }}
+        showQuickJumper
+        showTotal={(total) => `Total ${total} item`}
+      />
     </div>
   );
 }

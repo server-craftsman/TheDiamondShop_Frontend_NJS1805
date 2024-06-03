@@ -7,13 +7,14 @@ import { Card, Image, Col, Row, Pagination } from "antd";
 function RingPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); 
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-   
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/diamond-ring");
+        const response = await fetch(
+          "http://localhost:8090/products/diamond-ring"
+        );
         const data = await response.json();
         setDataSource(data);
       } catch (error) {
@@ -33,7 +34,6 @@ function RingPage() {
 
   return (
     <div className="ringpage">
-    
       <h1>The ring makes you noble and shows your class</h1>
       <h1>Choose what suits you</h1>
       <Row gutter={16}>
@@ -61,11 +61,14 @@ function RingPage() {
       <Pagination
         current={currentPage}
         total={dataSource.length}
-        pageSize={itemsPerPage}        
+        pageSize={itemsPerPage}
         onChange={handlePageChange}
-        
-      />    
- 
+        onShowSizeChange={(currentPage, size) => {
+          setItemsPerPage(size);
+        }}
+        showQuickJumper
+        showTotal={(total) => `Total ${total} item`}
+      />
     </div>
   );
 }
