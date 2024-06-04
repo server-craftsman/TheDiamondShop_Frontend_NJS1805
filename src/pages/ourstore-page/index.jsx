@@ -112,10 +112,13 @@ function OurstorePage() {
           <div className="footer-column">
             <h3>Diamond Store</h3>
             <p>
-              700 Main Street
+            26 Le Van Viet,
               <br />
-              Lewiston, ID 83501
+              Tan Nhon Phu A Ward,
               <br />
+              Thu Duc City,
+              <br />
+              Ho Chi Minh City
               (208) 746-2649
             </p>
             <p>
@@ -153,7 +156,7 @@ function OurstorePage() {
                 <a href="/timepiece-page">Timepieces</a>
               </li>
               <li>
-                <a href="#">Designers</a>
+                <a href="/designer-page">Designers</a>
               </li>
               <li>
                 <a href="#">Contact</a>
