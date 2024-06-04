@@ -11,6 +11,8 @@ import TimepiecePage from "./pages/timepiece-page";
 import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
 
+import AddToCart from "./pages/cart-page";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -56,6 +58,10 @@ function App() {
         {
           path: "/ourstore-page",
           element: <OurstorePage />,
+        },
+        {
+          path: "/cart-page",
+          element: <AddToCart />,
         },
       ],
     },

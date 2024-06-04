@@ -11,6 +11,7 @@
     background-color: gray;
     background-size: 170%;
     background-position: center;
+    
 
     .logo-bg {
         display: block;
@@ -169,6 +170,7 @@
         font-family: "Poppins", "Arial", "Helvetica Neue", sans-serif;
         font-weight: 400;
         font-size: 14px;
+        
     }
 
     h1,
@@ -396,6 +398,7 @@
      #FORM
      ========================================================================== */
     input {
+        
         outline: none;
         margin: 0;
         border: none;
@@ -408,7 +411,7 @@
     }
 
     .input--style-4 {
-        line-height: 50px;
+        line-height: 50px;       
         background: #fafafa;
         -webkit-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
         -moz-box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.08);

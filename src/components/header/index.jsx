@@ -5,6 +5,8 @@ import { useState } from "react";
 import logo from "../assets/logo.png";
 import { Button } from "antd";
 
+import { AiOutlineShoppingCart } from "react-icons/ai";
+
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -45,9 +47,19 @@ function Header() {
             <Link to="/ourstore-page">OUR STORE</Link>
           </li>
 
-          <li onClick={() => setShowSearch(true)}>
+          
+        </ul>
+      </nav>
+      <div className="header-end">
+        <ul>
+        <li onClick={() => setShowSearch(true)}>
             <SearchOutlined />
           </li>
+
+          <li className="cart"> <Link to="/cart-page"><AiOutlineShoppingCart /></Link>
+           
+          </li>
+
           <li>
             <a>SIGN UP</a>
             <ul className="login-dropdown">
@@ -64,7 +76,7 @@ function Header() {
             </ul>
           </li>
         </ul>
-      </nav>
+      </div>
     </header>
   );
 }

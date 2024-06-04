@@ -37,7 +37,7 @@ function DiamondPage() {
       <h1>Let's choose your favorite color</h1>
       <Row gutter={16}>
         {currentPageData.map((item, index) => (
-          <Col span={8} key={index}>
+          <Col span={8} key={index}>  
             <Card
               hoverable
               style={{ width: 240 }}

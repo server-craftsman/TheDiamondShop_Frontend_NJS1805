@@ -75,7 +75,7 @@ function RegisterForm() {
                 <div className="row row-space">
                   <div className="col-2">
                     <div className="input-group">
-                      <label className="label">First name</label>
+                      <label className="label">First Name</label>
                       <input
                         className="input--style-4"
                         type="text"
@@ -87,7 +87,7 @@ function RegisterForm() {
                   </div>
                   <div className="col-2">
                     <div className="input-group">
-                      <label className="label">Last name</label>
+                      <label className="label">Last Name</label>
                       <input
                         className="input--style-4"
                         type="text"

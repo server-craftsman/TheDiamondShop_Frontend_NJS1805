@@ -16,9 +16,13 @@
 
     & .header__logo{
       margin-left: -150px;
+      display: flex;
+      justify-content: start;
     }
 
     &__nav {
+      display: flex;
+      justify-content: center;
       ul {
         display: flex;
         list-style: none;
@@ -96,6 +100,69 @@
           }
         }
       }
+    }
+
+    .header-end{
+      display: flex;
+      justify-content: end;
+      display: flex;
+      justify-content: center;
+
+      .cart{
+        font-size: 20px;
+        margin-left: -10px;
+        margin-right: 10px;
+      }
+
+      ul {
+        display: flex;
+        list-style: none;
+        gap: 30px;
+  
+        li {
+          color: black;
+          font-size: 18px;
+          a {
+            text-decoration: none;
+            color: black;
+          }
+        }
+      }
+      li {
+        margin-right: 20px;
+        position: relative; /* Để tạo vùng chứa cho dropdown */       
+        .login-dropdown {
+          display: none; /* Ẩn dropdown ban đầu */
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background-color: #ffffff73;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: 10px;
+          
+          li {
+            margin: 0;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            
+            button {
+              flex: 1; // Mỗi nút sẽ chiếm 1 phần không gian bằng nhau
+              margin: 0 10px; // Khoảng cách giữa các nút
+            }
+            a {
+              color: #fff;
+              text-decoration: none;
+            }
+          }
+        }
+        
+        &:hover {
+          .login-dropdown {
+            display: block; /* Hiển thị dropdown khi hover */
+          }
+        }
+      } 
     }
 }
 
