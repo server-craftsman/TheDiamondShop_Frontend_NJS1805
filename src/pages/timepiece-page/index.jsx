@@ -7,7 +7,7 @@ import { Card, Image, Col, Row, Pagination } from "antd";
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,7 +63,6 @@ function TimepiecePage() {
           </label>
         </div>
 
-
         <div className="timepiecepage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
@@ -105,14 +104,13 @@ function TimepiecePage() {
           <div className="footer-column">
             <h3>Diamond Store</h3>
             <p>
-            26 Le Van Viet,
+              26 Le Van Viet,
               <br />
               Tan Nhon Phu A Ward,
               <br />
               Thu Duc City,
               <br />
-              Ho Chi Minh City
-              (208) 746-2649
+              Ho Chi Minh City (208) 746-2649
             </p>
             <p>
               <strong>Store Information</strong>
@@ -182,8 +180,8 @@ function TimepiecePage() {
         </div>
         <div className="footer-bottom">
           <p>
-            &copy; 2024 Diamond Store All Rights Reserved. Website
-            designed, maintained, and hosted by Punchmark.{' '}
+            &copy; 2024 Diamond Store All Rights Reserved. Website designed,
+            maintained, and hosted by Punchmark.{" "}
             <a href="#">Accessibility Statement</a>.
           </p>
         </div>

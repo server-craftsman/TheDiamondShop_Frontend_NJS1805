@@ -112,6 +112,17 @@
         font-size: 20px;
         margin-left: -10px;
         margin-right: 10px;
+        span {
+          position: absolute;
+          top: 20px;
+          right: -10px;
+          background: red;
+          font-size: 10px;
+          color: #fff;
+          padding: 3px 5px;
+          border-radius: 50%;
+          z-index: -1;
+        }
       }
 
       ul {

@@ -46,18 +46,19 @@ function Header() {
           <li>
             <Link to="/ourstore-page">OUR STORE</Link>
           </li>
-
-          
         </ul>
       </nav>
-      <div className="header-end">
+      <nav className="header-end">
         <ul>
-        <li onClick={() => setShowSearch(true)}>
+          <li onClick={() => setShowSearch(true)}>
             <SearchOutlined />
           </li>
 
-          <li className="cart"> <Link to="/cart-page"><AiOutlineShoppingCart /></Link>
-           
+          <li className="cart">
+            <span>0</span>
+            <Link eventkey={2} to="/cart-page">
+              <AiOutlineShoppingCart />
+            </Link>
           </li>
 
           <li>
@@ -73,13 +74,11 @@ function Header() {
                   <Link to="/register-page">Register</Link>
                 </Button>
               </li>
-              <li>
-                
-              </li>
+              <li></li>
             </ul>
           </li>
         </ul>
-      </div>
+      </nav>
     </header>
   );
 }

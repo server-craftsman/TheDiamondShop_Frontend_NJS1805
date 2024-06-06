@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-// import Carousel from "../../components/carousel";
-// import Header from "../../components/header";
 import "./index.scss";
-import { Card, Image, Col, Row, Pagination } from "antd";
+import { Card, Image, Col, Row, Pagination, Button } from "antd";
+import axios from "axios";
 
 function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(9); // Default items per page
-
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
+  const [cartItems, setCartItems] = useState([]);
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -27,15 +26,33 @@ function BridalPage() {
   // Calculate the index range for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
   // Slice the data for the current page
   const currentPageData = dataSource.slice(startIndex, endIndex);
-
   // Handle page change
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
+  async function handleAddToCart(item) {
+    try {
+
+      const data = {
+        productType: "Bridal",
+        productId: item.BridalID, 
+        quantity: 1,
+      };
+  
+
+      const response = await axios.post("http://localhost:8090/order/add-to-cart", data);
+  
+      console.log("Added to cart:", response.data);
+      setCartItems([...cartItems, item]);
+    } catch (error) {
+      console.error("Error adding to cart:", error.message);
+    
+    }
+  }
+  
   return (
     <div>
       <div className="app">
@@ -67,7 +84,9 @@ function BridalPage() {
             <input type="checkbox" /> Women`s
           </label>
         </div>
+
         <div className="bridalpage">
+          <div>Items in Cart: {cartItems.length}</div>
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
@@ -86,6 +105,7 @@ function BridalPage() {
                     title={item.NameBridal}
                     description={`${item.Price}$`}
                   />
+                  <Button onClick={handleAddToCart}>Add to Cart</Button>
                 </Card>
               </Col>
             ))}
