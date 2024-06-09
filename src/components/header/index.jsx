@@ -6,9 +6,11 @@ import logo from "../assets/logo.png";
 import { Button } from "antd";
 
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { useCart } from "../../CartContext";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
+  const { cartItems } = useCart();
 
   return (
     <header className="header">
@@ -55,8 +57,8 @@ function Header() {
           </li>
 
           <li className="cart">
-            <span>0</span>
-            <Link eventkey={2} to="/cart-page">
+            <span>{cartItems.length}</span>
+            <Link to="/cart-page">
               <AiOutlineShoppingCart />
             </Link>
           </li>

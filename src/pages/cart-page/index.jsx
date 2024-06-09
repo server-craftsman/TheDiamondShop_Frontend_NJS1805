@@ -1,156 +1,92 @@
-import React from "react";
-import "../cart-page/index.scss";
+import { useCart } from "../../CartContext";
+import "./index.scss";
+import { Table, Button } from "antd";
+import { useMemo } from 'react';
+const CartPage = () => {
+  const { cartItems, addToCart, removeFromCart } = useCart();
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "font-awesome/css/font-awesome.min.css";
-import {
-  AiOutlinePlus,
-  AiOutlineMinus,
-  AiOutlineCloseCircle,
-} from "react-icons/ai";
+  // Tính tổng số tiền
+  const totalPrice = useMemo(() => {
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  }, [cartItems]);
 
-function AddToCart() {
-  return (
-    <div className="cart-content">
-      <div className="card">
-        <div className="row">
-          <div className="col-md-8 cart">
-            <div className="title">
-              <div className="row">
-                <div className="col">
-                  <h4>
-                    <b>Shopping Cart</b>
-                  </h4>
-                </div>
-                <div className="col align-self-center text-right text-muted">
-                  3 items
-                </div>
-              </div>
-            </div>
-            <div className="row border-top border-bottom">
-              <div className="row main align-items-center">
-                <div className="col-2">
-                  <img
-                    className="img-fluid"
-                    src="https://i.imgur.com/1GrakTl.jpg"
-                  />
-                </div>
-                <div className="col">
-                  <div className="row text-muted">Shirt</div>
-                  <div className="row">Cotton T-shirt</div>
-                </div>
-                <div className="col">
-                  <button className="quantity">
-                    <AiOutlineMinus />
-                  </button>
-                  <input className="input-quantity" type="number" />
-                  <button className="quantity">
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-                <div className="col">
-                  € 44.00 <span className="close">✕</span>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="row main align-items-center">
-                <div className="col-2">
-                  <img
-                    className="img-fluid"
-                    src="https://i.imgur.com/ba3tvGm.jpg"
-                  />
-                </div>
-                <div className="col">
-                  <div className="row text-muted">Shirt</div>
-                  <div className="row">Cotton T-shirt</div>
-                </div>
-                <div className="col">
-                  <button className="quantity">
-                    <AiOutlineMinus />
-                  </button>
-                  <input className="input-quantity" type="number" />
-                  <button className="quantity">
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-                <div className="col">
-                  € 44.00 <span className="close">✕</span>
-                </div>
-              </div>
-            </div>
-            <div className="row border-top border-bottom">
-              <div className="row main align-items-center">
-                <div className="col-2">
-                  <img
-                    className="img-fluid"
-                    src="https://i.imgur.com/pHQ3xT3.jpg"
-                  />
-                </div>
-                <div className="col">
-                  <div className="row text-muted">Shirt</div>
-                  <div className="row">Cotton T-shirt</div>
-                </div>
-                <div className="col">
-                  <button className="quantity">
-                    <AiOutlineMinus />
-                  </button>
-                  <input className="input-quantity" type="number" />
-                  <button className="quantity">
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-                <div className="col">
-                  € 44.00
-                  <span className="close">
-                    <AiOutlineCloseCircle />
-                  </span>
-                </div>
-                {/* <button className='close'></button> */}
-              </div>
-            </div>
-            <div className="back-to-shop">
-              <a href="/diamond-page">←Back to shop</a>
-            </div>
-          </div>
-          <div className="col-md-4 summary">
-            <div>
-              <h5>
-                <b>Summary</b>
-              </h5>
-            </div>
-            <hr />
-            <div className="row">
-              <div className="col" style={{ paddingLeft: 0 }}>
-                ITEMS 3
-              </div>
-              <div className="col text-right">€ 132.00</div>
-            </div>
-            <form>
-              <p>SHIPPING</p>
-              <select>
-                <option className="text-muted">Standard-Delivery- €5.00</option>
-                <option className="text-muted">Payment Online</option>
-              </select>
-              <p>GIVE CODE</p>
-              <input id="code" placeholder="Enter your code" />
-            </form>
-            <div
-              className="row"
-              style={{
-                borderTop: "1px solid rgba(0,0,0,.1)",
-                padding: "2vh 0",
-              }}
-            >
-              <div className="col">TOTAL PRICE</div>
-              <div className="col text-right">€ 137.00</div>
-            </div>
-            <button className="btn">CHECKOUT</button>
-          </div>
+  // Hàm để xử lý việc tăng số lượng sản phẩm
+  const handleQuantityChange = (item, amount) => {
+    if (item.quantity === 1 && amount === -1) {
+      removeFromCart(item.id);
+    } else {
+      addToCart({ ...item, quantity: amount });
+    }
+  };
+
+  // Cấu trúc dữ liệu cho bảng Ant Design
+  const columns = [
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (text, record) => (
+        <img
+          src={record.image}
+          alt={record.name}
+          style={{ width: "50px", height: "auto" }}
+        />
+      ),
+    },
+    {
+      title: "Product",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text, record) => (
+        <div>
+          <Button
+            onClick={() => handleQuantityChange(record, -1)}
+            disabled={record.quantity <= 1}
+          >
+            -
+          </Button>
+          <span style={{ margin: "0 10px" }}>{text}</span>
+          <Button onClick={() => handleQuantityChange(record, 1)}>+</Button>
         </div>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Button onClick={() => removeFromCart(record.id)}>Delete</Button>
+      ),
+    },
+  ];
+
+  // Chuẩn bị dữ liệu cho bảng
+  const data = useMemo(() => cartItems.map((item, index) => ({
+    key: index,
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+    id: item.id,
+    image: item.image,
+  })), [cartItems]);
+
+  return (
+    <div className="cart-page">
+      <Table columns={columns} dataSource={data} pagination={false} />
+      <div className="total-price">
+        <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
       </div>
     </div>
   );
-}
+};
 
-export default AddToCart;
+export default CartPage;

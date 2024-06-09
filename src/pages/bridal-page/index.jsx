@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import "./index.scss";
 import { Card, Image, Col, Row, Pagination, Button } from "antd";
-import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useCart } from "../../CartContext";
 
 function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
   const [cartItems, setCartItems] = useState([]);
+  const { addToCart } = useCart();
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -32,27 +34,16 @@ function BridalPage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
-  async function handleAddToCart(item) {
-    try {
-
-      const data = {
-        productType: "Bridal",
-        productId: item.BridalID, 
-        quantity: 1,
-      };
-  
-
-      const response = await axios.post("http://localhost:8090/order/add-to-cart", data);
-  
-      console.log("Added to cart:", response.data);
-      setCartItems([...cartItems, item]);
-    } catch (error) {
-      console.error("Error adding to cart:", error.message);
-    
-    }
+  function handleAddToCart(item) {
+    // Thay vì setCartItems, sử dụng addToCart từ useCart
+    addToCart({
+      id: item.BridalID,
+      name: item.NameBridal,
+      image: item.ImageBridal,
+      price: item.Price,
+      quantity: 1 // Hoặc số lượng mà người dùng chọn
+    });
   }
-  
   return (
     <div>
       <div className="app">
@@ -105,7 +96,7 @@ function BridalPage() {
                     title={item.NameBridal}
                     description={`${item.Price}$`}
                   />
-                  <Button onClick={handleAddToCart}>Add to Cart</Button>
+                  <Button onClick={() => handleAddToCart(item)}>Add to Cart</Button>
                 </Card>
               </Col>
             ))}

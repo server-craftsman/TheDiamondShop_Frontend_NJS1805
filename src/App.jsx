@@ -12,6 +12,9 @@ import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
 
 import AddToCart from "./pages/cart-page";
+import { CartProvider } from "./CartContext";
+
+
 
 function App() {
   const router = createBrowserRouter([
@@ -67,7 +70,11 @@ function App() {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
+  );
 }
 
 export default App;
