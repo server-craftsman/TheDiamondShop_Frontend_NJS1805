@@ -1,17 +1,28 @@
 import "./index.scss";
 import { Link } from "react-router-dom";
-import { SearchOutlined, CloseOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { SearchOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
+import { useContext, useState } from "react";
 import logo from "../assets/logo.png";
-import { Button } from "antd";
+import { Button, Dropdown, Menu} from "antd";
 
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useCart } from "../../CartContext";
+import { AuthContext } from "../../AuthContext";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const { cartItems } = useCart();
-
+  const { user, logout } = useContext(AuthContext);
+  const userMenu = (
+    <Menu>
+      <Menu.Item key="0">
+        <Link to="/profile">Profile</Link>
+      </Menu.Item>
+      <Menu.Item key="1" onClick={logout}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <header className="header">
       <div className={`header__search ${showSearch === true ? "active" : ""}`}>
@@ -55,15 +66,18 @@ function Header() {
           <li onClick={() => setShowSearch(true)}>
             <SearchOutlined />
           </li>
-
           <li className="cart">
             <span>{cartItems.length}</span>
             <Link to="/cart-page">
               <AiOutlineShoppingCart />
             </Link>
           </li>
-
-          <li>
+          {user ? (
+            <Dropdown overlay={userMenu} trigger={['hover']}>
+              <UserOutlined style={{ fontSize: '1.5em', cursor: 'pointer' }} />
+            </Dropdown>
+          ) : (
+            <li>
             <a>SIGN UP</a>
             <ul className="login-dropdown">
               <li>
@@ -76,9 +90,9 @@ function Header() {
                   <Link to="/register-page">Register</Link>
                 </Button>
               </li>
-              <li></li>
             </ul>
           </li>
+          )}
         </ul>
       </nav>
     </header>

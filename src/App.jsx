@@ -13,8 +13,7 @@ import OurstorePage from "./pages/ourstore-page";
 
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
-
-
+import { AuthProvider } from "./AuthContext";
 
 function App() {
   const router = createBrowserRouter([
@@ -71,9 +70,11 @@ function App() {
   ]);
 
   return (
-    <CartProvider>
-      <RouterProvider router={router} />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

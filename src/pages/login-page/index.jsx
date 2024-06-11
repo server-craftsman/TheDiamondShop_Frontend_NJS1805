@@ -2,24 +2,45 @@ import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
 import { LockOutlined, MailOutlined, WarningOutlined } from "@ant-design/icons";
 import "../register-page/index";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import "../forgot-password-page";
-
-// import videobg from "../../components/assets/videobg.mp4"
-// import logo diamong store
-// import { AiFillGoogleCircle, AiFillFacebook, AiOutlineWhatsApp, AiOutlineCaretDown } from "react-icons/ai";
+<<<<<<< HEAD
+import { AuthContext } from '../../AuthContext';
+=======
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  const googleAuth = () => {
+    window.open(
+        "http://localhost:8090/auth/google/customer",
+        "_self"
+    );
+};
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
+      const response = await axios.post(
+        "http://localhost:8090/auth/login",
+        { email, password },
+        { withCredentials: false }
+      );
+
+      if (response.data.token) {
+        localStorage.setItem("user", JSON.stringify(response.data.token));
+        login(response.data);
+        setMessage(response.data.message);
+        navigate("/", { state: { message: response.data.message } });
+=======
       const response = await axios.post("http://localhost:8090/auth/login", {
         email,
         password,
@@ -53,20 +74,27 @@ function LoginForm() {
           );
           setMessage("Login successful as Sale Staff!");
           navigate("/", { state: { message } });
-        } else if (response.data.DeliveryInformation){
+        } else if (response.data.DeliveryInformation) {
           localStorage.setItem(
             "user",
             JSON.stringify(response.data.DeliveryInformation)
           );
           setMessage("Login successful as Delivery Staff");
-          navigate("/", {state: { message} });
+          navigate("/", { state: { message } });
         }
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
       } else {
         setMessage("Invalid email or password");
       }
     } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data || "Invalid email or password");
+      } else if (error.request) {
+        setMessage("No response from server. Please try again later.");
+      } else {
+        setMessage("An error occurred. Please try again.");
+      }
       console.error("Error logging in:", error);
-      setMessage("An error occurred. Please try again.!");
     }
   };
 
@@ -112,7 +140,22 @@ function LoginForm() {
           <div>
             <button type="submit">Login</button>
           </div>
+          <div>
+<<<<<<< HEAD
+            <button onClick={googleAuth}>
+=======
+            <button>
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png?f=webp"
+                alt=""
+                width={15}
+              />
+              <span> Login with google </span>
+            </button>
+          </div>
           <div className="register-link">
+<<<<<<< HEAD
             {/* <p>-------------Or continue with------------</p>
             <br />
             <div className="social-media">
@@ -123,6 +166,8 @@ function LoginForm() {
               <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
 
             </div> */}
+=======
+>>>>>>> 64ac0cde3ace11408d55c4c8c162881bd1e1c99b
             <br />
             <p>
               You don't have account?
