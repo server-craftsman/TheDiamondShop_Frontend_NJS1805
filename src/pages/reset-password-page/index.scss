@@ -42,7 +42,7 @@
   
       .submit-group {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
   
         .btn {
@@ -55,15 +55,6 @@
   
           &:hover {
             background: #0056b3;
-          }
-        }
-  
-        .btn-link {
-          color: #007bff;
-          text-decoration: none;
-  
-          &:hover {
-            text-decoration: underline;
           }
         }
       }
