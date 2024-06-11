@@ -1,16 +1,26 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
 import { LockOutlined, MailOutlined, WarningOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import "../register-page/index";
+import { useState, useContext } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import "../forgot-password-page";
+import { AuthContext } from '../../AuthContext';
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+  const googleAuth = () => {
+    window.open(
+        "http://localhost:8090/auth/google/customer",
+        "_self"
+    );
+};
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,7 +32,8 @@ function LoginForm() {
       );
 
       if (response.data.token) {
-        localStorage.setItem("account", JSON.stringify(response.data.token));
+        localStorage.setItem("user", JSON.stringify(response.data.token));
+        login(response.data);
         setMessage(response.data.message);
         navigate("/", { state: { message: response.data.message } });
       } else {
@@ -40,14 +51,15 @@ function LoginForm() {
     }
   };
 
+  //form login
   return (
     <div className="form-login">
       <div className="logo-bg">
-        <img width={550} src={logo} alt="Logo" />
+        <img width={550} src={logo} alt="" />
       </div>
 
       <div className="login">
-        <form onSubmit={handleLogin}>
+        <form action="" onSubmit={handleLogin}>
           <h1>Login</h1>
           <div className="input-box">
             <input
@@ -81,10 +93,20 @@ function LoginForm() {
           <div>
             <button type="submit">Login</button>
           </div>
+          <div>
+            <button onClick={googleAuth}>
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png?f=webp"
+                alt=""
+                width={15}
+              />
+              <span> Login with google </span>
+            </button>
+          </div>
           <div className="register-link">
             <br />
             <p>
-              You don`t have an account?
+              You don't have account?
               <Link to="/register-page" className="register">
                 {" "}
                 Register
