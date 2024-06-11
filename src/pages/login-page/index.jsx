@@ -113,6 +113,19 @@ function LoginForm() {
             </button>
           </div>
           <div className="register-link">
+<<<<<<< HEAD
+            {/* <p>-------------Or continue with------------</p>
+            <br />
+            <div className="social-media">
+              <a href="#" className="social-icon"> <AiFillGoogleCircle /> </a>
+
+              <a href="#" className="social-icon"> <AiFillFacebook /> </a>
+              
+              <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
+
+            </div> */}
+=======
+>>>>>>> 64ac0cde3ace11408d55c4c8c162881bd1e1c99b
             <br />
             <p>
               You don`t have account?
