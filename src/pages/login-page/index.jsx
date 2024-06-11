@@ -119,7 +119,7 @@ function LoginForm() {
               <a href="#" className="social-icon"> <AiFillGoogleCircle /> </a>
 
               <a href="#" className="social-icon"> <AiFillFacebook /> </a>
-
+              
               <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
 
             </div> */}

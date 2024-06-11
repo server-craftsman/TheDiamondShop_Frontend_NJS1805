@@ -1,15 +1,26 @@
+
+import React from 'react';
 import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
 import logo from "../../components/assets/logo.png";
 
-import { WarningOutlined } from "@ant-design/icons";
+import { WarningOutlined, RadiusUprightOutlined } from "@ant-design/icons";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
+import { Button, Divider, notification } from "antd"
+
+const Context = React.createContext({
+  name: 'Default',
+});
 
 function RegisterForm() {
-  // const RegisterForm = () => {
+
+
+
+
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -49,17 +60,19 @@ function RegisterForm() {
         "http://localhost:8090/auth/register",
         data
       );
-      if (response.data.status) {
-        alert("Registration successful");
-        window.location.href = "/login"; 
+      if (response.status === 201) {
+        alert("Register Successfully");
+        window.location.href = "/login";
       } else {
-        alert(response.data.message);
+        alert(response.data.status);
       }
     } catch (error) {
-      console.error("There was an error registering!", error);
+     
+      // console.error("There was an error registering!", error);
       if (error.response && error.response.data) {
         alert(error.response.data.message);
       } else {
+        
         alert("Registration failed. Please try again.");
       }
     }
@@ -127,7 +140,6 @@ function RegisterForm() {
                           Male
                           <input
                             type="radio"
-                            // defaultChecked="checked"
                             name="gender"
                             value="Male"
                             checked={formData.gender === "Male"}
@@ -248,6 +260,7 @@ function RegisterForm() {
                         className="input--style-4"
                         type="password"
                         name="password"
+                        placeholder="At least 8 characters long"
                         value={formData.password}
                         onChange={handleChange}
                       />
@@ -259,6 +272,7 @@ function RegisterForm() {
                       <input
                         className="input--style-4"
                         type="password"
+                        placeholder="At least 8 characters long"
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -272,10 +286,10 @@ function RegisterForm() {
                   </div>
                 </div>
                 <div className="p-t-15">
-                  <button className="btn btn--radius-2 btn--blue" type="submit">
+                  <button className="btn btn--radius-2 btn--blue" type="submit" onClick={() => openNotification('topRight')}>
                     Register
                   </button>
-                  
+
                 </div>
               </form>
             </div>
