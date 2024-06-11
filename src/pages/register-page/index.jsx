@@ -16,8 +16,12 @@ function RegisterForm() {
     birthday: "",
     gender: "Male",
     email: "",
-    phone: "",
+    phoneNumber: "",
     address: "",
+    country: "",
+    city: "",
+    province: "",
+    postalCode: "",
     password: "",
     confirmPassword: "",
   });
@@ -46,7 +50,8 @@ function RegisterForm() {
         data
       );
       if (response.data.status) {
-        alert("Registration successful"); //có thể redirect tới trang nào đó khi register thành công
+        alert("Registration successful");
+        window.location.href = "/login"; 
       } else {
         alert(response.data.message);
       }
@@ -164,8 +169,8 @@ function RegisterForm() {
                       <input
                         className="input--style-4"
                         type="text"
-                        name="phone"
-                        value={formData.phone}
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
                         onChange={handleChange}
                       />
                     </div>
@@ -181,37 +186,32 @@ function RegisterForm() {
                     onChange={handleChange}
                   />
                 </div>
-                <div className="input-group">
-                  <label className="label">Company Name</label>
-                  <input
-                    className="input--style-4"
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                  />
-                </div>
 
-                <div className="input-group">
-                  <label className="label">Country</label>
-                  <input
-                    className="input--style-4"
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="input-group">
-                  <label className="label">City</label>
-                  <input
-                    className="input--style-4"
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
+                <div className="row row-space">
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">Country</label>
+                      <input
+                        className="input--style-4"
+                        type="text"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="col-2">
+                    <div className="input-group">
+                      <label className="label">City</label>
+                      <input
+                        className="input--style-4"
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="row row-space">
@@ -275,14 +275,7 @@ function RegisterForm() {
                   <button className="btn btn--radius-2 btn--blue" type="submit">
                     Register
                   </button>
-                  <Link to="/login">
-                    <button
-                      className="btn btn--radius-2 btn--blue"
-                      type="button"
-                    >
-                      Login
-                    </button>
-                  </Link>
+                  
                 </div>
               </form>
             </div>
