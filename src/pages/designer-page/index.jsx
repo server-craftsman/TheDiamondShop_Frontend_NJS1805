@@ -12,7 +12,7 @@ function DesignerPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/designer");
+        const response = await fetch("http://localhost:8090/products/brands");
         const data = await response.json();
         setDataSource(data);
       } catch (error) {
@@ -31,50 +31,53 @@ function DesignerPage() {
 
   return (
     <div>
-    <div className="designerpage">
-      <Row gutter={16}>
-        {currentPageData.map((item, index) => (
-          <Col span={8} key={index}>
-            <Card hoverable style={{ width: 240 }} className="designer-card">
-              <div className="image-container">
-                <Image width="100%" alt={item.BrandName} src={item.ImageLogo} />
-                <div className="overlay">
-                  <span className="brand-name">{item.BrandName}</span>
-                  <div className="button-group">
-                    <Button href="#" className="button">
-                      Shop
-                    </Button>
-                    <Button href="#" className="button">
-                      Learn
-                    </Button>
+      <div className="designerpage">
+        <Row gutter={16}>
+          {currentPageData.map((item, index) => (
+            <Col span={8} key={index}>
+              <Card hoverable style={{ width: 240 }} className="designer-card">
+                <div className="image-container">
+                  <Image
+                    width="100%"
+                    alt={item.BrandName}
+                    src={item.ImageBrand}
+                  />
+                  <div className="overlay">
+                    <span className="brand-name">{item.BrandName}</span>
+                    <div className="button-group">
+                      <Button href="#" className="button">
+                        Shop
+                      </Button>
+                      <Button href="#" className="button">
+                        Learn
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-      <Pagination
-        current={currentPage}
-        total={dataSource.length}
-        pageSize={itemsPerPage}
-        onChange={handlePageChange}
-      />
-    </div>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Pagination
+          current={currentPage}
+          total={dataSource.length}
+          pageSize={itemsPerPage}
+          onChange={handlePageChange}
+        />
+      </div>
 
-    <footer>
+      <footer>
         <div className="footer-container">
           <div className="footer-column">
             <h3>Diamond Store</h3>
             <p>
-            26 Le Van Viet,
+              26 Le Van Viet,
               <br />
               Tan Nhon Phu A Ward,
               <br />
               Thu Duc City,
               <br />
-              Ho Chi Minh City
-              (208) 746-2649
+              Ho Chi Minh City (208) 746-2649
             </p>
             <p>
               <strong>Store Information</strong>

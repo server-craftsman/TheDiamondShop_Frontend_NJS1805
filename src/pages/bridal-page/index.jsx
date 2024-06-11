@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import "./index.scss";
 import { Card, Image, Col, Row, Pagination, Button } from "antd";
-import { useParams } from "react-router-dom";
 import { useCart } from "../../CartContext";
 
 function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems] = useState([]);
   const { addToCart } = useCart();
   useEffect(() => {
     // Function to fetch data from the API
@@ -41,7 +40,7 @@ function BridalPage() {
       name: item.NameBridal,
       image: item.ImageBridal,
       price: item.Price,
-      quantity: 1 // Hoặc số lượng mà người dùng chọn
+      quantity: 1, // Hoặc số lượng mà người dùng chọn
     });
   }
   return (
@@ -96,7 +95,9 @@ function BridalPage() {
                     title={item.NameBridal}
                     description={`${item.Price}$`}
                   />
-                  <Button onClick={() => handleAddToCart(item)}>Add to Cart</Button>
+                  <Button onClick={() => handleAddToCart(item)}>
+                    Add to Cart
+                  </Button>
                 </Card>
               </Col>
             ))}

@@ -7,10 +7,6 @@ import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import "../forgot-password-page";
 
-// import videobg from "../../components/assets/videobg.mp4"
-// import logo diamong store
-// import { AiFillGoogleCircle, AiFillFacebook, AiOutlineWhatsApp, AiOutlineCaretDown } from "react-icons/ai";
-
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,13 +49,13 @@ function LoginForm() {
           );
           setMessage("Login successful as Sale Staff!");
           navigate("/", { state: { message } });
-        } else if (response.data.DeliveryInformation){
+        } else if (response.data.DeliveryInformation) {
           localStorage.setItem(
             "user",
             JSON.stringify(response.data.DeliveryInformation)
           );
           setMessage("Login successful as Delivery Staff");
-          navigate("/", {state: { message} });
+          navigate("/", { state: { message } });
         }
       } else {
         setMessage("Invalid email or password");
@@ -112,17 +108,17 @@ function LoginForm() {
           <div>
             <button type="submit">Login</button>
           </div>
+          <div>
+            <button>
+              <img
+                src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png?f=webp"
+                alt=""
+                width={15}
+              />
+              <span> Login with google </span>
+            </button>
+          </div>
           <div className="register-link">
-            {/* <p>-------------Or continue with------------</p>
-            <br />
-            <div className="social-media">
-              <a href="#" className="social-icon"> <AiFillGoogleCircle /> </a>
-
-              <a href="#" className="social-icon"> <AiFillFacebook /> </a>
-
-              <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
-
-            </div> */}
             <br />
             <p>
               You don't have account?
