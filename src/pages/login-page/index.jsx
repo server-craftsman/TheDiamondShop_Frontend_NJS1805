@@ -17,20 +17,24 @@ function LoginForm() {
   const googleAuth = () => {
     window.open("http://localhost:8090/auth/google/customer", "_self");
   };
-  
+
   // Thêm trình nghe sự kiện cho các sự kiện tin nhắn từ cửa sổ xác thực
-  window.addEventListener('message', (event) => {
-    // Kiểm tra nếu tin nhắn đến từ miền xác thực của bạn
-    if (event.origin === "http://localhost:8090") {
-      // Kiểm tra nếu tin nhắn chứa dữ liệu mong đợi
-      if (event.data && event.data.token) {
-        localStorage.setItem("user", JSON.stringify(event.data.token));
-        login(event.data);
-        navigate("/", { state: { message: event.data.message } });
+  window.addEventListener(
+    "message",
+    (event) => {
+      // Kiểm tra nếu tin nhắn đến từ miền xác thực của bạn
+      if (event.origin === "http://localhost:8090") {
+        // Kiểm tra nếu tin nhắn chứa dữ liệu mong đợi
+        if (event.data && event.data.token) {
+          localStorage.setItem("user", JSON.stringify(event.data.token));
+          login(event.data);
+          navigate("/", { state: { message: event.data.message } });
+        }
       }
-    }
-  }, false);
-  
+    },
+    false
+  );
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -113,19 +117,6 @@ function LoginForm() {
             </button>
           </div>
           <div className="register-link">
-<<<<<<< HEAD
-            {/* <p>-------------Or continue with------------</p>
-            <br />
-            <div className="social-media">
-              <a href="#" className="social-icon"> <AiFillGoogleCircle /> </a>
-
-              <a href="#" className="social-icon"> <AiFillFacebook /> </a>
-              
-              <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
-
-            </div> */}
-=======
->>>>>>> 64ac0cde3ace11408d55c4c8c162881bd1e1c99b
             <br />
             <p>
               You don`t have account?

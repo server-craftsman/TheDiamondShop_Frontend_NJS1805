@@ -3,7 +3,7 @@ import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
 import RegisterForm from "./pages/register-page";
 import Layout from "./components/layout";
-import PasswordForm from "./pages/forgot-password-page/index";
+import ForgotPasswordForm from "./pages/forgot-password-page/index";
 import BridalPage from "./pages/bridal-page";
 import DiamondPage from "./pages/diamond-page";
 import RingPage from "./pages/ring-page";
@@ -14,6 +14,8 @@ import OurstorePage from "./pages/ourstore-page";
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
 import { AuthProvider } from "./AuthContext";
+import ForgotPasswordCapchaCode from "./pages/forgot-password-capchacode-page";
+import ResetPassword from "./pages/reset-password-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -35,7 +37,15 @@ function App() {
         },
         {
           path: "/forgot-password-page",
-          element: <PasswordForm />,
+          element: <ForgotPasswordForm />,
+        },
+        {
+          path: "/forgot-password-capcha-code",
+          element: <ForgotPasswordCapchaCode />,
+        },
+        {
+          path: "/reset-password",
+          element: <ResetPassword />,
         },
         {
           path: "/bridal-page",

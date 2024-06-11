@@ -4,7 +4,7 @@ import "./index.scss";
 import logo from "../../components/assets/logo.png";
 import axios from "axios";
 
-const ForgotPasswordForm = () => {
+const ForgotPasswordCapchaCode = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const ForgotPasswordForm = () => {
       <div className="form-container">
         <h2 className="title">Forgot Password</h2>
         <p>
-          Enter the email associated with your account and we'll send you a link
+          Enter the email associated with your account and we`ll send you a link
           to reset your password.
         </p>
         <form onSubmit={handleSubmit}>
@@ -65,4 +65,4 @@ const ForgotPasswordForm = () => {
   );
 };
 
-export default ForgotPasswordForm;
+export default ForgotPasswordCapchaCode;

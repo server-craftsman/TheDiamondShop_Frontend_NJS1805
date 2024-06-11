@@ -12,7 +12,7 @@ function DiamondPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/diamond");
+        const response = await fetch("http://localhost:8090/products/diamonds");
         const data = await response.json();
         setDataSource(data);
       } catch (error) {

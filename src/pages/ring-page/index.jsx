@@ -13,7 +13,7 @@ function RingPage() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8090/products/diamond-ring"
+          "http://localhost:8090/products/diamond-rings"
         );
         const data = await response.json();
         setDataSource(data);
