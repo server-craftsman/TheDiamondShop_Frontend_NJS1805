@@ -12,7 +12,7 @@ function DesignerPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/designer");
+        const response = await fetch("http://localhost:8090/products/brands");
         const data = await response.json();
         setDataSource(data);
       } catch (error) {
@@ -34,10 +34,10 @@ function DesignerPage() {
     <div className="designerpage">
       <Row gutter={16}>
         {currentPageData.map((item, index) => (
-          <Col span={8} key={index}>
+          <Col span={6} key={index}>
             <Card hoverable style={{ width: 240 }} className="designer-card">
               <div className="image-container">
-                <Image width="100%" alt={item.BrandName} src={item.ImageLogo} />
+                <Image width="100%" alt={item.BrandName} src={item.ImageBrand} />
                 <div className="overlay">
                   <span className="brand-name">{item.BrandName}</span>
                   <div className="button-group">

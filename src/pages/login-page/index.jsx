@@ -1,15 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
 import { LockOutlined, MailOutlined, WarningOutlined } from "@ant-design/icons";
-import "../register-page/index";
 import { useState } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import "../forgot-password-page";
-
-// import videobg from "../../components/assets/videobg.mp4"
-// import logo diamong store
-// import { AiFillGoogleCircle, AiFillFacebook, AiOutlineWhatsApp, AiOutlineCaretDown } from "react-icons/ai";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -20,65 +15,39 @@ function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8090/auth/login", {
-        email,
-        password,
-      });
-      if (response.data.status) {
-        if (response.data.AdminInformation) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.AdminInformation)
-          );
-          setMessage("Login successful as Admin!");
-          navigate("/", { state: { message } });
-        } else if (response.data.ManagerInformation) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.ManagerInformation)
-          );
-          setMessage("Login successful as Manager!");
-          navigate("/", { state: { message } });
-        } else if (response.data.CustomerInformation) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.CustomerInformation)
-          );
-          setMessage("Login successful as Customer!");
-          navigate("/", { state: { message } });
-        } else if (response.data.SaleInformation) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.SaleInformation)
-          );
-          setMessage("Login successful as Sale Staff!");
-          navigate("/", { state: { message } });
-        } else if (response.data.DeliveryInformation){
-          localStorage.setItem(
-            "user",
-            JSON.stringify(response.data.DeliveryInformation)
-          );
-          setMessage("Login successful as Delivery Staff");
-          navigate("/", {state: { message} });
-        }
+      const response = await axios.post(
+        "http://localhost:8090/auth/login",
+        { email, password },
+        { withCredentials: false }
+      );
+
+      if (response.data.token) {
+        localStorage.setItem("account", JSON.stringify(response.data.token));
+        setMessage(response.data.message);
+        navigate("/", { state: { message: response.data.message } });
       } else {
         setMessage("Invalid email or password");
       }
     } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data || "Invalid email or password");
+      } else if (error.request) {
+        setMessage("No response from server. Please try again later.");
+      } else {
+        setMessage("An error occurred. Please try again.");
+      }
       console.error("Error logging in:", error);
-      setMessage("An error occurred. Please try again.!");
     }
   };
 
-  //form login
   return (
     <div className="form-login">
       <div className="logo-bg">
-        <img width={550} src={logo} alt="" />
+        <img width={550} src={logo} alt="Logo" />
       </div>
 
       <div className="login">
-        <form action="" onSubmit={handleLogin}>
+        <form onSubmit={handleLogin}>
           <h1>Login</h1>
           <div className="input-box">
             <input
@@ -113,19 +82,9 @@ function LoginForm() {
             <button type="submit">Login</button>
           </div>
           <div className="register-link">
-            {/* <p>-------------Or continue with------------</p>
-            <br />
-            <div className="social-media">
-              <a href="#" className="social-icon"> <AiFillGoogleCircle /> </a>
-
-              <a href="#" className="social-icon"> <AiFillFacebook /> </a>
-
-              <a href="#" className="social-icon"> <AiOutlineWhatsApp /></a>
-
-            </div> */}
             <br />
             <p>
-              You don't have account?
+              You don`t have an account?
               <Link to="/register-page" className="register">
                 {" "}
                 Register

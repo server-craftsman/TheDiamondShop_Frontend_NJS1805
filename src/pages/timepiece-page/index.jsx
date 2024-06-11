@@ -13,12 +13,16 @@ function TimepiecePage() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8090/products/timepieces"
+          'http://localhost:8090/products/timepieces'
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         setDataSource(data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setDataSource([]);
       }
     };
 
