@@ -6,7 +6,10 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import "../forgot-password-page";
+<<<<<<< HEAD
 import { AuthContext } from '../../AuthContext';
+=======
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -25,6 +28,7 @@ function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
       const response = await axios.post(
         "http://localhost:8090/auth/login",
         { email, password },
@@ -36,6 +40,49 @@ function LoginForm() {
         login(response.data);
         setMessage(response.data.message);
         navigate("/", { state: { message: response.data.message } });
+=======
+      const response = await axios.post("http://localhost:8090/auth/login", {
+        email,
+        password,
+      });
+      if (response.data.status) {
+        if (response.data.AdminInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.AdminInformation)
+          );
+          setMessage("Login successful as Admin!");
+          navigate("/", { state: { message } });
+        } else if (response.data.ManagerInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.ManagerInformation)
+          );
+          setMessage("Login successful as Manager!");
+          navigate("/", { state: { message } });
+        } else if (response.data.CustomerInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.CustomerInformation)
+          );
+          setMessage("Login successful as Customer!");
+          navigate("/", { state: { message } });
+        } else if (response.data.SaleInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.SaleInformation)
+          );
+          setMessage("Login successful as Sale Staff!");
+          navigate("/", { state: { message } });
+        } else if (response.data.DeliveryInformation) {
+          localStorage.setItem(
+            "user",
+            JSON.stringify(response.data.DeliveryInformation)
+          );
+          setMessage("Login successful as Delivery Staff");
+          navigate("/", { state: { message } });
+        }
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
       } else {
         setMessage("Invalid email or password");
       }
@@ -94,7 +141,11 @@ function LoginForm() {
             <button type="submit">Login</button>
           </div>
           <div>
+<<<<<<< HEAD
             <button onClick={googleAuth}>
+=======
+            <button>
+>>>>>>> 1044ce79cb82d9f37665d52a896416c43ebaad09
               <img
                 src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png?f=webp"
                 alt=""
