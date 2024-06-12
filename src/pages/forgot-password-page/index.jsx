@@ -1,22 +1,34 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
 import logo from "../../components/assets/logo.png";
 import axios from "axios";
 
-const ForgotPasswordCapchaCode = () => {
+const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/forgot-password", {
-        email,
-        userType: "account", // Hoặc userType khác tùy thuộc vào logic của bạn
-      });
-      alert(response.data.message);
-      navigate("/login");
+      const response = await axios.post(
+        "http://localhost:8090/auth/forgot-password",
+        {
+          email,
+          userType: "account",
+        }
+      );
+      if (
+        response.data.message ===
+        "Password reset instructions sent to your email"
+      ) {
+        sessionStorage.setItem("emailForVerification", email);
+        navigate("/verify-code");
+      } else {
+        alert(
+          "The email address you entered is not associated with an account."
+        );
+      }
     } catch (error) {
       console.error("Error sending reset password email:", error);
       alert("Failed to send reset password email. Please try again.");
@@ -48,13 +60,11 @@ const ForgotPasswordCapchaCode = () => {
             />
           </div>
           <div className="submit-group">
-            <Link to="/forgot-password-capcha-code" className="btn-link">
-              <button className="btn btn--radius-2 btn--blue" type="submit">
-                Continue
-              </button>
-            </Link>
+            <button className="btn btn--radius-2 btn--blue" type="submit">
+              Continue
+            </button>
             <Link to="/login" className="btn-link">
-              <button className="btn btn--radius-2 btn--blue" type="submit">
+              <button className="btn btn--radius-2 btn--blue" type="button">
                 Return to Login
               </button>
             </Link>
@@ -65,4 +75,4 @@ const ForgotPasswordCapchaCode = () => {
   );
 };
 
-export default ForgotPasswordCapchaCode;
+export default ForgotPasswordForm;

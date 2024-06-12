@@ -14,8 +14,8 @@ import OurstorePage from "./pages/ourstore-page";
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
 import { AuthProvider } from "./AuthContext";
-import ForgotPasswordCapchaCode from "./pages/forgot-password-capchacode-page";
 import ResetPassword from "./pages/reset-password-page";
+import VerificationCode from "./pages/verify-code-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -40,8 +40,8 @@ function App() {
           element: <ForgotPasswordForm />,
         },
         {
-          path: "/forgot-password-capcha-code",
-          element: <ForgotPasswordCapchaCode />,
+          path: "/verify-code",
+          element: <VerificationCode />,
         },
         {
           path: "/reset-password",
