@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
-import { LockOutlined, MailOutlined, WarningOutlined } from "@ant-design/icons";
+import { LockOutlined, MailOutlined, WarningOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import "../register-page/index";
 import { useState, useContext } from "react";
 import axios from "axios";
@@ -14,6 +14,13 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+};
+
+
   const googleAuth = () => {
     window.open("http://localhost:8090/auth/google/customer", "_self");
   };
@@ -86,13 +93,23 @@ function LoginForm() {
           </div>
           <div className="input-box">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <LockOutlined className="icon" />
+            {showPassword ? (
+                <EyeTwoTone
+                    onClick={toggleShowPassword}
+                    style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '15px' }}
+                />
+            ) : (
+                <EyeInvisibleOutlined
+                    onClick={toggleShowPassword}
+                    style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '15px' }}
+                />
+            )}
           </div>
           <div className="remember-forgot">
             <label>

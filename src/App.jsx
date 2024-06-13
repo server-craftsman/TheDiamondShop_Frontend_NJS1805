@@ -10,6 +10,7 @@ import RingPage from "./pages/ring-page";
 import TimepiecePage from "./pages/timepiece-page";
 import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
+import UserProfile from "./pages/userProfile-page";
 
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
@@ -74,6 +75,10 @@ function App() {
         {
           path: "/cart-page",
           element: <AddToCart />,
+        },
+        {
+          path: "/userProfile-page",
+          element: <UserProfile />,
         },
       ],
     },

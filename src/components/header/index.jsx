@@ -16,7 +16,7 @@ function Header() {
   const userMenu = (
     <Menu>
       <Menu.Item key="0">
-        <Link to="/profile">Profile</Link>
+        <Link to="/userProfile-page">Profile</Link>
       </Menu.Item>
       <Menu.Item key="1" onClick={logout}>
         Logout

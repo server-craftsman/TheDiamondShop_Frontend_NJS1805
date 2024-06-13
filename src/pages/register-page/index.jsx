@@ -5,20 +5,39 @@ import "./index.scss";
 import "../login-page/index";
 import logo from "../../components/assets/logo.png";
 
-import { WarningOutlined, RadiusUprightOutlined } from "@ant-design/icons";
+import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 import { useMemo, useState } from "react";
 import axios from "axios";
-import { Button, Divider, notification } from "antd"
+import { notification } from "antd"
+
+
 
 const Context = React.createContext({
   name: 'Default',
 });
 
 function RegisterForm() {
+  const [api, contextHolder] = notification.useNotification();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
+  const [showConfimPassword, setShowConfimPassword] = useState(false);
+  const toggleShowConfimPassword = () => {
+    setShowConfimPassword(!showPassword);
+  };
 
+  const openNotification = () => {
+    api.open({
+      message: 'Registration Successful',
+      description:
+        'You have registered successfully. Please log in to continue.',
+      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+    });
+  };
 
 
   const [formData, setFormData] = useState({
@@ -61,18 +80,20 @@ function RegisterForm() {
         data
       );
       if (response.status === 201) {
-        alert("Register Successfully");
-        window.location.href = "/login";
+        openNotification();
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 3000);
       } else {
         alert(response.data.status);
       }
     } catch (error) {
-     
+
       // console.error("There was an error registering!", error);
       if (error.response && error.response.data) {
         alert(error.response.data.message);
       } else {
-        
+
         alert("Registration failed. Please try again.");
       }
     }
@@ -80,6 +101,7 @@ function RegisterForm() {
 
   return (
     <div className="register-form">
+      {contextHolder}
       <div className="logo-bg">
         <img width={550} src={logo} alt="" />
       </div>
@@ -258,12 +280,23 @@ function RegisterForm() {
                       <label className="label">Password</label>
                       <input
                         className="input--style-4"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder="At least 8 characters long"
                         value={formData.password}
                         onChange={handleChange}
                       />
+                      {showPassword ? (
+                        <EyeTwoTone
+                          onClick={toggleShowPassword}
+                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
+                        />
+                      ) : (
+                        <EyeInvisibleOutlined
+                          onClick={toggleShowPassword}
+                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="col-2">
@@ -271,12 +304,23 @@ function RegisterForm() {
                       <label className="label">Confirm Password</label>
                       <input
                         className="input--style-4"
-                        type="password"
+                        type={showConfimPassword ? "text" : "password"}
                         placeholder="At least 8 characters long"
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
                       />
+                      {showConfimPassword ? (
+                        <EyeTwoTone
+                          onClick={toggleShowConfimPassword}
+                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
+                        />
+                      ) : (
+                        <EyeInvisibleOutlined
+                          onClick={toggleShowConfimPassword}
+                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
+                        />
+                      )}
                     </div>
                     {message && (
                       <p className="message">
@@ -286,7 +330,7 @@ function RegisterForm() {
                   </div>
                 </div>
                 <div className="p-t-15">
-                  <button className="btn btn--radius-2 btn--blue" type="submit" onClick={() => openNotification('topRight')}>
+                  <button className="btn btn--radius-2 btn--blue" type="submit" >
                     Register
                   </button>
 
