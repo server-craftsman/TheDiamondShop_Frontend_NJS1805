@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { SearchOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
 import logo from "../assets/logo.png";
-import { Button, Dropdown, Menu} from "antd";
+import { Button, Dropdown, Menu } from "antd";
 
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useCart } from "../../CartContext";
@@ -31,7 +31,7 @@ function Header() {
       </div>
 
       <div className="header__logo">
-        <Link to={""}>
+        <Link to={"/"}>
           <img src={logo} alt="" width={180} />
         </Link>
       </div>
@@ -73,25 +73,25 @@ function Header() {
             </Link>
           </li>
           {user ? (
-            <Dropdown overlay={userMenu} trigger={['hover']}>
-              <UserOutlined style={{ fontSize: '1.5em', cursor: 'pointer' }} />
+            <Dropdown overlay={userMenu} trigger={["hover"]}>
+              <UserOutlined style={{ fontSize: "1.5em", cursor: "pointer" }} />
             </Dropdown>
           ) : (
             <li>
-            <a>SIGN UP</a>
-            <ul className="login-dropdown">
-              <li>
-                <Button type="primary">
-                  <Link to="/login">Login</Link>
-                </Button>
-              </li>
-              <li>
-                <Button type="primary">
-                  <Link to="/register-page">Register</Link>
-                </Button>
-              </li>
-            </ul>
-          </li>
+              <a>SIGN UP</a>
+              <ul className="login-dropdown">
+                <li>
+                  <Button type="primary">
+                    <Link to="/login">Login</Link>
+                  </Button>
+                </li>
+                <li>
+                  <Button type="primary">
+                    <Link to="/register-page">Register</Link>
+                  </Button>
+                </li>
+              </ul>
+            </li>
           )}
         </ul>
       </nav>
