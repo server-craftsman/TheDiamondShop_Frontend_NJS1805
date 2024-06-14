@@ -4,6 +4,12 @@
     align-items: center;
     min-height: 100vh;
     background-color: #f4f4f4;
+    background:url(../../components/assets/background.png)
+    no-repeat;
+    background-position: 10px center;
+    background-color: gray;
+    background-size: 100%;
+    background-position: center;
   
     .logo-bg {
       position: absolute;

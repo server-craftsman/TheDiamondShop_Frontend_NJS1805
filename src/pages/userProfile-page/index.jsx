@@ -1,73 +1,244 @@
-import React from 'react';
-import { useEffect, useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import React, { useEffect, useState } from "react";
+import "../userProfile-page/index.scss";
+import {
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  Card,
+  Avatar,
+  DatePicker,
+} from "antd";
+import {
+  UserOutlined,
+  FacebookOutlined,
+  TwitterOutlined,
+  GooglePlusOutlined,
+} from "@ant-design/icons";
 
 function UserProfile() {
-  const [name, setName] = useState(0);
-  const [dataSource, setDataSource] = useState([]);
+  const [formData, setFormData] = useState({
+    FirstName: "",
+    LastName: "",
+    Gender: "",
+    Birthday: "",
+    Password: "",
+    Email: "",
+    PhoneNumber: "",
+    Address: "",
+    Country: "",
+    City: "",
+    Province: "",
+    PostalCode: "",
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const handleDateChange = (date) => setFormData({ ...formData, Birthday: date });
+
+ 
+    const handleSubmit = async (e) => {
+      e.preventDefault();
       try {
-        const response = await fetch('http://localhost:8090/features/customers');
-        const data = await response.json();
-        setDataSource(data);
-        setName(data); // Calculate total based on data length
+        const response = await axios.post(
+          "http://localhost:8090/features/customers",
+          { formData }
+        );
+        console.log(response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error(error);
       }
     };
-
-
-    fetchData();
+    useEffect(() => {
   }, []);
 
-
   return (
-    <section className='bg-light py-3 py-md-5 py-xl-8'>
-      <div className="container">
-        <div className="row justify-content-md-center">
-          <div className="col-12 col-md-10 col-lg-8 col-xl-7 col-xxl-6">
-            <h2 className="mb-4 display-5 text-center">Profile</h2>
-            <p className="text-secondary text-center lead fs-4 mb-5">The Profile page is your digital hub, where you
-              can fine-tune your experience. Here's a closer look at the settings you can expect to find in
-              your profile page.</p>
-            <hr className="w-50 mx-auto mb-5 mb-xl-9 border-dark-subtle" />
-          </div>
-        </div>
-    
-
-        <div className='container'>
-          <div className='row gy-4 gy-lg-0'>
-            <div className='col-12 col-lg-4 col-xl-3'>
-              <div className='row gy-4'>
-                <div className='col-12'>
-                  <div className='card widget-card border-light shadow-sm'>
-                
-
-                  </div>
-
-
-                </div>
-
-
-              </div>
-
-
+    <div className="profile" style={{ padding: "24px" } } onSubmit={handleSubmit}>
+      <Row gutter={16}>
+        <Col span={8}>
+          <Card
+            cover={
+              <img
+                alt="example"
+                src="https://c4.wallpaperflare.com/wallpaper/14/548/927/the-avengers-avengers-endgame-avengers-endgame-infinity-gauntlet-iron-man-hd-wallpaper-preview.jpg"
+              />
+            }
+          >
+            <Card.Meta
+              title={`${formData.FirstName} ${formData.LastName}`}
+              description={`${formData.FirstName} ${formData.LastName}`}
+            />
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
+              <p>
+                "Lamborghini Mercy <br />
+                Your chick she so thirsty <br />
+                I'm in that two seat Lambo"
+              </p>
             </div>
+          </Card>
+        </Col>
 
-
-          </div>
-        </div>
-      </div>
-
-
-    </section>
-  )
+        {/* PROFILE */}
+        <Col  span={16}>
+          <Card title="Edit Profile">
+            <Form layout="vertical">
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="First Name">
+                    <Input
+                      value={formData.FirstName}
+                      onChange={handleChange}
+                      name="FirstName"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Last Name">
+                    <Input
+                      value={formData.LastName}
+                      onChange={handleChange}
+                      name="LastName"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Gender">
+                    <Input
+                      value={formData.Gender}
+                      onChange={handleChange}
+                      name="Gender"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Birthday">
+                    <DatePicker
+                      value={formData.Birthday}
+                      onChange={handleDateChange}
+                      format="YYYY-MM-DD"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Email">
+                    <Input
+                      type="email"
+                      value={formData.Email}
+                      onChange={handleChange}
+                      name="Email"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Phone Number">
+                    <Input
+                      type="phone"
+                      value={formData.PhoneNumber}
+                      onChange={handleChange}
+                      name="PhoneNumber"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item label="Address">
+                    <Input
+                      value={formData.Address}
+                      onChange={handleChange}
+                      name="Address"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Form.Item label="Country">
+                    <Input
+                      value={formData.Country}
+                      onChange={handleChange}
+                      name="Country"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item label="City">
+                    <Input
+                      value={formData.City}
+                      onChange={handleChange}
+                      name="City"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item label="Province">
+                    <Input
+                      value={formData.Province}
+                      onChange={handleChange}
+                      name="Province"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Postal Code">
+                    <Input
+                      type="number"
+                      value={formData.PostalCode}
+                      onChange={handleChange}
+                      name="PostalCode"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Password">
+                    <Input
+                      type="password"
+                      value={formData.Password}
+                      onChange={handleChange}
+                      name="Password"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item label="Image">
+                    <Input.TextArea
+                      rows={4}
+                      defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
+                      placeholder="Here can be your description"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Form.Item>
+                <Button
+                  type="submit"
+                  
+                  style={{ float: "right" }}
+                >
+                  Update Profile
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
 }
 
-
-export default UserProfile
+export default UserProfile;

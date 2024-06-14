@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useCart } from "../../CartContext";
 import "./index.scss";
 import { Table, Button } from "antd";
@@ -85,6 +86,7 @@ const CartPage = () => {
       <div className="total-price">
         <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
       </div>
+      <Link to ="/payment-page"><Button>Payment</Button></Link>
     </div>
   );
 };
