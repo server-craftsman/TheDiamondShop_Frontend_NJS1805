@@ -12,6 +12,7 @@ import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
 import UserProfile from "./pages/userProfile-page";
 import Payment from "./pages/payment-page";
+import HistoryOrder from "../src/pages/historyOrder-page"
 
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
@@ -84,6 +85,10 @@ function App() {
         {
           path: "/userProfile-page",
           element: <UserProfile />,
+        },
+        {
+          path: "/historyOrder-page",
+          element: <HistoryOrder />,
         },
       ],
     },
