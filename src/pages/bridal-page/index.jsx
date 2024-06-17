@@ -7,7 +7,6 @@ function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
-  const [cartItems] = useState([]);
   const { addToCart } = useCart();
   useEffect(() => {
     // Function to fetch data from the API
@@ -76,7 +75,6 @@ function BridalPage() {
         </div>
 
         <div className="bridalpage">
-          <div>Items in Cart: {cartItems.length}</div>
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>

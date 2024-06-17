@@ -1,14 +1,13 @@
-// import Carousel from "../../components/carousel";
-// import Header from "../../components/header";
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination } from "antd";
+import { Card, Image, Col, Row, Pagination, Button } from "antd";
+import { useCart } from "../../CartContext";
 
 function RingPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,7 +30,15 @@ function RingPage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
+  function handleAddToCart(item) {
+    addToCart({
+      id: item.RingsID,
+      name: item.NameRings,
+      image: item.ImageRings,
+      price: item.Price,
+      quantity: 1,
+    });
+  }
   return (
     <div>
       <div className="app">
@@ -81,7 +88,10 @@ function RingPage() {
                   <Card.Meta
                     title={item.NameRings}
                     description={`${item.Price}$`}
-                  />
+                  />{" "}
+                  <Button onClick={() => handleAddToCart(item)}>
+                    Add to Cart
+                  </Button>
                 </Card>
               </Col>
             ))}
@@ -105,14 +115,13 @@ function RingPage() {
           <div className="footer-column">
             <h3>Diamond Store</h3>
             <p>
-            26 Le Van Viet,
+              26 Le Van Viet,
               <br />
               Tan Nhon Phu A Ward,
               <br />
               Thu Duc City,
               <br />
-              Ho Chi Minh City
-              (208) 746-2649
+              Ho Chi Minh City (208) 746-2649
             </p>
             <p>
               <strong>Store Information</strong>

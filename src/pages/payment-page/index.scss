@@ -1,4 +1,4 @@
-
+//index.scss
 .payment {
     max-width: 600px;
     margin: 40px auto;
@@ -60,7 +60,7 @@
   
     .payment-method {
       text-align: center;
-  
+      
       button {
         padding: 10px 20px;
         background-color: #ffc439;
@@ -68,7 +68,8 @@
         border-radius: 4px;
         cursor: pointer;
         font-size: 16px;
-  
+        margin-right: 40px;
+        margin-left: 40px;
         &:hover {
           background-color: #fcb20e;
         }

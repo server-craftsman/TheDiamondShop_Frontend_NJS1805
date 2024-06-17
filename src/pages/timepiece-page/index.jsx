@@ -1,14 +1,13 @@
-// import Carousel from "../../components/carousel";
-// import Header from "../../components/header";
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination } from "antd";
+import { Card, Image, Col, Row, Pagination, Button } from "antd";
+import { useCart } from "../../CartContext";
 
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,6 +30,16 @@ function TimepiecePage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  function handleAddToCart(item) {
+    addToCart({
+      // id: item.TimepiexesID,
+      name: item.NameTimepieces,
+      image: item.ImageTimepieces,
+      price: item.Price,
+      quantity: 1,
+    });
+  }
   return (
     <div>
       <div className="app">
@@ -81,7 +90,10 @@ function TimepiecePage() {
                   <Card.Meta
                     title={item.NameTimepieces}
                     description={`${item.Price}$`}
-                  />
+                  />{" "}
+                  <Button onClick={() => handleAddToCart(item)}>
+                    Add to Cart
+                  </Button>
                 </Card>
               </Col>
             ))}
