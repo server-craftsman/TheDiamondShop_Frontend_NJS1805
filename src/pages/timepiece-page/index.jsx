@@ -1,12 +1,13 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Button } from "antd";
+import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
 
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +17,7 @@ function TimepiecePage() {
         );
         const data = await response.json();
         setDataSource(data);
+        setFilteredData(data); // Initialize filteredData with all data
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -26,9 +28,54 @@ function TimepiecePage() {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = dataSource.slice(startIndex, endIndex);
+  const currentPageData = filteredData.slice(startIndex, endIndex);
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const parsePriceRange = (range) => {
+    if (range === "Under $480") {
+      return (price) => price < 480;
+    }
+    if (range === "$480-$730") {
+      return (price) => price >= 480 && price <= 730;
+    }
+    if (range === "Over $730") {
+      return (price) => price > 731;
+    }
+    return () => true;
+  };
+
+  const handleFilters = (newFilters) => {
+    let filtered = dataSource.filter((item) => {
+      let passesPrice = true;
+      let passesDialColor = true;
+      let passesGender = true;
+
+      if (newFilters.Price && newFilters.Price.length > 0) {
+        passesPrice = newFilters.Price.some((range) =>
+          parsePriceRange(range)(item.Price)
+        );
+      }
+
+      if (newFilters.DialColor && newFilters.DialColor.length > 0) {
+        passesDialColor = newFilters.DialColor.includes(item.DialColor);
+      }
+
+      if (newFilters.Gender && newFilters.Gender.length > 0) {
+        passesGender = newFilters.Gender.includes(item.Gender);
+      }
+
+      return passesPrice && passesDialColor && passesGender;
+    });
+
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const clearFilters = () => {
+    setFilteredData(dataSource);
+    setCurrentPage(1); // Reset to first page when filters clear
   };
 
   function handleAddToCart(item) {
@@ -44,32 +91,39 @@ function TimepiecePage() {
     <div>
       <div className="app">
         <div className="filter-section">
-          <h2>Price</h2>
-          <label>
-            <input type="checkbox" /> Under $480
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> $480-$730
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> Over $730
-          </label>
-
-          <h2>Brands</h2>
-          <label>
-            <input type="checkbox" /> Citizen
-          </label>
-
-          <h2>Gender</h2>
-          <label>
-            <input type="checkbox" /> Men`s
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> Women`s
-          </label>
+        <h3>Price</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Under $480" className="Checkbox">Under $480</Checkbox>
+              <Checkbox value="$480-$730" className="Checkbox">$480-$730</Checkbox>
+              <Checkbox value="Over $730" className="Checkbox">Over $730</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>DialColor</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ DialColor: values })}>
+            <Row className = "row-column">
+              <Checkbox value="White" className="Checkbox">White</Checkbox>
+              <Checkbox value="Black" className="Checkbox">Black</Checkbox>
+              <Checkbox value="Blue" className="Checkbox">Blue</Checkbox>
+              <Checkbox value="Gray" className="Checkbox">Grayd</Checkbox>
+              <Checkbox value="Red" className="Checkbox">Red</Checkbox>
+              <Checkbox value="Light Blue" className="Checkbox">Light Blue</Checkbox>
+              <Checkbox value="Green" className="Checkbox">Green</Checkbox>
+              <Checkbox value="Silver-Tone" className="Checkbox">Silver-Tone</Checkbox>
+              <Checkbox value="Pink" className="Checkbox">Pink</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Gender</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ Gender: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Women" className="Checkbox">Women</Checkbox>
+              <Checkbox value="Men" className="Checkbox">Men</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
         </div>
 
         <div className="timepiecepage">
@@ -100,7 +154,7 @@ function TimepiecePage() {
           </Row>
           <Pagination
             current={currentPage}
-            total={dataSource.length}
+            total={filteredData.length}
             pageSize={itemsPerPage}
             onChange={handlePageChange}
             onShowSizeChange={(currentPage, size) => {

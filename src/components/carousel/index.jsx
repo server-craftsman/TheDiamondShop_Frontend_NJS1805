@@ -21,7 +21,7 @@ export default function Carousel({
 
   const fetechBanner = async () => {
     const response = await axios.get(
-      "http://localhost:8090/products/"
+      "http://localhost:8090/products/banner"
     );
     console.log(response.data);
     setBanner(response.data);

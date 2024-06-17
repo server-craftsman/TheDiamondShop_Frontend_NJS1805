@@ -5,6 +5,7 @@ import "./index.scss";
 function HomePage() {
   return (
     <div className="homepage">
+            <Carousel numberOfSlide={1} isUseNavigation={true} /> {/* Include the Carousel component */}
       <footer>
         <div className="footer-container">
           <div className="footer-column">

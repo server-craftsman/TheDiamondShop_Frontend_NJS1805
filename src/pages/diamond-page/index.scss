@@ -10,18 +10,13 @@
     padding: 75px;
     padding-right: 50px;
     padding-top: 100px;
-    margin-left: 100px;
-    background-color: #fff;
-    h1{
-        text-align: center;
+    //margin-left: 100px;
+    width: 80%;
+    .ant-card{
+        margin-bottom: 20px;
     }
-    
-    .ant-card {
-      margin-bottom: 20px;
-    }
-    
-    .ant-pagination {
-      margin-top: 20px;
+        .ant-pagination {
+      margin-top: 100px;
       display: flex;
       justify-content: center;
     }
@@ -35,8 +30,42 @@
     width: 500px;
     padding-top: 120px;
     padding-left: 100px;
+    //background-color: #f4f4f4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-right: 20px;
+  
+    h2, h3 {
+      margin-top: 0;
+      font-size: 25px;
+    }
+  
+    .buttonfilter {
+      background-color: black;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: #40a9ff;
+      }
+    }
   }
 
+  .app {
+    display: flex;
+  }
+
+  .row-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Checkbox{
+    font-size: 18px;
+  }
   .products-section {
     flex: 1;
     padding: 20px;

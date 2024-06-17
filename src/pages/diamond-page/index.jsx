@@ -1,12 +1,13 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Button } from "antd";
+import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
 
 function DiamondPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +15,7 @@ function DiamondPage() {
         const response = await fetch("http://localhost:8090/products/diamonds");
         const data = await response.json();
         setDataSource(data);
+        setFilteredData(data); // Initialize filteredData with all data
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -24,10 +26,64 @@ function DiamondPage() {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPageData = dataSource.slice(startIndex, endIndex);
+  const currentPageData = filteredData.slice(startIndex, endIndex);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  const parsePriceRange = (range) => {
+    if (range === "Under $1000") {
+      return (price) => price < 1000;
+    }
+    if (range === "$1001-$2000") {
+      return (price) => price >= 1001 && price <= 2000;
+    }
+    if (range === "$2001-$3000") {
+      return (price) => price >= 2001 && price <= 3000;    
+    }
+    if (range === "$3001-$4000") {
+      return (price) => price >= 3001 && price <= 4000;    
+    }
+    if (range === "$4001-$5000") {
+      return (price) => price >= 40001 && price <= 5000;   
+     }
+    if (range === "Over $5001") {
+      return (price) => price > 5001;
+    }
+    return () => true;
+  };
+
+  const handleFilters = (newFilters) => {
+    let filtered = dataSource.filter((item) => {
+      let passesPrice = true;
+      let passesColor = true;
+      let passesShape = true;
+
+      if (newFilters.Price && newFilters.Price.length > 0) {
+        passesPrice = newFilters.Price.some((range) =>
+          parsePriceRange(range)(item.Price)
+        );
+      }
+
+      if (newFilters.Color && newFilters.Color.length > 0) {
+        passesColor = newFilters.Color.includes(item.Color);
+      }
+
+      if (newFilters.Shape && newFilters.Shape.length > 0) {
+        passesShape = newFilters.Shape.includes(item.Shape);
+      }
+
+      return passesPrice && passesColor && passesShape;
+    });
+
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const clearFilters = () => {
+    setFilteredData(dataSource);
+    setCurrentPage(1); // Reset to first page when filters clear
+  };
+
   function handleAddToCart(item) {
     addToCart({
       id: item.DiamondID,
@@ -41,34 +97,43 @@ function DiamondPage() {
     <div>
       <div className="app">
         <div className="filter-section">
-          <h2>Price</h2>
-          <label>
-            <input type="checkbox" /> Under $480
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> $480-$730
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> Over $730
-          </label>
-
-          <h2>Brands</h2>
-          <label>
-            <input type="checkbox" /> Citizen
-          </label>
-
-          <h2>Gender</h2>
-          <label>
-            <input type="checkbox" /> Men`s
-          </label>
-          <br />
-          <label>
-            <input type="checkbox" /> Women`s
-          </label>
+        <h3>Price</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Under $1000" className="Checkbox">Under $1000</Checkbox>
+              <Checkbox value="$1001-$2000" className="Checkbox">$1001-$2000</Checkbox>
+              <Checkbox value="$2001-$3000" className="Checkbox">$2001-$3000</Checkbox>
+              <Checkbox value="$3001-$4000" className="Checkbox">$3001-$4000</Checkbox>
+              <Checkbox value="$4001-$5000" className="Checkbox">$4001-$5000</Checkbox>
+              <Checkbox value="Over $5001" className="Checkbox">Over $5001</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Color</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ Color: values })}>
+            <Row>
+              <Checkbox value="D" className="Checkbox">D</Checkbox>
+              <Checkbox value="E" className="Checkbox">E</Checkbox>
+              <Checkbox value="F" className="Checkbox">F</Checkbox>
+              <Checkbox value="H" className="Checkbox">H</Checkbox>
+              <Checkbox value="I" className="Checkbox">I</Checkbox>
+              <Checkbox value="J" className="Checkbox">J</Checkbox>
+              <Checkbox value="K" className="Checkbox">K</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Shape</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ Shape: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Round" className="Checkbox">Round</Checkbox>
+              <Checkbox value="Princess" className="Checkbox">Princess</Checkbox>
+              <Checkbox value="Cushion" className="Checkbox">Cushion</Checkbox>
+              <Checkbox value="Emerald" className="Checkbox">Emerald</Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
         </div>
-
         <div className="diamondpage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
@@ -97,7 +162,7 @@ function DiamondPage() {
           </Row>
           <Pagination
             current={currentPage}
-            total={dataSource.length}
+            total={filteredData.length}
             pageSize={itemsPerPage}
             onChange={handlePageChange}
             onShowSizeChange={(currentPage, size) => {
