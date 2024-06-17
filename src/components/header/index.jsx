@@ -18,7 +18,10 @@ function Header() {
       <Menu.Item key="0">
         <Link to="/userProfile-page">Profile</Link>
       </Menu.Item>
-      <Menu.Item key="1" onClick={logout}>
+      <Menu.Item key="1">
+        <Link to="/historyOrder-page">History Order</Link>
+      </Menu.Item>
+      <Menu.Item key="2" onClick={logout}>
         Logout
       </Menu.Item>
     </Menu>
