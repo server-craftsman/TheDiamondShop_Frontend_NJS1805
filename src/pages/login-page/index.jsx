@@ -64,13 +64,13 @@ function LoginForm() {
             navigate("/bridal-page", { state: { message: response.data.message } });
             break;
           case 'Manager':
-            navigate("/diamond-page", { state: { message: response.data.message } });
+            navigate("/manager-page", { state: { message: response.data.message } });
             break;
           case 'Customer':
            navigate("/designer-page", { state: { message: response.data.message } });
            break;
           case 'Sale':
-            navigate("/ring-page", { state: { message: response.data.message } });
+            navigate("/sale-page", { state: { message: response.data.message } });
             break;
           case 'Delivery':
             navigate("/timepiece-page", { state: { message: response.data.message } });

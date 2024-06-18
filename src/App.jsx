@@ -21,7 +21,14 @@ import ResetPassword from "./pages/reset-password-page";
 import VerificationCode from "./pages/verify-code-page";
 import ChangePassword from "./pages/change-password-page";
 import ManagerPage from "./manager-pages";
-
+//==========Sale Pages===========//
+import SalePage from "./sales-page"
+import ViewOrder from "./sales-page/order-pages/view-order";
+import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
+import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
+import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher";
+//==========Manage Pages=========//
+import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
 function App() {
   const router = createBrowserRouter([
     {
@@ -101,6 +108,31 @@ function App() {
     {
       path: "/manager-page",
       element: <ManagerPage />,
+    },
+    {
+      path: "/manager-diamond-page",
+      element: <ManageDiamondPage />,
+    },
+//=========Sale page========//
+    {
+      path: "/sale-page",
+      element: <SalePage />,
+    },
+    {
+      path: "/view-order",
+      element: <ViewOrder />,
+    },
+    {
+      path: "/view-order-confirm",
+      element: <ViewOrderConfirm />,
+    },
+    {
+      path: "/view-promotion-event",
+      element: <ViewPromotionEvent />,
+    },
+    {
+      path: "/view-promotion-voucher",
+      element: <ViewPromotionVoucher />,
     },
   ]);
 
