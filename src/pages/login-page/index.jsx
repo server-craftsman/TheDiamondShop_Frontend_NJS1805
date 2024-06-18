@@ -52,13 +52,42 @@ function LoginForm() {
       );
 
       if (response.data.token) {
-        localStorage.setItem("user", JSON.stringify(response.data.token));
+        const user = {
+          token: response.data.token,
+          role: response.data.roleName
+        }
+        localStorage.setItem("user", JSON.stringify(user));
         login(response.data);
         setMessage(response.data.message);
-        navigate("/", { state: { message: response.data.message } });
+        switch (response.data.roleName) {
+          case 'Admin':
+            navigate("/bridal-page", { state: { message: response.data.message } });
+            break;
+          case 'Manager':
+            navigate("/diamond-page", { state: { message: response.data.message } });
+            break;
+          case 'Customer':
+           navigate("/designer-page", { state: { message: response.data.message } });
+           break;
+          case 'Sale':
+            navigate("/ring-page", { state: { message: response.data.message } });
+            break;
+          case 'Delivery':
+            navigate("/timepiece-page", { state: { message: response.data.message } });
+            break;
+          default:
+            navigate("/", { state: { message: response.data.message } });
+        }
       } else {
         setMessage("Invalid email or password");
       }
+      //   localStorage.setItem("user", JSON.stringify(response.data.token));
+      //   login(response.data);
+      //   setMessage(response.data.message);
+      //   navigate("/", { state: { message: response.data.message } });
+      // } else {
+      //   setMessage("Invalid email or password");
+      // }
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data || "Invalid email or password");
