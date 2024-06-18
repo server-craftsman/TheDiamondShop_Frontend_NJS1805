@@ -12,13 +12,15 @@ import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
 import UserProfile from "./pages/userProfile-page";
 import Payment from "./pages/payment-page";
-import HistoryOrder from "../src/pages/historyOrder-page"
+import HistoryOrder from "../src/pages/historyOrder-page";
 
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
 import { AuthProvider } from "./AuthContext";
 import ResetPassword from "./pages/reset-password-page";
 import VerificationCode from "./pages/verify-code-page";
+import ChangePassword from "./pages/change-password-page";
+import ManagerPage from "./manager-pages";
 
 function App() {
   const router = createBrowserRouter([
@@ -87,10 +89,18 @@ function App() {
           element: <UserProfile />,
         },
         {
+          path: "/change-password-page",
+          element: <ChangePassword />,
+        },
+        {
           path: "/historyOrder-page",
           element: <HistoryOrder />,
         },
       ],
+    },
+    {
+      path: "/manager-page",
+      element: <ManagerPage />,
     },
   ]);
 
