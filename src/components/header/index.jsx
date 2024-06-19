@@ -11,8 +11,14 @@ import { AuthContext } from "../../AuthContext";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
   const { cartItems } = useCart();
   const { user, logout } = useContext(AuthContext);
+  const handleSearchSubmit = () => {
+    // Xử lý tìm kiếm (ví dụ: lấy kết quả)
+    console.log("Tìm kiếm:", searchInput);
+    // Bạn có thể cập nhật trạng thái hoặc thực hiện các hành động khác ở đây
+  };
   const userMenu = (
     <Menu>
       <Menu.Item key="0">
@@ -29,8 +35,14 @@ function Header() {
   return (
     <header className="header">
       <div className={`header__search ${showSearch === true ? "active" : ""}`}>
-        <input type="text" placeholder=" Search movie " />
+        <input
+          type="text"
+          placeholder=" Search Products "
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+        />
         <CloseOutlined onClick={() => setShowSearch(false)} />
+        <SearchOutlined onClick={handleSearchSubmit}>Search</SearchOutlined>
       </div>
 
       <div className="header__logo">

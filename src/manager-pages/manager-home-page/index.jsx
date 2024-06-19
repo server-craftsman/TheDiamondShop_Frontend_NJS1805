@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Layout,
-  Menu,
-  theme,
-} from "antd";
+import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, Link } from "react-router-dom";
 import {
   AuditOutlined,
@@ -37,8 +32,8 @@ function ManagerPage() {
           >
             <Menu.Item key="bridals">Bridals</Menu.Item>
             <Menu.Item key="diamonds">
-            <Link to="/manager-diamond-page">Diamond</Link>
-              </Menu.Item>
+              <Link to="/manager-diamond-page">Diamond</Link>
+            </Menu.Item>
             <Menu.Item key="rings">Rings</Menu.Item>
             <Menu.Item key="timepieces">Timepieces</Menu.Item>
           </Menu.SubMenu>
@@ -62,7 +57,7 @@ function ManagerPage() {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-      <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -78,8 +73,7 @@ function ManagerPage() {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
-        >
-        </Content>
+        ></Content>
         <Outlet />
       </Layout>
     </Layout>
