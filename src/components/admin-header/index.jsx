@@ -1,147 +1,121 @@
-import { useState, useEffect, useContext } from "react";
-import { Avatar, Badge, Button, Dropdown, Input, Layout, Menu, theme } from "antd";
-import { Outlet, Link } from "react-router-dom";
-import {
-    AuditOutlined,
-    BarChartOutlined,
-    BellOutlined,
-    BookOutlined,
-    DashboardOutlined,
-    DownOutlined,
-    LaptopOutlined,
-    LogoutOutlined,
-    MailOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    SettingOutlined,
-    ShoppingOutlined,
-    SketchOutlined,
-    TeamOutlined,
-    UserOutlined,
-} from "@ant-design/icons";
-import { AuthContext } from "../../AuthContext";
-import Search from "antd/es/input/Search";
-import logo from "../../assets/img/admin/logoAdmin.png";
-import SubMenu from "antd/es/menu/SubMenu";
+import { useContext, useEffect, useRef } from "react";
+
+import { Link } from "react-router-dom";
 import "../admin-header/index.scss";
+// import { SidebarContext } from "../../context/SidebarContext";
+import { CaretDownOutlined, DashboardOutlined, LaptopOutlined } from "@ant-design/icons";
+import { Dropdown, Menu } from "antd";
+import { FaMap, FaBoxOpen, FaUserCircle, FaChartBar, FaTools, FaSignOutAlt } from "react-icons/fa";
 
 
 function HeaderAdmin() {
-    const { Header, Sider, Content } = Layout;
-    const [collapsed, setCollapsed] = useState(false);
-    const { admin, logoutAdmin } = useContext(AuthContext);
-
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
-
-
-    const profileMenu = (
+    const menu = (
         <Menu>
-            <Menu.Item key="1">My Profile</Menu.Item>
-            <Menu.Item key="2">Settings</Menu.Item>
-            <Menu.Item key="3" onClick={logoutAdmin}>Log Out</Menu.Item>
+          <Menu.Item key="1">
+            <Link to="/customer-page">Customer</Link>
+          </Menu.Item>
+          <Menu.Item key="2">
+            <Link to="/manager-page">Manager</Link>
+          </Menu.Item>
+          <Menu.Item key="3">
+            <Link to="/sale-page">Sale Staff</Link>
+          </Menu.Item>
+          <Menu.Item key="4">
+            <Link to="/delivery-page">Delivery</Link>
+          </Menu.Item>
         </Menu>
-    );
-
-    return (
-        <Layout>
-
-            {/* Sidebar */}
-            <Sider trigger={null} collapsible collapsed={collapsed} className="sildeBar">
-                <div className="demo-logo-vertical" />
-                <h3>ADMINITRATOR</h3>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <Menu.Item key="1" icon={<DashboardOutlined />}>
-                        <Link to="/">Dashboard</Link>
-                    </Menu.Item>
-                    <SubMenu key="2" icon={<LaptopOutlined />} title="Manage">
-                        <Menu.Item key="customer">
-                            <Link to="/customer">Customer</Link>
-                        </Menu.Item>
-                        <Menu.Item key="manager">
-                            <Link to="/manager">Manager</Link>
-                        </Menu.Item>
-                        <Menu.Item key="sales-staff">
-                            <Link to="/staff">Sales Staff</Link>
-                        </Menu.Item>
-                        <Menu.Item key="delivery-staff">
-                            <Link to="/delivery">Delivery Staff</Link>
-                        </Menu.Item>
-                    </SubMenu>
-                    <Menu.Item key="3" icon={<UserOutlined />}>
-                        <Link to="/profile-page">User Profile</Link>
-                    </Menu.Item>
-                    <Menu.Item key="4" icon={<TeamOutlined />}>
-                        <Link to="/map-page">Map</Link>
-                    </Menu.Item>
-                    <Menu.Item key="5" icon={<ShoppingOutlined />}>
-                        <Link to="/product-page">Product</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6" icon={<BarChartOutlined />}>
-                        <Link to="/charts-page">Charts</Link>
-                    </Menu.Item>
-                    <Menu.Item key="7" icon={<LogoutOutlined />} onClick={() => { logoutAdmin }}>
-                        Logout
-                    </Menu.Item>
-                </Menu>
-            </Sider>
-
-            {/* Header */}
-            <Layout className="site-layout">
-    <Header style={{ padding: 0, background: colorBgContainer }}>
-        <div className="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-            <div className="d-flex align-items-center">
-                <Button
-                    type="text"
-                    icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                    onClick={() => setCollapsed(!collapsed)}
-                    style={{ fontSize: "16px", width: 64, height: 64 }}
-                />
-
-                {/* Search component (if uncommented) */}
-                {/* <Search
-                    placeholder="Search..."
-                    enterButton
-                    className="d-none d-md-flex ms-4"
-                /> */}
+      );
+    
+      return (
+        <nav
+          className={`sidebar "sidebar-show" : ""}`}
+        >
+          <div className="sidebar-top">
+            <div className="sidebar-brand">
+              <span className="sidebar-brand-text">ADMINITRATOR</span>
             </div>
-
-            <div className="ms-auto">
-                <Dropdown trigger={['click']}>
-                    <a className="nav-link">
-                        <Badge count={5} offset={[10, 0]}>
-                            <MailOutlined className="me-lg-2" />
-                        </Badge>
-                        <span className="d-none d-lg-inline-flex me-2">Message</span> <DownOutlined />
-                    </a>
-                </Dropdown>
-                <Dropdown trigger={['click']}>
-                    <a className="nav-link">
-                        <Badge count={10} offset={[10, 0]}>
-                            <BellOutlined className="me-lg-2" />
-                        </Badge>
-                        <span className="d-none d-lg-inline-flex me-2">Notification</span> <DownOutlined />
-                    </a>
-                </Dropdown>
-                <Dropdown overlay={profileMenu} trigger={['click']}>
-                    <a className="nav-link" onClick={(e) => e.preventDefault()}>
-                        <Avatar src={logo} size="small" className="me-lg-2" />
-                        <span className="d-none d-lg-inline-flex me-2">Quan Nguyen</span> <DownOutlined />
-                    </a>
-                </Dropdown>
+    
+          </div>
+          <div className="sidebar-body">
+            <div className="sidebar-menu">
+              <ul className="menu-list">
+                <li className="menu-item">
+                  <Link to="/admin-page" className="menu-link active">
+                    <span className="menu-link-icon">
+                      <DashboardOutlined  size={18} />
+                    </span>
+                    <span className="menu-link-text">Dashboard</span>
+                  </Link>
+                </li>
+                <li className="menu-item">
+                  <Dropdown overlay={menu} trigger={['click']}>
+                    <Link to="/" className="menu-link" onClick={e => e.preventDefault()}>
+                      <span className="menu-link-icon">
+                        <LaptopOutlined size={20} />
+                      </span>
+                      <span className="menu-link-text">Manager</span>
+                      <CaretDownOutlined />
+                    </Link>
+                  </Dropdown>
+                </li>
+                <li className="menu-item">
+                  <Link to="/profile-page" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaUserCircle  size={20} />
+                    </span>
+                    <span className="menu-link-text">Profile</span>
+                  </Link>
+                </li>
+                <li className="menu-item">
+                  <Link to="/" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaMap size={18} />
+                    </span>
+                    <span className="menu-link-text">Map</span>
+                  </Link>
+                </li>
+                <li className="menu-item">
+                  <Link to="/" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaBoxOpen size={20} />
+                    </span>
+                    <span className="menu-link-text">Products</span>
+                  </Link>
+                </li>
+                <li className="menu-item">
+                  <Link to="/" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaChartBar size={18} />
+                    </span>
+                    <span className="menu-link-text">Chart</span>
+                  </Link>
+                </li>
+              </ul>
             </div>
-        </div>
-    </Header>
-
-    {/* Content and Outlet components */}
-    <Outlet />
-</Layout>
-
-
-
-        </Layout>
-    );
+    
+            <div className="sidebar-menu sidebar-menu2">
+              <ul className="menu-list">
+                <li className="menu-item">
+                  <Link to="/" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaTools size={20} />
+                    </span>
+                    <span className="menu-link-text">Settings</span>
+                  </Link>
+                </li>
+                <li className="menu-item">
+                  <Link to="/" className="menu-link">
+                    <span className="menu-link-icon">
+                      <FaSignOutAlt size={20} />
+                    </span>
+                    <span className="menu-link-text">Logout</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      );
 }
 
 export default HeaderAdmin;
