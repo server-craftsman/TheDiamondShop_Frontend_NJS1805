@@ -1,10 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  Button,
-  Layout,
-  Menu,
-  theme,
-} from "antd";
+import { useState, useEffect, useContext } from "react";
+import { Button, Layout, Menu, theme } from "antd";
 import { Outlet, Link } from "react-router-dom";
 import {
   AuditOutlined,
@@ -16,12 +11,14 @@ import {
   SketchOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { AuthContext } from "../../AuthContext";
 function ManagerPage() {
   const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const { user, logout } = useContext(AuthContext);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -37,8 +34,8 @@ function ManagerPage() {
           >
             <Menu.Item key="bridals">Bridals</Menu.Item>
             <Menu.Item key="diamonds">
-            <Link to="/manager-diamond-page">Diamond</Link>
-              </Menu.Item>
+              <Link to="/manager-diamond-page">Diamond</Link>
+            </Menu.Item>
             <Menu.Item key="rings">Rings</Menu.Item>
             <Menu.Item key="timepieces">Timepieces</Menu.Item>
           </Menu.SubMenu>
@@ -56,13 +53,15 @@ function ManagerPage() {
             <Menu.Item key="events">Events</Menu.Item>
             <Menu.Item key="vouchers">Vouchers</Menu.Item>
           </Menu.SubMenu>
-          <Menu.Item key="6" icon={<LogoutOutlined />}>
-            Logout
-          </Menu.Item>
+          {user ? (
+            <Menu.Item key="6" icon={<LogoutOutlined />} onClick={logout}>
+              <Link to="/login">Logout</Link>
+            </Menu.Item>
+          ) : null}
         </Menu>
       </Sider>
       <Layout className="site-layout">
-      <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -78,8 +77,7 @@ function ManagerPage() {
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
-        >
-        </Content>
+        ></Content>
         <Outlet />
       </Layout>
     </Layout>

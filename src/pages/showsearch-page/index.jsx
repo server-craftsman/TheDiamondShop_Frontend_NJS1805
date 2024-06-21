@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react";
+import { Button, Card, Checkbox, Col, Image, Pagination, Row } from "antd";
 import "./index.scss";
-import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
+import { useEffect, useState } from "react";
 import { useCart } from "../../CartContext";
 
-function BridalPage() {
+function ShowSearch() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12); // Default items per page
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
   useEffect(() => {
-    // Function to fetch data from the API
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:8090/products/bridals");
+        const response = await fetch("http://localhost:8090/products/product");
         const data = await response.json();
-        setDataSource(data); // Update state with data from the API
-        setFilteredData(data); // Initialize filteredData with all data
+        setDataSource(data);
+        setFilteredData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -25,12 +24,12 @@ function BridalPage() {
     fetchData();
   }, []);
 
-  // Calculate the index range for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
+
   const endIndex = startIndex + itemsPerPage;
-  // Slice the data for the current page
+
   const currentPageData = filteredData.slice(startIndex, endIndex);
-  // Handle page change
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -81,24 +80,32 @@ function BridalPage() {
     });
 
     setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   const clearFilters = () => {
     setFilteredData(dataSource);
-    setCurrentPage(1); // Reset to first page when filters clear
+    setCurrentPage(1);
   };
 
   function handleAddToCart(item) {
-    // Thay vì setCartItems, sử dụng addToCart từ useCart
     addToCart({
-      id: item.BridalID,
-      name: item.NameBridal,
-      image: item.ImageBridal,
+      id: item.ProductID,
+      name: item.ProductType,
+      image: item.Image,
       price: item.Price,
-      quantity: 1, // Hoặc số lượng mà người dùng chọn
+      quantity: 1,
     });
   }
+  
+  const handleSearch = (keyword) => {
+    // Xử lý tìm kiếm dựa trên từ khóa (ví dụ: tìm kiếm trong tên sản phẩm)
+    const filteredByKeyword = dataSource.filter((item) =>
+      item.ProductType.toLowerCase().includes(keyword.toLowerCase())
+    );
+    setFilteredData(filteredByKeyword);
+    setCurrentPage(1);
+  };
   return (
     <div>
       <div className="app">
@@ -171,7 +178,7 @@ function BridalPage() {
           </button>
         </div>
 
-        <div className="bridalpage">
+        <div className="showsearch">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
@@ -181,13 +188,13 @@ function BridalPage() {
                   cover={
                     <Image
                       width="100%"
-                      alt={item.NameBridal}
-                      src={item.ImageBridal}
+                      alt={item.ProductType}
+                      src={item.Image}
                     />
                   }
                 >
                   <Card.Meta
-                    title={item.NameBridal}
+                    title={item.ProductType}
                     description={`${item.Price}$`}
                   />
                   <Button onClick={() => handleAddToCart(item)}>
@@ -210,7 +217,6 @@ function BridalPage() {
           />
         </div>
       </div>
-
       <footer>
         <div className="footer-container">
           <div className="footer-column">
@@ -304,4 +310,4 @@ function BridalPage() {
   );
 }
 
-export default BridalPage;
+export default ShowSearch;

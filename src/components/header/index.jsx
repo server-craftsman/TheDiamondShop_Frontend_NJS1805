@@ -22,7 +22,7 @@ function Header() {
         <Link to="/historyOrder-page">History Order</Link>
       </Menu.Item>
       <Menu.Item key="2" onClick={logout}>
-        Logout
+      <Link to="/login">Logout</Link>
       </Menu.Item>
     </Menu>
   );

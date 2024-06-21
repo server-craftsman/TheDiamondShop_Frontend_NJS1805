@@ -13,6 +13,7 @@ import OurstorePage from "./pages/ourstore-page";
 import UserProfile from "./pages/userProfile-page";
 import Payment from "./pages/payment-page";
 import HistoryOrder from "../src/pages/historyOrder-page";
+import ShowSearch from "./pages/showsearch-page";
 
 import AddToCart from "./pages/cart-page";
 import { CartProvider } from "./CartContext";
@@ -20,7 +21,7 @@ import { AuthProvider } from "./AuthContext";
 import ResetPassword from "./pages/reset-password-page";
 import VerificationCode from "./pages/verify-code-page";
 import ChangePassword from "./pages/change-password-page";
-import ManagerPage from "./manager-pages";
+
 //==========Sale Pages===========//
 import SalePage from "./sales-page"
 import ViewOrder from "./sales-page/order-pages/view-order";
@@ -29,6 +30,8 @@ import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
 import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher";
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
+import ManagerPage from "./manager-pages/manager-home-page";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -102,6 +105,10 @@ function App() {
         {
           path: "/historyOrder-page",
           element: <HistoryOrder />,
+        },
+        {
+          path: "/showsearch-page",
+          element: <ShowSearch />,
         },
       ],
     },
