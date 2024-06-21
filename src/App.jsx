@@ -32,6 +32,10 @@ import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher
 import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
 import ManagerPage from "./manager-pages/manager-home-page";
 
+//===========Admin Pages=========//
+import LayoutAdmin from "./components/admin-layout";
+import Dashboard from "./admin-pages/dashboard";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -140,6 +144,18 @@ function App() {
     {
       path: "/view-promotion-voucher",
       element: <ViewPromotionVoucher />,
+    },
+
+    //=======Admin Pages==========//
+    {
+      path: "/admin-page",
+      element: <LayoutAdmin />,
+      children: [
+        {
+          path: "/admin-page", 
+          element: <Dashboard />,
+        }
+      ]
     },
   ]);
 

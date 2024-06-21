@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./index.scss";
-import logo from "../../components/assets/logo.png";
+import logo from "../../assets/logo.png";
 import axios from "axios";
 
 const VerificationCode = () => {

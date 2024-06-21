@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
-import logo from "../../components/assets/logo.png";
+import logo from "../../assets/logo.png";
 
 import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
