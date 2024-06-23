@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../../CartContext";
 import "./index.scss";
 import { Select } from "antd";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 function Payment() {
   const { cartItems } = useCart();
@@ -80,6 +81,26 @@ function Payment() {
     }
   };
 
+  const onApprove = (data) => {
+    //Order is captured on the server and the response is returned to the browser
+    return fetch("y-server/capture-paypal-order", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            orderId: data.orderId,
+        })
+    })
+    .then((response) => response.json());
+}
+
+  const initialOptions = {
+    clientId: "AQS6ZDYhlVA7ZYS9-ImUV_URrFDGLljL8bDMX7QRa0rFVoWCM7d-y1EaGJVue6Nr0uBfiE77Ue2YXnvZ",
+    currency: "USD",
+    intent: "capture",
+};
+
   return (
     <div className="payment">
       <h1>Payment online</h1>
@@ -143,9 +164,16 @@ function Payment() {
         <p className="total">Total: ${total.toFixed(2)}</p>
       </div>
       <div className="payment-method">
-        <button onClick={handlePayPalPayment}>Pay with PayPal</button>
+        {/* <button onClick={handlePayPalPayment}>Pay with PayPal</button> */}
         <button>Pay with cast</button>
       </div>
+      <br />
+      <PayPalScriptProvider options={initialOptions}>
+            <PayPalButtons onClick={handlePayPalPayment} 
+              orderResponse = {(data, actions) => orderResponse(data, actions)}
+              onApprove = {(data, actions) => onApprove(data, actions)}
+            />
+        </PayPalScriptProvider>
     </div>
   );
 }
