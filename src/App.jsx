@@ -31,6 +31,7 @@ import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
 import ManagerPage from "./manager-pages/manager-home-page";
+import DeliveryPage from "./delivery-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -140,6 +141,11 @@ function App() {
     {
       path: "/view-promotion-voucher",
       element: <ViewPromotionVoucher />,
+    },
+    //==============================
+    {
+      path: "/delivery",
+      element: <DeliveryPage />,
     },
   ]);
 
