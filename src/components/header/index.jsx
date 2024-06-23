@@ -2,7 +2,7 @@ import "./index.scss";
 import { Link } from "react-router-dom";
 import { SearchOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useState } from "react";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { Button, Dropdown, Menu } from "antd";
 
 import { AiOutlineShoppingCart } from "react-icons/ai";

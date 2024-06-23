@@ -4,7 +4,7 @@ import { LockOutlined, MailOutlined, WarningOutlined, EyeInvisibleOutlined, EyeT
 import "../register-page/index";
 import { useState, useContext } from "react";
 import axios from "axios";
-import logo from "../../components/assets/logo.png";
+import logo from "../../assets/logo.png";
 import "../forgot-password-page";
 import { AuthContext } from "../../AuthContext";
 
@@ -61,7 +61,7 @@ function LoginForm() {
         setMessage(response.data.message);
         switch (response.data.roleName) {
           case 'Admin':
-            navigate("/bridal-page", { state: { message: response.data.message } });
+            navigate("/admin-page", { state: { message: response.data.message } });
             break;
           case 'Manager':
             navigate("/manager-page", { state: { message: response.data.message } });
