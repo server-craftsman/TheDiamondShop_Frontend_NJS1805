@@ -36,6 +36,7 @@ import DeliveryPage from "./delivery-page";
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
 import Dashboard from "./admin-pages/dashboard";
+import SearchAllProduct from "./pages/searchProduct-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -114,6 +115,10 @@ function App() {
         {
           path: "/showsearch-page",
           element: <ShowSearch />,
+        },
+        {
+          path: "/searchAllProduct-page",
+          element: <SearchAllProduct />,
         },
       ],
     },
