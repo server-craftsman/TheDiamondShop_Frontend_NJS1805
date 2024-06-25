@@ -23,7 +23,7 @@ import VerificationCode from "./pages/verify-code-page";
 import ChangePassword from "./pages/change-password-page";
 
 //==========Sale Pages===========//
-import SalePage from "./sales-page"
+import SalePage from "./sales-page";
 import ViewOrder from "./sales-page/order-pages/view-order";
 import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
 import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
@@ -31,12 +31,15 @@ import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
 import ManagerPage from "./manager-pages/manager-home-page";
-import DeliveryPage from "./delivery-page";
 
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
 import Dashboard from "./admin-pages/dashboard";
 import SearchAllProduct from "./pages/searchProduct-page";
+
+//==========Delivery Pages============//
+import DeliveryPage from "./delivery-page/delivery-confirm";
+import DeliveryLayout from "./components/delivery-layout";
 
 function App() {
   const router = createBrowserRouter([
@@ -130,7 +133,7 @@ function App() {
       path: "/manager-diamond-page",
       element: <ManageDiamondPage />,
     },
-//=========Sale page========//
+    //=========Sale page========//
     {
       path: "/sale-page",
       element: <SalePage />,
@@ -155,8 +158,13 @@ function App() {
     //==============================
     {
       path: "/delivery",
-      element: <DeliveryPage />,
-
+      element: <DeliveryLayout />,
+      children: [
+        {
+          path: "/delivery",
+          element: <DeliveryPage />,
+        },
+      ],
     },
     //=======Admin Pages==========//
     {
@@ -164,11 +172,10 @@ function App() {
       element: <LayoutAdmin />,
       children: [
         {
-          path: "/admin-page", 
+          path: "/admin-page",
           element: <Dashboard />,
-        }
-      ]
-
+        },
+      ],
     },
   ]);
 
