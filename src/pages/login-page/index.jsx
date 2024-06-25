@@ -81,7 +81,7 @@ function LoginForm() {
             });
             break;
           case "Delivery":
-            navigate("/timepiece-page", {
+            navigate("/delivery-page", {
               state: { message: response.data.message },
             });
             break;
