@@ -1,13 +1,18 @@
-import { Link, useNavigate } from "react-router-dom";
+import React, { useMemo, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../CartContext";
+import { Table, Button, Checkbox, Popconfirm, Modal } from "antd";
+import Warning from "../../Warning"; // Adjust path if necessary
+import { AuthContext } from "../../AuthContext";
 import "./index.scss";
-import { Table, Button, Checkbox } from "antd";
-import { useMemo, useState } from "react";
+
 const CartPage = () => {
-  const { cartItems, addToCart, removeFromCart } = useCart();
-  const [selectedItems, setSelectedItems] = useState([]);
+  const { cartItems, removeFromCart, setCartItems } = useCart();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [warningOpen, setWarningOpen] = useState(false);
   const navigate = useNavigate();
-  // Tính tổng số tiền
+  const { user, token } = useContext(AuthContext); // Ensure AuthContext provides 'user' and 'token'
+
   const totalPrice = useMemo(() => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -15,32 +20,102 @@ const CartPage = () => {
     );
   }, [cartItems]);
 
-  // Hàm để xử lý việc tăng số lượng sản phẩm
-  const handleQuantityChange = (item, amount) => {
-    if (item.quantity === 1 && amount === -1) {
-      removeFromCart(item.id);
+  const handleCheckboxChange = (e, record) => {
+    const checked = e.target.checked;
+    if (checked) {
+      setSelectedOptions([...selectedOptions, record.key]);
     } else {
-      addToCart({ ...item, quantity: amount });
+      setSelectedOptions(selectedOptions.filter((id) => id !== record.key));
     }
   };
-  // Hàm xử lý việc chọn sản phẩm
-  const handleSelectItem = (item, checked) => {
-    const newSelectedItems = checked
-      ? [...selectedItems, item.id]
-      : selectedItems.filter((id) => id !== item.id);
-    setSelectedItems(newSelectedItems);
+
+  const handleQuantityChange = (item, amount) => {
+    const updatedCart = cartItems.map((cartItem) =>
+      cartItem.key === item.key
+        ? { ...cartItem, quantity: cartItem.quantity + amount }
+        : cartItem
+    );
+
+    if (amount < 0 && item.quantity === 1) {
+      removeFromCart(item.key);
+    } else {
+      setCartItems(updatedCart);
+    }
   };
-  // Cấu trúc dữ liệu cho bảng Ant Design
+
+  const handleDeleteItem = (item) => {
+    removeFromCart(item.key);
+    setSelectedOptions(selectedOptions.filter((id) => id !== item.key));
+  };
+
+  useEffect(() => {
+    const hasDiamondOrBridal = cartItems.some(
+      (item) => item.type === "Diamond" || item.type === "Bridal"
+    );
+
+    if (!hasDiamondOrBridal) {
+      setWarningOpen(false); // Close warning if no Diamond or Bridal items
+    }
+  }, [cartItems]);
+
+  const handlePayment = () => {
+    if (selectedOptions.length > 0) {
+      const selectedItems = cartItems.filter((item) =>
+        selectedOptions.includes(item.key)
+      );
+
+      // Check conditions for required items
+      const hasDiamond = selectedItems.some((item) => item.type === "Diamond");
+      const hasBridal = selectedItems.some((item) => item.type === "Bridal");
+      const hasDiamondRings = selectedItems.some(
+        (item) => item.type === "DiamondRings"
+      );
+      const hasDiamondTimepieces = selectedItems.some(
+        (item) => item.type === "DiamondTimepieces"
+      );
+
+      // Valid conditions to create an order
+      const validConditions = hasDiamond || hasBridal;
+
+      if (!validConditions) {
+        try {
+          if (user && token) {
+            sessionStorage.setItem(
+              "selectedOptions",
+              JSON.stringify(selectedOptions)
+            );
+            sessionStorage.setItem("token", token);
+            navigate("/order-form");
+          } else {
+            Modal.warning({
+              title: "Warning",
+              content: "User authentication failed. Please log in again.",
+            });
+          }
+        } catch (error) {
+          console.error("Error handling payment:", error);
+        }
+      } else {
+        Modal.warning({
+          title: "Warning",
+          content:
+            "Please select at least one Diamond or Bridal item to proceed with the order.",
+        });
+      }
+    } else {
+      Modal.warning({
+        title: "Warning",
+        content: "Please select at least one item to proceed to order.",
+      });
+    }
+  };
+
   const columns = [
     {
       title: "",
-      dataIndex: "select",
-      key: "select",
-      render: (text, record) => (
-        <Checkbox
-          onChange={(e) => handleSelectItem(record, e.target.checked)}
-          checked={selectedItems.includes(record.id)}
-        />
+      dataIndex: "checkbox",
+      render: (_, record) => (
+        <Checkbox onChange={(e) => handleCheckboxChange(e, record)} />
       ),
     },
     {
@@ -86,39 +161,41 @@ const CartPage = () => {
       title: "",
       key: "action",
       render: (text, record) => (
-        <Button onClick={() => removeFromCart(record.id)}>Delete</Button>
+        <Popconfirm
+          title="Are you sure you want to delete this item?"
+          onConfirm={() => handleDeleteItem(record)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="danger">Delete</Button>
+        </Popconfirm>
       ),
     },
   ];
 
-  // Chuẩn bị dữ liệu cho bảng
   const data = useMemo(
     () =>
-      cartItems.map((item, index) => ({
-        key: index,
+      cartItems.map((item) => ({
+        key: item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        id: item.id,
         image: item.image,
+        type: item.type,
       })),
     [cartItems]
   );
- const handlePayment = () => {
-    // Lưu trữ selectedItems vào localStorage
-    localStorage.setItem('selectedItems', JSON.stringify(selectedItems));
-    // Chuyển đến trang thanh toán
-    navigate('/payment-page');
-  };
+
   return (
     <div className="cart-page">
       <Table columns={columns} dataSource={data} pagination={false} />
       <div className="total-price">
         <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
       </div>
-      <Link to="/payment-page" onClick={handlePayment}>
-        <Button>Payment</Button>
-      </Link>
+      <Button onClick={handlePayment} disabled={selectedOptions.length === 0}>
+        Create Order
+      </Button>
+      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </div>
   );
 };

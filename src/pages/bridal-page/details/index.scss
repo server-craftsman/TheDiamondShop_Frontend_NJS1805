@@ -1,0 +1,39 @@
+.roboto-mono {
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 100px;
+    font-style: normal;
+  }
+  
+  .bridal-image {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .bridal-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.4); /* Màu của vùng overlay */
+    z-index: 1; /* Đẩy lên phía trước để che phủ ảnh */
+    opacity: 0; /* Ban đầu ẩn đi */
+    transition: opacity 0.3s ease; /* Hiệu ứng mượt mà khi hover */
+  }
+  
+  .bridal-image:hover::before {
+    opacity: 1; /* Hiển thị overlay khi hover */
+  }
+  
+  .view-certificate-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .view-certificate-btn .zoom-lens {
+    position: absolute;
+    width: 40px;
+  }
+  

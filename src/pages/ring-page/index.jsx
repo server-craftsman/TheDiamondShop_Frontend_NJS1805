@@ -1,14 +1,15 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
-import { useCart } from "../../CartContext";
+//import { useCart } from "../../CartContext";
 import { Link } from "react-router-dom";
+
 function RingPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
-  const { addToCart } = useCart();
+  //const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -86,15 +87,17 @@ function RingPage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-  function handleAddToCart(item) {
-    addToCart({
-      id: item.RingsID,
-      name: item.NameRings,
-      image: item.ImageRings,
-      price: item.Price,
-      quantity: 1,
-    });
-  }
+  // function handleAddToCart(item) {
+  //   item.type = "DiamondRings";
+  //   addToCart({
+  //     id: item.RingsID,
+  //     name: item.NameRings,
+  //     image: item.ImageRings,
+  //     price: item.Price,
+  //     quantity: 1,
+  //     type: item.type,
+  //   });
+  // }
   return (
     <div>
       <div className="app">
@@ -136,27 +139,35 @@ function RingPage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-               <Link to={`/productring/${item.DiamondRingsID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
+                    <Link to={`/ring-detail/${item.DiamondRingsID}`}>
                     <Image
                       width="100%"
                       alt={item.NameRings}
                       src={item.ImageRings}
                     />
+                    </Link>
                   }
                 >
-                  <Card.Meta
+                  {/* <Card.Meta
                     title={item.NameRings}
                     description={`${item.Price}$`}
-                  />{" "}
-                  <Button onClick={() => handleAddToCart(item)}>
+                  />{" "} */}
+                  <Card.Meta
+                  title={
+                    <Link to={`/ring-detail/${item.DiamondRingsID}`}>
+                      {item.RingStyle.toUpperCase()}
+                    </Link>
+                  }
+                  description={`${item.Price}$`}
+                />
+                  {/* <Button onClick={() => handleAddToCart(item)}>
                     Add to Cart
-                  </Button>
+                  </Button> */}
                 </Card>
-                </Link>
               </Col>
             ))}
           </Row>

@@ -1,14 +1,14 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
-import { useCart } from "../../CartContext";
 import { Link } from "react-router-dom";
+
 function DiamondPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
-  const { addToCart } = useCart();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,29 +27,28 @@ function DiamondPage() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageData = filteredData.slice(startIndex, endIndex);
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   const parsePriceRange = (range) => {
-    if (range === "Under $1000") {
-      return (price) => price < 1000;
+    switch (range) {
+      case "Under $1000":
+        return (price) => price < 1000;
+      case "$1001-$2000":
+        return (price) => price >= 1001 && price <= 2000;
+      case "$2001-$3000":
+        return (price) => price >= 2001 && price <= 3000;
+      case "$3001-$4000":
+        return (price) => price >= 3001 && price <= 4000;
+      case "$4001-$5000":
+        return (price) => price >= 4001 && price <= 5000;
+      case "Over $5001":
+        return (price) => price > 5001;
+      default:
+        return () => true;
     }
-    if (range === "$1001-$2000") {
-      return (price) => price >= 1001 && price <= 2000;
-    }
-    if (range === "$2001-$3000") {
-      return (price) => price >= 2001 && price <= 3000;    
-    }
-    if (range === "$3001-$4000") {
-      return (price) => price >= 3001 && price <= 4000;    
-    }
-    if (range === "$4001-$5000") {
-      return (price) => price >= 40001 && price <= 5000;   
-     }
-    if (range === "Over $5001") {
-      return (price) => price > 5001;
-    }
-    return () => true;
   };
 
   const handleFilters = (newFilters) => {
@@ -84,99 +83,128 @@ function DiamondPage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-  function handleAddToCart(item) {
-    addToCart({
-      id: item.DiamondID,
-      name: item.DiamondOrigin,
-      image: item.Image,
-      price: item.Price,
-      quantity: 1,
-    });
-  }
+
+
   return (
-    <div>
-      <div className="app">
-        <div className="filter-section">
+    <>
+    <div className="app">
+      <div className="filter-section">
         <h3>Price</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Under $1000" className="Checkbox">Under $1000</Checkbox>
-              <Checkbox value="$1001-$2000" className="Checkbox">$1001-$2000</Checkbox>
-              <Checkbox value="$2001-$3000" className="Checkbox">$2001-$3000</Checkbox>
-              <Checkbox value="$3001-$4000" className="Checkbox">$3001-$4000</Checkbox>
-              <Checkbox value="$4001-$5000" className="Checkbox">$4001-$5000</Checkbox>
-              <Checkbox value="Over $5001" className="Checkbox">Over $5001</Checkbox>
-            </Row>
-          </Checkbox.Group>
-          <hr />
-          <h3>Color</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Color: values })}>
-            <Row>
-              <Checkbox value="D" className="Checkbox">D</Checkbox>
-              <Checkbox value="E" className="Checkbox">E</Checkbox>
-              <Checkbox value="F" className="Checkbox">F</Checkbox>
-              <Checkbox value="H" className="Checkbox">H</Checkbox>
-              <Checkbox value="I" className="Checkbox">I</Checkbox>
-              <Checkbox value="J" className="Checkbox">J</Checkbox>
-              <Checkbox value="K" className="Checkbox">K</Checkbox>
-            </Row>
-          </Checkbox.Group>
-          <hr />
-          <h3>Shape</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Shape: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Round" className="Checkbox">Round</Checkbox>
-              <Checkbox value="Princess" className="Checkbox">Princess</Checkbox>
-              <Checkbox value="Cushion" className="Checkbox">Cushion</Checkbox>
-              <Checkbox value="Emerald" className="Checkbox">Emerald</Checkbox>
-            </Row>
-          </Checkbox.Group>
-          <hr />
-          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
-        </div>
-        <div className="diamondpage">
-          <Row gutter={16}>
-            {currentPageData.map((item, index) => (
-              <Col span={8} key={index}>
-                <Link to={`/product/${item.DiamondID}`}>
-                <Card
-                  hoverable
-                  style={{ width: 240 }}
-                  cover={
+        <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
+          <Row className="row-column">
+            <Checkbox value="Under $1000" className="Checkbox">
+              Under $1000
+            </Checkbox>
+            <Checkbox value="$1001-$2000" className="Checkbox">
+              $1001-$2000
+            </Checkbox>
+            <Checkbox value="$2001-$3000" className="Checkbox">
+              $2001-$3000
+            </Checkbox>
+            <Checkbox value="$3001-$4000" className="Checkbox">
+              $3001-$4000
+            </Checkbox>
+            <Checkbox value="$4001-$5000" className="Checkbox">
+              $4001-$5000
+            </Checkbox>
+            <Checkbox value="Over $5001" className="Checkbox">
+              Over $5001
+            </Checkbox>
+          </Row>
+        </Checkbox.Group>
+        <hr />
+        <h3>Color</h3>
+        <Checkbox.Group onChange={(values) => handleFilters({ Color: values })}>
+          <Row>
+            <Checkbox value="D" className="Checkbox">
+              D
+            </Checkbox>
+            <Checkbox value="E" className="Checkbox">
+              E
+            </Checkbox>
+            <Checkbox value="F" className="Checkbox">
+              F
+            </Checkbox>
+            <Checkbox value="H" className="Checkbox">
+              H
+            </Checkbox>
+            <Checkbox value="I" className="Checkbox">
+              I
+            </Checkbox>
+            <Checkbox value="J" className="Checkbox">
+              J
+            </Checkbox>
+            <Checkbox value="K" className="Checkbox">
+              K
+            </Checkbox>
+          </Row>
+        </Checkbox.Group>
+        <hr />
+        <h3>Shape</h3>
+        <Checkbox.Group onChange={(values) => handleFilters({ Shape: values })}>
+          <Row className="row-column">
+            <Checkbox value="Round" className="Checkbox">
+              Round
+            </Checkbox>
+            <Checkbox value="Princess" className="Checkbox">
+              Princess
+            </Checkbox>
+            <Checkbox value="Cushion" className="Checkbox">
+              Cushion
+            </Checkbox>
+            <Checkbox value="Emerald" className="Checkbox">
+              Emerald
+            </Checkbox>
+          </Row>
+        </Checkbox.Group>
+        <hr />
+        <button onClick={clearFilters} className="buttonfilter">
+          Clear Filters
+        </button>
+      </div>
+      <div className="diamondpage">
+        <Row gutter={16}>
+          {currentPageData.map((item, index) => (
+            <Col span={8} key={index}>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <Link to={`/diamond-detail/${item.DiamondID}`}>
                     <Image
                       width="100%"
                       alt={item.DiamondOrigin}
                       src={item.Image}
                     />
+                  </Link>
+                }
+              >
+                <Card.Meta
+                  title={
+                    <Link to={`/diamond-detail/${item.DiamondID}`}>
+                      {item.DiamondOrigin.toUpperCase()}
+                    </Link>
                   }
-                >
-                  <Card.Meta
-                    title={item.DiamondOrigin}
-                    description={`${item.Price}$`}
-                  />{" "}
-                   <Button onClick={() => handleAddToCart(item)}>
-                    Add to Cart
-                  </Button>
-                </Card>
-                </Link>
-              </Col>
-            ))}
-          </Row>
-          <Pagination
-            current={currentPage}
-            total={filteredData.length}
-            pageSize={itemsPerPage}
-            onChange={handlePageChange}
-            onShowSizeChange={(currentPage, size) => {
-              setItemsPerPage(size);
-            }}
-            showQuickJumper
-            showTotal={(total) => `Total ${total} item`}
-          />
-        </div>
+                  description={`${item.Price}$`}
+                />
+              </Card>
+            </Col>
+          ))}
+        </Row>
+        <Pagination
+          current={currentPage}
+          total={filteredData.length}
+          pageSize={itemsPerPage}
+          onChange={handlePageChange}
+          onShowSizeChange={(currentPage, size) => {
+            setItemsPerPage(size);
+          }}
+          showQuickJumper
+          showTotal={(total) => `Total ${total} item`}
+        />
       </div>
-
-      <footer>
+    </div>
+    <footer>
         <div className="footer-container">
           <div className="footer-column">
             <h3>Diamond Store</h3>
@@ -246,6 +274,7 @@ function DiamondPage() {
           <div className="footer-column">
             <h3>Location</h3>
             <iframe
+              title="Store Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.339281181677!2d106.7625251!3d10.8501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317527a1fc80477b%3A0x62944f7a73c84aaf!2sVincom%20Thu%20Duc!5e0!3m2!1sen!2s!4v1688018656344!5m2!1sen!2s"
               width="100%"
               height="150"
@@ -257,13 +286,13 @@ function DiamondPage() {
         </div>
         <div className="footer-bottom">
           <p>
-            &copy; 2024 Diamond Store All Rights Reserved. Website designed,
+            © 2024 Diamond Store All Rights Reserved. Website designed,
             maintained, and hosted by Punchmark.{" "}
             <a href="#">Accessibility Statement</a>.
           </p>
         </div>
       </footer>
-    </div>
+      </>
   );
 }
 

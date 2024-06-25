@@ -3,6 +3,7 @@ import "./index.scss";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
 import { Link } from "react-router-dom";
+
 function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,14 +44,14 @@ function BridalPage() {
       return (price) => price >= 1001 && price <= 2000;
     }
     if (range === "$2001-$3000") {
-      return (price) => price >= 2001 && price <= 3000;
+      return (price) => price >= 2001 && price <= 3000;    
     }
     if (range === "$3001-$4000") {
-      return (price) => price >= 3001 && price <= 4000;
+      return (price) => price >= 3001 && price <= 4000;    
     }
     if (range === "$4001-$5000") {
-      return (price) => price >= 40001 && price <= 5000;
-    }
+      return (price) => price >= 40001 && price <= 5000;   
+     }
     if (range === "Over $5001") {
       return (price) => price > 5001;
     }
@@ -88,15 +89,16 @@ function BridalPage() {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
   };
-
   function handleAddToCart(item) {
     // Thay vì setCartItems, sử dụng addToCart từ useCart
+    item.type = "Bridal";
     addToCart({
       id: item.BridalID,
       name: item.NameBridal,
       image: item.ImageBridal,
       price: item.Price,
-      quantity: 1, // Hoặc số lượng mà người dùng chọn
+      quantity: 1,
+      type: item.type, // Hoặc số lượng mà người dùng chọn
     });
   }
   return (
@@ -104,98 +106,68 @@ function BridalPage() {
       <div className="app">
         <div className="filter-section">
           <h3>Price</h3>
-          <Checkbox.Group
-            onChange={(values) => handleFilters({ Price: values })}
-          >
-            <Row className="row-column">
-              <Checkbox value="Under $1000" className="Checkbox">
-                Under $1000
-              </Checkbox>
-              <Checkbox value="$1001-$2000" className="Checkbox">
-                $1001-$2000
-              </Checkbox>
-              <Checkbox value="$2001-$3000" className="Checkbox">
-                $2001-$3000
-              </Checkbox>
-              <Checkbox value="$3001-$4000" className="Checkbox">
-                $3001-$4000
-              </Checkbox>
-              <Checkbox value="$4001-$5000" className="Checkbox">
-                $4001-$5000
-              </Checkbox>
-              <Checkbox value="Over $5001" className="Checkbox">
-                Over $5001
-              </Checkbox>
+          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Under $1000" className="Checkbox">Under $1000</Checkbox>
+              <Checkbox value="$1001-$2000" className="Checkbox">$1001-$2000</Checkbox>
+              <Checkbox value="$2001-$3000" className="Checkbox">$2001-$3000</Checkbox>
+              <Checkbox value="$3001-$4000" className="Checkbox">$3001-$4000</Checkbox>
+              <Checkbox value="$4001-$5000" className="Checkbox">$4001-$5000</Checkbox>
+              <Checkbox value="Over $5001" className="Checkbox">Over $5001</Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Color</h3>
-          <Checkbox.Group
-            onChange={(values) => handleFilters({ Material: values })}
-          >
-            <Row className="row-column">
-              <Checkbox value="Platinum" className="Checkbox">
-                Platinum
-              </Checkbox>
-              <Checkbox value="14K White Gold" className="Checkbox">
-                14K White Gold
-              </Checkbox>
-              <Checkbox value="18K White Gold" className="Checkbox">
-                18K White Gold
-              </Checkbox>
-              <Checkbox value="14K Yellow Gold" className="Checkbox">
-                14K Yellow Gold
-              </Checkbox>
-              <Checkbox value="18K Yellow Gold" className="Checkbox">
-                18K Yellow Gold
-              </Checkbox>
+          <Checkbox.Group onChange={(values) => handleFilters({ Material: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Platinum" className="Checkbox">Platinum</Checkbox>
+              <Checkbox value="14K White Gold" className="Checkbox">14K White Gold</Checkbox>
+              <Checkbox value="18K White Gold" className="Checkbox">18K White Gold</Checkbox>
+              <Checkbox value="14K Yellow Gold" className="Checkbox">14K Yellow Gold</Checkbox>
+              <Checkbox value="18K Yellow Gold" className="Checkbox">18K Yellow Gold</Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Gender</h3>
-          <Checkbox.Group
-            onChange={(values) => handleFilters({ Gender: values })}
-          >
-            <Row className="row-column">
-              <Checkbox value="Womens" className="Checkbox">
-                Womens
-              </Checkbox>
-              <Checkbox value="Mans" className="Checkbox">
-                Mans
-              </Checkbox>
+          <Checkbox.Group onChange={(values) => handleFilters({ Gender: values })}>
+            <Row className = "row-column">
+              <Checkbox value="Womens" className="Checkbox">Womens</Checkbox>
+              <Checkbox value="Mans" className="Checkbox">Mans</Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
-          <button onClick={clearFilters} className="buttonfilter">
-            Clear Filters
-          </button>
+          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
         </div>
 
         <div className="bridalpage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-                <Link to={`/productbridal/${item.BridalID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
+                    <Link to={`/bridal-detail/${item.BridalID}`}>
                     <Image
                       width="100%"
                       alt={item.NameBridal}
                       src={item.ImageBridal}
                     />
+                    </Link>
                   }
                 >
                   <Card.Meta
-                    title={item.NameBridal}
+                    title={
+                      <Link to={`/bridal-detail/${item.BridalID}`}>
+                        {item.BridalStyle.toUpperCase()}
+                      </Link>
+                    }
                     description={`${item.Price}$`}
                   />
-                  <Button onClick={() => handleAddToCart(item)}>
+                  {/* <Button onClick={() => handleAddToCart(item)}>
                     Add to Cart
-                  </Button>
+                  </Button> */}
                 </Card>
-                </Link>
               </Col>
             ))}
           </Row>

@@ -1,11 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
-import { LockOutlined, MailOutlined, WarningOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import "../register-page/index";
+import {
+  MailOutlined,
+  WarningOutlined,
+  EyeInvisibleOutlined,
+  EyeTwoTone,
+} from "@ant-design/icons";
 import { useState, useContext } from "react";
 import axios from "axios";
-import logo from "../../assets/logo.png";
-import "../forgot-password-page";
+import logo from "../../components/assets/logo.png";
 import { AuthContext } from "../../AuthContext";
 
 function LoginForm() {
@@ -18,22 +21,19 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
-};
-
+  };
 
   const googleAuth = () => {
     window.open("http://localhost:8090/auth/google/customer", "_self");
   };
 
-  // Thêm trình nghe sự kiện cho các sự kiện tin nhắn từ cửa sổ xác thực
   window.addEventListener(
     "message",
     (event) => {
-      // Kiểm tra nếu tin nhắn đến từ miền xác thực của bạn
       if (event.origin === "http://localhost:8090") {
-        // Kiểm tra nếu tin nhắn chứa dữ liệu mong đợi
         if (event.data && event.data.token) {
-          localStorage.setItem("user", JSON.stringify(event.data.token));
+          localStorage.setItem("user", JSON.stringify(event.data));
+          localStorage.setItem("token", event.data.token);
           login(event.data);
           navigate("/", { state: { message: event.data.message } });
         }
@@ -54,26 +54,36 @@ function LoginForm() {
       if (response.data.token) {
         const user = {
           token: response.data.token,
-          role: response.data.roleName
-        }
+          role: response.data.roleName,
+        };
         localStorage.setItem("user", JSON.stringify(user));
-        login(response.data);
+        localStorage.setItem("token", response.data.token);
+        login(user);
         setMessage(response.data.message);
+
         switch (response.data.roleName) {
-          case 'Admin':
-            navigate("/admin-page", { state: { message: response.data.message } });
+          case "Admin":
+            navigate("/bridal-page", {
+              state: { message: response.data.message },
+            });
             break;
-          case 'Manager':
-            navigate("/manager-page", { state: { message: response.data.message } });
+          case "Manager":
+            navigate("/manager-page", {
+              state: { message: response.data.message },
+            });
             break;
-          case 'Customer':
-           navigate("/", { state: { message: response.data.message } });
-           break;
-          case 'Sale':
-            navigate("/sale-page", { state: { message: response.data.message } });
+          case "Customer":
+            navigate("/", { state: { message: response.data.message } });
             break;
-          case 'Delivery':
-            navigate("/timepiece-page", { state: { message: response.data.message } });
+          case "Sale":
+            navigate("/sale-page", {
+              state: { message: response.data.message },
+            });
+            break;
+          case "Delivery":
+            navigate("/timepiece-page", {
+              state: { message: response.data.message },
+            });
             break;
           default:
             navigate("/", { state: { message: response.data.message } });
@@ -81,16 +91,9 @@ function LoginForm() {
       } else {
         setMessage("Invalid email or password");
       }
-      //   localStorage.setItem("user", JSON.stringify(response.data.token));
-      //   login(response.data);
-      //   setMessage(response.data.message);
-      //   navigate("/", { state: { message: response.data.message } });
-      // } else {
-      //   setMessage("Invalid email or password");
-      // }
     } catch (error) {
       if (error.response) {
-        setMessage(error.response.data || "Invalid email or password");
+        setMessage(error.response.data.message || "Invalid email or password");
       } else if (error.request) {
         setMessage("No response from server. Please try again later.");
       } else {
@@ -100,7 +103,6 @@ function LoginForm() {
     }
   };
 
-  //form login
   return (
     <div className="form-login">
       <div className="logo-bg">
@@ -108,7 +110,7 @@ function LoginForm() {
       </div>
 
       <div className="login">
-        <form action="" onSubmit={handleLogin}>
+        <form onSubmit={handleLogin}>
           <h1>Login</h1>
           <div className="input-box">
             <input
@@ -129,22 +131,31 @@ function LoginForm() {
               required
             />
             {showPassword ? (
-                <EyeTwoTone
-                    onClick={toggleShowPassword}
-                    style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '15px' }}
-                />
+              <EyeTwoTone
+                onClick={toggleShowPassword}
+                style={{
+                  position: "absolute",
+                  right: "18px",
+                  cursor: "pointer",
+                  top: "15px",
+                }}
+              />
             ) : (
-                <EyeInvisibleOutlined
-                    onClick={toggleShowPassword}
-                    style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '15px' }}
-                />
+              <EyeInvisibleOutlined
+                onClick={toggleShowPassword}
+                style={{
+                  position: "absolute",
+                  right: "18px",
+                  cursor: "pointer",
+                  top: "15px",
+                }}
+              />
             )}
           </div>
           <div className="remember-forgot">
             <label>
               <input type="checkbox" /> Remember me{" "}
             </label>
-
             <Link to="/forgot-password-page" className="forgot">
               Forgot password
             </Link>
@@ -153,7 +164,7 @@ function LoginForm() {
             <button type="submit">Login</button>
           </div>
           <div>
-            <button onClick={googleAuth}>
+            <button type="button" onClick={googleAuth}>
               <img
                 src="https://cdn.iconscout.com/icon/free/png-256/free-google-160-189824.png?f=webp"
                 alt=""

@@ -1,5 +1,4 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { useEffect, useState } from "react";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
 import RegisterForm from "./pages/register-page";
@@ -11,7 +10,7 @@ import RingPage from "./pages/ring-page";
 import TimepiecePage from "./pages/timepiece-page";
 import DesignerPage from "./pages/designer-page";
 import OurstorePage from "./pages/ourstore-page";
-import UserProfile from "./pages/userProfile-page";
+import UserProfile from "./pages/userProfile-page/viewProfile";
 import Payment from "./pages/payment-page";
 import HistoryOrder from "../src/pages/historyOrder-page";
 import ShowSearch from "./pages/showsearch-page";
@@ -22,14 +21,18 @@ import { AuthProvider } from "./AuthContext";
 import ResetPassword from "./pages/reset-password-page";
 import VerificationCode from "./pages/verify-code-page";
 import ChangePassword from "./pages/change-password-page";
+import OrderForm from './pages/order-form';
 
 //==========Sale Pages===========//
-import SalePage from "./sales-page";
+import SalePage from "./sales-page"
 import ViewOrder from "./sales-page/order-pages/view-order";
 import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
 import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
 import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher";
 import ViewCertificate from "./sales-page/certificate-pages/certificate";
+import LayoutSale from "./components/sale-layout";
+import ViewWaranty from "./sales-page/warranty-pages";
+
 
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
@@ -37,12 +40,13 @@ import ManagerPage from "./manager-pages/manager-home-page";
 import ManageBridalPage from "./manager-pages/manageproduct/bridals";
 import ManageRingPage from "./manager-pages/manageproduct/rings";
 import ManageTimepiecesPage from "./manager-pages/manageproduct/timepieces";
+import ManagerLayout from "./components/manager-layout";
 
 //=========Product Detail Pages==========//
-import ProductDetailsPage from './pages/productdetaildiamond-page';
-import ProductDetailsRingPage from './pages/productdetailring-page';
-import ProductDetailsBridalPage from './pages/productdetailbridal-page';
-import ProductDetailsTimepiecesPage from './pages/productdetailtimepieces-page';
+import DiamondDetail from "./pages/diamond-page/details";
+import RingDetail from './pages/ring-page/details';
+import BridalDetails from './pages/bridal-page/details';
+import TimepieceDetail from './pages/timepiece-page/details';
 
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
@@ -54,40 +58,6 @@ import DeliveryPage from "./delivery-page/delivery-confirm";
 import DeliveryLayout from "./components/delivery-layout";
 
 function App() {
-
-  const [diamonds, setDiamonds] = useState([]);
-  const [bridals, setBridals] = useState([]);
-  const [rings, setRings] = useState([]);
-  const [timepieces, setTimepieces] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [diamondRes, bridalRes, ringRes, timepieceRes] = await Promise.all([
-          fetch("http://localhost:8090/products/diamonds"),
-          fetch("http://localhost:8090/products/bridals"),
-          fetch("http://localhost:8090/products/diamond-rings"),
-          fetch("http://localhost:8090/products/timepieces")
-        ]);
-
-        const [diamonds, bridals, rings, timepieces] = await Promise.all([
-          diamondRes.json(),
-          bridalRes.json(),
-          ringRes.json(),
-          timepieceRes.json()
-        ]);
-
-        setDiamonds(diamonds);
-        setBridals(bridals);
-        setRings(rings);
-        setTimepieces(timepieces);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const router = createBrowserRouter([
     {
       path: "/",
@@ -165,17 +135,59 @@ function App() {
           path: "/showsearch-page",
           element: <ShowSearch />,
         },
+        {
+          path: "/order-form",
+          element: <OrderForm />
+        },
+        {
+          path: "/diamond-detail/:id",
+          element: <DiamondDetail />,
+        },
+        {
+          path: "/ring-detail/:id",
+          element:<RingDetail />
+        },
+        {
+          path: "/bridal-detail/:id",
+          element: <BridalDetails />
+        },
+        {
+          path: "/timepieces-detail/:id",
+          element: <TimepieceDetail />
+        },
       ],
     },
     {
-      path: "/manager-page",
-      element: <ManagerPage />,
-    },
-    {
-      path: "/manager-diamond-page",
-      element: <ManageDiamondPage />,
+      path: "/",
+      element: <ManagerLayout />,
+      children: [
+        {
+          path: "/manager-page",
+          element: <ManagerPage />,
+        },
+        {
+          path: "/manager-diamond-page",
+          element: <ManageDiamondPage />,
+        },
+        {
+          path: "/manager-bridal-page",
+          element: <ManageBridalPage />,
+        },
+        {
+          path: "/manager-ring-page",
+          element: <ManageRingPage />,
+        },
+        {
+          path: "/manager-timepieces-page",
+          element: <ManageTimepiecesPage />,
+        },
+      ],
     },
 //=========Sale page========//
+{
+  path: "/",
+  element: <LayoutSale />,
+  children: [
     {
       path: "/sale-page",
       element: <SalePage />,
@@ -196,6 +208,16 @@ function App() {
       path: "/view-promotion-voucher",
       element: <ViewPromotionVoucher />,
     },
+    {
+      path: "/view-certificate",
+      element: <ViewCertificate />,
+    },
+    {
+      path: "/view-warranty",
+      element: <ViewWaranty />,
+    },
+  ]
+},
 
     //=======Admin Pages==========//
     {

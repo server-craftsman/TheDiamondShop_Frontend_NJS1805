@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
 import { Link } from "react-router-dom";
+
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -78,15 +79,16 @@ function TimepiecePage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-  function handleAddToCart(item) {
-    addToCart({
-      // id: item.TimepiexesID,
-      name: item.NameTimepieces,
-      image: item.ImageTimepieces,
-      price: item.Price,
-      quantity: 1,
-    });
-  }
+  // function handleAddToCart(item) {
+  //   item.type = "DiamondTimepieces";
+  //   addToCart({
+  //     name: item.NameTimepieces,
+  //     image: item.ImageTimepieces,
+  //     price: item.Price,
+  //     quantity: 1,
+  //     type: item.type,
+  //   });
+  // }
   return (
     <div>
       <div className="app">
@@ -130,28 +132,37 @@ function TimepiecePage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-                <Link to={`/producttimepiece/${item.DiamondTimepiecesID}`}>
                 <Card
-                  hoverable
-                  style={{ width: 240 }}
-                  cover={
-                    <Image
-                      width="100%"
-                      alt={item.NameTimepieces}
-                      src={item.ImageTimepieces}
-                    />
-                  }
-                >
-                  <Card.Meta
-                    title={item.NameTimepieces}
-                    description={`${item.Price}$`}
-                  />{" "}
-                  <Button onClick={() => handleAddToCart(item)}>
-                    Add to Cart
-                  </Button>
-                </Card>
-                </Link>
-              </Col>
+                
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
+                  <Image
+                    width="100%"
+                    alt={item.NameTimepieces}
+                    src={item.ImageTimepieces}
+                  />
+                  </Link>
+                }
+              >
+                {/* <Card.Meta
+                  title={item.NameTimepieces}
+                  description={`${item.Price}$`}
+                />{" "} */}
+                <Card.Meta
+                title={
+                  <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
+                    {item.TimepiecesStyle.toUpperCase()}
+                  </Link>
+                }
+                description={`${item.Price}$`}
+              />
+                {/* <Button onClick={() => handleAddToCart(item)}>
+                  Add to Cart
+                </Button> */}
+              </Card>
+            </Col>
             ))}
           </Row>
           <Pagination

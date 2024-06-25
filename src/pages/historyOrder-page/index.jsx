@@ -1,79 +1,83 @@
-import { Table } from 'antd';
-import React, { useContext } from 'react'
-import { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from "react";
+import { Table } from "antd";
 import "../historyOrder-page/index.scss";
-import { AuthContext } from '../../AuthContext';
+import { AuthContext } from "../../AuthContext";
+import axios from "axios";
 
 function HistoryOrder() {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [historyOrders, setHistoryOrders] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      fetchHistoryOrders(user.AccountID);
-    }
-  }, [user]);  //check user login
+    fetchHistoryOrders();
+  }, [user]); // Ensure useEffect runs when user changes
 
-  const fetchHistoryOrders = async (accountID) => {
+  const fetchHistoryOrders = async () => {
     try {
-      const response = await fetch('http://localhost:8090/features/history-order', {
-        method: 'POST',
+      const token = user?.token; // Retrieve token from AuthContext
+  
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        return;
+      }
+  
+      const response = await fetch('http://localhost:8090/auth/history-order', {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ AccountID: accountID }),
+        credentials: 'include', // Ensure credentials are sent
       });
+  
       const data = await response.json();
+      console.log('Fetch response:', data);
+  
       if (data.status) {
-        setHistoryOrders(data.HistoryOrder);
+        setHistoryOrders(data.historyOrder);
       } else {
-        console.error(data.message); // Handle error
+        console.error(data.message); // Handle API error
       }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Fetch error:', error); // Handle fetch error
     }
   };
+  
 
   const columns = [
     {
-      title: 'Order ID',
-      dataIndex: 'OrderID',
-      key: 'OrderID',
+      title: "Order ID",
+      dataIndex: "OrderID",
+      key: "OrderID",
     },
     {
-      title: 'Order Date',
-      dataIndex: 'OrderDate',
-      key: 'OrderDate',
+      title: "Order Date",
+      dataIndex: "OrderDate",
+      key: "OrderDate",
     },
     {
-      title: 'Quantity',
-      dataIndex: 'Quantity',
-      key: 'Quantity',
+      title: "Quantity",
+      dataIndex: "Quantity",
+      key: "Quantity",
     },
     {
-      title: 'Order Status',
-      dataIndex: 'OrderStatus',
-      key: 'OrderStatus',
+      title: "Order Status",
+      dataIndex: "OrderStatus",
+      key: "OrderStatus",
     },
     {
-      title: 'Total Price',
-      dataIndex: 'TotalPrice',
-      key: 'TotalPrice',
+      title: "Total Price",
+      dataIndex: "TotalPrice",
+      key: "TotalPrice",
     },
   ];
 
   return (
-    <div className='history'>
-      <h1>History Order</h1> <br />
-      <Table
-        columns={columns}
-        dataSource={historyOrders}
-        rowKey="OrderID"
-      />
-
-
+    <div className="history">
+      <h1>History Order</h1>
+      <Table columns={columns} dataSource={historyOrders} rowKey="OrderID" />
     </div>
-  )
+  );
 }
 
 export default HistoryOrder;
