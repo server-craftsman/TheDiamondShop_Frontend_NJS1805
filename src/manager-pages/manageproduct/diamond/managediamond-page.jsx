@@ -12,29 +12,15 @@ import {
   InputNumber,
   Modal,
 } from "antd";
-import { Link } from "react-router-dom";
-import {
-  AuditOutlined,
-  BookOutlined,
-  LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
-  SketchOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+
 function ManageDiamondPage() {
-  const { Header, Sider, Content } = Layout;
-  const [collapsed, setCollapsed] = useState(false);
+  
   const [diamonds, setDiamonds] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
 
   useEffect(() => {
     fetchData();
@@ -186,74 +172,12 @@ function ManageDiamondPage() {
     // Add other necessary columns here
   ];
 
-  const menuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to="/user">User</Link>,
-    },
-    {
-      key: "sub1",
-      icon: <SketchOutlined  />,
-      label: "Manage Product",
-      children: [
-        { key: "bridals", label: <Link to="/manager-bridal-page">Bridals</Link> },
-        { key: "diamonds", label: <Link to="/manager-diamond-page">Diamond</Link> },
-        { key: "rings", label: <Link to="/manager-ring-page">Rings</Link> },
-        { key: "timepieces", label: <Link to="/manager-timepieces-page">Timepieces</Link> },
-      ],
-    },
-    { key: "4", icon: <BookOutlined />, label: "Manage Warranty" },
-    {
-      key: "5",
-      icon: <AuditOutlined />,
-      label: <Link to="/view-certificate">View Certificate</Link>,
-    },
-    {
-      key: "sub2",
-      icon: <SettingOutlined />,
-      label: "Manage Promotions",
-      children: [
-        { key: "6", label: <Link to="/view-promotion-event">View Promotion Events</Link> },
-        { key: "7", label: <Link to="/view-promotion-voucher">View Promotion Vouchers</Link> },
-      ],
-    },
-    { key: "8", icon: <LogoutOutlined />, label: "Logout" },
-  ];
-
   return (
-    <Layout>
-       <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={menuItems} />
-      </Sider>
-      <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 64, height: 64 }}
-          />
-        </Header>
-          <Content
-            style={{
-              margin: "24px 16px",
-              padding: 24,
-              minHeight: 860,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
+    <>
             <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
               Add Diamond
             </Button>
             <Table dataSource={diamonds} columns={columns} rowKey="DiamondID" />
-          </Content>
-        </Layout>
-      </Layout>
-      <div>
       <Modal
         title="Add Diamond"
         open={isAddModalVisible}
@@ -367,8 +291,7 @@ function ManageDiamondPage() {
           </Form.Item>
         </Form>
       </Modal>
-      </div>
-      <div>
+
       <Modal
         title="Edit Diamond"
         open={isEditModalVisible}
@@ -486,8 +409,8 @@ function ManageDiamondPage() {
           </Form.Item>
         </Form>
       </Modal> 
-      </div>    
-    </Layout>
+  
+    </>
   );
 }
 

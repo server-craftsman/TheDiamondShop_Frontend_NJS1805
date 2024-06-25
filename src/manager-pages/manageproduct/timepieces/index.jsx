@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -12,29 +12,13 @@ import {
   InputNumber,
   Modal,
 } from "antd";
-import { Link } from "react-router-dom";
-import {
-  AuditOutlined,
-  BookOutlined,
-  LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
-  SketchOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 function ManageTimepiecesPage() {
-  const { Header, Sider, Content } = Layout;
-  const [collapsed, setCollapsed] = useState(false);
   const [timepieces, setTimepieces] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddTimepiecesVisible, setIsAddTimepiecesVisible] = useState(false);
   const [isEditTimepiecesVisible, setIsEditTimepiecesVisible] = useState(false);
   const [form] = Form.useForm();
- // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
   useEffect(() => {
     fetchData();
@@ -171,10 +155,10 @@ function ManageTimepiecesPage() {
       key: "action",
       render: (text, record) => (
         <div>
-        <Button type="link" onClick={() => handleEditTimepieces(record)}>
-          Edit
-        </Button>
-        <Button
+          <Button type="link" onClick={() => handleEditTimepieces(record)}>
+            Edit
+          </Button>
+          <Button
             type="link"
             danger
             onClick={() => handleDeleteTimepieces(record.DiamondTimepiecesID)}
@@ -184,74 +168,15 @@ function ManageTimepiecesPage() {
         </div>
       ),
     },
-  ]
-  const menuItems = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to="/user">User</Link>,
-    },
-    {
-      key: "sub1",
-      icon: <SketchOutlined  />,
-      label: "Manage Product",
-      children: [
-        { key: "bridals", label: <Link to="/manager-bridal-page">Bridals</Link> },
-        { key: "diamonds", label: <Link to="/manager-diamond-page">Diamond</Link> },
-        { key: "rings", label: <Link to="/manager-ring-page">Rings</Link> },
-        { key: "timepieces", label: <Link to="/manager-timepieces-page">Timepieces</Link> },
-      ],
-    },
-    { key: "4", icon: <BookOutlined />, label: "Manage Warranty" },
-    {
-      key: "5",
-      icon: <AuditOutlined />,
-      label: <Link to="/view-certificate">View Certificate</Link>,
-    },
-    {
-      key: "sub2",
-      icon: <SettingOutlined />,
-      label: "Manage Promotions",
-      children: [
-        { key: "6", label: <Link to="/view-promotion-event">View Promotion Events</Link> },
-        { key: "7", label: <Link to="/view-promotion-voucher">View Promotion Vouchers</Link> },
-      ],
-    },
-    { key: "8", icon: <LogoutOutlined />, label: "Logout" },
   ];
 
-  return ( 
-    <Layout>
-      <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={menuItems} />
-      </Sider>
-      <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 64, height: 64 }}
-          />
-        </Header>
-          <Content
-            style={{
-              margin: "24px 16px",
-              padding: 24,
-              minHeight: 860,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            <Button type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
-              Add Timepieces
-            </Button>
-            <Table dataSource={timepieces} columns={columns} rowKey="DiamondID" />
-          </Content>
-        </Layout>
-      </Layout>
+  return (
+    <>
+      <Button type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
+        Add Timepieces
+      </Button>
+      <Table dataSource={timepieces} columns={columns} rowKey="DiamondID" />
+
       <Modal
         title="Add Timepiecs"
         open={isAddTimepiecesVisible}
@@ -280,28 +205,39 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="collection"
             label="Collection"
-            rules={[{ required: true, message: "Please input the collection!" }]}
+            rules={[
+              { required: true, message: "Please input the collection!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="waterResistance"
             label="Water Resistance"
-            rules={[{ required: true, message: "Please input water resistance!" }]}
+            rules={[
+              { required: true, message: "Please input water resistance!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="crystalType"
             label="Crystal Type"
-            rules={[{ required: true, message: "Please input the crystal type!" }]}
+            rules={[
+              { required: true, message: "Please input the crystal type!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="braceletMaterial"
             label="BraceletMaterial"
-            rules={[{ required: true, message: "Please input the bracelet material!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the bracelet material!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -315,18 +251,20 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="dialColor"
             label="DialColor"
-            rules={[{ required: true, message: "Please input the dial color!" }]}
+            rules={[
+              { required: true, message: "Please input the dial color!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item name="movement" label="Movement">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="gender" label="Gender">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="category" label="Category">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="brandName" label="Brand Name">
             <Input />
@@ -335,13 +273,13 @@ function ManageTimepiecesPage() {
             <Input />
           </Form.Item>
           <Form.Item name="description" label="Description">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="price" label="Price">
-          <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="imageTimepieces" label="Image Timepieces">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="imageBrand" label="Image Brand">
             <Input />
@@ -363,14 +301,14 @@ function ManageTimepiecesPage() {
         footer={null}
       >
         <Form form={form} layout="vertical" onFinish={handleUpdateTimepieces}>
-        <Form.Item
+          <Form.Item
             name="timepiecesStyle"
             label="Timepieces Style"
             rules={[
               { required: true, message: "Please input the Timepieces Style!" },
             ]}
           >
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="nameTimepieces"
@@ -384,28 +322,39 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="collection"
             label="Collection"
-            rules={[{ required: true, message: "Please input the collection!" }]}
+            rules={[
+              { required: true, message: "Please input the collection!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="waterResistance"
             label="Water Resistance"
-            rules={[{ required: true, message: "Please input water resistance!" }]}
+            rules={[
+              { required: true, message: "Please input water resistance!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="crystalType"
             label="Crystal Type"
-            rules={[{ required: true, message: "Please input the crystal type!" }]}
+            rules={[
+              { required: true, message: "Please input the crystal type!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="braceletMaterial"
             label="BraceletMaterial"
-            rules={[{ required: true, message: "Please input the bracelet material!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the bracelet material!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -419,18 +368,20 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="dialColor"
             label="DialColor"
-            rules={[{ required: true, message: "Please input the dial color!" }]}
+            rules={[
+              { required: true, message: "Please input the dial color!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item name="movement" label="Movement">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="gender" label="Gender">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="category" label="Category">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="brandName" label="Brand Name">
             <Input />
@@ -439,13 +390,13 @@ function ManageTimepiecesPage() {
             <Input />
           </Form.Item>
           <Form.Item name="description" label="Description">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="price" label="Price">
-          <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="imageTimepieces" label="Image Timepieces">
-          <Input />
+            <Input />
           </Form.Item>
           <Form.Item name="imageBrand" label="Image Brand">
             <Input />
@@ -459,9 +410,9 @@ function ManageTimepiecesPage() {
             </Button>
           </Form.Item>
         </Form>
-      </Modal> 
-    </Layout>
-  )
+      </Modal>
+    </>
+  );
 }
 
 export default ManageTimepiecesPage;

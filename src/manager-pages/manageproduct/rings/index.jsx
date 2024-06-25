@@ -12,29 +12,14 @@ import {
   InputNumber,
   Modal,
 } from "antd";
-import { Link } from "react-router-dom";
-import {
-  AuditOutlined,
-  BookOutlined,
-  LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
-  SketchOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+
 function ManageRingPage() {
-  const { Header, Sider, Content } = Layout;
-  const [collapsed, setCollapsed] = useState(false);
   const [rings, setRings] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddRingVisible, setIsAddRingVisible] = useState(false);
   const [isEditRingVisible, setIsEditRingVisible] = useState(false);
   const [form] = Form.useForm();
- // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
   useEffect(() => {
     fetchData();
@@ -52,7 +37,10 @@ function ManageRingPage() {
   };
   const handleAddRings = async (values) => {
     try {
-      await axios.post("http://localhost:8090/products/add-diamond-rings", values);
+      await axios.post(
+        "http://localhost:8090/products/add-diamond-rings",
+        values
+      );
       fetchData(); // Refresh the list
       setIsAddRingVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
@@ -86,13 +74,16 @@ function ManageRingPage() {
       description: record.Description,
       imageRings: record.ImageRings,
       imageBrand: record.ImageBrand, // Populate StockNumber, but disable input
-      inventory: record.Inventory
+      inventory: record.Inventory,
     });
   };
 
   const handleUpdateRings = async (values) => {
     try {
-      await axios.put("http://localhost:8090/products/edit-diamond-rings", values);
+      await axios.put(
+        "http://localhost:8090/products/edit-diamond-rings",
+        values
+      );
       fetchData(); // Refresh the list
       setIsEditRingVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
@@ -103,142 +94,87 @@ function ManageRingPage() {
 
   const handleDeleteRings = async (diamondRingsId) => {
     try {
-      await axios.delete("http://localhost:8090/products/delete-diamond-rings", {
-        data: { diamondRingsId },
-      });
+      await axios.delete(
+        "http://localhost:8090/products/delete-diamond-rings",
+        {
+          data: { diamondRingsId },
+        }
+      );
       fetchData(); // Refresh the list
     } catch (error) {
       console.error("Error deleting diamond:", error);
     }
   };
-const columns = [
-  {
-    title: "Ring Style",
-    dataIndex: "RingStyle",
-    key: "RingStyle",
-  },
-  {
-    title: "NameRings",
-    dataIndex: "NameRings",
-    key: "NameRings",
-  },
-  {
-    title: "Category",
-    dataIndex: "Category",
-    key: "Category",
-  },
-  {
-    title: "BrandName",
-    dataIndex: "BrandName",
-    key: "BrandName",
-  },
-  {
-    title: "Material",
-    dataIndex: "Material",
-    key: "Material",
-  },
-  {
-    title: "Price",
-    dataIndex: "Price",
-    key: "Price",
-  },
-  {
-    title: "Image Rings",
-    dataIndex: "ImageRings",
-    key: "ImageRings",
-    render: (text, record) => (
-      <img
-        src={record.ImageRings}
-        alt="Rings"
-        style={{ width: "100px", height: "auto" }}
-      />
-    ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (text, record) => (
-      <div>
-      <Button type="link" onClick={() => handleEditRings(record)}>
-        Edit
-      </Button>
-      <Button
-          type="link"
-          danger
-          onClick={() => handleDeleteRings(record.DiamondRingsID)}
-        >
-          Delete
-        </Button>
-      </div>
-    ),
-  },
-]
-  const menuItems = [
+  const columns = [
     {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to="/user">User</Link>,
+      title: "Ring Style",
+      dataIndex: "RingStyle",
+      key: "RingStyle",
     },
     {
-      key: "sub1",
-      icon: <SketchOutlined  />,
-      label: "Manage Product",
-      children: [
-        { key: "bridals", label: <Link to="/manager-bridal-page">Bridals</Link> },
-        { key: "diamonds", label: <Link to="/manager-diamond-page">Diamond</Link> },
-        { key: "rings", label: <Link to="/manager-ring-page">Rings</Link> },
-        { key: "timepieces", label: <Link to="/manager-timepieces-page">Timepieces</Link> },
-      ],
-    },
-    { key: "4", icon: <BookOutlined />, label: "Manage Warranty" },
-    {
-      key: "5",
-      icon: <AuditOutlined />,
-      label: <Link to="/view-certificate">View Certificate</Link>,
+      title: "NameRings",
+      dataIndex: "NameRings",
+      key: "NameRings",
     },
     {
-      key: "sub2",
-      icon: <SettingOutlined />,
-      label: "Manage Promotions",
-      children: [
-        { key: "6", label: <Link to="/view-promotion-event">View Promotion Events</Link> },
-        { key: "7", label: <Link to="/view-promotion-voucher">View Promotion Vouchers</Link> },
-      ],
+      title: "Category",
+      dataIndex: "Category",
+      key: "Category",
     },
-    { key: "8", icon: <LogoutOutlined />, label: "Logout" },
-  ];
-  return (
-    <Layout>
-      <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={menuItems} />
-      </Sider>
-      <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+    {
+      title: "BrandName",
+      dataIndex: "BrandName",
+      key: "BrandName",
+    },
+    {
+      title: "Material",
+      dataIndex: "Material",
+      key: "Material",
+    },
+    {
+      title: "Price",
+      dataIndex: "Price",
+      key: "Price",
+    },
+    {
+      title: "Image Rings",
+      dataIndex: "ImageRings",
+      key: "ImageRings",
+      render: (text, record) => (
+        <img
+          src={record.ImageRings}
+          alt="Rings"
+          style={{ width: "100px", height: "auto" }}
+        />
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <div>
+          <Button type="link" onClick={() => handleEditRings(record)}>
+            Edit
+          </Button>
           <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: "16px", width: 64, height: 64 }}
-          />
-        </Header>
-          <Content
-            style={{
-              margin: "24px 16px",
-              padding: 24,
-              minHeight: 860,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
+            type="link"
+            danger
+            onClick={() => handleDeleteRings(record.DiamondRingsID)}
           >
-            <Button type="primary" onClick={() => setIsAddRingVisible(true)}>
-              Add Ring
-            </Button>
-            <Table dataSource={rings} columns={columns} rowKey="DiamondRingsID" />
-          </Content>
-        </Layout>
-      </Layout>
+            Delete
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <Button type="primary" onClick={() => setIsAddRingVisible(true)}>
+        Add Ring
+      </Button>
+      <Table dataSource={rings} columns={columns} rowKey="DiamondRingsID" />
+
       <Modal
         title="Add Ring"
         open={isAddRingVisible}
@@ -274,7 +210,9 @@ const columns = [
           <Form.Item
             name="brandName"
             label="BrandName"
-            rules={[{ required: true, message: "Please input the brand Name!" }]}
+            rules={[
+              { required: true, message: "Please input the brand Name!" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -288,14 +226,21 @@ const columns = [
           <Form.Item
             name="centerGemstone"
             label="CenterGemstone"
-            rules={[{ required: true, message: "Please input the center gemstone!" }]}
+            rules={[
+              { required: true, message: "Please input the center gemstone!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="centerGemstoneShape"
             label="CenterGemstoneShape"
-            rules={[{ required: true, message: "Please input the center gemstone shape!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center gemstone shape!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -304,16 +249,19 @@ const columns = [
             label="Width"
             rules={[{ required: true, message: "Please input the width!" }]}
           >
-            <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
-          <Form.Item name="centerDiamondDimension" label="Center Diamond Dimension">
-          <InputNumber style={{ width: "100%" }} />
+          <Form.Item
+            name="centerDiamondDimension"
+            label="Center Diamond Dimension"
+          >
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="weight" label="Weight">
-          <InputNumber style={{ width: "100%" }}/>
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="gemstoneWeight" label="Gem stone Weight">
-          <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="centerDiamondColor" label="Center Diamond Color">
             <Input />
@@ -321,14 +269,17 @@ const columns = [
           <Form.Item name="centerDiamondClarity" label="Center Diamond Clarity">
             <Input />
           </Form.Item>
-          <Form.Item name="centerDiamondCaratWeight" label="Center Diamond CaratWeight">
-          <InputNumber style={{ width: "100%" }} precision={2} />
+          <Form.Item
+            name="centerDiamondCaratWeight"
+            label="Center Diamond CaratWeight"
+          >
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="ringSize" label="Ring Size">
-          <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="price" label="Price">
-          <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="gender" label="Gender">
             <Input />
@@ -362,14 +313,14 @@ const columns = [
         footer={null}
       >
         <Form form={form} layout="vertical" onFinish={handleUpdateRings}>
-        <Form.Item
+          <Form.Item
             name="ringStyle"
             label="Ring Style"
             rules={[
               { required: true, message: "Please input the Ring Style!" },
             ]}
           >
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="nameRings"
@@ -390,7 +341,9 @@ const columns = [
           <Form.Item
             name="brandName"
             label="BrandName"
-            rules={[{ required: true, message: "Please input the brand Name!" }]}
+            rules={[
+              { required: true, message: "Please input the brand Name!" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -404,14 +357,21 @@ const columns = [
           <Form.Item
             name="centerGemstone"
             label="CenterGemstone"
-            rules={[{ required: true, message: "Please input the center gemstone!" }]}
+            rules={[
+              { required: true, message: "Please input the center gemstone!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="centerGemstoneShape"
             label="CenterGemstoneShape"
-            rules={[{ required: true, message: "Please input the center gemstone shape!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center gemstone shape!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -420,16 +380,19 @@ const columns = [
             label="Width"
             rules={[{ required: true, message: "Please input the width!" }]}
           >
-            <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
-          <Form.Item name="centerDiamondDimension" label="Center Diamond Dimension">
-          <InputNumber style={{ width: "100%" }} />
+          <Form.Item
+            name="centerDiamondDimension"
+            label="Center Diamond Dimension"
+          >
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="weight" label="Weight">
-          <InputNumber style={{ width: "100%" }}/>
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="gemstoneWeight" label="Gem stone Weight">
-          <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="centerDiamondColor" label="Center Diamond Color">
             <Input />
@@ -437,14 +400,17 @@ const columns = [
           <Form.Item name="centerDiamondClarity" label="Center Diamond Clarity">
             <Input />
           </Form.Item>
-          <Form.Item name="centerDiamondCaratWeight" label="Center Diamond CaratWeight">
-          <InputNumber style={{ width: "100%" }} precision={2} />
+          <Form.Item
+            name="centerDiamondCaratWeight"
+            label="Center Diamond CaratWeight"
+          >
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="ringSize" label="Ring Size">
-          <InputNumber style={{ width: "100%" }} precision={2}/>
+            <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="price" label="Price">
-          <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="gender" label="Gender">
             <Input />
@@ -470,9 +436,9 @@ const columns = [
             </Button>
           </Form.Item>
         </Form>
-      </Modal> 
-    </Layout>
-  )
+      </Modal>
+    </>
+  );
 }
 
 export default ManageRingPage;
