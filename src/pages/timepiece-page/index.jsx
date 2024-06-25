@@ -2,7 +2,7 @@ import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
-
+import { Link } from "react-router-dom";
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -130,6 +130,7 @@ function TimepiecePage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
+                <Link to={`/producttimepiece/${item.DiamondTimepiecesID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
@@ -149,6 +150,7 @@ function TimepiecePage() {
                     Add to Cart
                   </Button>
                 </Card>
+                </Link>
               </Col>
             ))}
           </Row>

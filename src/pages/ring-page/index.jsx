@@ -2,7 +2,7 @@ import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
-
+import { Link } from "react-router-dom";
 function RingPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -136,6 +136,7 @@ function RingPage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
+               <Link to={`/productring/${item.DiamondRingsID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
@@ -155,6 +156,7 @@ function RingPage() {
                     Add to Cart
                   </Button>
                 </Card>
+                </Link>
               </Col>
             ))}
           </Row>

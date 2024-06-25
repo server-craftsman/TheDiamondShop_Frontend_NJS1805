@@ -1,0 +1,99 @@
+footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    //max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+.footer-column {
+    flex: 1;
+    margin: 10px;
+    min-width: 200px;
+}
+
+.footer-column h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.footer-column p, .footer-column ul, .footer-column form {
+    margin: 10px 0;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin: 5px 0;
+}
+
+.footer-column ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-column ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-column form {
+    display: flex;
+}
+
+.footer-column input[type="email"] {
+    padding: 5px;
+    flex: 1;
+    border: none;
+    border-radius: 5px 0 0 5px;
+}
+
+.footer-column button {
+    padding: 5px;
+    border: none;
+    background-color: #444;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+.footer-column button img {
+    width: 20px;
+    height: 20px;
+}
+
+.social-icons {
+    display: flex;
+    margin-top: 10px;
+}
+
+.social-icons a {
+    margin-right: 10px;
+}
+
+.social-icons img {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-bottom {
+    text-align: center;
+    // margin-top: 20px;
+    //border-top: 1px solid #444;
+    //padding-top: 10px;
+    background-color: #333;
+    color: #fff;
+}
+
+.footer-bottom a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    text-decoration: underline;
+}

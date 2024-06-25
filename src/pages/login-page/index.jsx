@@ -67,7 +67,7 @@ function LoginForm() {
             navigate("/manager-page", { state: { message: response.data.message } });
             break;
           case 'Customer':
-           navigate("/designer-page", { state: { message: response.data.message } });
+           navigate("/", { state: { message: response.data.message } });
            break;
           case 'Sale':
             navigate("/sale-page", { state: { message: response.data.message } });

@@ -12,6 +12,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { AuthContext } from "../../AuthContext";
+
 function ManagerPage() {
   const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
@@ -19,46 +20,51 @@ function ManagerPage() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const { user, logout } = useContext(AuthContext);
+  
+  const menuItems = [
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: <Link to="/user">User</Link>,
+    },
+    {
+      key: "sub1",
+      icon: <SketchOutlined />,
+      label: "Manage Product",
+      children: [
+        { key: "bridals", label: <Link to="/manager-bridal-page">Bridals</Link> },
+        { key: "diamonds", label: <Link to="/manager-diamond-page">Diamond</Link> },
+        { key: "rings", label: <Link to="/manager-ring-page">Rings</Link> },
+        { key: "timepieces", label: <Link to="/manager-timepieces-page">Timepieces</Link> },
+      ],
+    },
+    { key: "4", icon: <BookOutlined />, label: "Manage Warranty" },
+    {
+      key: "5",
+      icon: <AuditOutlined />,
+      label: <Link to="/view-certificate">View Certificate</Link>,
+    },
+    {
+      key: "sub2",
+      icon: <SettingOutlined />,
+      label: "Manage Promotions",
+      children: [
+        { key: "events", label: <Link to="/view-promotion-event">View Promotion Events</Link> },
+        { key: "vouchers", label: <Link to="/view-promotion-voucher">View Promotion Vouchers</Link> },
+      ],
+    },
+    user ? {
+      key: "6",
+      icon: <LogoutOutlined />,
+      label: <Link to="/login" onClick={logout}>Logout</Link>,
+    } : null,
+  ];
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<UserOutlined />}>
-            <Link to="/user">User</Link>
-          </Menu.Item>
-          <Menu.SubMenu
-            key="2"
-            icon={<SketchOutlined />}
-            title="Manage Product"
-          >
-            <Menu.Item key="bridals">Bridals</Menu.Item>
-            <Menu.Item key="diamonds">
-              <Link to="/manager-diamond-page">Diamond</Link>
-            </Menu.Item>
-            <Menu.Item key="rings">Rings</Menu.Item>
-            <Menu.Item key="timepieces">Timepieces</Menu.Item>
-          </Menu.SubMenu>
-          <Menu.Item key="3" icon={<BookOutlined />}>
-            <Link to="/user">User</Link>
-          </Menu.Item>
-          <Menu.Item key="4" icon={<AuditOutlined />}>
-            <Link to="/user">User</Link>
-          </Menu.Item>
-          <Menu.SubMenu
-            key="5"
-            icon={<SettingOutlined />}
-            title="Manage Promotions"
-          >
-            <Menu.Item key="events">Events</Menu.Item>
-            <Menu.Item key="vouchers">Vouchers</Menu.Item>
-          </Menu.SubMenu>
-          {user ? (
-            <Menu.Item key="6" icon={<LogoutOutlined />} onClick={logout}>
-              <Link to="/login">Logout</Link>
-            </Menu.Item>
-          ) : null}
-        </Menu>
+        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline" items={menuItems} />
       </Sider>
       <Layout className="site-layout">
         <Header style={{ padding: 0, background: colorBgContainer }}>

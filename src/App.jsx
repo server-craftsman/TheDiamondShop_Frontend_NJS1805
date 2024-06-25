@@ -1,4 +1,5 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { useEffect, useState } from "react";
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login-page";
 import RegisterForm from "./pages/register-page";
@@ -28,9 +29,20 @@ import ViewOrder from "./sales-page/order-pages/view-order";
 import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
 import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
 import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher";
+import ViewCertificate from "./sales-page/certificate-pages/certificate";
+
 //==========Manage Pages=========//
-import ManageDiamondPage from "./manager-pages/manageproduct/managediamond-page";
+import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
 import ManagerPage from "./manager-pages/manager-home-page";
+import ManageBridalPage from "./manager-pages/manageproduct/bridals";
+import ManageRingPage from "./manager-pages/manageproduct/rings";
+import ManageTimepiecesPage from "./manager-pages/manageproduct/timepieces";
+
+//=========Product Detail Pages==========//
+import ProductDetailsPage from './pages/productdetaildiamond-page';
+import ProductDetailsRingPage from './pages/productdetailring-page';
+import ProductDetailsBridalPage from './pages/productdetailbridal-page';
+import ProductDetailsTimepiecesPage from './pages/productdetailtimepieces-page';
 
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
@@ -42,6 +54,40 @@ import DeliveryPage from "./delivery-page/delivery-confirm";
 import DeliveryLayout from "./components/delivery-layout";
 
 function App() {
+
+  const [diamonds, setDiamonds] = useState([]);
+  const [bridals, setBridals] = useState([]);
+  const [rings, setRings] = useState([]);
+  const [timepieces, setTimepieces] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [diamondRes, bridalRes, ringRes, timepieceRes] = await Promise.all([
+          fetch("http://localhost:8090/products/diamonds"),
+          fetch("http://localhost:8090/products/bridals"),
+          fetch("http://localhost:8090/products/diamond-rings"),
+          fetch("http://localhost:8090/products/timepieces")
+        ]);
+
+        const [diamonds, bridals, rings, timepieces] = await Promise.all([
+          diamondRes.json(),
+          bridalRes.json(),
+          ringRes.json(),
+          timepieceRes.json()
+        ]);
+
+        setDiamonds(diamonds);
+        setBridals(bridals);
+        setRings(rings);
+        setTimepieces(timepieces);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -119,10 +165,6 @@ function App() {
           path: "/showsearch-page",
           element: <ShowSearch />,
         },
-        {
-          path: "/searchAllProduct-page",
-          element: <SearchAllProduct />,
-        },
       ],
     },
     {
@@ -133,7 +175,7 @@ function App() {
       path: "/manager-diamond-page",
       element: <ManageDiamondPage />,
     },
-    //=========Sale page========//
+//=========Sale page========//
     {
       path: "/sale-page",
       element: <SalePage />,
@@ -155,17 +197,6 @@ function App() {
       element: <ViewPromotionVoucher />,
     },
 
-    //==============================
-    {
-      path: "/delivery",
-      element: <DeliveryLayout />,
-      children: [
-        {
-          path: "/delivery",
-          element: <DeliveryPage />,
-        },
-      ],
-    },
     //=======Admin Pages==========//
     {
       path: "/admin-page",

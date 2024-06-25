@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./index.scss";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { useCart } from "../../CartContext";
-
+import { Link } from "react-router-dom";
 function BridalPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -175,6 +175,7 @@ function BridalPage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
+                <Link to={`/productbridal/${item.BridalID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
@@ -194,6 +195,7 @@ function BridalPage() {
                     Add to Cart
                   </Button>
                 </Card>
+                </Link>
               </Col>
             ))}
           </Row>
