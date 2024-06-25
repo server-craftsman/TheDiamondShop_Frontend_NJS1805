@@ -12,7 +12,7 @@ function HeaderAdmin() {
     const menu = (
         <Menu>
           <Menu.Item key="1">
-            <Link to="/customer-page">Customer</Link>
+            <Link to="customer-page">Customer</Link>
           </Menu.Item>
           <Menu.Item key="2">
             <Link to="/manager-page">Manager</Link>
@@ -82,27 +82,13 @@ function HeaderAdmin() {
                     <span className="menu-link-text">Products</span>
                   </Link>
                 </li>
-                <li className="menu-item">
-                  <Link to="/" className="menu-link">
-                    <span className="menu-link-icon">
-                      <FaChartBar size={18} />
-                    </span>
-                    <span className="menu-link-text">Chart</span>
-                  </Link>
-                </li>
+                
               </ul>
             </div>
     
             <div className="sidebar-menu sidebar-menu2">
               <ul className="menu-list">
-                <li className="menu-item">
-                  <Link to="/" className="menu-link">
-                    <span className="menu-link-icon">
-                      <FaTools size={20} />
-                    </span>
-                    <span className="menu-link-text">Settings</span>
-                  </Link>
-                </li>
+                
                 <li className="menu-item">
                   <Link to="/" className="menu-link">
                     <span className="menu-link-icon">

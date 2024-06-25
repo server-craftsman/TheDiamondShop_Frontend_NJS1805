@@ -1,0 +1,28 @@
+.page-wrapper {
+    background-color: var(--background-color);
+   
+
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+
+.content-wrapper {
+    background-color: var(--background-color);
+    background-color: #fafafa;
+    min-height: 100vh;
+    padding: 50px 58px;
+    margin-left: 260px;
+}
+
+// content
+.content-area {
+   
+    &>section {
+        margin-bottom: 16px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
