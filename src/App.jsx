@@ -21,10 +21,10 @@ import { AuthProvider } from "./AuthContext";
 import ResetPassword from "./pages/reset-password-page";
 import VerificationCode from "./pages/verify-code-page";
 import ChangePassword from "./pages/change-password-page";
-import OrderForm from './pages/order-form';
+import OrderForm from "./pages/order-form";
 
 //==========Sale Pages===========//
-import SalePage from "./sales-page"
+import SalePage from "./sales-page";
 import ViewOrder from "./sales-page/order-pages/view-order";
 import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
 import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
@@ -32,7 +32,6 @@ import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher
 import ViewCertificate from "./sales-page/certificate-pages/certificate";
 import LayoutSale from "./components/sale-layout";
 import ViewWaranty from "./sales-page/warranty-pages";
-
 
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
@@ -44,9 +43,9 @@ import ManagerLayout from "./components/manager-layout";
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
-import RingDetail from './pages/ring-page/details';
-import BridalDetails from './pages/bridal-page/details';
-import TimepieceDetail from './pages/timepiece-page/details';
+import RingDetail from "./pages/ring-page/details";
+import BridalDetails from "./pages/bridal-page/details";
+import TimepieceDetail from "./pages/timepiece-page/details";
 
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
@@ -56,6 +55,7 @@ import SearchAllProduct from "./pages/searchProduct-page";
 //==========Delivery Pages============//
 import DeliveryPage from "./delivery-page/delivery-confirm";
 import DeliveryLayout from "./components/delivery-layout";
+import DeliveryCompleted from "./delivery-page/delivery-completed";
 
 function App() {
   const router = createBrowserRouter([
@@ -137,7 +137,7 @@ function App() {
         },
         {
           path: "/order-form",
-          element: <OrderForm />
+          element: <OrderForm />,
         },
         {
           path: "/diamond-detail/:id",
@@ -145,18 +145,19 @@ function App() {
         },
         {
           path: "/ring-detail/:id",
-          element:<RingDetail />
+          element: <RingDetail />,
         },
         {
           path: "/bridal-detail/:id",
-          element: <BridalDetails />
+          element: <BridalDetails />,
         },
         {
           path: "/timepieces-detail/:id",
-          element: <TimepieceDetail />
+          element: <TimepieceDetail />,
         },
       ],
     },
+    //========Manager pages==============//
     {
       path: "/",
       element: <ManagerLayout />,
@@ -183,42 +184,56 @@ function App() {
         },
       ],
     },
-//=========Sale page========//
-{
-  path: "/",
-  element: <LayoutSale />,
-  children: [
+    //=========Sale page========//
     {
-      path: "/sale-page",
-      element: <SalePage />,
+      path: "/",
+      element: <LayoutSale />,
+      children: [
+        {
+          path: "/sale-page",
+          element: <SalePage />,
+        },
+        {
+          path: "/view-order",
+          element: <ViewOrder />,
+        },
+        {
+          path: "/view-order-confirm",
+          element: <ViewOrderConfirm />,
+        },
+        {
+          path: "/view-promotion-event",
+          element: <ViewPromotionEvent />,
+        },
+        {
+          path: "/view-promotion-voucher",
+          element: <ViewPromotionVoucher />,
+        },
+        {
+          path: "/view-certificate",
+          element: <ViewCertificate />,
+        },
+        {
+          path: "/view-warranty",
+          element: <ViewWaranty />,
+        },
+      ],
     },
+    //==============Delivery pages===============//
     {
-      path: "/view-order",
-      element: <ViewOrder />,
+      path: "/",
+      element: <DeliveryLayout />,
+      children: [
+        {
+          path: "/delivery",
+          element: <DeliveryPage />,
+        },
+        {
+          path: "/delivery-completed",
+          element: <DeliveryCompleted />,
+        },
+      ],
     },
-    {
-      path: "/view-order-confirm",
-      element: <ViewOrderConfirm />,
-    },
-    {
-      path: "/view-promotion-event",
-      element: <ViewPromotionEvent />,
-    },
-    {
-      path: "/view-promotion-voucher",
-      element: <ViewPromotionVoucher />,
-    },
-    {
-      path: "/view-certificate",
-      element: <ViewCertificate />,
-    },
-    {
-      path: "/view-warranty",
-      element: <ViewWaranty />,
-    },
-  ]
-},
-
     //=======Admin Pages==========//
     {
       path: "/admin-page",

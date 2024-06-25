@@ -21,6 +21,8 @@ function DeliveryHeader() {
       {" "}
       <header className="delivery__header">
         <h1>Diamond Shop</h1>
+        <Link to="/delivery-completed">View complete</Link>
+        <Link to="/delivery">View shiping</Link>
         {user ? (
           <Dropdown overlay={userMenu} trigger={["hover"]}>
             <UserOutlined

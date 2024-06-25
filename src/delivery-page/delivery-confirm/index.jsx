@@ -8,7 +8,7 @@ function DeliveryPage() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8090/features/orderstatus-delivery"
+        "http://localhost:8090/features/view-order-shipping"
       );
       setOrders(response.data);
     } catch (error) {
@@ -73,11 +73,11 @@ function DeliveryPage() {
                   <strong>Delivery Address:</strong> {order.DeliveryAddress}
                 </p>
                 <div className="delivery__actions">
-                  <button
+                  {/* <button
                     onClick={() => updateStatus(order.OrderID, "Shipped")}
                   >
                     Shipped
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => updateStatus(order.OrderID, "Completed")}
                   >
