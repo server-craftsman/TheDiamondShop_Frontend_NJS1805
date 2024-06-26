@@ -10,6 +10,7 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import { AuthContext } from "../../AuthContext";
+import { Checkbox } from "antd";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -154,7 +155,7 @@ function LoginForm() {
           </div>
           <div className="remember-forgot">
             <label>
-              <input type="checkbox" /> Remember me{" "}
+            <Checkbox >Remember me</Checkbox>
             </label>
             <Link to="/forgot-password-page" className="forgot">
               Forgot password

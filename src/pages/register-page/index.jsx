@@ -9,7 +9,7 @@ import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from
 
 import { useMemo, useState } from "react";
 import axios from "axios";
-import { notification } from "antd"
+import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd"
 
 
 
@@ -21,14 +21,8 @@ function RegisterForm() {
   const [api, contextHolder] = notification.useNotification();
 
   const [showPassword, setShowPassword] = useState(false);
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const [showConfirmPassword, setShowConfimPassword] = useState(false);
 
-  const [showConfimPassword, setShowConfimPassword] = useState(false);
-  const toggleShowConfimPassword = () => {
-    setShowConfimPassword(!showPassword);
-  };
 
   const openNotification = () => {
     api.open({
@@ -109,233 +103,178 @@ function RegisterForm() {
       <div className="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
         <div className="wrapper wrapper--w680">
           <div className="card card-4">
+
             <div className="card-body">
-              <h2 className="title">Registration Form</h2>
-              <form method="POST" onSubmit={handleSubmit}>
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">First Name</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Last Name</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Birthday</label>
-                      <div className="input-group-icon">
-                        <input
-                          className="input--style-4 birthday"
-                          type="date"
-                          name="birthday"
-                          value={formData.birthday}
-                          onChange={handleChange}
-                        />
-                        <i className="zmdi zmdi-calendar-note input-icon js-btn-calendar" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Gender</label>
-                      <div className="p-t-10">
-                        <label className="radio-container m-r-45">
-                          Male
-                          <input
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            checked={formData.gender === "Male"}
-                            onChange={handleChange}
-                          />
-                          <span className="checkmark" />
-                        </label>
-                        <label className="radio-container">
-                          Female
-                          <input
-                            type="radio"
-                            name="gender"
-                            value="Female"
-                            checked={formData.gender === "Female"}
-                            onChange={handleChange}
-                          />
-                          <span className="checkmark" />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Email</label>
-                      <input
-                        className="input--style-4"
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Phone Number</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="input-group">
-                  <label className="label">Address</label>
-                  <input
-                    className="input--style-4"
-                    type="text"
-                    name="address"
-                    value={formData.address}
+
+              <Form
+
+                layout="vertical"
+                onFinish={handleSubmit}
+              // initialValues={formData}
+              >
+                <h1 className="title">Registration Form</h1>
+                <Row>
+
+                  <Form.Item
+                    className='form-item name'
+                    label="First Name"
+                    name="firstName"
+
+                    rules={[{ required: true, message: 'Please input your first name!' }]}
+
+                  >
+                    <Input onChange={handleChange} value={formData.firstName} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className='name'
+                    label="Last Name"
+                    name="lastName"
+
+                    rules={[{ required: true, message: 'Please input your last name!' }]}
+
+                  >
+                    <Input onChange={handleChange} value={formData.lastName} />
+                  </Form.Item>
+                </Row>
+
+                <Row>
+                  <Form.Item
+                    className='form-item name'
+                    label="Birthday"
+                    name="birthday"
+
+                    rules={[{ required: true, message: 'Please select your birthday!' }]}
                     onChange={handleChange}
-                  />
-                </div>
+                  >
+                    <DatePicker onChange={handleChange} value={formData.birthday} />
+                  </Form.Item>
 
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Country</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">City</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  <Form.Item
+                    label="Gender"
+                    name="gender"
+                    style={{marginTop: "5px"}}
+                  >
+                    <Radio.Group onChange={handleChange}>
+                      <Radio value="Male" checked={formData.gender === "Male"} onChange={handleChange} >Male</Radio>
+                      <Radio value="Female" checked={formData.gender === "Female"} onChange={handleChange} >Female</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Row>
 
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Province</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="province"
-                        value={formData.province}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Postal Code</label>
-                      <input
-                        className="input--style-4"
-                        type="text"
-                        name="postalCode"
-                        value={formData.postalCode}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="row row-space">
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Password</label>
-                      <input
-                        className="input--style-4"
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        placeholder="At least 8 characters long"
-                        value={formData.password}
-                        onChange={handleChange}
-                      />
-                      {showPassword ? (
-                        <EyeTwoTone
-                          onClick={toggleShowPassword}
-                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
-                        />
-                      ) : (
-                        <EyeInvisibleOutlined
-                          onClick={toggleShowPassword}
-                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div className="col-2">
-                    <div className="input-group">
-                      <label className="label">Confirm Password</label>
-                      <input
-                        className="input--style-4"
-                        type={showConfimPassword ? "text" : "password"}
-                        placeholder="At least 8 characters long"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                      />
-                      {showConfimPassword ? (
-                        <EyeTwoTone
-                          onClick={toggleShowConfimPassword}
-                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
-                        />
-                      ) : (
-                        <EyeInvisibleOutlined
-                          onClick={toggleShowConfimPassword}
-                          style={{ position: 'absolute', right: '18px', cursor: 'pointer', top: '45px' }}
-                        />
-                      )}
-                    </div>
-                    {message && (
-                      <p className="message">
-                        <WarningOutlined /> {message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="p-t-15">
-                  <button className="btn btn--radius-2 btn--blue" type="submit" >
+                <Form.Item
+                  label="Email"
+                  name="email"
+
+                  rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+                >
+                  <Input onChange={handleChange} value={formData.email} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Phone Number"
+                  name="phoneNumber"
+
+                  rules={[{ required: true, message: 'Please input your phone number!' }]}
+                >
+                  <Input onChange={handleChange} value={formData.phoneNumber} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Address"
+                  name="address"
+
+                  rules={[{ required: true, message: 'Please input your address!' }]}
+                >
+                  <Input onChange={handleChange}
+                    value={formData.address} />
+                </Form.Item>
+                <Row>
+                  <Form.Item
+                    className='form-item name'
+                    label="Country"
+                    name="country"
+                    rules={[{ required: true, message: 'Please input your country!' }]}
+                  >
+                    <Input onChange={handleChange}
+                      value={formData.country} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className='name'
+                    label="City"
+                    name="city"
+                    rules={[{ required: true, message: 'Please input your city!' }]}
+                  >
+                    <Input onChange={handleChange}
+                      value={formData.city} />
+                  </Form.Item>
+                </Row>
+
+                <Row>
+                  <Form.Item
+
+                    className='form-item name'
+                    label="Province"
+                    name="province"
+                    value={formData.province}
+                    rules={[{ required: true, message: 'Please input your province!' }]}
+                  >
+                    <Input onChange={handleChange} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className='name'
+                    label="Postal Code"
+                    name="postalCode"
+                    rules={[{ required: true, message: 'Please input your postal code!' }]}
+                  >
+                    <Input onChange={handleChange}
+                      value={formData.postalCode} />
+                  </Form.Item>
+                </Row>
+
+                <Row>
+
+                  <Form.Item
+                    className='form-item'
+                    label="Password"
+                    name="password"
+                    rules={[{ required: true, message: 'Please input your password!', min: 8 }]}
+                  >
+                    <Input.Password
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleChange}
+                      iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    rules={[{ required: true, message: 'Please confirm your password!', min: 8 }]}
+                  >
+                    <Input.Password
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                    />
+                  </Form.Item>
+                </Row>
+                {message && (
+                  <p className="message">
+                    <WarningOutlined /> {message}
+                  </p>
+                )}
+
+                <Form.Item className='p-t-15'>
+                  <Button className='btn btn--radius-2 btn--blue' type="submit">
                     Register
-                  </button>
-
-                </div>
-              </form>
+                  </Button>
+                </Form.Item>
+              </Form>
             </div>
           </div>
         </div>

@@ -14,8 +14,8 @@
     & .logo-bg {
         display: block;
         position: absolute;
-        top: 200px;
-        left: 200px;
+        top: 300px;
+        left: 260px;
     }
 
     & .login {
@@ -23,24 +23,22 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 75vh;
-        // background:url(./components/assets/diamond-bg.jpg)
-        // no-repeat;
+        min-height: 70vh;
+       
         background-position: 10px center;
-        background-color: gray;
+        // background-color: gray;
         background-size: 40%;
         background-position: center;
-        width: 500px;
+        width: 520px;
         background: #fff;
-        // background: transparent;
-        // border: 2px solid rgba(255, 255, 255, .2);
+        
         backdrop-filter: blur(30px);
         box-shadow: 0 0 10px rgba(0, 0, 0, .2);
         color: #fff;
         border-radius: 20px;
         padding: 40px 40px;
         margin-top: 50px;
-        margin-left: 700px;
+        margin-left: 800px;
 
 
 

@@ -248,8 +248,38 @@ function Dashboard() {
       "Inventory Quantity": 2000,
       "Out Of Stock": 9800
     },
-    
+
   ]
+
+  //FINANCE REPORT===================================================
+  const dataFinance = [
+    { "name": "2024-01-01", "price": 2169 },
+    { "name": "2024-01-08", "price": 5163 },
+    { "name": "2024-01-15", "price": 5591 },
+    { "name": "2024-01-22", "price": 2021 },
+    { "name": "2024-01-29", "price": 4022 },
+    { "name": "2024-02-05", "price": 4600 },
+    { "name": "2024-02-12", "price": 3335 },
+    { "name": "2024-02-19", "price": 4800 },
+    { "name": "2024-02-26", "price": 4900 },
+    { "name": "2024-03-04", "price": 4271 },
+    { "name": "2024-03-11", "price": 4557 },
+    { "name": "2024-03-18", "price": 5200 },
+    { "name": "2024-03-25", "price": 3728 },
+    { "name": "2024-04-01", "price": 5400 },
+    { "name": "2024-04-08", "price": 3964 },
+    { "name": "2024-04-15", "price": 5600 },
+    { "name": "2024-04-22", "price": 3964 },
+    { "name": "2024-04-29", "price": 5467 },
+    { "name": "2024-05-06", "price": 5900 },
+    { "name": "2024-05-13", "price": 4371 },
+    { "name": "2024-05-20", "price": 6100 },
+    { "name": "2024-05-27", "price": 5317 },
+    { "name": "2024-06-03", "price": 2168 },
+    { "name": "2024-06-10", "price": 4029 },
+    { "name": "2024-06-17", "price": 2597 },
+    { "name": "2024-06-24", "price": 2783 },
+  ];
 
   return (
     <div className='dashboard'>
@@ -306,17 +336,18 @@ function Dashboard() {
         <section className='content-area-chart'>
 
           <br />
-
-          <BarChart style={{ width: "100%" }} width={1550} height={400} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="diamond" fill="#8884d8" />
-            <Bar dataKey="ring" fill="#82ca9d" />
-            <Bar dataKey="timepieces" fill="#FF6600" />
-          </BarChart>
+          <ResponsiveContainer width="100%" height={400} >
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="diamond" fill="#8884d8" />
+              <Bar dataKey="ring" fill="#82ca9d" />
+              <Bar dataKey="timepieces" fill="#FF6600" />
+            </BarChart>
+          </ResponsiveContainer>
         </section>
       </div>
 
@@ -364,11 +395,13 @@ function Dashboard() {
         </section>
 
         <section className='content-area-chart'>
-          <PieChart width={1300} height={500}>
-            <Pie data={dataPieOrder} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={150} fill="#8884d8" label />
-            <Tooltip />
-            <Legend />
-          </PieChart>
+          <ResponsiveContainer width="100%" height={500} >
+            <PieChart >
+              <Pie data={dataPieOrder} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={150} fill="#8884d8" label />
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
         </section>
 
       </div>
@@ -418,16 +451,36 @@ function Dashboard() {
         <h2>Total Product sold</h2>
 
         <section className='content-area-chart'>
-          <BarChart width={1450} height={400} data={dataProductSold}>
+          <ResponsiveContainer width="100%" height={400} >
+            <BarChart width={1450} height={400} data={dataProductSold}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Inventory Quantity" fill="#8884d8" />
+              <Bar dataKey="Out Of Stock" fill="#EE0000" />
+            </BarChart>
+          </ResponsiveContainer>
+        </section>
+      </div>
+
+      <br />
+      <br />
+      {/* ===================FINANCE REPORT============================ */}
+      <div className='financial-report'>
+        <h2>Financial report</h2>
+        <ResponsiveContainer width="100%" height={400} >
+          <LineChart data={dataFinance}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="Inventory Quantity" fill="#8884d8" />
-            <Bar dataKey="Out Of Stock" fill="#EE0000" />
-          </BarChart>
-        </section>
+            <Line type="monotone" dataKey="price" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
 
