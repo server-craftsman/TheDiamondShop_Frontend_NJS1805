@@ -69,7 +69,7 @@ function ManageBridalPage() {
 
   const handleUpdateBridals = async (values) => {
     try {
-      await axios.put(`http://localhost:8090/products/edit-bridals/${editingBridal.BridalID}`, values);
+      await axios.put(`http://localhost:8090/products/edit-bridals/`, values);
       fetchData(); // Refresh the list
       setIsEditBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
