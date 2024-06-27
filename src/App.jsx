@@ -246,18 +246,8 @@ function App() {
       ],
     },
 
-    {
-      path: "/",
-      element: <DeliveryLayout />,
-      children: [
-        {
-          path: "/delivery-page",
-          element: <DeliveryPage />,
-        }
-      ],
-    }
   ]);
-//==========Delivery Pages======//
+
 
   return (
     <AuthProvider>

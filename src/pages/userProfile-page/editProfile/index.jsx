@@ -199,7 +199,7 @@ function UserProfile() {
                 </Col>
               </Row>
               <Row gutter={16}>
-                <Col span={12}>
+                <Col span={8}>
                   <Form.Item label="Postal Code">
                     <Input
                       type="number"
@@ -210,9 +210,9 @@ function UserProfile() {
                   </Form.Item>
                 </Col>
 
-              </Row>
-              <Row gutter={16}>
-                <Col span={24}>
+             
+              
+                <Col span={8}>
                   <Form.Item label="Image">
                     <Input.TextArea
                       rows={4}

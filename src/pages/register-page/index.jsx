@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
@@ -7,11 +6,8 @@ import logo from "../../assets/logo.png";
 
 import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
-import { useMemo, useState } from "react";
 import axios from "axios";
-import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd"
-
-
+import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd";
 
 const Context = React.createContext({
   name: 'Default',
@@ -21,48 +17,21 @@ function RegisterForm() {
   const [api, contextHolder] = notification.useNotification();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfimPassword] = useState(false);
-
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const openNotification = () => {
     api.open({
       message: 'Registration Successful',
-      description:
-        'You have registered successfully. Please log in to continue.',
+      description: 'You have registered successfully. Please log in to continue.',
       icon: <SmileOutlined style={{ color: '#108ee9' }} />,
     });
   };
 
-
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    birthday: "",
-    gender: "Male",
-    email: "",
-    phoneNumber: "",
-    address: "",
-    country: "",
-    city: "",
-    province: "",
-    postalCode: "",
-    password: "",
-    confirmPassword: "",
-  });
   const [message, setMessage] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { confirmPassword, ...data } = formData;
-    if (formData.password !== confirmPassword) {
+  const handleSubmit = async (values) => {
+    const { confirmPassword, ...data } = values;
+    if (values.password !== confirmPassword) {
       setMessage("Passwords do not match!");
       return;
     }
@@ -82,12 +51,9 @@ function RegisterForm() {
         alert(response.data.status);
       }
     } catch (error) {
-
-      // console.error("There was an error registering!", error);
       if (error.response && error.response.data) {
         alert(error.response.data.message);
       } else {
-
         alert("Registration failed. Please try again.");
       }
     }
@@ -103,38 +69,26 @@ function RegisterForm() {
       <div className="page-wrapper bg-gra-02 p-t-130 p-b-100 font-poppins">
         <div className="wrapper wrapper--w680">
           <div className="card card-4">
-
             <div className="card-body">
-
-              <Form
-
-                layout="vertical"
-                onFinish={handleSubmit}
-              // initialValues={formData}
-              >
+              <Form layout="vertical" onFinish={handleSubmit}>
                 <h1 className="title">Registration Form</h1>
                 <Row>
-
                   <Form.Item
                     className='form-item name'
                     label="First Name"
                     name="firstName"
-
                     rules={[{ required: true, message: 'Please input your first name!' }]}
-
                   >
-                    <Input onChange={handleChange} value={formData.firstName} />
+                    <Input />
                   </Form.Item>
 
                   <Form.Item
                     className='name'
                     label="Last Name"
                     name="lastName"
-
                     rules={[{ required: true, message: 'Please input your last name!' }]}
-
                   >
-                    <Input onChange={handleChange} value={formData.lastName} />
+                    <Input />
                   </Form.Item>
                 </Row>
 
@@ -143,11 +97,9 @@ function RegisterForm() {
                     className='form-item name'
                     label="Birthday"
                     name="birthday"
-
                     rules={[{ required: true, message: 'Please select your birthday!' }]}
-                    onChange={handleChange}
                   >
-                    <DatePicker onChange={handleChange} value={formData.birthday} />
+                    <Input type='date'/>
                   </Form.Item>
 
                   <Form.Item
@@ -155,9 +107,9 @@ function RegisterForm() {
                     name="gender"
                     style={{marginTop: "5px"}}
                   >
-                    <Radio.Group onChange={handleChange}>
-                      <Radio value="Male" checked={formData.gender === "Male"} onChange={handleChange} >Male</Radio>
-                      <Radio value="Female" checked={formData.gender === "Female"} onChange={handleChange} >Female</Radio>
+                    <Radio.Group>
+                      <Radio value="Male">Male</Radio>
+                      <Radio value="Female">Female</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Row>
@@ -165,29 +117,25 @@ function RegisterForm() {
                 <Form.Item
                   label="Email"
                   name="email"
-
                   rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
                 >
-                  <Input onChange={handleChange} value={formData.email} />
+                  <Input />
                 </Form.Item>
 
                 <Form.Item
                   label="Phone Number"
                   name="phoneNumber"
-
                   rules={[{ required: true, message: 'Please input your phone number!' }]}
                 >
-                  <Input onChange={handleChange} value={formData.phoneNumber} />
+                  <Input />
                 </Form.Item>
 
                 <Form.Item
                   label="Address"
                   name="address"
-
                   rules={[{ required: true, message: 'Please input your address!' }]}
                 >
-                  <Input onChange={handleChange}
-                    value={formData.address} />
+                  <Input />
                 </Form.Item>
                 <Row>
                   <Form.Item
@@ -196,8 +144,7 @@ function RegisterForm() {
                     name="country"
                     rules={[{ required: true, message: 'Please input your country!' }]}
                   >
-                    <Input onChange={handleChange}
-                      value={formData.country} />
+                    <Input />
                   </Form.Item>
 
                   <Form.Item
@@ -206,21 +153,18 @@ function RegisterForm() {
                     name="city"
                     rules={[{ required: true, message: 'Please input your city!' }]}
                   >
-                    <Input onChange={handleChange}
-                      value={formData.city} />
+                    <Input />
                   </Form.Item>
                 </Row>
 
                 <Row>
                   <Form.Item
-
                     className='form-item name'
                     label="Province"
                     name="province"
-                    value={formData.province}
                     rules={[{ required: true, message: 'Please input your province!' }]}
                   >
-                    <Input onChange={handleChange} />
+                    <Input />
                   </Form.Item>
 
                   <Form.Item
@@ -229,13 +173,11 @@ function RegisterForm() {
                     name="postalCode"
                     rules={[{ required: true, message: 'Please input your postal code!' }]}
                   >
-                    <Input onChange={handleChange}
-                      value={formData.postalCode} />
+                    <Input />
                   </Form.Item>
                 </Row>
 
                 <Row>
-
                   <Form.Item
                     className='form-item'
                     label="Password"
@@ -244,25 +186,34 @@ function RegisterForm() {
                   >
                     <Input.Password
                       type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={handleChange}
-                      iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                      iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                     />
                   </Form.Item>
 
                   <Form.Item
                     label="Confirm Password"
                     name="confirmPassword"
-                    rules={[{ required: true, message: 'Please confirm your password!', min: 8 }]}
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                      { required: true, message: 'Please confirm your password!', min: 8 },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || getFieldValue('password') === value) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(new Error('The two passwords do not match!'));
+                        },
+                      }),
+                    ]}
                   >
                     <Input.Password
                       type={showConfirmPassword ? "text" : "password"}
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                      iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                     />
                   </Form.Item>
                 </Row>
+
                 {message && (
                   <p className="message">
                     <WarningOutlined /> {message}
@@ -270,7 +221,7 @@ function RegisterForm() {
                 )}
 
                 <Form.Item className='p-t-15'>
-                  <Button className='btn btn--radius-2 btn--blue' type="submit">
+                  <Button className='btn btn--radius-2 btn--blue' type="primary" htmlType="submit">
                     Register
                   </Button>
                 </Form.Item>

@@ -62,45 +62,6 @@
         top: 100%;
       }
     }
-  
-  &__nav {
-    
-      li {
-        margin-right: 20px;
-        position: relative; /* Để tạo vùng chứa cho dropdown */       
-        .login-dropdown {
-          display: none; /* Ẩn dropdown ban đầu */
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background-color: #ffffff73;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          padding: 10px;
-          
-          li {
-            margin: 0;
-            padding: 5px 0;
-            display: flex;
-            justify-content: space-between;
-            
-            button {
-              flex: 1; // Mỗi nút sẽ chiếm 1 phần không gian bằng nhau
-              margin: 0 10px; // Khoảng cách giữa các nút
-            }
-            a {
-              color: #fff;
-              text-decoration: none;
-            }
-          }
-        }
-        
-        &:hover {
-          .login-dropdown {
-            display: block; /* Hiển thị dropdown khi hover */
-          }
-        }
-      }
-    }
 
     .header-end{
       display: flex;
@@ -139,17 +100,22 @@
           }
         }
       }
+
       li {
         margin-right: 20px;
-        position: relative; /* Để tạo vùng chứa cho dropdown */       
+        position: relative; /* Để tạo vùng chứa cho dropdown */    
+        align-items: center;
+
         .login-dropdown {
           display: none; /* Ẩn dropdown ban đầu */
           position: absolute;
           top: 100%;
           left: 0;
-          background-color: #ffffff73;
+          background-color: white;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           padding: 10px;
+          border-radius: 10px;
+          
           
           li {
             margin: 0;
@@ -160,6 +126,23 @@
             button {
               flex: 1; // Mỗi nút sẽ chiếm 1 phần không gian bằng nhau
               margin: 0 10px; // Khoảng cách giữa các nút
+              border-radius: 20px;
+              background-color: white;
+          
+            background: #fff;
+            border: none;
+            outline: none;
+            border-radius: 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            font-weight: bolder;
+
+             .link{
+              color: black;
+              
+             }
             }
             a {
               color: #fff;
@@ -175,6 +158,9 @@
         }
       } 
     }
+
+    
+    
 }
 
   

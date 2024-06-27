@@ -15,12 +15,12 @@ function HistoryOrder() {
   const fetchHistoryOrders = async () => {
     try {
       const token = user?.token; // Retrieve token from AuthContext
-  
+
       if (!token) {
         console.error('Token not found in AuthContext');
         return;
       }
-  
+
       const response = await fetch('http://localhost:8090/auth/history-order', {
         method: 'GET',
         headers: {
@@ -29,20 +29,27 @@ function HistoryOrder() {
         },
         credentials: 'include', // Ensure credentials are sent
       });
-  
+
       const data = await response.json();
       console.log('Fetch response:', data);
-  
-      if (data.status) {
+
+      if (response.ok) {
         setHistoryOrders(data.historyOrder);
       } else {
-        console.error(data.message); // Handle API error
+        if (response.status === 401) {
+          console.error('Access denied. Invalid token.');
+          logout(); // Logout user on 401 Unauthorized
+          message.error('Session expired. Please log in again.'); // Notify the user
+        } else {
+          console.error(data.message || 'Failed to fetch history orders');
+        }
       }
     } catch (error) {
-      console.error('Fetch error:', error); // Handle fetch error
+      console.error('Fetch error:', error);
     }
+
   };
-  
+
 
   const columns = [
     {

@@ -19,6 +19,7 @@ function Header() {
     console.log("Tìm kiếm:", searchInput);
     // Bạn có thể cập nhật trạng thái hoặc thực hiện các hành động khác ở đây
   };
+
   const userMenu = (
     <Menu>
       <Menu.Item key="0">
@@ -88,21 +89,42 @@ function Header() {
             </Link>
           </li>
           {user ? (
-            <Dropdown overlay={userMenu} trigger={["hover"]}>
-              <UserOutlined style={{ fontSize: "1.5em", cursor: "pointer" }} />
-            </Dropdown>
+            // <Dropdown overlay={userMenu} trigger={["hover"]}>
+            //   <UserOutlined style={{ fontSize: "1.5em", cursor: "pointer" }} />
+            // </Dropdown>
+
+            <li>
+              <a><UserOutlined style={{fontSize: "25px"}}/></a>
+              <ul className="login-dropdown">
+                <li>
+                  <Button >
+                    <Link className="link" to="/userProfile-page">Profile</Link>
+                  </Button>
+                </li>
+                <li>
+                  <Button >
+                    <Link className="link" to="/historyOrder-page">History Order</Link>
+                  </Button>
+                </li>
+                <li>
+                  <Button  onClick={logout}>
+                    <Link className="link" to="/login">Logout</Link>
+                  </Button>
+                </li>
+              </ul>
+            </li>
           ) : (
             <li>
               <a>SIGN UP</a>
               <ul className="login-dropdown">
                 <li>
-                  <Button type="primary">
-                    <Link to="/login">Login</Link>
+                  <Button >
+                    <Link className="link" to="/login">Login</Link>
                   </Button>
                 </li>
                 <li>
-                  <Button type="primary">
-                    <Link to="/register-page">Register</Link>
+                  <Button >
+                    <Link className="link" to="/register-page">Register</Link>
                   </Button>
                 </li>
               </ul>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Grid, Card, CardContent, CardMedia, Typography, Button, Box } from "@mui/material";
 import { AuthContext } from "../AuthContext"; // Adjust the path as needed
 import axios from "axios";
+import { Col, Form, Input, Row, Button, Card } from "antd";
+
 
 const SalePage = () => {
   const { user } = useContext(AuthContext);
@@ -72,70 +73,181 @@ const SalePage = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      {fetchError && <Typography color="error">Error: {fetchError}</Typography>}
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ textAlign: 'center' }}>
-            <CardMedia
-              component="img"
-              sx={{ borderRadius: '50%', width: 150, height: 150, margin: 'auto', mt: 2 }}
-              image={userProfile.Image ? userProfile.Image : "https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg"}
-              alt="User"
-            />
-            <CardContent>
-              <Typography variant="h5">{`${userProfile.FirstName} ${userProfile.LastName}`}</Typography>
-              <Typography variant="body2" color="textSecondary">{userProfile.RoleName}</Typography>
-            </CardContent>
-            <Button variant="contained" color="primary" sx={{ mb: 2 }}>Edit Profile</Button>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={8}>
-          <Card>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>First Name:</strong> {userProfile.FirstName}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Last Name:</strong> {userProfile.LastName}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Gender:</strong> {userProfile.Gender}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Birthday:</strong> {userProfile.Birthday}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Email:</strong> {userProfile.Email}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Phone Number:</strong> {userProfile.PhoneNumber}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Address:</strong> {userProfile.Address}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Country:</strong> {userProfile.Country}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>City:</strong> {userProfile.City}</Typography>
-                </Grid>
-                <Grid item xs={5}>
-                  <Typography variant="body1"><strong>Province:</strong> {userProfile.Province}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Postal Code:</strong> {userProfile.PostalCode}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body1"><strong>Role Name:</strong> {userProfile.RoleName}</Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+    <div className="profile" style={{ padding: "24px" }} >
+    {fetchError && <p style={{ color: 'red' }}>Error: {fetchError}</p>}
+         <Row gutter={16}>
+           <Col span={8}>
+             <Card className="form-edit"
+               cover={
+                 <img style={{borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px"}}
+                   alt="User"
+                   src={userProfile.Image ? userProfile.Image : "https://static.vecteezy.com/system/resources/previews/005/267/497/original/avatar-of-a-blonde-man-in-a-classic-suit-portrait-of-a-businessman-students-partner-sales-manager-for-business-correspondence-bots-support-illustration-vector.jpg"}
+                 />
+               }
+             >
+   
+               <Card.Meta style={{textAlign: "center"}}
+                 title={`${userProfile.FirstName} ${userProfile.LastName}`}
+                 description={`${userProfile.RoleName}` }
+               />
+               <div style={{ marginTop: "16px", textAlign: "center"}}>
+                 <p>
+                   "Lamborghini Mercy <br />
+                   Your chick she so thirsty <br />
+                   I'm in that two seat Lambo"
+                 </p>
+   
+                 <Button
+                     type="submit"
+   
+                     style={{ alignItems: "center", marginTop: "16px" }}
+                   >
+                     Update Profile
+                   </Button>
+               </div>
+   
+   
+             </Card>
+           </Col>
+   
+           {/* PROFILE */}
+           <Col span={16}>
+             <Card title="View Profile">
+               <Form layout="vertical">
+                 <Row gutter={16}>
+                   <Col span={12}>
+                     <Form.Item label="First Name">
+                       <Input
+                         value={userProfile.FirstName}
+                         name="FirstName"
+                       />
+                     </Form.Item>
+                   </Col>
+                   <Col span={12}>
+                     <Form.Item label="Last Name">
+                       <Input
+                         value={userProfile.LastName}
+                         name="LastName"
+                       />
+                     </Form.Item>
+                   </Col>
+                 </Row>
+                 <Row gutter={16}>
+                   <Col span={12}>
+                     <Form>
+                       <Form.Item label="Gender">
+   
+                       <Input
+                         value={userProfile.Gender}
+                         name="Gender"
+                       />
+                         {/* <!-- <select
+                           name="Gender"
+                           value={userProfile.Gender}
+                         >
+                           <option value="">Choose Gender</option>
+                           <option value="Male">Male</option>
+                           <option value="Female">Female</option>
+                           <option value="LGBT">LGBT</option>
+                           <option value="LGBTQ+">LGBTQ+</option>
+                         </select> --> */}
+                       </Form.Item>
+                     </Form>
+                   </Col>
+                   <Col span={12}>
+                     <Form.Item label="Birthday">
+                     <Input
+                         value={userProfile.Birthday}
+                         name="Gender"
+                       />
+                       {/* <!-- <DatePicker
+                         value={userProfile.Birthday}
+                       /> --> */}
+                     </Form.Item>
+                   </Col>
+                 </Row>
+                 <Row gutter={16}>
+                   <Col span={12}>
+                     <Form.Item label="Email">
+                       <Input
+                         type="email"
+                         value={userProfile.Email}
+                         name="Email"
+                       />
+                     </Form.Item>
+                   </Col>
+                   <Col span={12}>
+                     <Form.Item label="Phone Number">
+                       <Input
+                         type="phone"
+                         value={userProfile.PhoneNumber}
+                         name="PhoneNumber"
+                       />
+                     </Form.Item>
+                   </Col>
+                 </Row>
+                 <Row gutter={16}>
+                   <Col span={24}>
+                     <Form.Item label="Address">
+                       <Input
+                         value={userProfile.Address}
+                         name="Address"
+                       />
+                     </Form.Item>
+                   </Col>
+                 </Row>
+                 <Row gutter={16}>
+                   <Col span={8}>
+                     <Form.Item label="Country">
+                       <Input
+                         value={userProfile.Country}
+                         name="Country"
+                       />
+                     </Form.Item>
+                   </Col>
+                   <Col span={8}>
+                     <Form.Item label="City">
+                       <Input
+                         value={userProfile.City}
+                         name="City"
+                       />
+                     </Form.Item>
+                   </Col>
+                   <Col span={8}>
+                     <Form.Item label="Province">
+                       <Input
+                         value={userProfile.Province}
+                         name="Province"
+                       />
+                     </Form.Item>
+                   </Col>
+                 </Row>
+   
+                 <Row gutter={12}>
+                   <Col span={12}>
+                     <Form.Item label="Postal Code">
+                       <Input
+                         value={userProfile.PostalCode}
+                         name="PostalCode"
+                       />
+                     </Form.Item>
+                   </Col>
+   
+                   <Col span={12}>
+                     <Form.Item label="Role Name">
+                       <Input
+                         value={userProfile.RoleName}
+                         name="RoleName"
+                       />
+                     </Form.Item>
+                   </Col>
+   
+                 </Row>
+               </Form>
+             </Card>
+           </Col>
+         </Row>
+       </div>
   );
 };
 
