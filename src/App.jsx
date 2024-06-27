@@ -53,9 +53,10 @@ import Dashboard from "./admin-pages/dashboard";
 import SearchAllProduct from "./pages/searchProduct-page";
 
 //==========Delivery Pages============//
-import DeliveryPage from "./delivery-page/delivery-confirm";
+import DeliveryPage from "./delivery-page/delivery-shopping";
 import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
+import DeliveryConfirm from "./delivery-page/delivery-confirm";
 
 function App() {
   const router = createBrowserRouter([
@@ -231,6 +232,10 @@ function App() {
         {
           path: "/delivery-completed",
           element: <DeliveryCompleted />,
+        },
+        {
+          path: "/delivery-confirm",
+          element: <DeliveryConfirm />,
         },
       ],
     },

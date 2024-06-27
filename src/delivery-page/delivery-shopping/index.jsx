@@ -1,15 +1,14 @@
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.scss";
 
-import { useEffect, useState } from "react";
-
-function DeliveryConfirm() {
+function DeliveryPage() {
   const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8090/features/view-order-confirm"
+        "http://localhost:8090/features/view-order-shipping"
       );
       setOrders(response.data);
     } catch (error) {
@@ -74,8 +73,13 @@ function DeliveryConfirm() {
                   <strong>Delivery Address:</strong> {order.DeliveryAddress}
                 </p>
                 <div className="delivery__actions">
-                  <button
+                  {/* <button
                     onClick={() => updateStatus(order.OrderID, "Shipped")}
+                  >
+                    Shipped
+                  </button> */}
+                  <button
+                    onClick={() => updateStatus(order.OrderID, "Completed")}
                   >
                     Completed
                   </button>
@@ -92,4 +96,4 @@ function DeliveryConfirm() {
   );
 }
 
-export default DeliveryConfirm;
+export default DeliveryPage;

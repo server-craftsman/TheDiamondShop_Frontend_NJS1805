@@ -1,8 +1,54 @@
-header {
-    background-color: white;
+.delivery__header {
+  background-color: white;
+  color: black;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  li {
     color: black;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 18px;
+    list-style: none;
+    a {
+      text-decoration: none;
+      color: black;
+    }&:hover{
+      a{
+        color: aqua;
+      }
+    } 
+   
   }
+  .user-menu {
+    margin-right: 75px;
+    position: relative;
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff73;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+
+      li {
+        margin: 0;
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-between;
+
+        button {
+          flex: 1;
+          margin: 0 10px;
+        }
+      }
+    }
+
+    &:hover {
+      .dropdown {
+        display: block;
+      }
+    }
+  }
+}
