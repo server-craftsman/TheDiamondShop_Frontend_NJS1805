@@ -12,6 +12,7 @@ import {
   InputNumber,
   Modal,
 } from "antd";
+import { Link } from "react-router-dom";
 
 function ManageDiamondPage() {
   
@@ -165,6 +166,7 @@ function ManageDiamondPage() {
           >
             Delete
           </Button>
+          <Link to={`/diamonds-detail/${record.DiamondID}`}>View Details</Link>
         </div>
       ),
     },
@@ -282,7 +284,7 @@ function ManageDiamondPage() {
             <Input />
           </Form.Item>
           <Form.Item name="inventory" label="Inventory">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber disabled />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -400,7 +402,7 @@ function ManageDiamondPage() {
             <Input />
           </Form.Item>
           <Form.Item name="inventory" label="Inventory">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber disabled />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

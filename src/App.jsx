@@ -25,13 +25,15 @@ import OrderForm from "./pages/order-form";
 
 //==========Sale Pages===========//
 import SalePage from "./sales-page";
-import ViewOrder from "./sales-page/order-pages/view-order";
-import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm";
+import ViewOrder from "./sales-page/order-pages/view-order-page";
+import ViewOrderConfirm from "./sales-page/order-pages/view-order-confirm-page";
 import ViewPromotionEvent from "./sales-page/promotion-pages/promotion-event";
 import ViewPromotionVoucher from "./sales-page/promotion-pages/promotion-voucher";
-import ViewCertificate from "./sales-page/certificate-pages/certificate";
+import ViewCertificate from "./sales-page/certificate-pages";
 import LayoutSale from "./components/sale-layout";
 import ViewWaranty from "./sales-page/warranty-pages";
+import OrderDetail from "./sales-page/order-pages/view-order-page/detail";
+import OrderConfirmDetail from "./sales-page/order-pages/view-order-confirm-page/detail";
 
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
@@ -40,6 +42,10 @@ import ManageBridalPage from "./manager-pages/manageproduct/bridals";
 import ManageRingPage from "./manager-pages/manageproduct/rings";
 import ManageTimepiecesPage from "./manager-pages/manageproduct/timepieces";
 import ManagerLayout from "./components/manager-layout";
+import ViewBridalDetailPage from "./manager-pages/manageproduct/bridals/detail";
+import ViewDiamondDetailPage from "./manager-pages/manageproduct/diamond/detail";
+import ViewRingDetailPage from "./manager-pages/manageproduct/rings/detail";
+import ViewTimepiecesDetailPage from "./manager-pages/manageproduct/timepieces/detail";
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
@@ -58,7 +64,6 @@ import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
 import ManageCertificate from "./manager-pages/manager-certificate";
-
 
 function App() {
   const router = createBrowserRouter([
@@ -189,6 +194,22 @@ function App() {
           path: "/manager-certificate",
           element: <ManageCertificate />,
         },
+        {
+          path: "/bridals-detail/:id",
+          element: <ViewBridalDetailPage />,
+        },
+        {
+          path: "/diamonds-detail/:id",
+          element: <ViewDiamondDetailPage />,
+        },
+        {
+          path: "/rings-detail/:id",
+          element: <ViewRingDetailPage />,
+        },
+        {
+          path: "/timepieces-details/:id",
+          element: <ViewTimepiecesDetailPage />,
+        },
       ],
     },
     //=========Sale page========//
@@ -224,6 +245,14 @@ function App() {
           path: "/view-warranty",
           element: <ViewWaranty />,
         },
+        {
+          path: "/order/:id",
+          element: <OrderDetail />,
+        },
+        {
+          path: "/order-confirm/:id",
+          element: <OrderConfirmDetail />,
+        },
       ],
     },
     //==============Delivery pages===============//
@@ -256,9 +285,7 @@ function App() {
         },
       ],
     },
-
   ]);
-
 
   return (
     <AuthProvider>

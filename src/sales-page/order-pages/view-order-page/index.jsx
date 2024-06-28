@@ -2,7 +2,8 @@ import { useEffect, useState} from "react";
 import { Button, Table } from "antd";
 //import { Link} from "react-router-dom";
 import axios from "axios";
-import './orderpages.scss'
+import './index.scss'
+import { Link } from "react-router-dom";
 
 const ViewOrder = () => {
   //const [collapsed, setCollapsed] = useState(false);
@@ -53,11 +54,11 @@ const ViewOrder = () => {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Button onClick={() => handleVerifyOrder(record.OrderID)}>
-          Verify Order
-        </Button>
+        <Link to={`/order/${record.OrderID}`}>
+          <Button>View Details</Button>
+        </Link>
       ),
-    }
+    },
   ];
 
   const fetchData = async () => {
@@ -72,19 +73,6 @@ const ViewOrder = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const handleVerifyOrder = async (orderID) => {
-    try {
-      const response = await axios.put(
-        "http://localhost:8090/features/update-order-status-sale",
-        { orderID }
-      );
-      console.log("Order verified successfully:", response.data);
-      fetchData();
-    } catch (error) {
-      console.error("Error verifying order:", error);
-    }
-  };
 
   return ( 
           <Table dataSource={orderdetail} columns={columns} />

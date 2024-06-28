@@ -12,6 +12,7 @@ import {
   InputNumber,
   Modal,
 } from "antd";
+import { Link } from "react-router-dom";
 
 function ManageRingPage() {
   const [rings, setRings] = useState([]);
@@ -163,6 +164,7 @@ function ManageRingPage() {
           >
             Delete
           </Button>
+          <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>
         </div>
       ),
     },
