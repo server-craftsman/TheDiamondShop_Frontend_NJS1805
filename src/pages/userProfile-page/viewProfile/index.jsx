@@ -3,6 +3,7 @@ import { Row, Col, Card, Form, Input, Button } from "antd";
 import { AuthContext } from "../../../AuthContext"; // Adjust the path as needed
 import './index.scss';
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function UserProfile() {
   const { user } = useContext(AuthContext);
@@ -73,116 +74,41 @@ function UserProfile() {
   }
 
   return (
-    // <div className="profile" style={{ padding: "24px" }}>
-    //   {fetchError && <p style={{ color: 'red' }}>Error: {fetchError}</p>}
-    //   <Row gutter={16}>
-    //     <Col span={8}>
-    //       <Card style={{  paddingLeft: "120px", paddingRight: "8px"}}
-    //         cover={
-    //           <img style={{borderRadius: "50%", width: "200px", textAlign: "center"}}
-    //             alt="User"
-    //             src={userProfile.Image ? userProfile.Image : "https://t3.ftcdn.net/jpg/03/58/90/78/360_F_358907879_Vdu96gF4XVhjCZxN2kCG0THTsSQi8IhT.jpg"}
-    //           />
-    //         }
-    //       >
-    //         <Card.Meta style={{marginLeft: "20px"}}
-    //           title={`${userProfile.FirstName} ${userProfile.LastName}`}
-    //           // description={`${userProfile.FirstName} ${userProfile.LastName}`}
-    //         />
-            
-    //       </Card>
-    //     </Col>
 
-    //     <Col span={16}>
-    //       <Card>
-    //         <Row gutter={16}>
-    //           <Col span={12}>
-    //             <p><strong>First Name:</strong> {userProfile.FirstName}</p>
-    //           </Col>
-    //           <Col span={12}>
-    //             <p><strong>Last Name:</strong> {userProfile.LastName}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={12}>
-    //             <p><strong>Gender:</strong> {userProfile.Gender}</p>
-    //           </Col>
-    //           <Col span={12}>
-    //             <p><strong>Birthday:</strong> {userProfile.Birthday}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={24}>
-    //             <p><strong>Email:</strong> {userProfile.Email}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={24}>
-    //             <p><strong>Phone Number:</strong> {userProfile.PhoneNumber}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={24}>
-    //             <p><strong>Address:</strong> {userProfile.Address}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={8}>
-    //             <p><strong>Country:</strong> {userProfile.Country}</p>
-    //           </Col>
-    //           <Col span={8}>
-    //             <p><strong>City:</strong> {userProfile.City}</p>
-    //           </Col>
-    //           <Col span={8}>
-    //             <p><strong>Province:</strong> {userProfile.Province}</p>
-    //           </Col>
-    //         </Row>
-    //         <Row gutter={16}>
-    //           <Col span={12}>
-    //             <p><strong>Postal Code:</strong> {userProfile.PostalCode}</p>
-    //           </Col>
-    //           <Col span={12}>
-    //             <p><strong>Role Name:</strong> {userProfile.RoleName}</p>
-    //           </Col>
-    //         </Row>
-    //       </Card>
-    //     </Col>
-    //   </Row>
-    // </div>
     <div className="profile" style={{ padding: "24px" }} >
- {fetchError && <p style={{ color: 'red' }}>Error: {fetchError}</p>}
+      {fetchError && <p style={{ color: 'red' }}>Error: {fetchError}</p>}
       <Row gutter={16}>
         <Col span={8}>
           <Card className="form-edit"
             cover={
-              <img style={{borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px"}}
+              <img style={{ borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px" }}
                 alt="User"
-                src={userProfile.Image ? userProfile.Image : "https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1868"}
+                src={userProfile.Image ? userProfile.Image : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"}
               />
             }
           >
 
-            <Card.Meta style={{textAlign: "center"}}
+            <Card.Meta style={{ textAlign: "center" }}
               title={`${userProfile.FirstName} ${userProfile.LastName}`}
-              description={`${userProfile.FirstName} ${userProfile.LastName}`}
+              description={`${userProfile.RoleName}`}
             />
-            <div style={{ marginTop: "16px", textAlign: "center"}}>
+            <div style={{ marginTop: "16px", textAlign: "center" }}>
               <p>
-                "Lamborghini Mercy <br />
-                Your chick she so thirsty <br />
-                I'm in that two seat Lambo"
+                "Welcome to Diamond Store <br />
+                where elegance meets brilliance <br />
+                Diamonds - Rings - Timepiesces."
               </p>
 
-              <Button
+              <Link to="/userProfile-edit">
+                <Button
                   type="submit"
 
                   style={{ alignItems: "center", marginTop: "16px" }}
                 >
                   Update Profile
-                </Button>
+                </Button></Link>
+
             </div>
-
-
           </Card>
         </Col>
 
@@ -213,32 +139,20 @@ function UserProfile() {
                   <Form>
                     <Form.Item label="Gender">
 
-                    <Input
-                      value={userProfile.Gender}
-                      name="Gender"
-                    />
-                      {/* <!-- <select
-                        name="Gender"
+                      <Input
                         value={userProfile.Gender}
-                      >
-                        <option value="">Choose Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="LGBT">LGBT</option>
-                        <option value="LGBTQ+">LGBTQ+</option>
-                      </select> --> */}
+                        name="Gender"
+                      />
+
                     </Form.Item>
                   </Form>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Birthday">
-                  <Input
+                    <Input
                       value={userProfile.Birthday}
-                      name="Gender"
+                      name="Birthday"
                     />
-                    {/* <!-- <DatePicker
-                      value={userProfile.Birthday}
-                    /> --> */}
                   </Form.Item>
                 </Col>
               </Row>

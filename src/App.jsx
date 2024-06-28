@@ -64,6 +64,7 @@ import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
 import ManageCertificate from "./manager-pages/manager-certificate";
+import EditProfile from "./pages/userProfile-page/editProfile";
 
 function App() {
   const router = createBrowserRouter([
@@ -130,6 +131,10 @@ function App() {
         {
           path: "/userProfile-page",
           element: <UserProfile />,
+        },
+        {
+          path: "/userProfile-edit",
+          element: <EditProfile />,
         },
         {
           path: "/change-password-page",

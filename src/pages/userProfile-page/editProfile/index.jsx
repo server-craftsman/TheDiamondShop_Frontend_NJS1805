@@ -1,36 +1,76 @@
-import React, { useEffect, useState } from "react";
-import "../userProfile-page/index.scss";
-import {
-  Form,
-  Input,
-  Button,
-  Row,
-  Col,
-  Card,
-  Avatar,
-  DatePicker,
-} from "antd";
-import {
-  UserOutlined,
-  FacebookOutlined,
-  TwitterOutlined,
-  GooglePlusOutlined,
-} from "@ant-design/icons";
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from "../../../AuthContext"; // Adjust the path as needed
+import './index.scss';
+import axios from "axios";
+import moment from "moment";
+import { Form, Input, Button, Row, Col, Card, DatePicker, notification, Select, Upload } from "antd";
 
-function UserProfile() {
+function EditProfile() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [userProfile, setUserProfile] = useState(null); // Initial state is null
+
   const [formData, setFormData] = useState({
-    FirstName: "",
-    LastName: "",
-    Gender: "",
-    Birthday: "",
-    Email: "",
-    PhoneNumber: "",
-    Address: "",
-    Country: "",
-    City: "",
-    Province: "",
-    PostalCode: "",
+    FirstName: '',
+    LastName: '',
+    Gender: '',
+    Birthday: '',
+    PhoneNumber: '',
+    Address: '',
+    Country: '',
+    City: '',
+    Province: '',
+    PostalCode: '',
+    Image: '',
+    RoleName: ''
   });
+
+  const [fetchError, setFetchError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        setFetchError('Token not found in AuthContext');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching user profile with token:', token);
+
+      const response = await axios.get('http://localhost:8090/features/view-profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Ensure credentials are sent
+      });
+
+      console.log('Fetch response status:', response.status);
+
+      if (response.status === 200) {
+        const userData = response.data.user;
+        setUserProfile(userData);
+        setFormData({
+          ...userData,
+          Birthday: userData.Birthday ? moment(userData.Birthday) : null,
+        }); // Initialize form data with moment date
+        setFetchError(null);
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error.message);
+      setFetchError('Error fetching user profile. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,21 +82,55 @@ function UserProfile() {
 
   const handleDateChange = (date) => setFormData({ ...formData, Birthday: date });
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:8090/features/customers",
-        { formData }
+      const token = user?.token;
+
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        setFetchError('Token not found in AuthContext');
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:8090/features/update-account",
+        { ...formData, AccountID: userProfile.AccountID }, // Add AccountID to the formData
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
       );
-      console.log(response.data);
+
+      if (response.status === 200) {
+        notification.success({
+          message: 'Profile Updated',
+          description: 'Your profile has been successfully updated.',
+        });
+      } else {
+        throw new Error('Failed to update profile');
+      }
     } catch (error) {
       console.error(error);
+      notification.error({
+        message: 'Update Failed',
+        description: 'There was an error updating your profile. Please try again.',
+      });
     }
   };
+
+  const handleBack = () => {
+    navigate('/userProfile-page');
+  };
+
   useEffect(() => {
-  }, []);
+    fetchUserProfile();
+  }, [user]);
+
+  
 
   return (
     <div className="profile" style={{ padding: "24px" }} onSubmit={handleSubmit}>
@@ -65,20 +139,21 @@ function UserProfile() {
           <Card
             cover={
               <img
-                alt="example"
-                src="https://ttol.vietnamnetjsc.vn/images/2023/08/13/19/42/xa-hoi.jpg"
+              style={{ borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px" }}
+              alt="example"
+              src={formData.Image ? formData.Image : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"}
               />
             }
           >
-            <Card.Meta
+            <Card.Meta style={{ textAlign: "center" }}
               title={`${formData.FirstName} ${formData.LastName}`}
-              description={`${formData.FirstName} ${formData.LastName}`}
+              description={`${formData.RoleName}`}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               <p>
-                "Lamborghini Mercy <br />
-                Your chick she so thirsty <br />
-                I'm in that two seat Lambo"
+              "Welcome to Diamond Store <br />
+              where elegance meets brilliance <br />
+              Diamonds - Rings - Timepiesces."
               </p>
             </div>
           </Card>
@@ -87,7 +162,8 @@ function UserProfile() {
         {/* PROFILE */}
         <Col span={16}>
           <Card title="Edit Profile">
-            <Form layout="vertical">
+            {userProfile ? (
+            <Form layout="vertical" onSubmit={handleSubmit}>
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="First Name">
@@ -112,17 +188,16 @@ function UserProfile() {
                 <Col span={12}>
                   <Form>
                     <Form.Item label="Gender">
-                      <select
-                        name="Gender"
-                        value={formData.Gender}
-                        onChange={handleChange}
-                      >
-                        <option value="">Choose Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="LGBT">LGBT</option>
-                        <option value="LGBTQ+">LGBTQ+</option>
-                      </select>
+                    <Select
+                          name="Gender"
+                          value={formData.Gender}
+                          onChange={(value) => handleChange({ target: { name: 'Gender', value } })}
+                          style={{ width: "50%" }}
+                        >
+                          <Option value="Male">Male</Option>
+                          <Option value="Female">Female</Option>
+                          <Option value="Orther">Orther</Option>
+                        </Select>
                     </Form.Item>
                   </Form>
                 </Col>
@@ -198,8 +273,8 @@ function UserProfile() {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row gutter={16}>
-                <Col span={8}>
+              <Row gutter={12}>
+                <Col span={12}>
                   <Form.Item label="Postal Code">
                     <Input
                       type="number"
@@ -212,7 +287,7 @@ function UserProfile() {
 
              
               
-                <Col span={8}>
+                {/* <Col span={12}>
                   <Form.Item label="Image">
                     <Input.TextArea
                       rows={4}
@@ -220,18 +295,29 @@ function UserProfile() {
                       placeholder="Here can be your description"
                     />
                   </Form.Item>
-                </Col>
+                </Col> */}
+
               </Row>
               <Form.Item>
                 <Button
                   type="submit"
-
+                  onClick={handleSubmit}
                   style={{ float: "right" }}
                 >
                   Update Profile
                 </Button>
+                <Button
+                    type="button" 
+                    style={{ float: "right", marginRight: "8px" }}
+                    onClick={handleBack} 
+                  >
+                    Back to Profile
+                  </Button>
               </Form.Item>
             </Form>
+            ) : (
+              <p>Loading...</p>
+            )}
           </Card>
         </Col>
       </Row>
@@ -239,4 +325,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default EditProfile;

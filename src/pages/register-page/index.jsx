@@ -46,15 +46,24 @@ function RegisterForm() {
         openNotification();
         setTimeout(() => {
           window.location.href = "/login";
-        }, 3000);
+        }, 2000);
       } else {
-        alert(response.data.status);
+        notification.error({
+          message: 'Registration Failed',
+          description: response.data.message || 'Registration failed. Please try again.',
+        });
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        alert(error.response.data.message);
+        notification.error({
+          message: 'Registration Failed',
+          description: error.response.data.message || 'Registration failed. Please try again.',
+        });
       } else {
-        alert("Registration failed. Please try again.");
+        notification.error({
+          message: 'Registration Failed',
+          description: 'Registration failed. Please try again.',
+        });
       }
     }
   };
