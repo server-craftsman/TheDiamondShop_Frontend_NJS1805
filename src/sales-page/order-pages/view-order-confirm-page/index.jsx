@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Button, Layout, Menu, Table, theme } from "antd";
 
 import axios from "axios";
-import './orderpages.scss'
+import './index.scss'
+import { Link } from "react-router-dom";
 
 function ViewOrderConfirm() {
   const [orderdetail, setOrderDetail] = useState([]);
@@ -48,6 +49,15 @@ function ViewOrderConfirm() {
       title: "OrderStatus",
       dataIndex: "OrderStatus",
       key: "OrderStatus",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Link to={`/order-confirm/${record.OrderID}`}>
+          <Button>View Details</Button>
+        </Link>
+      ),
     },
     ];
     const fetchData = async () => {

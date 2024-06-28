@@ -8,6 +8,7 @@ import {
   InputNumber,
   Modal,
 } from "antd";
+import { Link } from "react-router-dom";
 
 function ManageBridalPage() {
   const [bridals, setBridals] = useState([]);
@@ -157,6 +158,7 @@ function ManageBridalPage() {
           >
             Delete
           </Button>
+          <Link to={`/bridals-detail/${record.BridalID}`}>View Details</Link>
         </div>
       ),
     },

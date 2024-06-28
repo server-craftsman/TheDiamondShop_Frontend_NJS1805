@@ -12,6 +12,7 @@ import {
   InputNumber,
   Modal,
 } from "antd";
+import { Link } from "react-router-dom";
 function ManageTimepiecesPage() {
   const [timepieces, setTimepieces] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
@@ -165,6 +166,8 @@ function ManageTimepiecesPage() {
           >
             Delete
           </Button>
+          <br />
+          <Link to={`/timepieces-details/${record.DiamondTimepiecesID}`}>View Details</Link>
         </div>
       ),
     },
