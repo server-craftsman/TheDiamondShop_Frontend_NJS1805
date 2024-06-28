@@ -1,10 +1,16 @@
 .delivery__header {
+  height: 70px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
   background-color: white;
   color: black;
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px 340px;
   li {
     color: black;
     font-size: 18px;

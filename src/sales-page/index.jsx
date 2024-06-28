@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../AuthContext"; // Adjust the path as needed
 import axios from "axios";
-import { Col, Form, Input, Row, Button, Card } from "antd";
+import { Col, Form, Input, Row, Button, Card, Typography } from "antd";
 
 
 const SalePage = () => {

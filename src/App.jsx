@@ -57,6 +57,8 @@ import DeliveryPage from "./delivery-page/delivery-shopping";
 import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
+import ManageCertificate from "./manager-pages/manager-certificate";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -182,6 +184,10 @@ function App() {
         {
           path: "/manager-timepieces-page",
           element: <ManageTimepiecesPage />,
+        },
+        {
+          path: "/manager-certificate",
+          element: <ManageCertificate />,
         },
       ],
     },
