@@ -11,7 +11,7 @@ function TimepiecePage() {
   const [itemsPerPage, setItemsPerPage] = useState(9);
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -134,31 +134,35 @@ function TimepiecePage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-                <Link to={`/producttimepiece/${item.DiamondTimepiecesID}`}>
-                  <Card
 
-                    hoverable
-                    style={{ width: 240 }}
-                    cover={
+                <Card
 
+                  hoverable
+                  style={{ width: 240 }}
+                  cover={
+                    <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
                       <Image
                         width="100%"
                         alt={item.NameTimepieces}
                         src={item.ImageTimepieces}
                       />
-
+                    </Link>
+                  }
+                >
+                  <Card.Meta
+                    title={
+                      <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
+                        {item.TimepiecesStyle.toUpperCase()}
+                      </Link>
                     }
-                  >
-                    <Card.Meta
-                      title={item.NameTimepieces}
-                      description={`${item.Price}$`}
-                    />{" "}
+                    description={`${item.Price}$`}
+                  />
 
-                    <Button onClick={() => handleAddToCart(item)}>
-                      Add to Cart
-                    </Button>
-                  </Card>
-                </Link>
+                  {/* <Button onClick={() => handleAddToCart(item)}>
+                    Add to Cart
+                  </Button> */}
+                </Card>
+
               </Col>
             ))}
           </Row>

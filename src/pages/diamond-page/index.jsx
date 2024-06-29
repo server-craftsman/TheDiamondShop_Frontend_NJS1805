@@ -164,34 +164,50 @@ function DiamondPage() {
         </button>
       </div>
       <div className="diamondpage">
-        <Row gutter={16}>
-          {currentPageData.map((item, index) => (
-            <Col span={8} key={index}>
-              <Card
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <Link to={`/diamond-detail/${item.DiamondID}`}>
-                    <Image
-                      width="100%"
-                      alt={item.DiamondOrigin}
-                      src={item.Image}
-                    />
-                  </Link>
-                }
-              >
-                <Card.Meta
-                  title={
-                    <Link to={`/diamond-detail/${item.DiamondID}`}>
-                      {item.DiamondOrigin.toUpperCase()}
-                    </Link>
+      <Row gutter={16}>
+            {currentPageData.map((item, index) => (
+              <Col span={8} key={index}>
+                <Card
+                  hoverable
+                  style={{ width: 240 }}
+                  cover={
+                    // <Link to={`/diamond-detail/${item.DiamondID}`}>
+                      <Image
+                        maxWidth="100%"
+                        maxHeight="100%"
+                        alt={item.DiamondOrigin}
+                        src={item.Image}
+                      />
+                    // </Link>
                   }
-                  description={`${item.Price}$`}
-                />
-              </Card>
-            </Col>
-          ))}
-        </Row>
+                >
+                  <Card.Meta
+                    title={
+                      <Link
+                        to={`/diamond-detail/${item.DiamondID}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <div style={{ fontSize: "1.2em", fontWeight: "bold" }}>
+                          {item.StockNumber.toUpperCase()}
+                        </div>
+                        <div style={{ fontSize: "1em", color: "#757575" }}>
+                          {item.Clarity}
+                        </div>
+                        <div style={{ fontSize: "1em", color: "#757575" }}>
+                          {item.Color}
+                        </div>
+                      </Link>
+                    }
+                    description={
+                      <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
+                        {`${item.Price}$`}
+                      </div>
+                    }
+                  />
+                </Card>
+              </Col>
+            ))}
+          </Row>
         <Pagination
           current={currentPage}
           total={filteredData.length}

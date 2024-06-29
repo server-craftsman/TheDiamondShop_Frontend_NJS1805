@@ -146,27 +146,33 @@ function BridalPage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-                <Link to={`/productbridal/${item.BridalID}`} >
+                
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
+                    <Link to={`/bridal-detail/${item.BridalID}`}>
                     <Image
                       width="100%"
                       alt={item.NameBridal}
                       src={item.ImageBridal}
                     />  
+                    </Link>
                   }
                 >
                   <Card.Meta
-                    title={item.NameBridal}
+                    title={
+                      <Link to={`/bridal-detail/${item.BridalID}`}>
+                        {item.BridalStyle.toUpperCase()}
+                      </Link>
+                    }
                     description={`${item.Price}$`}
                   />
-                  <Button onClick={() => handleAddToCart(item)}>
+                  {/* <Button onClick={() => handleAddToCart(item)}>
                     Add to Cart
-                  </Button>
+                  </Button> */}
                 </Card>
-                </Link>
+                
               </Col>
             ))}
           </Row>

@@ -64,7 +64,7 @@ function LoginForm() {
 
         switch (response.data.roleName) {
           case "Admin":
-            navigate("/bridal-page", {
+            navigate("/admin-page", {
               state: { message: response.data.message },
             });
             break;
