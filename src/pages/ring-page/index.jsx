@@ -140,35 +140,30 @@ function RingPage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
+                <Link to={`/productring/${item.DiamondRingsID}`}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
-                    <Link to={`/ring-detail/${item.DiamondRingsID}`}>
+                    
                     <Image
                       width="100%"
                       alt={item.NameRings}
                       src={item.ImageRings}
                     />
-                    </Link>
+                    
                   }
                 >
-                  {/* <Card.Meta
+                  <Card.Meta
                     title={item.NameRings}
                     description={`${item.Price}$`}
-                  />{" "} */}
-                  <Card.Meta
-                  title={
-                    <Link to={`/ring-detail/${item.DiamondRingsID}`}>
-                      {item.RingStyle.toUpperCase()}
-                    </Link>
-                  }
-                  description={`${item.Price}$`}
-                />
-                  {/* <Button onClick={() => handleAddToCart(item)}>
+                  />{" "}
+          
+                  <Button onClick={() => handleAddToCart(item)}>
                     Add to Cart
-                  </Button> */}
+                  </Button>
                 </Card>
+                </Link>
               </Col>
             ))}
           </Row>

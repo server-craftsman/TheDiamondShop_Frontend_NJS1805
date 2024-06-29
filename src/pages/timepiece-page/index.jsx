@@ -11,6 +11,7 @@ function TimepiecePage() {
   const [itemsPerPage, setItemsPerPage] = useState(9);
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,23 +81,23 @@ function TimepiecePage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-  // function handleAddToCart(item) {
-  //   item.type = "DiamondTimepieces";
-  //   addToCart({
-  //     name: item.NameTimepieces,
-  //     image: item.ImageTimepieces,
-  //     price: item.Price,
-  //     quantity: 1,
-  //     type: item.type,
-  //   });
-  // }
+  function handleAddToCart(item) {
+    item.type = "DiamondTimepieces";
+    addToCart({
+      name: item.NameTimepieces,
+      image: item.ImageTimepieces,
+      price: item.Price,
+      quantity: 1,
+      type: item.type,
+    });
+  }
   return (
     <div>
       <div className="app">
         <div className="filter-section">
-        <h3>Price</h3>
+          <h3>Price</h3>
           <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
-            <Row className = "row-column">
+            <Row className="row-column">
               <Checkbox value="Under $480" className="Checkbox">Under $480</Checkbox>
               <Checkbox value="$480-$730" className="Checkbox">$480-$730</Checkbox>
               <Checkbox value="Over $730" className="Checkbox">Over $730</Checkbox>
@@ -105,7 +106,7 @@ function TimepiecePage() {
           <hr />
           <h3>DialColor</h3>
           <Checkbox.Group onChange={(values) => handleFilters({ DialColor: values })}>
-            <Row className = "row-column">
+            <Row className="row-column">
               <Checkbox value="White" className="Checkbox">White</Checkbox>
               <Checkbox value="Black" className="Checkbox">Black</Checkbox>
               <Checkbox value="Blue" className="Checkbox">Blue</Checkbox>
@@ -120,7 +121,7 @@ function TimepiecePage() {
           <hr />
           <h3>Gender</h3>
           <Checkbox.Group onChange={(values) => handleFilters({ Gender: values })}>
-            <Row className = "row-column">
+            <Row className="row-column">
               <Checkbox value="Women" className="Checkbox">Women</Checkbox>
               <Checkbox value="Men" className="Checkbox">Men</Checkbox>
             </Row>
@@ -133,37 +134,32 @@ function TimepiecePage() {
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
               <Col span={8} key={index}>
-                <Card
-                
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
-                  <Image
-                    width="100%"
-                    alt={item.NameTimepieces}
-                    src={item.ImageTimepieces}
-                  />
-                  </Link>
-                }
-              >
-                {/* <Card.Meta
-                  title={item.NameTimepieces}
-                  description={`${item.Price}$`}
-                />{" "} */}
-                <Card.Meta
-                title={
-                  <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
-                    {item.TimepiecesStyle.toUpperCase()}
-                  </Link>
-                }
-                description={`${item.Price}$`}
-              />
-                {/* <Button onClick={() => handleAddToCart(item)}>
-                  Add to Cart
-                </Button> */}
-              </Card>
-            </Col>
+                <Link to={`/producttimepiece/${item.DiamondTimepiecesID}`}>
+                  <Card
+
+                    hoverable
+                    style={{ width: 240 }}
+                    cover={
+
+                      <Image
+                        width="100%"
+                        alt={item.NameTimepieces}
+                        src={item.ImageTimepieces}
+                      />
+
+                    }
+                  >
+                    <Card.Meta
+                      title={item.NameTimepieces}
+                      description={`${item.Price}$`}
+                    />{" "}
+
+                    <Button onClick={() => handleAddToCart(item)}>
+                      Add to Cart
+                    </Button>
+                  </Card>
+                </Link>
+              </Col>
             ))}
           </Row>
           <Pagination
@@ -179,7 +175,7 @@ function TimepiecePage() {
           />
         </div>
       </div>
-<Footer />
+      <Footer />
     </div>
   );
 }

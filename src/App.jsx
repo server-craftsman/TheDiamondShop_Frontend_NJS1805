@@ -49,8 +49,6 @@ import ViewTimepiecesDetailPage from "./manager-pages/manageproduct/timepieces/d
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
-import RingDetail from "./pages/ring-page/details";
-import BridalDetails from "./pages/bridal-page/details";
 import TimepieceDetail from "./pages/timepiece-page/details";
 
 //===========Admin Pages=========//
@@ -65,8 +63,49 @@ import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
 import ManageCertificate from "./manager-pages/manager-certificate";
 import EditProfile from "./pages/userProfile-page/editProfile";
+import ProductDetailsBridalPage from "./pages/productDetailsBridal-page";
+import { useEffect, useState } from "react";
+import ProductDetailsRingPage from "./pages/productDetailsRings-page";
+import ProductDetailsTimepiecesPage from "./pages/productDetailsTimpieces";
+import HistoryOrderDetails from "./pages/historyOrder-page/details";
+
 
 function App() {
+  const [diamonds, setDiamonds] = useState([]);
+  const [bridals, setBridals] = useState([]);
+  const [rings, setRings] = useState([]);
+  const [timepieces, setTimepieces] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const [diamondRes, bridalRes, ringRes, timepieceRes] = await Promise.all([
+            fetch("http://localhost:8090/products/diamonds"),
+            fetch("http://localhost:8090/products/bridals"),
+            fetch("http://localhost:8090/products/diamond-rings"),
+            fetch("http://localhost:8090/products/timepieces")
+          ]);
+  
+          const [diamonds, bridals, rings, timepieces] = await Promise.all([
+            diamondRes.json(),
+            bridalRes.json(),
+            ringRes.json(),
+            timepieceRes.json()
+          ]);
+  
+          setDiamonds(diamonds);
+          setBridals(bridals);
+          setRings(rings);
+          setTimepieces(timepieces);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    
   const router = createBrowserRouter([
     {
       path: "/",
@@ -145,6 +184,10 @@ function App() {
           element: <HistoryOrder />,
         },
         {
+          path: "/history-order-details/:orderId",
+          element: <HistoryOrderDetails />,
+        },
+        {
           path: "/showsearch-page",
           element: <ShowSearch />,
         },
@@ -157,17 +200,17 @@ function App() {
           element: <DiamondDetail />,
         },
         {
-          path: "/ring-detail/:id",
-          element: <RingDetail />,
+          path: "/productring/:id",
+          element:<ProductDetailsRingPage data={rings} />
         },
         {
-          path: "/bridal-detail/:id",
-          element: <BridalDetails />,
+          path: "/productbridal/:id",
+          element: <ProductDetailsBridalPage data={bridals} />
         },
         {
-          path: "/timepieces-detail/:id",
-          element: <TimepieceDetail />,
-        },
+          path: "/producttimepiece/:id",
+          element: <ProductDetailsTimepiecesPage data={timepieces} />
+        }
       ],
     },
     //========Manager pages==============//

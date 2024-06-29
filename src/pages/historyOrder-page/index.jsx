@@ -3,6 +3,7 @@ import { Table } from "antd";
 import "../historyOrder-page/index.scss";
 import { AuthContext } from "../../AuthContext";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function HistoryOrder() {
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
@@ -77,12 +78,23 @@ function HistoryOrder() {
       dataIndex: "TotalPrice",
       key: "TotalPrice",
     },
+    {
+      title: "View Details",
+      key: "action",
+      render: (text, record) => (
+        <Link to={`/history-order-details/${record.OrderID}`}>View Details</Link>
+      ),
+    },
   ];
+
+  const sortedHistoryOrders = [...historyOrders].sort(
+    (a, b) => new Date(b.OrderDate) - new Date(a.OrderDate)
+  );
 
   return (
     <div className="history">
       <h1>History Order</h1>
-      <Table columns={columns} dataSource={historyOrders} rowKey="OrderID" />
+      <Table columns={columns} dataSource={sortedHistoryOrders} rowKey="OrderID" />
     </div>
   );
 }
