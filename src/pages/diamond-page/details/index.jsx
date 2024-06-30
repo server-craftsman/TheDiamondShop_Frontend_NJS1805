@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
   Container,
@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogActions,
+  Zoom,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -32,7 +33,13 @@ const DiamondDetail = () => {
   const [cut, setCut] = useState("");
   const [certification, setCertification] = useState("");
   const [openCertificate, setOpenCertificate] = useState(false); // State for dialog
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, setCartItems } = useCart();
+  const [warningOpen, setWarningOpen] = useState(false);
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [zoom, setZoom] = useState(2);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [openCombinedDialog, setOpenCombinedDialog] = useState(false);
 
   useEffect(() => {
     axios
@@ -44,21 +51,66 @@ const DiamondDetail = () => {
   if (!diamond) return <div>Loading...</div>;
 
   const handleAddToCart = () => {
-    const itemToAdd = {
+    const updatedCartItems = [...cartItems];
+    const alreadyInCart = updatedCartItems.find(
+      (item) => item.id === diamond.DiamondID
+    );
+
+    if (!alreadyInCart) {
+      diamond.Type = "Diamond";
+      const itemToAdd = {
         id: diamond.DiamondID,
         name: diamond.DiamondOrigin,
         image: diamond.Image,
         price: diamond.Price,
-        quantity: 1,
-        type: "Diamond",
+        type: diamond.Type,
+        stockNumber: diamond.StockNumber,
+        combinedWithJewelry: true,
+        combinedWithJewelryId: 1,
+        caratWeight: diamond.caratWeight,
+        color: diamond.Color,
+        clarity: diamond.Clarity,
+        cut: diamond.Cut,
+        shape: diamond.Shape,
+        certification: diamond.Certification,
     };
 
+    updatedCartItems.push(itemToAdd);
     addToCart(itemToAdd);
-  };
+    setCartItems(updatedCartItems);
+  } else {
+    setWarningOpen(true);
+  }
+};
 
   const handleBuyNow = () => {
-    // Replace this with the correct path to your order form
-    window.location.href = "/order-form";
+    diamond.Type = "Diamond";
+    console.log("Navigating to OrderForm with diamond:", diamond);
+    navigate("/order-form", {
+      state: {
+        diamond: { ...diamond }, // Ensure diamond data is spread properly
+        selectedOptions: {
+          clarity,
+          cut,
+          certification,
+        },
+        caratWeight: diamond.CaratWeight,
+        DiamondID: diamond.DiamondID,
+        selectedVoucher: null,
+        shipping: "Standard",
+        paymentMethod: "PayPal",
+        totalPrice: diamond.Price,
+        combinedWithJewelry: true,
+        combinedWithJewelryId: 1,
+        color: diamond.Color,
+        clarity: diamond.Clarity,
+        cut: diamond.Cut,
+        shape: diamond.Shape,
+        image: diamond.Image,
+        name: diamond.DiamondOrigin,
+        certification: diamond.Certification,
+      },
+    });
   };
 
   const handleViewCertificate = () => {
@@ -67,6 +119,35 @@ const DiamondDetail = () => {
 
   const handleCloseCertificate = () => {
     setOpenCertificate(false);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleMouseWheel = (event) => {
+    event.preventDefault();
+    const scale = event.deltaY > 0 ? 1.1 : 0.9;
+    setZoom((prevZoom) => prevZoom * scale);
+  };
+
+  const handleMouseMove = (e) => {
+    const bounds = e.target.getBoundingClientRect();
+    const x = (e.clientX - bounds.left) / bounds.width;
+    const y = (e.clientY - bounds.top) / bounds.height;
+    setOffset({ x, y });
+  };
+
+  const handleCombinedWithJewelry = () => {
+    setOpenCombinedDialog(true);
+  };
+
+  const handleCloseCombinedDialog = () => {
+    setOpenCombinedDialog(false);
   };
 
   return (
@@ -81,8 +162,42 @@ const DiamondDetail = () => {
               height="100%"
               image={diamond.Image}
               className="diamond-image"
+              style={{
+                height: "480px",
+                width: "450px",
+                padding: "100px 50px 40px 50px",
+              }}
+              onClick={handleClickOpen}
             />
           </Card>
+          <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+              <div
+                style={{
+                  overflow: "hidden",
+                  position: "relative",
+                  width: "100%",
+                  height: "auto",
+                }}
+              >
+                <Zoom in={open}>
+                  <img
+                    src={diamond.Image}
+                    alt="diamond"
+                    style={{
+                      position: "absolute",
+                      top: `${-offset.y}%`,
+                      left: `${-offset.x}%`,
+                      transform: `scale(${zoom})`,
+                      transformOrigin: "top left",
+                      width: `${100 * zoom}%`,
+                      height: `${100 * zoom}%`,
+                    }}
+                    onMouseMove={handleMouseMove}
+                    onWheel={handleMouseWheel}
+                  />
+                </Zoom>
+              </div>
+            </Dialog>
         </Grid>
 
         <Grid item xs={12} md={7}>

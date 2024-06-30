@@ -12,6 +12,8 @@ const CartPage = () => {
   const [warningOpen, setWarningOpen] = useState(false);
   const navigate = useNavigate();
   const { user, token } = useContext(AuthContext); // Ensure AuthContext provides 'user' and 'token'
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const totalPrice = useMemo(() => {
     return cartItems.reduce(
@@ -115,7 +117,8 @@ const CartPage = () => {
       title: "",
       dataIndex: "checkbox",
       render: (_, record) => (
-        <Checkbox onChange={(e) => handleCheckboxChange(e, record)} />
+        <Checkbox onChange={(e) => handleCheckboxChange(e, record)} 
+        checked={selectedOptions.includes(record.key)}/>
       ),
     },
     {
@@ -134,6 +137,23 @@ const CartPage = () => {
       title: "Product",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Stock Number",
+      dataIndex: "stockNumber",
+      key: "stockNumber",
+    },
+    {
+
+      title: "Carat Weight",
+      dataIndex: "caratWeight",
+      key: "caratWeight",
+    },
+    {
+
+      title: "Color",
+      dataIndex: "color",
+      key: "color",
     },
     {
       title: "Price",
@@ -158,7 +178,7 @@ const CartPage = () => {
       ),
     },
     {
-      title: "",
+      title: "Actions",
       key: "action",
       render: (text, record) => (
         <Popconfirm
@@ -182,8 +202,31 @@ const CartPage = () => {
         quantity: item.quantity,
         image: item.image,
         type: item.type,
+        stockNumber: item.stockNumber,
+        caratWeight: item.caratWeight,
+        clarity: item.clarity,
+        cut: item.cut,
+        polish: item.polish,
+        symmetry: item.symmetry,
+        fluorescence: item.fluorescence,
+        description: item.description,
+        gender: item.gender,
+        stoneType: item.stoneType,
+        stoneShape: item.stoneShape,
+        stoneSize: item.stoneSize,
+        stoneClarity: item.stoneClarity,
+        stoneCut: item.stoneCut,
+        stonePolish: item.stonePolish,
+        stoneSymmetry: item.stoneSymmetry,
+        stoneFluorescence: item.stoneFluorescence,
+        stoneDescription: item.stoneDescription,
+        stoneGender: item.stoneGender,
+        stoneCaratWeight: item.stoneCaratWeight,
+        color: item.color,
+        totalPrice: item.price * item.quantity,
+        checkbox: selectedOptions.includes(item.id),
       })),
-    [cartItems]
+    [cartItems, selectedOptions]
   );
 
   return (
@@ -193,7 +236,7 @@ const CartPage = () => {
         <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
       </div>
       <Button onClick={handlePayment} disabled={selectedOptions.length === 0}>
-        Create Order
+      Proceed to Checkout
       </Button>
       <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </div>
