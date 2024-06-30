@@ -59,6 +59,41 @@ function HistoryOrderDetails() {
     navigate("/historyOrder-page"); // Navigate back to history-order page
   };
 
+  const updateRequestWarranty = async () => {
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:8090/auth/update-warranty`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ orderId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Update response:", data);
+      // Assuming `fetchOrderDetails` will update the state with new data
+      fetchOrderDetails();
+    } catch (error) {
+      console.error("Update error:", error);
+      // Handle error using Material-UI Snackbar or similar
+    }
+  };
+
   if (!orderDetails) {
     return (
       <div
@@ -239,6 +274,35 @@ function HistoryOrderDetails() {
                   {orderDetails.DeliveryAddress}
                 </Typography>
               </Grid>
+
+              {orderDetails.ResquestWarranty !== null && (
+              <Grid item xs={12} sm={6}>
+              
+                <Typography
+                  variant="subtitle1"
+                  style={{ color: "#616161", fontWeight: "bold" }}
+                >
+                  Request Warranty
+                </Typography>
+                <Typography variant="body1" style={{ fontSize: "1.125rem" }}>
+                  {orderDetails.ResquestWarranty}
+                </Typography>
+                
+              </Grid>
+              )}
+              <Grid item xs={12}>
+                {orderDetails.ResquestWarranty !== "Request"
+                && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateRequestWarranty}
+                  >
+                    Request Warranty
+                  </Button>
+                )}
+              </Grid>
+              
             </Grid>
           </Paper>
         </div>
