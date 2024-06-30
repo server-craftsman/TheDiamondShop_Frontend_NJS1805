@@ -45,7 +45,7 @@ function ManagerHeader() {
     {
       key: "4",
       icon: <BookOutlined />,
-      label: <Link to="">Manage Warranty</Link>,
+      label: <Link to="/manager-warranty">Manage Warranty</Link>,
     },
     {
       key: "5",
