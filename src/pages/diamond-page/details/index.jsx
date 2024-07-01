@@ -303,6 +303,10 @@ const DiamondDetail = () => {
                   display="flex"
                   justifyContent="flex-start"
                   alignItems="center"
+                  item
+                    xs={12}
+                    sm={6}
+                    md={11}
                 >
                   <Button
                     variant="contained"
@@ -312,7 +316,10 @@ const DiamondDetail = () => {
                       color: "#ffffff",
                       fontWeight: "bold",
                       boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                      marginRight: "15px",
+                      borderRadius: "4rem",
+                      fontSize: "1.3rem",
+                      padding: "10px 40px 10px 30px",
+                      margin: "5px 50px 10px -100px",
                     }}
                     startIcon={<AddShoppingCartIcon />}
                   >
@@ -326,6 +333,10 @@ const DiamondDetail = () => {
                       color: "#FFFB02",
                       fontWeight: "bold",
                       boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                      borderRadius: "4rem",
+                        fontSize: "1.3rem",
+                        padding: "10px 40px 10px 30px",
+                        margin: "5px 50px 10px 0",
                     }}
                     startIcon={<PaymentIcon />}
                   >
@@ -343,13 +354,18 @@ const DiamondDetail = () => {
           Diamond Details
         </Typography>
         <Grid container spacing={2}>
-          {Object.entries(diamond).map(([key, value]) => (
-            <Grid item xs={12} sm={6} md={3} key={key}>
-              <Typography variant="body1">
-                <strong>{key}:</strong> {value}
-              </Typography>
-            </Grid>
-          ))}
+          {Object.entries(diamond).map(([key, value]) => {
+            if (key === "Image") {
+              return null;
+            }
+            return (
+              <Grid item xs={12} sm={6} md={4} key={key}>
+                <Typography variant="body1">
+                  <strong>{key}:</strong> {value}
+                </Typography>
+              </Grid>
+            );
+          })}
         </Grid>
       </Box>
 
@@ -373,8 +389,41 @@ const DiamondDetail = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+          open={openCombinedDialog}
+          onClose={handleCloseCombinedDialog}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Combined With Jewelry</DialogTitle>
+          <DialogContent dividers>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={30}>
+                <iframe
+                  src="/ring-page"
+                  title="Ring Page"
+                  style={{ width: "300%", height: "500px", border: "none" }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={30}>
+                <iframe
+                  src="/timepiece-page"
+                  title="Timepiece Page"
+                  style={{ width: "300%", height: "500px", border: "none" }}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseCombinedDialog} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
     </Container>
     <Footer />
+
     </>
   );
 };
