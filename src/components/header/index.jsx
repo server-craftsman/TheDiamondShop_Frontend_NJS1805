@@ -20,19 +20,19 @@ function Header() {
     // Bạn có thể cập nhật trạng thái hoặc thực hiện các hành động khác ở đây
   };
 
-  const userMenu = (
-    <Menu>
-      <Menu.Item key="0">
-        <Link to="/userProfile-page">Profile</Link>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <Link to="/historyOrder-page">History Order</Link>
-      </Menu.Item>
-      <Menu.Item key="2" onClick={logout}>
-      <Link to="/login">Logout</Link>
-      </Menu.Item>
-    </Menu>
-  );
+  // const userMenu = (
+  //   <Menu>
+  //     <Menu.Item key="0">
+  //       <Link to="/userProfile-page">Profile</Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="1">
+  //       <Link to="/historyOrder-page">History Order</Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="2" onClick={logout}>
+  //     <Link to="/login">Logout</Link>
+  //     </Menu.Item>
+  //   </Menu>
+  // );
   return (
     <header className="header">
       <div className={`header__search ${showSearch === true ? "active" : ""}`}>
@@ -75,6 +75,9 @@ function Header() {
           <li>
             <Link to="/ourstore-page">OUR STORE</Link>
           </li>
+          <li>
+            <Link to="/instruct-page">INSTRUCT</Link>
+          </li>
         </ul>
       </nav>
       <nav className="header-end">
@@ -94,21 +97,29 @@ function Header() {
             // </Dropdown>
 
             <li>
-              <a><UserOutlined style={{fontSize: "25px"}}/></a>
+              <a>
+                <UserOutlined style={{ fontSize: "25px" }} />
+              </a>
               <ul className="login-dropdown">
                 <li>
-                  <Button >
-                    <Link className="link" to="/userProfile-page">Profile</Link>
+                  <Button>
+                    <Link className="link" to="/userProfile-page">
+                      Profile
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button >
-                    <Link className="link" to="/historyOrder-page">History Order</Link>
+                  <Button>
+                    <Link className="link" to="/historyOrder-page">
+                      History Order
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button  onClick={logout}>
-                    <Link className="link" to="/login">Logout</Link>
+                  <Button onClick={logout}>
+                    <Link className="link" to="/login">
+                      Logout
+                    </Link>
                   </Button>
                 </li>
               </ul>
@@ -118,13 +129,17 @@ function Header() {
               <a>SIGN UP</a>
               <ul className="login-dropdown">
                 <li>
-                  <Button >
-                    <Link className="link" to="/login">Login</Link>
+                  <Button>
+                    <Link className="link" to="/login">
+                      Login
+                    </Link>
                   </Button>
                 </li>
                 <li>
-                  <Button >
-                    <Link className="link" to="/register-page">Register</Link>
+                  <Button>
+                    <Link className="link" to="/register-page">
+                      Register
+                    </Link>
                   </Button>
                 </li>
               </ul>

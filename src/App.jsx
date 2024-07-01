@@ -68,6 +68,7 @@ import EditProfile from "./pages/userProfile-page/editProfile";
 import HistoryOrderDetails from "./pages/historyOrder-page/details";
 import BridalDetail from "./pages/bridal-page/details";
 import RingDetail from "./pages/ring-page/details";
+import Instruct from "./pages/instruct-page";
 
 
 
@@ -127,6 +128,10 @@ function App() {
         {
           path: "/ourstore-page",
           element: <OurstorePage />,
+        },
+        {
+          path: "/instruct-page",
+          element: <Instruct />,
         },
         {
           path: "/cart-page",
