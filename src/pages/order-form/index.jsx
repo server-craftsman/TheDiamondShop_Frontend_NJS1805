@@ -84,6 +84,8 @@ const OrderForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [shippingCost, setShippingCost] = useState(10);
 
+  const [selectedCartItem, setSelectedCartItem] = useState(null);
+
   //Paypal
   useEffect(() => {
     if (initialTotalPrice !== null && typeof initialTotalPrice === "number") {
@@ -367,12 +369,13 @@ const OrderForm = () => {
           Shipping: orderData.shippingMethod,
           PaymentMethod: orderData.paymentMethod,
           OrderItems: orderItems,
+          [`${productType}ID`]: productID,
         },
       };
 
       const response = await axios.post(
         "http://localhost:8090/orders/create",
-        orderPayload,
+        { orderData: orderPayload },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -408,30 +411,6 @@ const OrderForm = () => {
         setLoading(false);
         return;
       }
-
-      // const orderPayload = {
-      //   DeliveryAddress: orderData.deliveryAddress,
-      //   // DeliveryCity: orderData.deliveryCity,
-      //   // DeliveryState: orderData.deliveryState,
-      //   // DeliveryZipCode: orderData.deliveryZipCode,
-      //   ProductType: productType,
-      //   Quantity: quantity,
-      //   TotalPrice: parseFloat(price * quantity),
-      //   VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
-      //   Shipping: orderData.shippingMethod,
-      //   PaymentMethod: orderData.paymentMethod,
-      //   [`${productType}ID`]: productID,
-      // };
-
-      // const response = await axios.post(
-      //   "http://localhost:8090/orders/create",
-      //   { orderData: orderPayload },
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      // );
 
       console.log("Order created successfully:", response.data);
       setSuccess(true);
@@ -617,6 +596,8 @@ const OrderForm = () => {
                   </RadioGroup>
                 </FormControl>
               </Grid>
+
+              {/* Payment Method */}
               <Grid item xs={12}>
                 <FormControl component="fieldset">
                   <Typography variant="subtitle1">Payment Method</Typography>
@@ -926,8 +907,8 @@ const OrderForm = () => {
                   <option value=""></option>
                   {eligibleVouchers.map((voucher) => (
                     <option key={voucher.VoucherID} value={voucher.VoucherID}>
-                    {voucher.VoucherName}
-                  </option>
+                      {voucher.VoucherName}
+                    </option>
                   ))}
                 </TextField>
               </FormControl>

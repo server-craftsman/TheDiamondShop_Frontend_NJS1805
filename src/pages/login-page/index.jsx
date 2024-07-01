@@ -18,6 +18,8 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+  const [token, setToken] = useState(""); 
+  const [roleName, setRoleName] = useState(""); 
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -34,14 +36,21 @@ function LoginForm() {
       if (event.origin === "http://localhost:8090") {
         if (event.data && event.data.token) {
           localStorage.setItem("user", JSON.stringify(event.data));
-          localStorage.setItem("token", event.data.token);
-          login(event.data);
+          // localStorage.setItem("token", event.data.token);
+          login(user);
           navigate("/", { state: { message: event.data.message } });
         }
       }
     },
     false
   );
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      login({ token: storedToken });
+    }
+  }, [login]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,54 +61,41 @@ function LoginForm() {
         { withCredentials: false }
       );
 
-      if (response.data.token) {
-        const user = {
-          token: response.data.token,
-          role: response.data.roleName,
-        };
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("token", response.data.token);
-        login(user);
-        setMessage(response.data.message);
+      console.log("Login response:", response);
 
-        switch (response.data.roleName) {
+      if (response.data.token) {
+
+        const { token, roleName, message } = response.data;
+        setMessage(message);
+
+        // Store token in localStorage
+      localStorage.setItem('accessToken', token);
+        login({ token });
+
+        switch (roleName) {
           case "Admin":
-            navigate("/admin-page", {
-              state: { message: response.data.message },
-            });
+            navigate("/admin-page");
             break;
           case "Manager":
-            navigate("/manager-page", {
-              state: { message: response.data.message },
-            });
+            navigate("/manager-page");
             break;
           case "Customer":
-            navigate("/", { state: { message: response.data.message } });
+            navigate("/");
             break;
           case "Sale":
-            navigate("/sale-page", {
-              state: { message: response.data.message },
-            });
+            navigate("/sale-page");
             break;
           case "Delivery":
-            navigate("/delivery-page", {
-              state: { message: response.data.message },
-            });
+            navigate("/timepiece-page");
             break;
           default:
-            navigate("/", { state: { message: response.data.message } });
+            navigate("/");
         }
       } else {
         setMessage("Invalid email or password");
       }
     } catch (error) {
-      if (error.response) {
-        setMessage(error.response.data.message || "Invalid email or password");
-      } else if (error.request) {
-        setMessage("No response from server. Please try again later.");
-      } else {
-        setMessage("An error occurred. Please try again.");
-      }
+      setMessage("Error logging in");
       console.error("Error logging in:", error);
     }
   };

@@ -11,24 +11,19 @@ const CartPage = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [warningOpen, setWarningOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, token } = useContext(AuthContext); // Ensure AuthContext provides 'user' and 'token'
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const { user, token } = useContext(AuthContext); // Ensure AuthContext provides 'user' and 'token'
+
 
   const totalPrice = useMemo(() => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   }, [cartItems]);
 
   const handleCheckboxChange = (e, record) => {
     const checked = e.target.checked;
-    if (checked) {
-      setSelectedOptions([...selectedOptions, record.key]);
-    } else {
-      setSelectedOptions(selectedOptions.filter((id) => id !== record.key));
-    }
+    selectItemForPayment(record.key, checked);
+    setSelectedOptions((prev) =>
+      checked ? [...prev, record.key] : prev.filter((id) => id !== record.key)
+    );
   };
 
   const handleQuantityChange = (item, amount) => {
@@ -46,64 +41,31 @@ const CartPage = () => {
   };
 
   const handleDeleteItem = (item) => {
-    removeFromCart(item.key);
-    setSelectedOptions(selectedOptions.filter((id) => id !== item.key));
+    removeFromCart(item.id);
+    setSelectedOptions(selectedOptions.filter((id) => id !== item.id));
   };
 
   useEffect(() => {
-    const hasDiamondOrBridal = cartItems.some(
-      (item) => item.type === "Diamond" || item.type === "Bridal"
-    );
-
-    if (!hasDiamondOrBridal) {
-      setWarningOpen(false); // Close warning if no Diamond or Bridal items
+    if (cartItems.length === 0) {
+      setWarningOpen(false);
     }
   }, [cartItems]);
 
   const handlePayment = () => {
     if (selectedOptions.length > 0) {
       const selectedItems = cartItems.filter((item) =>
-        selectedOptions.includes(item.key)
-      );
+      selectedOptions.includes(item.id));
 
-      // Check conditions for required items
-      const hasDiamond = selectedItems.some((item) => item.type === "Diamond");
-      const hasBridal = selectedItems.some((item) => item.type === "Bridal");
-      const hasDiamondRings = selectedItems.some(
-        (item) => item.type === "DiamondRings"
+      sessionStorage.setItem(
+        "selectedOptions",
+        JSON.stringify(selectedOptions)
       );
-      const hasDiamondTimepieces = selectedItems.some(
-        (item) => item.type === "DiamondTimepieces"
-      );
-
-      // Valid conditions to create an order
-      const validConditions = hasDiamond || hasBridal;
-
-      if (!validConditions) {
-        try {
-          if (user && token) {
-            sessionStorage.setItem(
-              "selectedOptions",
-              JSON.stringify(selectedOptions)
-            );
-            sessionStorage.setItem("token", token);
-            navigate("/order-form");
-          } else {
-            Modal.warning({
-              title: "Warning",
-              content: "User authentication failed. Please log in again.",
-            });
-          }
-        } catch (error) {
-          console.error("Error handling payment:", error);
+      navigate("/order-form", {
+        state: {
+          cart: selectedItems,
+          totalPrice: selectedItems.reduce((total, item) => total + item.price * item.quantity, 0),
         }
-      } else {
-        Modal.warning({
-          title: "Warning",
-          content:
-            "Please select at least one Diamond or Bridal item to proceed with the order.",
-        });
-      }
+      });
     } else {
       Modal.warning({
         title: "Warning",
@@ -159,23 +121,7 @@ const CartPage = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-    },
-    {
-      title: "Quantity",
-      dataIndex: "quantity",
-      key: "quantity",
-      render: (text, record) => (
-        <div>
-          <Button
-            onClick={() => handleQuantityChange(record, -1)}
-            disabled={record.quantity <= 1}
-          >
-            -
-          </Button>
-          <span style={{ margin: "0 10px" }}>{text}</span>
-          <Button onClick={() => handleQuantityChange(record, 1)}>+</Button>
-        </div>
-      ),
+      render: (text, record) => `$${record.price.toFixed(2)}`, // Display price formatted as currency
     },
     {
       title: "Actions",
@@ -197,6 +143,7 @@ const CartPage = () => {
     () =>
       cartItems.map((item) => ({
         key: item.id,
+        id: item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
