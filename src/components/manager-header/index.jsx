@@ -67,7 +67,7 @@ function ManagerHeader() {
       icon: <SettingOutlined />,
       label: "Manage Promotions",
       children: [
-        { key: "events", label: <Link to="">Events</Link> },
+        { key: "events", label: <Link to="/manager-event">Events</Link> },
         { key: "vouchers", label: <Link to="">Vouchers</Link> },
       ],
     },
