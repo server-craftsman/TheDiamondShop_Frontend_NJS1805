@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, DatePicker, message } from 'antd';
-import axios from 'axios';
-import moment from 'moment';
+import React, { useState, useEffect } from "react";
+import { Table, Button, Modal, Form, Input, DatePicker, message } from "antd";
+import axios from "axios";
+import moment from "moment";
 
 const ManageEvent = () => {
   const [events, setEvents] = useState([]);
@@ -18,10 +18,12 @@ const ManageEvent = () => {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8090/events/promotionEvents');
+      const response = await axios.get(
+        "http://localhost:8090/events/promotionEvents"
+      );
       setEvents(response.data);
     } catch (error) {
-      message.error('Failed to fetch events');
+      message.error("Failed to fetch events");
     } finally {
       setLoading(false);
     }
@@ -29,26 +31,29 @@ const ManageEvent = () => {
 
   const handleCreate = async (values) => {
     try {
-      await axios.post('http://localhost:8090/events/new-event', values);
-      message.success('Event created successfully');
+      await axios.post("http://localhost:8090/events/new-event", values);
+      message.success("Event created successfully");
       fetchEvents();
       setIsModalVisible(false);
       form.resetFields();
     } catch (error) {
-      message.error('Failed to create event');
+      message.error("Failed to create event");
     }
   };
 
   const handleUpdate = async (values) => {
     try {
-      await axios.put(`http://localhost:8090/events/update-event/${editingEvent.EventID}`, values);
-      message.success('Event updated successfully');
+      await axios.put(
+        `http://localhost:8090/events/update-event/${editingEvent.EventID}`,
+        values
+      );
+      message.success("Event updated successfully");
       fetchEvents();
       setIsModalVisible(false);
       form.resetFields();
       setEditingEvent(null);
     } catch (error) {
-      message.error('Failed to update event');
+      message.error("Failed to update event");
     }
   };
 
@@ -63,33 +68,33 @@ const ManageEvent = () => {
 
   const columns = [
     {
-      title: 'Event Name',
-      dataIndex: 'EventName',
-      key: 'EventName',
+      title: "Event Name",
+      dataIndex: "EventName",
+      key: "EventName",
     },
     {
-      title: 'Event Description',
-      dataIndex: 'EventDescription',
-      key: 'EventDescription',
+      title: "Event Description",
+      dataIndex: "EventDescription",
+      key: "EventDescription",
     },
     {
-      title: 'Event Date',
-      dataIndex: 'EventDate',
-      key: 'EventDate',
+      title: "Event Date",
+      dataIndex: "EventDate",
+      key: "EventDate",
     },
     {
-      title: 'Event Location',
-      dataIndex: 'EventLocation',
-      key: 'EventLocation',
+      title: "Event Location",
+      dataIndex: "EventLocation",
+      key: "EventLocation",
     },
     {
-      title: 'Event Type',
-      dataIndex: 'EventType',
-      key: 'EventType',
+      title: "Event Type",
+      dataIndex: "EventType",
+      key: "EventType",
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => (
         <Button type="link" onClick={() => handleEdit(record)}>
           Edit
@@ -100,13 +105,22 @@ const ManageEvent = () => {
 
   return (
     <div>
-      <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginBottom: 16 }}>
+      <Button
+        type="primary"
+        onClick={() => setIsModalVisible(true)}
+        style={{ marginBottom: 16 }}
+      >
         New Event
       </Button>
-      <Table columns={columns} dataSource={events} loading={loading} rowKey="EventID" />
+      <Table
+        columns={columns}
+        dataSource={events}
+        loading={loading}
+        rowKey="EventID"
+      />
 
       <Modal
-        title={editingEvent ? 'Edit Event' : 'New Event'}
+        title={editingEvent ? "Edit Event" : "New Event"}
         visible={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -124,7 +138,7 @@ const ManageEvent = () => {
               }
             })
             .catch((info) => {
-              console.log('Validate Failed:', info);
+              console.log("Validate Failed:", info);
             });
         }}
       >
@@ -132,35 +146,48 @@ const ManageEvent = () => {
           <Form.Item
             name="EventName"
             label="Event Name"
-            rules={[{ required: true, message: 'Please input the event name!' }]}
+            rules={[
+              { required: true, message: "Please input the event name!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="EventDescription"
             label="Event Description"
-            rules={[{ required: true, message: 'Please input the event description!' }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the event description!",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="EventDate"
             label="Event Date"
-            rules={[{ required: true, message: 'Please select the event date!' }]}
+            rules={[
+              { required: true, message: "Please select the event date!" },
+            ]}
           >
             <DatePicker />
           </Form.Item>
           <Form.Item
             name="EventLocation"
             label="Event Location"
-            rules={[{ required: true, message: 'Please input the event location!' }]}
+            rules={[
+              { required: true, message: "Please input the event location!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="EventType"
             label="Event Type"
-            rules={[{ required: true, message: 'Please input the event type!' }]}
+            rules={[
+              { required: true, message: "Please input the event type!" },
+            ]}
           >
             <Input />
           </Form.Item>

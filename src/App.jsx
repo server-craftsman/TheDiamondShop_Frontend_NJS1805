@@ -58,7 +58,7 @@ import TimepieceDetail from "./pages/timepiece-page/details";
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
 import Dashboard from "./admin-pages/dashboard";
-import SearchAllProduct from "./pages/searchProduct-page";
+// import SearchAllProduct from "./pages/searchProduct-page";
 
 //==========Delivery Pages============//
 import DeliveryPage from "./delivery-page/delivery-shopping";
@@ -71,12 +71,9 @@ import HistoryOrderDetails from "./pages/historyOrder-page/details";
 import BridalDetail from "./pages/bridal-page/details";
 import RingDetail from "./pages/ring-page/details";
 import Instruct from "./pages/instruct-page";
-
+import ManageVoucher from "./manager-pages/manage-promotions/manage-voucher";
 
 function App() {
- 
-
-    
   const router = createBrowserRouter([
     {
       path: "/",
@@ -173,20 +170,19 @@ function App() {
         {
           path: "/diamond-detail/:id",
           element: <DiamondDetail />,
-        }, 
+        },
         {
           path: "/bridal-detail/:id",
-          element: <BridalDetail />
+          element: <BridalDetail />,
         },
         {
           path: "/ring-detail/:id",
-          element:<RingDetail />
+          element: <RingDetail />,
         },
         {
           path: "/timepieces-detail/:id",
-          element: <TimepieceDetail />
-        }
-
+          element: <TimepieceDetail />,
+        },
       ],
     },
     //========Manager pages==============//
@@ -220,15 +216,19 @@ function App() {
         },
         {
           path: "/manager-order-warranty",
-          element: <ManageWarranty/>,
+          element: <ManageWarranty />,
         },
         {
           path: "/manager-request-warranty",
-          element: <RequestWaranty/>,
+          element: <RequestWaranty />,
         },
         {
           path: "/manager-event",
-          element: <ManageEvent/>,
+          element: <ManageEvent />,
+        },
+        {
+          path: "manage-voucher",
+          element: <ManageVoucher />,
         },
         {
           path: "/bridals-detail/:id",

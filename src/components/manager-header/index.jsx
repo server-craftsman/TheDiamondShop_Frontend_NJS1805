@@ -68,7 +68,7 @@ function ManagerHeader() {
       label: "Manage Promotions",
       children: [
         { key: "events", label: <Link to="/manager-event">Events</Link> },
-        { key: "vouchers", label: <Link to="">Vouchers</Link> },
+        { key: "vouchers", label: <Link to="manage-voucher">Vouchers</Link> },
       ],
     },
     user
