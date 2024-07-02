@@ -34,6 +34,9 @@ import LayoutSale from "./components/sale-layout";
 import ViewWaranty from "./sales-page/warranty-pages";
 import OrderDetail from "./sales-page/order-pages/view-order-page/detail";
 import OrderConfirmDetail from "./sales-page/order-pages/view-order-confirm-page/detail";
+import ViewRequestWarranty from "./sales-page/view-requestwarranty-page";
+import ViewRequestWarrantyDetail from "./sales-page/view-requestwarranty-page/details-request-warranty";
+import ViewWarrantyByReportNo from "./sales-page/view-requestwarranty-page/details-warranty";
 
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
@@ -288,6 +291,18 @@ function App() {
         {
           path: "/order-confirm/:id",
           element: <OrderConfirmDetail />,
+        },
+        {
+          path: "/view-requestwarranty",
+          element: <ViewRequestWarranty />,
+        },
+        {
+          path: "/view-warrantydetails/:orderId",
+          element: <ViewRequestWarrantyDetail />,
+        },
+        {
+          path: "/view-warranty/:reportNo",
+          element: <ViewWarrantyByReportNo />,
         },
       ],
     },

@@ -65,9 +65,15 @@ const Nav = () => {
         },
       ],
     },
+    {
+        key: "6",
+        icon: <SettingOutlined />,
+        label: "View Reuest Warranty",
+        link: "/view-requestwarranty",
+    },
     user
       ? {
-          key: "6",
+          key: "7",
           icon: <LogoutOutlined />,
           label: (
             <Link to="/login" onClick={logout}>
@@ -77,6 +83,9 @@ const Nav = () => {
         }
       : null,
   ];
+
+  // Filter out null values from menuItems
+  const filteredMenuItems = menuItems.filter(item => item !== null);
 
   return (
     <div className="sidebar-sale">
@@ -92,7 +101,7 @@ const Nav = () => {
           selectedKeys={[location.pathname]}
           defaultOpenKeys={["sub1", "sub2"]}
         >
-          {menuItems.map((item) =>
+          {filteredMenuItems.map((item) =>
             item.children ? (
               <SubMenu key={item.key} icon={item.icon} title={item.label}>
                 {item.children.map((child) => (
