@@ -47,7 +47,8 @@ import ViewDiamondDetailPage from "./manager-pages/manageproduct/diamond/detail"
 import ViewRingDetailPage from "./manager-pages/manageproduct/rings/detail";
 import ViewTimepiecesDetailPage from "./manager-pages/manageproduct/timepieces/detail";
 import ManageCertificate from "./manager-pages/manager-certificate";
-import ManageWarranty from "./manager-pages/manager-warranty";
+import ManageWarranty from "./manager-pages/manager-warranty/order-warranty";
+import RequestWaranty from "./manager-pages/manager-warranty/request-warranty";
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
@@ -69,8 +70,6 @@ import HistoryOrderDetails from "./pages/historyOrder-page/details";
 import BridalDetail from "./pages/bridal-page/details";
 import RingDetail from "./pages/ring-page/details";
 import Instruct from "./pages/instruct-page";
-
-
 
 function App() {
  
@@ -218,8 +217,12 @@ function App() {
           element: <ManageCertificate />,
         },
         {
-          path: "/manager-warranty",
+          path: "/manager-order-warranty",
           element: <ManageWarranty/>,
+        },
+        {
+          path: "/manager-request-warranty",
+          element: <RequestWaranty/>,
         },
         {
           path: "/bridals-detail/:id",
