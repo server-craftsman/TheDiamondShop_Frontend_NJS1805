@@ -88,108 +88,183 @@ function ViewWarrantyDetails() {
 
   return (
     <div>
-      <h2>Customer</h2>
-      <Descriptions bordered>
-        {/* Customer Details */}
-        <Descriptions.Item label="First Name">
-          {warrantyDetails.FirstName}
-        </Descriptions.Item>
-        <Descriptions.Item label="Last Name">
-          {warrantyDetails.LastName}
-        </Descriptions.Item>
-        <Descriptions.Item label="Email">
-          {warrantyDetails.Email}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phone Number">
-          {warrantyDetails.PhoneNumber}
-        </Descriptions.Item>
-      </Descriptions>
-      <h2>Order</h2>
-      {/* Order Details */}
-      <Descriptions bordered>
-        <Descriptions.Item label="Order ID">
-          {warrantyDetails.OrderID}
-        </Descriptions.Item>
-        <Descriptions.Item label="Order Date">
-          {new Date(warrantyDetails.OrderDate).toLocaleDateString()}
-        </Descriptions.Item>
-        <Descriptions.Item label="Quantity">
-          {warrantyDetails.Quantity}
-        </Descriptions.Item>
-        <Descriptions.Item label="Attached Accessories">
-          {warrantyDetails.AttachedAccessories}
-        </Descriptions.Item>
-        <Descriptions.Item label="Shipping">
-          {warrantyDetails.Shipping}
-        </Descriptions.Item>
-        <Descriptions.Item label="Report No">
-          {warrantyDetails.ReportNo}
-        </Descriptions.Item>
-        <Descriptions.Item label="Delivery Address">
-          {warrantyDetails.DeliveryAddress}
-        </Descriptions.Item>
-        <Descriptions.Item label="Order Status">
-          {warrantyDetails.OrderStatus}
-        </Descriptions.Item>
-        <Descriptions.Item label="Total Price">
-          {warrantyDetails.TotalPrice}
-        </Descriptions.Item>
-        <Descriptions.Item label="Request Warranty">
-          {warrantyDetails.ResquestWarranty}
-        </Descriptions.Item>
-      </Descriptions>
-      <h2>Diamond</h2>
-      {/* Diamond Details */}
-      <Descriptions bordered>
-        <Descriptions.Item label="Diamond Stock Number">
-          {warrantyDetails.StockNumber}
-        </Descriptions.Item>
-        <Descriptions.Item label="Diamond Clarity">
-          {warrantyDetails.Clarity}
-        </Descriptions.Item>
-        <Descriptions.Item label="Diamond Color">
-          {warrantyDetails.Color}
-        </Descriptions.Item>
-      </Descriptions>
-      <h2>Diamond</h2>
-      {/* Diamond Rings Details */}
-      <Descriptions bordered>
-        <Descriptions.Item label="Ring Style">
-          {warrantyDetails.RingStyle}
-        </Descriptions.Item>
-        <Descriptions.Item label="Name Rings">
-          {warrantyDetails.NameRings}
-        </Descriptions.Item>
-        <Descriptions.Item label="Ring Category">
-          {warrantyDetails.RingCategory}
-        </Descriptions.Item>
-      </Descriptions>
-      <h2>Bridal</h2>
-      {/* Bridal Details */}
-      <Descriptions bordered>
-        <Descriptions.Item label="Bridal Name">
-          {warrantyDetails.NameBridal}
-        </Descriptions.Item>
-        <Descriptions.Item label="Bridal Style">
-          {warrantyDetails.BridalStyle}
-        </Descriptions.Item>
-        <Descriptions.Item label="Bridal Category">
-          {warrantyDetails.BridalCategory}
-        </Descriptions.Item>
-      </Descriptions>
-      <h2>Timepieces</h2>
-      {/* Timepieces Details */}
-      <Descriptions bordered>
-        <Descriptions.Item label="Timepieces Name">
-          {warrantyDetails.NameTimepieces}
-        </Descriptions.Item>
-        <Descriptions.Item label="Timepieces Style">
-          {warrantyDetails.TimepiecesStyle}
-        </Descriptions.Item>
-        <Descriptions.Item label="Timepieces Collection">
-          {warrantyDetails.Collection}
-        </Descriptions.Item>
-      </Descriptions>
+      {warrantyDetails.FirstName || warrantyDetails.LastName || warrantyDetails.Email || warrantyDetails.PhoneNumber ? (
+        <>
+          <h2>Customer</h2>
+          <Descriptions bordered>
+            {warrantyDetails.FirstName && (
+              <Descriptions.Item label="First Name">
+                {warrantyDetails.FirstName}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.LastName && (
+              <Descriptions.Item label="Last Name">
+                {warrantyDetails.LastName}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Email && (
+              <Descriptions.Item label="Email">
+                {warrantyDetails.Email}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.PhoneNumber && (
+              <Descriptions.Item label="Phone Number">
+                {warrantyDetails.PhoneNumber}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
+
+      {warrantyDetails.OrderID || warrantyDetails.OrderDate || warrantyDetails.Quantity || warrantyDetails.AttachedAccessories || warrantyDetails.Shipping || warrantyDetails.ReportNo || warrantyDetails.DeliveryAddress || warrantyDetails.OrderStatus || warrantyDetails.TotalPrice || warrantyDetails.ResquestWarranty ? (
+        <>
+          <h2>Order</h2>
+          <Descriptions bordered>
+            {warrantyDetails.OrderID && (
+              <Descriptions.Item label="Order ID">
+                {warrantyDetails.OrderID}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.OrderDate && (
+              <Descriptions.Item label="Order Date">
+                {new Date(warrantyDetails.OrderDate).toLocaleDateString()}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Quantity && (
+              <Descriptions.Item label="Quantity">
+                {warrantyDetails.Quantity}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.AttachedAccessories && (
+              <Descriptions.Item label="Attached Accessories">
+                {warrantyDetails.AttachedAccessories}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Shipping && (
+              <Descriptions.Item label="Shipping">
+                {warrantyDetails.Shipping}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.ReportNo && (
+              <Descriptions.Item label="Report No">
+                {warrantyDetails.ReportNo}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.DeliveryAddress && (
+              <Descriptions.Item label="Delivery Address">
+                {warrantyDetails.DeliveryAddress}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.OrderStatus && (
+              <Descriptions.Item label="Order Status">
+                {warrantyDetails.OrderStatus}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.TotalPrice && (
+              <Descriptions.Item label="Total Price">
+                {warrantyDetails.TotalPrice}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.ResquestWarranty && (
+              <Descriptions.Item label="Request Warranty">
+                {warrantyDetails.ResquestWarranty}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
+
+      {warrantyDetails.StockNumber || warrantyDetails.Clarity || warrantyDetails.Color ? (
+        <>
+          <h2>Diamond</h2>
+          <Descriptions bordered>
+            {warrantyDetails.StockNumber && (
+              <Descriptions.Item label="Diamond Stock Number">
+                {warrantyDetails.StockNumber}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Clarity && (
+              <Descriptions.Item label="Diamond Clarity">
+                {warrantyDetails.Clarity}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Color && (
+              <Descriptions.Item label="Diamond Color">
+                {warrantyDetails.Color}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
+
+      {warrantyDetails.RingStyle || warrantyDetails.NameRings || warrantyDetails.RingCategory ? (
+        <>
+          <h2>Diamond Rings</h2>
+          <Descriptions bordered>
+            {warrantyDetails.RingStyle && (
+              <Descriptions.Item label="Ring Style">
+                {warrantyDetails.RingStyle}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.NameRings && (
+              <Descriptions.Item label="Name Rings">
+                {warrantyDetails.NameRings}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.RingCategory && (
+              <Descriptions.Item label="Ring Category">
+                {warrantyDetails.RingCategory}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
+
+      {warrantyDetails.NameBridal || warrantyDetails.BridalStyle || warrantyDetails.BridalCategory ? (
+        <>
+          <h2>Bridal</h2>
+          <Descriptions bordered>
+            {warrantyDetails.NameBridal && (
+              <Descriptions.Item label="Bridal Name">
+                {warrantyDetails.NameBridal}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.BridalStyle && (
+              <Descriptions.Item label="Bridal Style">
+                {warrantyDetails.BridalStyle}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.BridalCategory && (
+              <Descriptions.Item label="Bridal Category">
+                {warrantyDetails.BridalCategory}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
+
+      {warrantyDetails.NameTimepieces || warrantyDetails.TimepiecesStyle || warrantyDetails.Collection ? (
+        <>
+          <h2>Timepieces</h2>
+          <Descriptions bordered>
+            {warrantyDetails.NameTimepieces && (
+              <Descriptions.Item label="Timepieces Name">
+                {warrantyDetails.NameTimepieces}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.TimepiecesStyle && (
+              <Descriptions.Item label="Timepieces Style">
+                {warrantyDetails.TimepiecesStyle}
+              </Descriptions.Item>
+            )}
+            {warrantyDetails.Collection && (
+              <Descriptions.Item label="Timepieces Collection">
+                {warrantyDetails.Collection}
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        </>
+      ) : null}
 
       {/* Render the buttons based on warranty request status */}
       {warrantyDetails.ResquestWarranty === "Assign" && (

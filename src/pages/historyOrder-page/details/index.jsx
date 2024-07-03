@@ -293,11 +293,12 @@ function HistoryOrderDetails() {
                 </Grid>
               )}
               <Grid item xs={12}>
-                {orderDetails.ResquestWarranty !== "Request" &&
-                  orderDetails.ResquestWarranty !== "Assign" &&
-                  orderDetails.ResquestWarranty !== "Approved" &&
-                  orderDetails.ResquestWarranty !== "Refused" &&
-                  orderDetails.ResquestWarranty !== "Processing" && (
+              {orderDetails.ResquestWarranty !== "Request" &&
+                orderDetails.OrderStatus === "Completed" &&
+                orderDetails.ResquestWarranty !== "Assign" &&
+                orderDetails.ResquestWarranty !== "Approved" &&
+                orderDetails.ResquestWarranty !== "Processing" &&
+                orderDetails.ResquestWarranty !== "Refused" && (
                     <Button
                       variant="contained"
                       color="primary"
