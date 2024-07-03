@@ -25,6 +25,8 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useCart } from "../../../CartContext";
 import Footer from "../../../components/footer"
+import Feedback from "../../feedback-page";
+import FeedbackForm from "../../feedback-page/createFeedback";
 
 const DiamondDetail = () => {
   const { id } = useParams();
@@ -73,15 +75,15 @@ const DiamondDetail = () => {
         cut: diamond.Cut,
         shape: diamond.Shape,
         certification: diamond.Certification,
-    };
+      };
 
-    updatedCartItems.push(itemToAdd);
-    addToCart(itemToAdd);
-    setCartItems(updatedCartItems);
-  } else {
-    setWarningOpen(true);
-  }
-};
+      updatedCartItems.push(itemToAdd);
+      addToCart(itemToAdd);
+      setCartItems(updatedCartItems);
+    } else {
+      setWarningOpen(true);
+    }
+  };
 
   const handleBuyNow = () => {
     diamond.Type = "Diamond";
@@ -152,25 +154,25 @@ const DiamondDetail = () => {
 
   return (
     <>
-    <Container>
-      <Grid container spacing={2} marginTop= "100px">
-        <Grid item xs={12} md={5}>
-          <Card>
-            <CardMedia
-              component="img"
-              alt="diamond"
-              height="100%"
-              image={diamond.Image}
-              className="diamond-image"
-              style={{
-                height: "480px",
-                width: "450px",
-                padding: "100px 50px 40px 50px",
-              }}
-              onClick={handleClickOpen}
-            />
-          </Card>
-          <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+      <Container>
+        <Grid container spacing={2} marginTop="100px">
+          <Grid item xs={12} md={5}>
+            <Card>
+              <CardMedia
+                component="img"
+                alt="diamond"
+                height="100%"
+                image={diamond.Image}
+                className="diamond-image"
+                style={{
+                  height: "480px",
+                  width: "450px",
+                  padding: "100px 50px 40px 50px",
+                }}
+                onClick={handleClickOpen}
+              />
+            </Card>
+            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
               <div
                 style={{
                   overflow: "hidden",
@@ -198,199 +200,200 @@ const DiamondDetail = () => {
                 </Zoom>
               </div>
             </Dialog>
-        </Grid>
+          </Grid>
 
-        <Grid item xs={12} md={7}>
-          <Card>
-            <CardContent>
-              <Box mt={2}>
-                <Typography variant="h5" component="h2">
-                  {diamond.DiamondOrigin.toUpperCase()}
-                </Typography>
-                <Typography variant="body1" component="p">
-                  $
-                  {Number(diamond.Price)
-                    .toFixed(2)
-                    .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
-                </Typography>
+          <Grid item xs={12} md={7}>
+            <Card>
+              <CardContent>
+                <Box mt={2}>
+                  <Typography variant="h5" component="h2">
+                    {diamond.DiamondOrigin.toUpperCase()}
+                  </Typography>
+                  <Typography variant="body1" component="p">
+                    $
+                    {Number(diamond.Price)
+                      .toFixed(2)
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                  </Typography>
 
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <InputLabel id="clarity-label">Clarity</InputLabel>
-                  <Select
-                    labelId="clarity-label"
-                    value={clarity}
-                    onChange={(e) => setClarity(e.target.value)}
-                    label="Clarity"
-                  >
-                    <MenuItem value="IF">IF</MenuItem>
-                    <MenuItem value="VVS1">VVS1</MenuItem>
-                    <MenuItem value="VVS2">VVS2</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <InputLabel id="cut-label">Cut</InputLabel>
-                  <Select
-                    labelId="cut-label"
-                    value={cut}
-                    onChange={(e) => setCut(e.target.value)}
-                    label="Cut"
-                  >
-                    <MenuItem value="Excellent">Excellent</MenuItem>
-                    <MenuItem value="Very Good">Very Good</MenuItem>
-                    <MenuItem value="Good">Good</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl fullWidth variant="outlined" margin="normal">
-                  <InputLabel id="certification-label">
-                    Certification
-                  </InputLabel>
-                  <Select
-                    labelId="certification-label"
-                    value={certification}
-                    onChange={(e) => setCertification(e.target.value)}
-                    label="Certification"
-                  >
-                    <MenuItem value="GIA">GIA</MenuItem>
-                  </Select>
-                </FormControl>
-
-                <Grid container justifyContent="flex-start">
-                  <Grid item xs={12} sm={6} md={8}>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={handleViewCertificate}
-                      style={{
-                        marginBottom: "8px",
-                        backgroundColor: "#000000",
-                        color: "#ffffff",
-                        fontWeight: "bold",
-                        boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                        position: "relative",
-                        overflow: "hidden",
-                      }}
-                      startIcon={<VisibilityIcon />}
-                      className="view-certificate-btn"
+                  <FormControl fullWidth variant="outlined" margin="normal">
+                    <InputLabel id="clarity-label">Clarity</InputLabel>
+                    <Select
+                      labelId="clarity-label"
+                      value={clarity}
+                      onChange={(e) => setClarity(e.target.value)}
+                      label="Clarity"
                     >
-                      View Certificate
-                      <span className="zoom-lens"></span>
-                    </Button>
-                  </Grid>
-                </Grid>
+                      <MenuItem value="IF">IF</MenuItem>
+                      <MenuItem value="VVS1">VVS1</MenuItem>
+                      <MenuItem value="VVS2">VVS2</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth variant="outlined" margin="normal">
+                    <InputLabel id="cut-label">Cut</InputLabel>
+                    <Select
+                      labelId="cut-label"
+                      value={cut}
+                      onChange={(e) => setCut(e.target.value)}
+                      label="Cut"
+                    >
+                      <MenuItem value="Excellent">Excellent</MenuItem>
+                      <MenuItem value="Very Good">Very Good</MenuItem>
+                      <MenuItem value="Good">Good</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth variant="outlined" margin="normal">
+                    <InputLabel id="certification-label">
+                      Certification
+                    </InputLabel>
+                    <Select
+                      labelId="certification-label"
+                      value={certification}
+                      onChange={(e) => setCertification(e.target.value)}
+                      label="Certification"
+                    >
+                      <MenuItem value="GIA">GIA</MenuItem>
+                    </Select>
+                  </FormControl>
 
-                <Grid container justifyContent="flex-start">
-                  <Grid item xs={12} sm={6} md={8}>
+                  <Grid container justifyContent="flex-start">
+                    <Grid item xs={12} sm={6} md={8}>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        onClick={handleViewCertificate}
+                        style={{
+                          marginBottom: "8px",
+                          backgroundColor: "#000000",
+                          color: "#ffffff",
+                          fontWeight: "bold",
+                          boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                          position: "relative",
+                          overflow: "hidden",
+                        }}
+                        startIcon={<VisibilityIcon />}
+                        className="view-certificate-btn"
+                      >
+                        View Certificate
+                        <span className="zoom-lens"></span>
+                      </Button>
+                    </Grid>
+                  </Grid>
+
+                  <Grid container justifyContent="flex-start">
+                    <Grid item xs={12} sm={6} md={8}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleAddToCart}
+                        style={{
+                          backgroundColor: "#000000",
+                          color: "#ffffff",
+                          fontWeight: "bold",
+                          boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                          marginBottom: "8px",
+                        }}
+                        startIcon={<AddShoppingCartIcon />}
+                      >
+                        COMBINED WITH JEWELRY
+                      </Button>
+                    </Grid>
+                  </Grid>
+
+                  <Box
+                    display="flex"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    item
+                    xs={12}
+                    sm={6}
+                    md={11}
+                  >
                     <Button
                       variant="contained"
-                      color="primary"
-                      fullWidth
                       onClick={handleAddToCart}
                       style={{
                         backgroundColor: "#000000",
                         color: "#ffffff",
                         fontWeight: "bold",
                         boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                        marginBottom: "8px",
+                        borderRadius: "4rem",
+                        fontSize: "1.3rem",
+                        padding: "10px 40px 10px 30px",
+                        // margin: "5px 50px 10px -100px",
+                        marginRight: "20px"
                       }}
                       startIcon={<AddShoppingCartIcon />}
                     >
-                      COMBINED WITH JEWELRY
+                      Add to Cart
                     </Button>
-                  </Grid>
-                </Grid>
-
-                <Box
-                  display="flex"
-                  justifyContent="flex-start"
-                  alignItems="center"
-                  item
-                    xs={12}
-                    sm={6}
-                    md={11}
-                >
-                  <Button
-                    variant="contained"
-                    onClick={handleAddToCart}
-                    style={{
-                      backgroundColor: "#000000",
-                      color: "#ffffff",
-                      fontWeight: "bold",
-                      boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                      borderRadius: "4rem",
-                      fontSize: "1.3rem",
-                      padding: "10px 40px 10px 30px",
-                      margin: "5px 50px 10px -100px",
-                    }}
-                    startIcon={<AddShoppingCartIcon />}
-                  >
-                    Add to Cart
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={handleBuyNow}
-                    style={{
-                      backgroundColor: "#FF0202",
-                      color: "#FFFB02",
-                      fontWeight: "bold",
-                      boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                      borderRadius: "4rem",
+                    <Button
+                      variant="contained"
+                      onClick={handleBuyNow}
+                      style={{
+                        backgroundColor: "#FF0202",
+                        color: "#FFFB02",
+                        fontWeight: "bold",
+                        boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                        borderRadius: "4rem",
                         fontSize: "1.3rem",
                         padding: "10px 40px 10px 30px",
                         margin: "5px 50px 10px 0",
-                    }}
-                    startIcon={<PaymentIcon />}
-                  >
-                    Buy Now
-                  </Button>
+                      }}
+                      startIcon={<PaymentIcon />}
+                    >
+                      Buy Now
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
 
-      <Box mt={4}>
-        <Typography variant="h4" textAlign="center" gutterBottom>
-          Diamond Details
-        </Typography>
-        <Grid container spacing={2}>
-          {Object.entries(diamond).map(([key, value]) => {
-            if (key === "Image") {
-              return null;
-            }
-            return (
-              <Grid item xs={12} sm={6} md={4} key={key}>
-                <Typography variant="body1">
-                  <strong>{key}:</strong> {value}
-                </Typography>
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Box>
+        <Box mt={4}>
+          <Typography variant="h4" textAlign="center" gutterBottom>
+            Diamond Details
+          </Typography>
+          <Grid container spacing={2}>
+            {Object.entries(diamond).map(([key, value]) => {
+              if (key === "Image") {
+                return null;
+              }
+              return (
+                <Grid item xs={12} sm={6} md={4} key={key}>
+                  <Typography variant="body1">
+                    <strong>{key}:</strong> {value}
+                  </Typography>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </Box>
 
-      <Dialog
-        open={openCertificate}
-        onClose={handleCloseCertificate}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>View Certificate</DialogTitle>
-        <DialogContent>
-          <img
-            src="https://www.rachelboston.co.uk/cdn/shop/files/RB-GIA-report-8_48c37323-9dbf-4875-be1d-6ec304c5e0a4.jpg?crop=center&height=1000&v=1708019881&width=2000"
-            alt="Certificate"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCertificate} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={openCertificate}
+          onClose={handleCloseCertificate}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>View Certificate</DialogTitle>
+          <DialogContent>
+            <img
+              src="https://www.rachelboston.co.uk/cdn/shop/files/RB-GIA-report-8_48c37323-9dbf-4875-be1d-6ec304c5e0a4.jpg?crop=center&height=1000&v=1708019881&width=2000"
+              alt="Certificate"
+              style={{ width: "100%", height: "auto" }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseCertificate} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-      <Dialog
+        <Dialog
           open={openCombinedDialog}
           onClose={handleCloseCombinedDialog}
           maxWidth="md"
@@ -421,8 +424,17 @@ const DiamondDetail = () => {
             </Button>
           </DialogActions>
         </Dialog>
-    </Container>
-    <Footer />
+        <br />
+        <hr />
+        <FeedbackForm/>
+        <br />
+        <hr />
+        <h2>Customer feedback</h2>
+        {/* Add the Feedback component here */}
+        <Feedback productType="Diamond" productID={id} />
+
+      </Container>
+      <Footer />
 
     </>
   );
