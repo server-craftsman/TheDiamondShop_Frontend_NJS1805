@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Input, Button, message, Space } from 'antd';
 import axios from 'axios';
 
 function Certificate() {
   const [reportNumber, setReportNumber] = useState('');
-  const [reportNumbers, setReportNumbers] = useState([]);
-  const [reportData, setReportData] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const columns = [
@@ -22,6 +21,20 @@ function Certificate() {
     { title: 'Fluorescence', dataIndex: 'Fluorescence', key: 'Fluorescence' },
   ];
 
+  useEffect(() => {
+    fetchCertificates();
+  }, []);
+
+  const fetchCertificates = async () => {
+    try {
+      const response = await axios.get('http://localhost:8090/certificate/lookup');
+      setCertificates(response.data);
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
+      message.error('Error fetching certificates');
+    }
+  };
+
   const fetchData = async (reportNumber) => {
     try {
       const response = await axios.get(`http://localhost:8090/certificate/${reportNumber}`);
@@ -33,49 +46,42 @@ function Certificate() {
     }
   };
 
-  const handleAddReportNumber = async () => {
-    if (reportNumber && !reportNumbers.includes(reportNumber)) {
-      setReportNumbers([...reportNumbers, reportNumber]);
-      setLoading(true);
-      try {
-        const newData = await fetchData(reportNumber);
-
-        // Ensure each item has a unique key
-        const uniqueNewData = newData.map((item, index) => ({
-          ...item,
-          uniqueKey: `${item.GIAReportNumber}-${index}`,
-        }));
-
-        setReportData([...reportData, ...uniqueNewData]);
-      } finally {
-        setLoading(false);
-      }
+  const handleSearch = async () => {
+    if (!reportNumber) {
+      fetchCertificates();
+      return;
     }
-    setReportNumber('');
+    setLoading(true);
+    try {
+      const newData = await fetchData(reportNumber);
+      setCertificates(newData);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
-      <Space>
-        <Input
-          placeholder="Enter GIA Report Number"
-          value={reportNumber}
-          onChange={(e) => setReportNumber(e.target.value)}
-          style={{ width: 200 }}
-        />
-        <Button type="primary" onClick={handleAddReportNumber} loading={loading}>
-          Add
-        </Button>
-      </Space>
+      <div style={{ marginBottom: 20 }}>
+        <Space>
+          <Input
+            placeholder="Enter GIA Report Number"
+            value={reportNumber}
+            onChange={(e) => setReportNumber(e.target.value)}
+            style={{ width: 200 }}
+          />
+          <Button type="primary" onClick={handleSearch} loading={loading}>
+            Search
+          </Button>
+        </Space>
+      </div>
       <Table
+        dataSource={certificates}
         columns={columns}
-        dataSource={reportData}
-        rowKey="uniqueKey"
-        style={{ marginTop: 20 }}
+        rowKey="CertificateID"
       />
     </div>
   );
 }
 
 export default Certificate;
-

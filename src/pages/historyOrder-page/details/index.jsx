@@ -18,8 +18,10 @@ function HistoryOrderDetails() {
   const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
-    fetchOrderDetails();
-  }, [orderId]); // Fetch again when orderId changes
+    if (user && orderId) {
+      fetchOrderDetails();
+    }
+  }, [user, orderId]); // Fetch again when user or orderId changes
 
   const fetchOrderDetails = async () => {
     try {
@@ -293,12 +295,12 @@ function HistoryOrderDetails() {
                 </Grid>
               )}
               <Grid item xs={12}>
-              {orderDetails.ResquestWarranty !== "Request" &&
-                orderDetails.OrderStatus === "Completed" &&
-                orderDetails.ResquestWarranty !== "Assign" &&
-                orderDetails.ResquestWarranty !== "Approved" &&
-                orderDetails.ResquestWarranty !== "Processing" &&
-                orderDetails.ResquestWarranty !== "Refused" && (
+                {orderDetails.ResquestWarranty !== "Request" &&
+                  orderDetails.OrderStatus === "Completed" &&
+                  orderDetails.ResquestWarranty !== "Assign" &&
+                  orderDetails.ResquestWarranty !== "Approved" &&
+                  orderDetails.ResquestWarranty !== "Processing" &&
+                  orderDetails.ResquestWarranty !== "Refused" && (
                     <Button
                       variant="contained"
                       color="primary"
