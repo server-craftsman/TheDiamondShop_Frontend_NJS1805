@@ -64,7 +64,7 @@ import Dashboard from "./admin-pages/dashboard";
 // import SearchAllProduct from "./pages/searchProduct-page";
 
 //==========Delivery Pages============//
-import DeliveryPage from "./delivery-page/delivery-shopping";
+import DeliveryPage from "./delivery-page/delivery-shipping";
 import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";

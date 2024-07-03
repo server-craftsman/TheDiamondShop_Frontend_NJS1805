@@ -2,6 +2,7 @@ import axios from "axios";
 import "./index.scss";
 
 import { useEffect, useState } from "react";
+import { message } from "antd";
 
 function DeliveryConfirm() {
   const [orders, setOrders] = useState([]);
@@ -30,9 +31,11 @@ function DeliveryConfirm() {
           orderStatus: newStatus,
         }
       );
+      message.success("Order status updated successfully");
       fetchOrders();
     } catch (error) {
       console.error("Error updating order status:", error);
+      message.error("Failed to update order status");
     }
   };
 
@@ -77,7 +80,7 @@ function DeliveryConfirm() {
                   <button
                     onClick={() => updateStatus(order.OrderID, "Shipped")}
                   >
-                    Completed
+                    Shipped
                   </button>
                 </div>
               </li>

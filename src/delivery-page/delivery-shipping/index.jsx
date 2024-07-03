@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.scss";
+import { message } from "antd";
 
 function DeliveryPage() {
   const [orders, setOrders] = useState([]);
@@ -29,9 +30,11 @@ function DeliveryPage() {
           orderStatus: newStatus,
         }
       );
+      message.success("Order status updated successfully");
       fetchOrders();
     } catch (error) {
       console.error("Error updating order status:", error);
+      message.error("Failed to update order status");
     }
   };
 

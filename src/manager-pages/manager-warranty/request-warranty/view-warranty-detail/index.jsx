@@ -88,7 +88,10 @@ function ManagerViewWarrantyDetails() {
 
   return (
     <div>
-       {warrantyDetails.FirstName || warrantyDetails.LastName || warrantyDetails.Email || warrantyDetails.PhoneNumber ? (
+      {warrantyDetails.FirstName ||
+      warrantyDetails.LastName ||
+      warrantyDetails.Email ||
+      warrantyDetails.PhoneNumber ? (
         <>
           <h2>Customer</h2>
           <Descriptions bordered>
@@ -116,7 +119,16 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.OrderID || warrantyDetails.OrderDate || warrantyDetails.Quantity || warrantyDetails.AttachedAccessories || warrantyDetails.Shipping || warrantyDetails.ReportNo || warrantyDetails.DeliveryAddress || warrantyDetails.OrderStatus || warrantyDetails.TotalPrice || warrantyDetails.ResquestWarranty ? (
+      {warrantyDetails.OrderID ||
+      warrantyDetails.OrderDate ||
+      warrantyDetails.Quantity ||
+      warrantyDetails.AttachedAccessories ||
+      warrantyDetails.Shipping ||
+      warrantyDetails.ReportNo ||
+      warrantyDetails.DeliveryAddress ||
+      warrantyDetails.OrderStatus ||
+      warrantyDetails.TotalPrice ||
+      warrantyDetails.ResquestWarranty ? (
         <>
           <h2>Order</h2>
           <Descriptions bordered>
@@ -174,7 +186,9 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.StockNumber || warrantyDetails.Clarity || warrantyDetails.Color ? (
+      {warrantyDetails.StockNumber ||
+      warrantyDetails.Clarity ||
+      warrantyDetails.Color ? (
         <>
           <h2>Diamond</h2>
           <Descriptions bordered>
@@ -197,7 +211,9 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.RingStyle || warrantyDetails.NameRings || warrantyDetails.RingCategory ? (
+      {warrantyDetails.RingStyle ||
+      warrantyDetails.NameRings ||
+      warrantyDetails.RingCategory ? (
         <>
           <h2>Diamond Rings</h2>
           <Descriptions bordered>
@@ -220,7 +236,9 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.NameBridal || warrantyDetails.BridalStyle || warrantyDetails.BridalCategory ? (
+      {warrantyDetails.NameBridal ||
+      warrantyDetails.BridalStyle ||
+      warrantyDetails.BridalCategory ? (
         <>
           <h2>Bridal</h2>
           <Descriptions bordered>
@@ -243,7 +261,9 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.NameTimepieces || warrantyDetails.TimepiecesStyle || warrantyDetails.Collection ? (
+      {warrantyDetails.NameTimepieces ||
+      warrantyDetails.TimepiecesStyle ||
+      warrantyDetails.Collection ? (
         <>
           <h2>Timepieces</h2>
           <Descriptions bordered>
@@ -266,7 +286,7 @@ function ManagerViewWarrantyDetails() {
         </>
       ) : null}
 
-      {/* Render the buttons based on warranty request status */}
+      {/* Render the buttons based on warranty request status
       {warrantyDetails.ResquestWarranty === "Assign" && (
         <Button onClick={() => handleStatusChange(orderId, "Processing")}>
           Processing
@@ -281,7 +301,21 @@ function ManagerViewWarrantyDetails() {
           <Select.Option value="Approved">Approved</Select.Option>
           <Select.Option value="Refused">Refused</Select.Option>
         </Select>
-      )}
+      )} */}
+
+      {/* ====================================================================== */}
+
+      {/* Render the Select component for changing the status */}
+      <Select
+        style={{ width: 120 }}
+        onChange={(value) => handleStatusChange(orderId, value)}
+        defaultValue={warrantyDetails.ResquestWarranty}
+      >
+        <Select.Option value="Assign">Assign</Select.Option>
+        <Select.Option value="Processing">Processing</Select.Option>
+        <Select.Option value="Approved">Approved</Select.Option>
+        <Select.Option value="Refused">Refused</Select.Option>
+      </Select>
 
       <Button onClick={() => window.history.back()}>Back</Button>
       <Link to={`/manager-view-warranty/${warrantyDetails.ReportNo}`}>
