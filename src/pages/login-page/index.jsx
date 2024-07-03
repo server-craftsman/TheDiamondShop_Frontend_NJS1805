@@ -18,8 +18,6 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const [token, setToken] = useState(""); 
-  const [roleName, setRoleName] = useState(""); 
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -45,12 +43,6 @@ function LoginForm() {
     false
   );
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      login({ token: storedToken });
-    }
-  }, [login]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
