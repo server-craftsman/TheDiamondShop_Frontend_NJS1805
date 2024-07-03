@@ -75,6 +75,8 @@ import BridalDetail from "./pages/bridal-page/details";
 import RingDetail from "./pages/ring-page/details";
 import Instruct from "./pages/instruct-page";
 import ManageVoucher from "./manager-pages/manage-promotions/manage-voucher";
+import ManagerViewWarrantyDetails from "./manager-pages/manager-warranty/request-warranty/view-warranty-detail";
+import ManagerViewWarrantyByReportNo from "./manager-pages/manager-warranty/request-warranty/view-warrant-byreportno";
 
 function App() {
   const router = createBrowserRouter([
@@ -232,6 +234,14 @@ function App() {
         {
           path: "manage-voucher",
           element: <ManageVoucher />,
+        },
+        {
+          path: "/manager-view-warrantydetails/:orderId",
+          element: <ManagerViewWarrantyDetails />,
+        },
+        {
+          path: "/manager-view-warranty/:reportNo",
+          element: <ManagerViewWarrantyByReportNo />,
         },
         {
           path: "/bridals-detail/:id",
