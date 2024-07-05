@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input, Modal, Table, DatePicker } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Table,
+  DatePicker,
+  Popconfirm,
+} from "antd";
 import axios from "axios";
 import moment from "moment";
 
@@ -145,13 +153,16 @@ function ManageWarranty() {
           <Button type="link" onClick={() => handleEditWarranty(record)}>
             Edit
           </Button>
-          <Button
-            type="link"
-            danger
-            onClick={() => handleDeleteWarranty(record.ReportNo)}
+          <Popconfirm
+            title="Are you sure you want to delete this warranty?"
+            onConfirm={() => handleDeleteWarranty(record.ReportNo)}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </Button>
+            <Button type="link" danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       ),
     },

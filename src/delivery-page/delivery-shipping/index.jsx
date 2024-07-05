@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { message, Popconfirm } from "antd";
 import "./index.scss";
-import { message } from "antd";
 
 function DeliveryPage() {
   const [orders, setOrders] = useState([]);
@@ -76,16 +76,14 @@ function DeliveryPage() {
                   <strong>Delivery Address:</strong> {order.DeliveryAddress}
                 </p>
                 <div className="delivery__actions">
-                  {/* <button
-                    onClick={() => updateStatus(order.OrderID, "Shipped")}
+                  <Popconfirm
+                    title="Are you sure you want to update the status to Completed?"
+                    onConfirm={() => updateStatus(order.OrderID, "Completed")}
+                    okText="Yes"
+                    cancelText="No"
                   >
-                    Shipped
-                  </button> */}
-                  <button
-                    onClick={() => updateStatus(order.OrderID, "Completed")}
-                  >
-                    Completed
-                  </button>
+                    <button>Completed</button>
+                  </Popconfirm>
                 </div>
               </li>
             ))}
@@ -93,7 +91,7 @@ function DeliveryPage() {
         </section>
       </div>
       <footer className="delivery__footer">
-        <p> 2024 Delivery Service. All rights reserved.</p>
+        <p>2024 Delivery Service. All rights reserved.</p>
       </footer>
     </div>
   );
