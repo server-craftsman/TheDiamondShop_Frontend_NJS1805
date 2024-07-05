@@ -72,7 +72,7 @@ function HeaderAdmin() {
               </Dropdown>
             </li>
             <li className="menu-item">
-              <Link to="/profile-page" className="menu-link">
+              <Link to="profileAdmin-page" className="menu-link">
                 <span className="menu-link-icon">
                   <FaUserCircle size={20} />
                 </span>

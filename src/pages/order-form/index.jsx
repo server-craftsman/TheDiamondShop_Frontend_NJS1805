@@ -859,8 +859,14 @@ const OrderForm = () => {
                     },
                   }}
                 >
-                  <option value=""></option>
+                  {/* <option value=""></option>
                   {eligibleVouchers.map((voucher) => (
+                    <option key={voucher.VoucherID} value={voucher.VoucherID}>
+                      {voucher.VoucherName}
+                    </option>
+                  ))} */}
+                  <option value=""></option>
+                  {Array.isArray(eligibleVouchers) && eligibleVouchers.map((voucher) => (
                     <option key={voucher.VoucherID} value={voucher.VoucherID}>
                       {voucher.VoucherName}
                     </option>

@@ -80,6 +80,8 @@ import ManagerViewWarrantyByReportNo from "./manager-pages/manager-warranty/requ
 import Feedback from "./pages/feedback-page";
 import FeedbackForm from "./pages/feedback-page/createFeedback";
 import PriceDiamond from "./pages/priceDiamond-page";
+import Customer from "./admin-pages/admin-manager/customer";
+import ProfileAdmin from "./admin-pages/profile";
 
 function App() {
   const router = createBrowserRouter([
@@ -358,6 +360,14 @@ function App() {
         {
           path: "/admin-page",
           element: <Dashboard />,
+        },
+        {
+          path: "customer-page",
+          element: <Customer />,
+        },
+        {
+          path: "profileAdmin-page",
+          element: <ProfileAdmin />,
         },
       ],
     },
