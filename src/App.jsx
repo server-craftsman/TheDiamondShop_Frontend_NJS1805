@@ -79,6 +79,7 @@ import ManagerViewWarrantyDetails from "./manager-pages/manager-warranty/request
 import ManagerViewWarrantyByReportNo from "./manager-pages/manager-warranty/request-warranty/view-warrant-byreportno";
 import Feedback from "./pages/feedback-page";
 import FeedbackForm from "./pages/feedback-page/createFeedback";
+import PriceDiamond from "./pages/priceDiamond-page";
 
 function App() {
   const router = createBrowserRouter([
@@ -189,6 +190,10 @@ function App() {
         {
           path: "/timepieces-detail/:id",
           element: <TimepieceDetail />,
+        },
+        {
+          path: "/priceDiamond-page",
+          element: <PriceDiamond />,
         },
       ],
     },

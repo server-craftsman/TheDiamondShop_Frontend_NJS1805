@@ -78,6 +78,9 @@ function Header() {
           <li>
             <Link to="/instruct-page">INSTRUCT</Link>
           </li>
+          <li>
+            <Link to="/priceDiamond-page">PRICE</Link>
+          </li>
         </ul>
       </nav>
       <nav className="header-end">
