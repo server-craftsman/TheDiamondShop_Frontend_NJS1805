@@ -77,6 +77,8 @@ import Instruct from "./pages/instruct-page";
 import ManageVoucher from "./manager-pages/manage-promotions/manage-voucher";
 import ManagerViewWarrantyDetails from "./manager-pages/manager-warranty/request-warranty/view-warranty-detail";
 import ManagerViewWarrantyByReportNo from "./manager-pages/manager-warranty/request-warranty/view-warrant-byreportno";
+import Feedback from "./pages/feedback-page";
+import FeedbackForm from "./pages/feedback-page/createFeedback";
 
 function App() {
   const router = createBrowserRouter([
@@ -258,6 +260,14 @@ function App() {
         {
           path: "/timepieces-details/:id",
           element: <ViewTimepiecesDetailPage />,
+        },
+        {
+          path: "/feedback-page",
+          element: <Feedback />,
+        },
+        {
+          path: "/feedback-create",
+          element: <FeedbackForm />,
         },
       ],
     },

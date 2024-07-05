@@ -251,51 +251,6 @@ const OrderForm = () => {
     setSelectedVoucher(voucher || null);
   };
 
-  // const applyVoucher = async (voucherID) => {
-  //   try {
-  //     const response = await fetch("http://localhost:8090/orders/apply-voucher", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //       },
-  //       body: JSON.stringify({ voucherID }),
-  //     });
-
-  //     if (response.status === 401) {
-  //       const refreshResponse = await fetch(
-  //         "http://localhost:8090/orders/refresh-token",
-  //         {
-  //           method: "POST",
-  //           headers: { "Content-Type": "application/json" },
-  //           body: JSON.stringify({
-  //             refreshToken: localStorage.getItem("refreshToken"),
-  //           }),
-  //         }
-  //       );
-
-  //       if (refreshResponse.ok) {
-  //         const { token } = await refreshResponse.json();
-  //         localStorage.setItem("token", token);
-
-  //         return applyVoucher(voucherID);
-  //       } else {
-  //         throw new Error("Failed to refresh token.");
-  //       }
-  //     } else if (!response.ok) {
-  //       const errorText = await response.text();
-  //       throw new Error(`Failed to apply voucher. Server responded with: ${errorText}`);
-  //     }
-
-  //     const data = await response.json();
-  //     message.success("Voucher applied successfully!");
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     message.error("Error applying voucher. Please try again.");
-  //     throw error;
-  //   }
-  // };
 
   const handleApplyVoucher = () => {
     if (selectedVoucher && initialTotalPrice !== null) {
