@@ -280,7 +280,17 @@ function HistoryOrderDetails() {
                   {orderDetails.DeliveryAddress}
                 </Typography>
               </Grid>
-
+              <Grid item xs={12} sm={6}>
+                {orderDetails.OrderStatus === "Completed" && (
+                  <Link
+                    to={`/customer-view-warranty/${orderDetails.ReportNo}`}
+                  >
+                    <Button variant="contained" color="primary">
+                      View Warranty
+                    </Button>
+                  </Link>
+                )}
+              </Grid>
               {orderDetails.ResquestWarranty !== null && (
                 <Grid item xs={12} sm={6}>
                   <Typography
@@ -294,7 +304,7 @@ function HistoryOrderDetails() {
                   </Typography>
                 </Grid>
               )}
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 {orderDetails.ResquestWarranty !== "Request" &&
                   orderDetails.OrderStatus === "Completed" &&
                   orderDetails.ResquestWarranty !== "Assign" &&
@@ -309,17 +319,6 @@ function HistoryOrderDetails() {
                       Request Warranty
                     </Button>
                   )}
-              </Grid>
-              <Grid item xs={12}>
-                {orderDetails.OrderStatus === "Completed" && (
-                  <Link
-                    to={`/customer-view-warranty/${orderDetails.ReportNo}`}
-                  >
-                    <Button variant="contained" color="primary">
-                      View Warranty
-                    </Button>
-                  </Link>
-                )}
               </Grid>
             </Grid>
           </Paper>

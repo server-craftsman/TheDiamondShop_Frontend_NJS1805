@@ -78,7 +78,7 @@ function LoginForm() {
             navigate("/sale-page");
             break;
           case "Delivery":
-            navigate("/timepiece-page");
+            navigate("/delivery");
             break;
           default:
             navigate("/");
