@@ -82,6 +82,7 @@ import FeedbackForm from "./pages/feedback-page/createFeedback";
 import PriceDiamond from "./pages/priceDiamond-page";
 import Customer from "./admin-pages/admin-manager/customer";
 import ProfileAdmin from "./admin-pages/profile";
+import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cus-view-warrant-byreportno";
 
 function App() {
   const router = createBrowserRouter([
@@ -168,6 +169,10 @@ function App() {
         {
           path: "/history-order-details/:orderId",
           element: <HistoryOrderDetails />,
+        },
+        {
+          path: "/customer-view-warranty/:reportNo",
+          element: <CustomerViewWarrantyByReportNo />,
         },
         {
           path: "/showsearch-page",

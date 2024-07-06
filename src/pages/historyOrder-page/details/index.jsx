@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useParams, useNavigate, Link } from "react-router-dom"; // Import useNavigate from react-router-dom
 import { AuthContext } from "../../../AuthContext";
 import {
   Typography,
@@ -309,6 +309,17 @@ function HistoryOrderDetails() {
                       Request Warranty
                     </Button>
                   )}
+              </Grid>
+              <Grid item xs={12}>
+                {orderDetails.OrderStatus === "Completed" && (
+                  <Link
+                    to={`/customer-view-warranty/${orderDetails.ReportNo}`}
+                  >
+                    <Button variant="contained" color="primary">
+                      View Warranty
+                    </Button>
+                  </Link>
+                )}
               </Grid>
             </Grid>
           </Paper>
