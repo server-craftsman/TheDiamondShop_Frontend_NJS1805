@@ -9,7 +9,7 @@ function DeliveryConfirm() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8090/features/view-order-confirm"
+        "http://localhost:8090/features/orderstatus-delivery"
       );
       setOrders(response.data);
     } catch (error) {
