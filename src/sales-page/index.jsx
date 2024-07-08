@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../AuthContext"; // Adjust the path as needed
 import axios from "axios";
 import { Col, Form, Input, Row, Button, Card, Typography } from "antd";
+import { Link } from "react-router-dom";
 
 
 const SalePage = () => {
@@ -97,13 +98,14 @@ const SalePage = () => {
                    I'm in that two seat Lambo"
                  </p>
    
-                 <Button
-                     type="submit"
-   
-                     style={{ alignItems: "center", marginTop: "16px" }}
-                   >
-                     Update Profile
-                   </Button>
+                 <Link to="/profileSale-edit">
+                <Button
+                  type="submit"
+
+                  style={{ alignItems: "center", marginTop: "16px" }}
+                >
+                  Update Profile
+                </Button></Link>
                </div>
    
    

@@ -1,7 +1,7 @@
 import { Button, DatePicker, Form, Input, Modal, Select } from 'antd';
-import React, { useState } from 'react'
-
-function Customer() {
+import React, { useState } from 'react';
+import "../account-page/index.scss";
+function Account() {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -32,7 +32,15 @@ function Customer() {
   };
 
   return (
-    <div>
+    <div className='account'>
+        <section className="content-area-top">
+        <div className="area-top-l">
+
+          <h1 className="area-top-title">Dashboard</h1> <br />
+
+        </div>
+      </section>
+      <br />
       <Button type="primary" onClick={showModal}>
         Add New Account
       </Button>
@@ -180,4 +188,4 @@ function Customer() {
   )
 }
 
-export default Customer;
+export default Account;

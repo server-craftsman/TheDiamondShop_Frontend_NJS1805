@@ -21,22 +21,22 @@ import { AuthContext } from "../../AuthContext";
 
 function HeaderAdmin() {
   const { logout } = useContext(AuthContext);
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Link to="customer-page">Customer</Link>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Link to="/manager-page">Manager</Link>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <Link to="/sale-page">Sale Staff</Link>
-      </Menu.Item>
-      <Menu.Item key="4">
-        <Link to="/delivery-page">Delivery</Link>
-      </Menu.Item>
-    </Menu>
-  );
+  // const menu = (
+  //   <Menu>
+  //     <Menu.Item key="1">
+  //       <Link to="customer-page">Customer</Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="2">
+  //       <Link to="/manager-page">Manager</Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="3">
+  //       <Link to="/sale-page">Sale Staff</Link>
+  //     </Menu.Item>
+  //     <Menu.Item key="4">
+  //       <Link to="/delivery-page">Delivery</Link>
+  //     </Menu.Item>
+  //   </Menu>
+  // );
 
   return (
     <nav className={`sidebar "sidebar-show" : ""}`}>
@@ -57,19 +57,12 @@ function HeaderAdmin() {
               </Link>
             </li>
             <li className="menu-item">
-              <Dropdown overlay={menu} trigger={["click"]}>
-                <Link
-                  to="/"
-                  className="menu-link"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <span className="menu-link-icon">
-                    <LaptopOutlined size={20} />
-                  </span>
-                  <span className="menu-link-text">Manager</span>
-                  <CaretDownOutlined />
-                </Link>
-              </Dropdown>
+              <Link to="account-page" className="menu-link active">
+                <span className="menu-link-icon">
+                  <DashboardOutlined size={18} />
+                </span>
+                <span className="menu-link-text">Account</span>
+              </Link>
             </li>
             <li className="menu-item">
               <Link to="profileAdmin-page" className="menu-link">
@@ -80,19 +73,11 @@ function HeaderAdmin() {
               </Link>
             </li>
             <li className="menu-item">
-              <Link to="/" className="menu-link">
+              <Link to="mapAdmin-page" className="menu-link">
                 <span className="menu-link-icon">
                   <FaMap size={18} />
                 </span>
                 <span className="menu-link-text">Map</span>
-              </Link>
-            </li>
-            <li className="menu-item">
-              <Link to="/" className="menu-link">
-                <span className="menu-link-icon">
-                  <FaBoxOpen size={20} />
-                </span>
-                <span className="menu-link-text">Products</span>
               </Link>
             </li>
           </ul>

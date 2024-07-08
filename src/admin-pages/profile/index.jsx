@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Row, Col, Card, Form, Input, Button } from "antd";
 import { AuthContext } from "../../AuthContext"; // Adjust the path as needed
-import './index.scss';
+import '../profile/index.scss';
 import axios from "axios";
 import { Link } from "react-router-dom";
 
