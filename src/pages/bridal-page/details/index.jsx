@@ -33,7 +33,7 @@ import {
   TableRow,
   Fade,
   Divider,
-Avatar
+  Avatar,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -49,16 +49,16 @@ import StarIcon from "@mui/icons-material/Star";
 import { AuthContext } from "../../../AuthContext";
 import { getAllFeedbacks } from "../../feedback-service/getAllFeedbacks";
 
-
 import { useCart } from "../../../CartContext";
 import Footer from "../../../components/footer";
+import Warning from "../../../Warning";
 
 function BridalDetail() {
   const { id } = useParams();
   const [bridal, setBridal] = useState(null);
   const [clarity, setClarity] = useState("");
   const { addToCart, cartItems, setCartItems } = useCart();
-
+  const [warningOpen, setWarningOpen] = useState(false);
   const [material, setMaterial] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [ringSize, setSelectedSize] = useState("");
@@ -71,7 +71,6 @@ function BridalDetail() {
   const [value, setValue] = useState(0);
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
-
 
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [feedbackBridal, setFeedbackBridal] = useState([]);
@@ -92,25 +91,25 @@ function BridalDetail() {
         console.error("Error fetching similar products:", error)
       );
 
-      async function fetchFeedback() {
-        try {
-          if (!user || !user.token) {
-            console.error("User or token not available");
-            return;
-          }
-  
-          const productType = "Bridal"; // Adjust based on your logic
-          const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
-          setFeedbackBridal(feedbacks);
-        } catch (error) {
-          console.error("Error fetching feedback:", error);
+    async function fetchFeedback() {
+      try {
+        if (!user || !user.token) {
+          console.error("User or token not available");
+          return;
         }
+
+        const productType = "Bridal"; // Adjust based on your logic
+        const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
+        setFeedbackBridal(feedbacks);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
       }
-  
-      if (user) {
-        fetchFeedback();
-      }
-  }, [useParams.id, user]);
+    }
+
+    if (user) {
+      fetchFeedback();
+    }
+  }, [id, user]);
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -206,66 +205,98 @@ function BridalDetail() {
     setQuantity(event.target.value);
   };
 
+  // const handleAddToCart = () => {
+  //   if (!material || !ringSize || !quantity) {
+  //     setOpen(true);
+  //     return;
+  //   }
+
+  //   const updatedCartItems = [...cartItems];
+  //   const itemToAdd = {
+  //     id: bridal.BridalsID,
+  //     name: bridal.NameBridal,
+  //     image: bridal.ImageBridal,
+  //     price: bridal.Price,
+  //     quantity: parseInt(quantity),
+  //     type: "Bridal",
+
+  //     ringSize: bridal.RingSizeRang,
+  //     category: bridal.Category,
+  //     totalPrice: bridal.Price * parseInt(quantity),
+  //   };
+
+  //   handleDetailNavigation();
+  //   updatedCartItems.push(itemToAdd);
+  //   addToCart(itemToAdd);
+  //   handleDetailNavigation();
+  //   setCartItems(updatedCartItems);
+  // };
   const handleAddToCart = () => {
-    if (!material || !ringSize || !quantity) {
-      setOpen(true);
-      return;
-    }
-
     const updatedCartItems = [...cartItems];
-    const itemToAdd = {
-      id: bridal.BridalsID,
-      name: bridal.NameBridal,
-      image: bridal.ImageBridal,
-      price: bridal.Price,
-      quantity: parseInt(quantity),
-      type: "Bridal",
+    const alreadyInCart = updatedCartItems.find(
+      (item) => item.id === bridal.BridalID
+    );
 
-      ringSize: bridal.RingSizeRang,
-      category: bridal.Category,
-      totalPrice: bridal.Price * parseInt(quantity),
-    };
+    if (!alreadyInCart) {
+      bridal.Type = "Bridal";
+      const itemToAdd = {
+        id: bridal.BridalsID,
+        name: bridal.NameBridal,
+        image: bridal.ImageBridal,
+        material: bridal.Material,
+        price: bridal.Price,
+        quantity: parseInt(quantity),
+        type: bridal.Type,
 
-    handleDetailNavigation();
-    updatedCartItems.push(itemToAdd);
-    addToCart(itemToAdd);
-    handleDetailNavigation();
-    setCartItems(updatedCartItems);
-  };
+        ringSize: bridal.RingSizeRang,
+        category: bridal.Category,
+        totalPrice: bridal.Price * parseInt(quantity),
+      };
 
-  const handleBuyNow = () => {
-    if (!material || !ringSize || !quantity) {
-      setOpen(true);
-      return;
+      updatedCartItems.push(itemToAdd);
+      addToCart(itemToAdd);
+      setCartItems(updatedCartItems);
+    } else {
+      setWarningOpen(true);
     }
-
-    const itemToAdd = {
-      id: bridal.BridalID,
-      name: bridal.NameBridal,
-      image: bridal.ImageBridal,
-      price: bridal.Price,
-      quantity: parseInt(quantity),
-      type: "Bridal",
-
-      material,
-      ringSize: bridal.RingSizeRang,
-      category: bridal.Category,
-      totalPrice: bridal.Price * parseInt(quantity),
-    };
-
-    // Disable the button to prevent multiple clicks during processing
-    setIsProcessingBuyNow(true);
-
-    // Add item to cart
-    addToCart(itemToAdd);
-
-    // Navigate to cart-page after a short delay to allow addToCart to complete
-    setTimeout(() => {
-      setIsProcessingBuyNow(false); // Reset the processing state after navigation
-      navigate("/cart-page"); // Navigate to cart-page after adding to cart
-    }, 0);
   };
 
+  // const handleBuyNow = () => {
+  //   if (!material || !ringSize || !quantity) {
+  //     setOpen(true);
+  //     return;
+  //   }
+
+  //   const itemToAdd = {
+  //     id: bridal.BridalID,
+  //     name: bridal.NameBridal,
+  //     image: bridal.ImageBridal,
+  //     price: bridal.Price,
+  //     quantity: parseInt(quantity),
+  //     type: "Bridal",
+
+  //     material,
+  //     ringSize: bridal.RingSizeRang,
+  //     category: bridal.Category,
+  //     totalPrice: bridal.Price * parseInt(quantity),
+  //   };
+
+  //   // Disable the button to prevent multiple clicks during processing
+  //   setIsProcessingBuyNow(true);
+
+  //   // Add item to cart
+  //   addToCart(itemToAdd);
+
+  //   // Navigate to cart-page after a short delay to allow addToCart to complete
+  //   setTimeout(() => {
+  //     setIsProcessingBuyNow(false); // Reset the processing state after navigation
+  //     navigate("/cart-page"); // Navigate to cart-page after adding to cart
+  //   }, 0);
+  // };
+  const handleBuyNow = () => {
+    handleAddToCart();
+    navigate("/cart-page"); // Ensure the correct path
+  };
   const handleCombinedWithJewelry = () => {
     navigate("/diamond-page");
   };
@@ -326,10 +357,13 @@ function BridalDetail() {
 
   const feedbackCount = feedbackBridal.length;
 
-
   return (
     <>
-      <Container fullWidth maxWidth="100%" style={{ backgroundColor: "#F3F2F2" }}>
+      <Container
+        fullWidth
+        maxWidth="100%"
+        style={{ backgroundColor: "#F3F2F2" }}
+      >
         <Grid container spacing={2} marginTop="100px">
           <Grid item xs={12} md={5}>
             <Card>
@@ -366,20 +400,24 @@ function BridalDetail() {
                     fontSize={"2.5rem"}
                     fontWeight={"bolder"}
                   >
-                    {bridal.NameBridal.toUpperCase() +
-                      " - " +
-                      bridal.Material +
-                      " - " +
-                      bridal.RingSizeRang}
+                    {bridal.NameBridal.toUpperCase() + " - " + bridal.Material}
                   </Typography>
-                  <Typography variant="body1" component="p">
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    style={{
+                      color: "red",
+                      fontWeight: "bold",
+                      fontSize: "30px",
+                    }}
+                  >
                     $
                     {Number(bridal.Price)
                       .toFixed(2)
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
-                  <FormControl
+                  {/* <FormControl
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -414,10 +452,10 @@ function BridalDetail() {
                       <MenuItem value="14K White Gold">14k White Gold</MenuItem>
                       <MenuItem value="Platinum">Platinum</MenuItem>
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
 
                   <div style={{ display: "flex" }}>
-                    <Box mt={3}>
+                    {/* <Box mt={3}>
                       <Button
                         variant="outlined"
                         onClick={handleMenuClick}
@@ -478,9 +516,14 @@ function BridalDetail() {
                           Selected Size: {ringSize}
                         </Typography>
                       )}
-                    </Box>
-
-                    <Typography variant="h6" marginTop={4}>
+                    </Box> */}
+                    <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                        Bridal size:{" "}
+                      </span>
+                      {bridal.RingSizeRang}
+                    </strong>
+                    <Typography variant="h6" marginTop={0.3}>
                       <Link
                         to="/instruct-page"
                         // target="_blank"
@@ -503,7 +546,7 @@ function BridalDetail() {
                     </Typography>
                   </div>
 
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -512,16 +555,16 @@ function BridalDetail() {
                     value={quantity}
                     onChange={handleQuantityChange}
                     required
-                  />
+                  /> */}
 
-                  <Button
+                  {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={handleDetailNavigation}
                     style={{ margin: "1rem 0" }}
                   >
                     Apply Change and View Details
-                  </Button>
+                  </Button> */}
 
                   <Grid container justifyContent="flex-start">
                     <Grid item xs={12} sm={6} md={20}>
@@ -681,7 +724,7 @@ function BridalDetail() {
         </Grid>
         <br /> <hr />
         <Box>
-        <Box
+          <Box
             sx={{ borderBottom: 1, borderColor: "divider", marginTop: "20px" }}
           >
             <div style={{ backgroundColor: "#ECECEC" }}>
@@ -954,151 +997,250 @@ function BridalDetail() {
             )}
             <CSSTransition key="feedback" timeout={300} classNames="fade">
               <TabPanel value={value} index={1}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginTop: '20px' }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Box mt={4}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Existing Feedbacks
-            </Typography>
-            <Grid container spacing={3}>
-              {feedbackBridal.length > 0 ? (
-                feedbackBridal.map((feedback, index) => (
-                  <React.Fragment key={feedback.id}>
-                    <Grid item xs={12} container alignItems="center" sx={{ mb: 2 }}>
-                      {/* Customer Avatar */}
-                      <Grid item xs={2} style={{ marginRight: '-12%' }}>
-                        <Avatar alt={feedback.LastName} src={feedback.Image} />
-                      </Grid>
-                      {/* Feedback Details */}
-                      <Grid item xs={10} sx={{ paddingLeft: '25px' }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize: '20px', mb: 1 }}>
-                          {feedback.FirstName} {feedback.LastName}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginTop: "20px",
+                  }}
+                >
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} md={6}>
+                      <Box mt={4}>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: "bold", mb: 2 }}
+                        >
+                          Existing Feedbacks
                         </Typography>
-                        <Typography variant="subtitle2" sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 1 }}>
-                          Evaluation Date: {new Date(feedback.EvaluationDate).toLocaleDateString()}
-                        </Typography>
-                        <Rating
-                          name={`rating-${feedback.id}`}
-                          value={feedback.Rating}
-                          readOnly
-                          precision={0.5}
-                          emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                        />
-                        <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
-                      </Grid>
+                        <Grid container spacing={3}>
+                          {feedbackBridal.length > 0 ? (
+                            feedbackBridal.map((feedback, index) => (
+                              <React.Fragment key={feedback.id}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  container
+                                  alignItems="center"
+                                  sx={{ mb: 2 }}
+                                >
+                                  {/* Customer Avatar */}
+                                  <Grid
+                                    item
+                                    xs={2}
+                                    style={{ marginRight: "-12%" }}
+                                  >
+                                    <Avatar
+                                      alt={feedback.LastName}
+                                      src={feedback.Image}
+                                    />
+                                  </Grid>
+                                  {/* Feedback Details */}
+                                  <Grid
+                                    item
+                                    xs={10}
+                                    sx={{ paddingLeft: "25px" }}
+                                  >
+                                    <Typography
+                                      variant="subtitle1"
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: "20px",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      {feedback.FirstName} {feedback.LastName}
+                                    </Typography>
+                                    <Typography
+                                      variant="subtitle2"
+                                      sx={{
+                                        fontStyle: "italic",
+                                        color: "text.secondary",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      Evaluation Date:{" "}
+                                      {new Date(
+                                        feedback.EvaluationDate
+                                      ).toLocaleDateString()}
+                                    </Typography>
+                                    <Rating
+                                      name={`rating-${feedback.id}`}
+                                      value={feedback.Rating}
+                                      readOnly
+                                      precision={0.5}
+                                      emptyIcon={
+                                        <StarIcon
+                                          style={{ opacity: 0.55 }}
+                                          fontSize="inherit"
+                                        />
+                                      }
+                                    />
+                                    <Typography sx={{ mt: 1 }}>
+                                      {feedback.Content}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                                {index < feedbackBridal.length - 1 && (
+                                  <Divider
+                                    variant="middle"
+                                    sx={{
+                                      my: 2,
+                                      borderColor: "rgba(0, 0, 0, 0.12)",
+                                    }}
+                                  />
+                                )}
+                                {index < feedbackBridal.length - 1 && (
+                                  <hr
+                                    style={{
+                                      width: "100%",
+                                      borderTop: "1px dashed black",
+                                      marginBottom: "16px",
+                                    }}
+                                  />
+                                )}
+                              </React.Fragment>
+                            ))
+                          ) : (
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontStyle: "italic" }}
+                            >
+                              No feedback available
+                            </Typography>
+                          )}
+                        </Grid>
+                      </Box>
                     </Grid>
-                    {index < feedbackBridal.length - 1 && (
-                      <Divider variant="middle" sx={{ my: 2, borderColor: 'rgba(0, 0, 0, 0.12)' }} />
-                    )}
-                    {index < feedbackBridal.length - 1 && (
-                      <hr style={{ width: '100%', borderTop: '1px dashed black', marginBottom: '16px' }} />
-                    )}
-                  </React.Fragment>
-                ))
-              ) : (
-                <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
-                  No feedback available
-                </Typography>
-              )}
-            </Grid>
-          </Box>
-        </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Box sx={{ p: 4, backgroundColor: '#000', color: '#fff', borderRadius: 2 }}>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Thêm đánh giá
-            </Typography>
-            <form onSubmit={handleFeedbackSubmit}>
-              <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                <Typography component="legend" style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
-                  Đánh giá của bạn *
-                </Typography>
-                <Rating
-                  name="rating"
-                  value={rating}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
-                  precision={1}
-                  emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                />
-              </FormControl>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                label="Nhận xét của bạn *"
-                variant="outlined"
-                margin="normal"
-                required
-                InputLabelProps={{
-                  style: { color: '#fff' },
-                }}
-                InputProps={{
-                  style: { color: '#fff', backgroundColor: '#919191' },
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <TextField
-                  fullWidth
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  label="Tên"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  label="Email"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-              </Box>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  backgroundColor: '#FFD700',
-                  color: '#000',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    backgroundColor: '#FFA500',
-                  },
-                }}
-              >
-                GỬI ĐI
-              </Button>
-            </form>
-          </Box>
-        </Grid>
-      </Grid>
-    </div>
-    </TabPanel>
+                    <Grid item xs={12} md={6}>
+                      <Box
+                        sx={{
+                          p: 4,
+                          backgroundColor: "#000",
+                          color: "#fff",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="h5" component="h2" gutterBottom>
+                          Thêm đánh giá
+                        </Typography>
+                        <form onSubmit={handleFeedbackSubmit}>
+                          <FormControl
+                            fullWidth
+                            variant="outlined"
+                            sx={{ mt: 2 }}
+                          >
+                            <Typography
+                              component="legend"
+                              style={{
+                                fontSize: "1.2rem",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              Đánh giá của bạn *
+                            </Typography>
+                            <Rating
+                              name="rating"
+                              value={rating}
+                              onChange={(event, newValue) => {
+                                setRating(newValue);
+                              }}
+                              precision={1}
+                              emptyIcon={
+                                <StarIcon
+                                  style={{ opacity: 0.55 }}
+                                  fontSize="inherit"
+                                />
+                              }
+                            />
+                          </FormControl>
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            label="Nhận xét của bạn *"
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            InputLabelProps={{
+                              style: { color: "#fff" },
+                            }}
+                            InputProps={{
+                              style: {
+                                color: "#fff",
+                                backgroundColor: "#919191",
+                              },
+                            }}
+                          />
+                          <Box sx={{ display: "flex", gap: 2 }}>
+                            <TextField
+                              fullWidth
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              label="Tên"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                            <TextField
+                              fullWidth
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              label="Email"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                          </Box>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                              mt: 2,
+                              backgroundColor: "#FFD700",
+                              color: "#000",
+                              fontSize: "1rem",
+                              fontWeight: "bold",
+                              "&:hover": {
+                                backgroundColor: "#FFA500",
+                              },
+                            }}
+                          >
+                            GỬI ĐI
+                          </Button>
+                        </form>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </div>
+              </TabPanel>
             </CSSTransition>
           </TransitionGroup>
         </Box>
       </Container>
       <Footer />
+      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </>
   );
 }

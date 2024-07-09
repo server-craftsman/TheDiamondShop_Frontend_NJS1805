@@ -49,6 +49,7 @@ import { getAllFeedbacks } from "../../feedback-service/getAllFeedbacks";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Footer from "../../../components/footer";
 import { useCart } from "../../../CartContext";
+import Warning from "../../../Warning";
 
 const RingDetail = () => {
   const { id } = useParams();
@@ -77,6 +78,7 @@ const RingDetail = () => {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [warningOpen, setWarningOpen] = useState(false);
 
   useEffect(() => {
     axios
@@ -85,7 +87,6 @@ const RingDetail = () => {
         // Update ring state after fetching data
         setRing({
           ...response.data,
-          RingSize: "Custom", // Set default RingSize here
         });
       })
       .catch((error) => console.error("Error fetching ring", error));
@@ -206,66 +207,97 @@ const RingDetail = () => {
     setQuantity(event.target.value);
   };
 
+  // const handleAddToCart = () => {
+  //   if (!material || !ringSize || !quantity) {
+  //     setOpen(true);
+  //     return;
+  //   }
+
+  //   const updatedCartItems = [...cartItems];
+  //   const itemToAdd = {
+  //     id: ring.DiamondRingsID,
+  //     name: ring.NameRings,
+  //     image: ring.ImageRings,
+  //     price: ring.Price,
+  //     quantity: parseInt(quantity),
+  //     type: "DiamondRings", // Assuming this is the correct type for rings
+
+  //     material,
+  //     ringSize,
+  //     category: ring.Category,
+  //     totalPrice: ring.Price * parseInt(quantity),
+  //   };
+
+  //   updatedCartItems.push(itemToAdd);
+  //   addToCart(itemToAdd);
+
+  //   setCartItems(updatedCartItems);
+  // };
+
   const handleAddToCart = () => {
-    if (!material || !ringSize || !quantity) {
-      setOpen(true);
-      return;
-    }
-
     const updatedCartItems = [...cartItems];
-    const itemToAdd = {
-      id: ring.DiamondRingsID,
-      name: ring.NameRings,
-      image: ring.ImageRings,
-      price: ring.Price,
-      quantity: parseInt(quantity),
-      type: "DiamondRings", // Assuming this is the correct type for rings
+    const alreadyInCart = updatedCartItems.find(
+      (item) => item.id === ring.DiamondRingsID
+    );
 
-      material,
-      ringSize,
-      category: ring.Category,
-      totalPrice: ring.Price * parseInt(quantity),
-    };
+    if (!alreadyInCart) {
+      const itemToAdd = {
+        id: ring.DiamondRingsID,
+        name: ring.NameRings,
+        image: ring.ImageRings,
+        price: ring.Price,
+        quantity: parseInt(quantity),
+        type: "DiamondRings", // Assuming this is the correct type for rings
 
-    updatedCartItems.push(itemToAdd);
-    addToCart(itemToAdd);
+        material: ring.Material,
+        ringSize: ring.RingSize,
+        category: ring.Category,
+        totalPrice: ring.Price * parseInt(quantity),
+      };
 
-    setCartItems(updatedCartItems);
-  };
-
-  const handleBuyNow = () => {
-    if (!material || !ringSize || !quantity) {
-      setOpen(true);
-      return;
+      updatedCartItems.push(itemToAdd);
+      addToCart(itemToAdd);
+      setCartItems(updatedCartItems);
+    } else {
+      setWarningOpen(true);
     }
-
-    const itemToAdd = {
-      id: ring.DiamondRingsID,
-      name: ring.NameRings,
-      image: ring.ImageRings,
-      price: ring.Price,
-      quantity: parseInt(quantity),
-      type: "DiamondRings",
-
-      material,
-      ringSize,
-      category: ring.Category,
-      totalPrice: ring.Price * parseInt(quantity),
-    };
-
-    // Disable the button to prevent multiple clicks during processing
-    setIsProcessingBuyNow(true);
-
-    // Add item to cart
-    addToCart(itemToAdd);
-
-    // Navigate to cart-page after a short delay to allow addToCart to complete
-    setTimeout(() => {
-      setIsProcessingBuyNow(false); // Reset the processing state after navigation
-      navigate("/cart-page"); // Navigate to cart-page after adding to cart
-    }, 0);
   };
+  // const handleBuyNow = () => {
+  //   if (!material || !ringSize || !quantity) {
+  //     setOpen(true);
+  //     return;
+  //   }
 
+  //   const itemToAdd = {
+  //     id: ring.DiamondRingsID,
+  //     name: ring.NameRings,
+  //     image: ring.ImageRings,
+  //     price: ring.Price,
+  //     quantity: parseInt(quantity),
+  //     type: "DiamondRings",
+
+  //     material,
+  //     ringSize,
+  //     category: ring.Category,
+  //     totalPrice: ring.Price * parseInt(quantity),
+  //   };
+
+  //   // Disable the button to prevent multiple clicks during processing
+  //   setIsProcessingBuyNow(true);
+
+  //   // Add item to cart
+  //   addToCart(itemToAdd);
+
+  //   // Navigate to cart-page after a short delay to allow addToCart to complete
+  //   setTimeout(() => {
+  //     setIsProcessingBuyNow(false); // Reset the processing state after navigation
+  //     navigate("/cart-page"); // Navigate to cart-page after adding to cart
+  //   }, 0);
+  // };
+  const handleBuyNow = () => {
+    handleAddToCart();
+    navigate("/cart-page"); // Ensure the correct path
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -380,14 +412,22 @@ const RingDetail = () => {
                   >
                     {ring.NameRings.toUpperCase()}
                   </Typography>
-                  <Typography variant="body1" component="p">
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    style={{
+                      color: "red",
+                      fontWeight: "bold",
+                      fontSize: "30px",
+                    }}
+                  >
                     $
                     {Number(ring.Price)
                       .toFixed(2)
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
-                  <FormControl
+                  {/* <FormControl
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -440,10 +480,10 @@ const RingDetail = () => {
                         18k Two-tone Gold
                       </MenuItem>
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
 
                   <div style={{ display: "flex" }}>
-                    <Box mt={3}>
+                    {/* <Box mt={3}>
                       <Button
                         variant="outlined"
                         onClick={handleMenuClick}
@@ -504,9 +544,14 @@ const RingDetail = () => {
                           Selected Size: {ringSize}
                         </Typography>
                       )}
-                    </Box>
-
-                    <Typography variant="h6" marginTop={4}>
+                    </Box> */}
+                    <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                        Ring size:{" "}
+                      </span>
+                      {ring.RingSize}
+                    </strong>
+                    <Typography variant="h6" marginTop={0.3}>
                       <Link
                         to="/instruct-page"
                         // target="_blank"
@@ -529,7 +574,7 @@ const RingDetail = () => {
                     </Typography>
                   </div>
 
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -538,16 +583,16 @@ const RingDetail = () => {
                     value={quantity}
                     onChange={handleQuantityChange}
                     required
-                  />
+                  /> */}
 
-                  <Button
+                  {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={handleDetailNavigation}
                     style={{ margin: "1rem 0" }}
                   >
                     Apply Change and View Details
-                  </Button>
+                  </Button> */}
 
                   <Grid container justifyContent="flex-start">
                     <Grid item xs={12} sm={6} md={20}>
@@ -1215,6 +1260,7 @@ const RingDetail = () => {
         </Box>
       </Container>
       <Footer />
+      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </>
   );
 };

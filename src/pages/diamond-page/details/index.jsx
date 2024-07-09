@@ -31,8 +31,8 @@ import {
   IconButton,
   Fade,
   Divider,
-Avatar,
-TextField
+  Avatar,
+  TextField,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PaymentIcon from "@mui/icons-material/Payment";
@@ -90,24 +90,24 @@ const DiamondDetail = () => {
         console.error("Error fetching similar products:", error)
       );
 
-      async function fetchFeedback() {
-        try {
-          if (!user || !user.token) {
-            console.error("User or token not available");
-            return;
-          }
-  
-          const productType = "Diamond"; // Adjust based on your logic
-          const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
-          setFeedbackDiamond(feedbacks);
-        } catch (error) {
-          console.error("Error fetching feedback:", error);
+    async function fetchFeedback() {
+      try {
+        if (!user || !user.token) {
+          console.error("User or token not available");
+          return;
         }
+
+        const productType = "Diamond"; // Adjust based on your logic
+        const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
+        setFeedbackDiamond(feedbacks);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
       }
-  
-      if (user) {
-        fetchFeedback();
-      }
+    }
+
+    if (user) {
+      fetchFeedback();
+    }
   }, [id, user]);
 
   // Function to handle submitting new feedback
@@ -280,7 +280,12 @@ const DiamondDetail = () => {
 
   return (
     <>
-      <Container fullWidth maxWidth="100%" className="container" style={{ backgroundColor: "#F3F2F2" }}>
+      <Container
+        fullWidth
+        maxWidth="100%"
+        className="container"
+        style={{ backgroundColor: "#F3F2F2" }}
+      >
         <Grid container spacing={2} marginTop="0px" fullWidth>
           <Grid item xs={12} md={5}>
             <Card style={{ height: "590px", overflow: "hidden" }}>
@@ -325,7 +330,7 @@ const DiamondDetail = () => {
 
           <Grid item xs={12} md={7}>
             <Card>
-              <CardContent style={{ marginBottom: "-10px" }}>
+              <CardContent style={{ marginBottom: "-10px", height:"600px"}}>
                 <Box mt={2}>
                   <Typography
                     variant="h5"
@@ -341,14 +346,14 @@ const DiamondDetail = () => {
                       "Color: " +
                       diamond.Color}
                   </Typography>
-                  <Typography variant="body1" component="p">
+                  <Typography variant="body1" component="p" style={{color: "red", fontWeight: "bold", fontSize: "30px" }}>
                     $
                     {Number(diamond.Price)
                       .toFixed(2)
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
-                  <FormControl fullWidth variant="outlined" margin="normal">
+                  {/* <FormControl fullWidth variant="outlined" margin="normal">
                     <InputLabel id="clarity-label">Clarity</InputLabel>
                     <Select
                       labelId="clarity-label"
@@ -360,9 +365,27 @@ const DiamondDetail = () => {
                         {diamond.Clarity}
                       </MenuItem>
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
 
-                  <FormControl fullWidth variant="outlined" margin="normal">
+                  <br />
+
+                  <strong style={{ fontSize: "20px", fontWeight: "normal" }}>
+                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      Cut:{" "}
+                    </span>
+                    {diamond.Cut}
+                  </strong>
+                  <br />
+                  <strong style={{ fontSize: "20px", fontWeight: "normal" }}>
+                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      Certufication:{" "}
+                    </span>
+                    {diamond.GradingReport}
+                  </strong>
+                  <br />
+                  <br />
+
+                  {/* <FormControl fullWidth variant="outlined" margin="normal">
                     <InputLabel id="cut-label">Cut</InputLabel>
                     <Select
                       labelId="cut-label"
@@ -390,7 +413,7 @@ const DiamondDetail = () => {
                         {diamond.GradingReport}
                       </MenuItem>
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
                   <div style={{ margin: "0 5px" }}>
                     <Grid container justifyContent="flex-start">
                       <Grid item xs={12} sm={6} md={20}>
@@ -453,7 +476,14 @@ const DiamondDetail = () => {
                     </Dialog>
 
                     <Grid container justifyContent="space-around">
-                      <Grid fullWidth width={"100%"} item xs={12} sm={20} display="flex">
+                      <Grid
+                        fullWidth
+                        width={"100%"}
+                        item
+                        xs={12}
+                        sm={20}
+                        display="flex"
+                      >
                         <Button
                           fullWidth
                           variant="contained"
@@ -536,7 +566,7 @@ const DiamondDetail = () => {
         <hr />
 
         <Box>
-        <Box
+          <Box
             sx={{ borderBottom: 1, borderColor: "divider", marginTop: "20px" }}
           >
             <div style={{ backgroundColor: "#ECECEC" }}>
@@ -746,20 +776,25 @@ const DiamondDetail = () => {
                                       }
                                     />
                                     <CardContent>
-                                    <h3>DIAMOND {similarDiamond.DiamondOrigin.toUpperCase()}</h3>
-                                    <Typography
+                                      <h3>
+                                        DIAMOND{" "}
+                                        {similarDiamond.DiamondOrigin.toUpperCase()}
+                                      </h3>
+                                      <Typography
                                         variant="subtitle1"
                                         component="h2"
                                         fontWeight={"bolder"}
                                       >
-                                        Stock Number: {similarDiamond.StockNumber}
+                                        Stock Number:{" "}
+                                        {similarDiamond.StockNumber}
                                       </Typography>
                                       <Typography
                                         variant="subtitle1"
                                         component="h2"
                                         fontWeight={"bolder"}
                                       >
-                                        Carat Weight: {similarDiamond.CaratWeight}
+                                        Carat Weight:{" "}
+                                        {similarDiamond.CaratWeight}
                                       </Typography>
                                       <Typography
                                         variant="body2"
@@ -804,146 +839,244 @@ const DiamondDetail = () => {
             )}
             <CSSTransition key="feedback" timeout={300} classNames="fade">
               <TabPanel value={value} index={1}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginTop: '20px' }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Box mt={4}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Existing Feedbacks
-            </Typography>
-            <Grid container spacing={3}>
-              {feedbackDiamond.length > 0 ? (
-                feedbackDiamond.map((feedback, index) => (
-                  <React.Fragment key={feedback.id}>
-                    <Grid item xs={12} container alignItems="center" sx={{ mb: 2 }}>
-                      {/* Customer Avatar */}
-                      <Grid item xs={2} style={{ marginRight: '-12%' }}>
-                        <Avatar alt={feedback.LastName} src={feedback.Image} />
-                      </Grid>
-                      {/* Feedback Details */}
-                      <Grid item xs={10} sx={{ paddingLeft: '25px' }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize: '20px', mb: 1 }}>
-                          {feedback.FirstName} {feedback.LastName}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginTop: "20px",
+                  }}
+                >
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} md={6}>
+                      <Box mt={4}>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: "bold", mb: 2 }}
+                        >
+                          Existing Feedbacks
                         </Typography>
-                        <Typography variant="subtitle2" sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 1 }}>
-                          Evaluation Date: {new Date(feedback.EvaluationDate).toLocaleDateString()}
-                        </Typography>
-                        <Rating
-                          name={`rating-${feedback.id}`}
-                          value={feedback.Rating}
-                          readOnly
-                          precision={0.5}
-                          emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                        />
-                        <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
-                      </Grid>
+                        <Grid container spacing={3}>
+                          {feedbackDiamond.length > 0 ? (
+                            feedbackDiamond.map((feedback, index) => (
+                              <React.Fragment key={feedback.id}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  container
+                                  alignItems="center"
+                                  sx={{ mb: 2 }}
+                                >
+                                  {/* Customer Avatar */}
+                                  <Grid
+                                    item
+                                    xs={2}
+                                    style={{ marginRight: "-12%" }}
+                                  >
+                                    <Avatar
+                                      alt={feedback.LastName}
+                                      src={feedback.Image}
+                                    />
+                                  </Grid>
+                                  {/* Feedback Details */}
+                                  <Grid
+                                    item
+                                    xs={10}
+                                    sx={{ paddingLeft: "25px" }}
+                                  >
+                                    <Typography
+                                      variant="subtitle1"
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: "20px",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      {feedback.FirstName} {feedback.LastName}
+                                    </Typography>
+                                    <Typography
+                                      variant="subtitle2"
+                                      sx={{
+                                        fontStyle: "italic",
+                                        color: "text.secondary",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      Evaluation Date:{" "}
+                                      {new Date(
+                                        feedback.EvaluationDate
+                                      ).toLocaleDateString()}
+                                    </Typography>
+                                    <Rating
+                                      name={`rating-${feedback.id}`}
+                                      value={feedback.Rating}
+                                      readOnly
+                                      precision={0.5}
+                                      emptyIcon={
+                                        <StarIcon
+                                          style={{ opacity: 0.55 }}
+                                          fontSize="inherit"
+                                        />
+                                      }
+                                    />
+                                    <Typography sx={{ mt: 1 }}>
+                                      {feedback.Content}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                                {index < feedbackDiamond.length - 1 && (
+                                  <Divider
+                                    variant="middle"
+                                    sx={{
+                                      my: 2,
+                                      borderColor: "rgba(0, 0, 0, 0.12)",
+                                    }}
+                                  />
+                                )}
+                                {index < feedbackDiamond.length - 1 && (
+                                  <hr
+                                    style={{
+                                      width: "100%",
+                                      borderTop: "1px dashed black",
+                                      marginBottom: "16px",
+                                    }}
+                                  />
+                                )}
+                              </React.Fragment>
+                            ))
+                          ) : (
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontStyle: "italic" }}
+                            >
+                              No feedback available
+                            </Typography>
+                          )}
+                        </Grid>
+                      </Box>
                     </Grid>
-                    {index < feedbackDiamond.length - 1 && (
-                      <Divider variant="middle" sx={{ my: 2, borderColor: 'rgba(0, 0, 0, 0.12)' }} />
-                    )}
-                    {index < feedbackDiamond.length - 1 && (
-                      <hr style={{ width: '100%', borderTop: '1px dashed black', marginBottom: '16px' }} />
-                    )}
-                  </React.Fragment>
-                ))
-              ) : (
-                <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
-                  No feedback available
-                </Typography>
-              )}
-            </Grid>
-          </Box>
-        </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Box sx={{ p: 4, backgroundColor: '#000', color: '#fff', borderRadius: 2 }}>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Thêm đánh giá
-            </Typography>
-            <form onSubmit={handleFeedbackSubmit}>
-              <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                <Typography component="legend" style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
-                  Đánh giá của bạn *
-                </Typography>
-                <Rating
-                  name="rating"
-                  value={rating}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
-                  precision={1}
-                  emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                />
-              </FormControl>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                label="Nhận xét của bạn *"
-                variant="outlined"
-                margin="normal"
-                required
-                InputLabelProps={{
-                  style: { color: '#fff' },
-                }}
-                InputProps={{
-                  style: { color: '#fff', backgroundColor: '#919191' },
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <TextField
-                  fullWidth
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  label="Tên"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  label="Email"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-              </Box>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  backgroundColor: '#FFD700',
-                  color: '#000',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    backgroundColor: '#FFA500',
-                  },
-                }}
-              >
-                GỬI ĐI
-              </Button>
-            </form>
-          </Box>
-        </Grid>
-      </Grid>
-    </div>
-    </TabPanel>
+                    <Grid item xs={12} md={6}>
+                      <Box
+                        sx={{
+                          p: 4,
+                          backgroundColor: "#000",
+                          color: "#fff",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="h5" component="h2" gutterBottom>
+                          Thêm đánh giá
+                        </Typography>
+                        <form onSubmit={handleFeedbackSubmit}>
+                          <FormControl
+                            fullWidth
+                            variant="outlined"
+                            sx={{ mt: 2 }}
+                          >
+                            <Typography
+                              component="legend"
+                              style={{
+                                fontSize: "1.2rem",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              Đánh giá của bạn *
+                            </Typography>
+                            <Rating
+                              name="rating"
+                              value={rating}
+                              onChange={(event, newValue) => {
+                                setRating(newValue);
+                              }}
+                              precision={1}
+                              emptyIcon={
+                                <StarIcon
+                                  style={{ opacity: 0.55 }}
+                                  fontSize="inherit"
+                                />
+                              }
+                            />
+                          </FormControl>
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            label="Nhận xét của bạn *"
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            InputLabelProps={{
+                              style: { color: "#fff" },
+                            }}
+                            InputProps={{
+                              style: {
+                                color: "#fff",
+                                backgroundColor: "#919191",
+                              },
+                            }}
+                          />
+                          <Box sx={{ display: "flex", gap: 2 }}>
+                            <TextField
+                              fullWidth
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              label="Tên"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                            <TextField
+                              fullWidth
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              label="Email"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                          </Box>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                              mt: 2,
+                              backgroundColor: "#FFD700",
+                              color: "#000",
+                              fontSize: "1rem",
+                              fontWeight: "bold",
+                              "&:hover": {
+                                backgroundColor: "#FFA500",
+                              },
+                            }}
+                          >
+                            GỬI ĐI
+                          </Button>
+                        </form>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </div>
+              </TabPanel>
             </CSSTransition>
           </TransitionGroup>
         </Box>

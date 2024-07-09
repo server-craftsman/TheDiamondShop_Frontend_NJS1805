@@ -18,7 +18,7 @@ const Warning = ({ open, onClose }) => {
           alt="Warning Image"
           style={{ maxWidth: '100%', maxHeight: '200px' }}
         />
-        <p style={{ marginTop: '10px' }}>Cannot add this item to cart. Please add Diamonds or Bridal first.</p>
+        <p style={{ marginTop: '10px' }}>Cannot add this item to cart, because the item alread have in your cart!</p>
       </div>
     </Modal>
   );
