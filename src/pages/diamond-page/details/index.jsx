@@ -48,6 +48,7 @@ import Rating from "@mui/material/Rating";
 import StarIcon from "@mui/icons-material/Star";
 import { AuthContext } from "../../../AuthContext";
 import { getAllFeedbacks } from "../../feedback-service/getAllFeedbacks";
+import { Modal } from "antd";
 
 const DiamondDetail = () => {
   const { id } = useParams();
@@ -75,6 +76,8 @@ const DiamondDetail = () => {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     axios
@@ -146,40 +149,42 @@ const DiamondDetail = () => {
 
   if (!diamond) return <div>Loading...</div>;
 
-  const handleAddToCart = () => {
-    const updatedCartItems = [...cartItems];
-    const alreadyInCart = updatedCartItems.find(
-      (item) => item.id === diamond.DiamondID
-    );
+  // const handleAddToCart = () => {
+  //   const updatedCartItems = [...cartItems];
+  //   const alreadyInCart = updatedCartItems.find(
+  //     (item) => item.id === diamond.DiamondID
+  //   );
 
-    if (!alreadyInCart) {
-      diamond.Type = "Diamond";
-      const itemToAdd = {
-        id: diamond.DiamondID,
-        name: diamond.DiamondOrigin,
-        image: diamond.Image,
-        price: diamond.Price,
-        type: diamond.Type,
-        quantity: parseInt(quantity),
-        stockNumber: diamond.StockNumber,
-        combinedWithJewelry: true,
-        combinedWithJewelryId: 1,
-        caratWeight: diamond.CaratWeight,
-        color: diamond.Color,
-        clarity: diamond.Clarity,
-        cut: diamond.Cut,
-        shape: diamond.Shape,
-
-        certification: diamond.Certification,
-      };
-
-      updatedCartItems.push(itemToAdd);
-      addToCart(itemToAdd);
-      setCartItems(updatedCartItems);
-    } else {
-      setWarningOpen(true);
-    }
-  };
+    const handleAddToCart = () => {
+      const alreadyInCart = cartItems.find(
+        (item) => item.id === diamond.DiamondID && item.type === "Diamond"
+      );
+  
+      if (!alreadyInCart) {
+        const itemToAdd = {
+          id: diamond.DiamondID,
+          name: diamond.DiamondOrigin,
+          image: diamond.Image,
+          price: diamond.Price,
+          type: "Diamond",
+          quantity: 1, 
+          stockNumber: diamond.StockNumber,
+          combinedWithJewelry: true,
+          combinedWithJewelryId: 1,
+          caratWeight: diamond.CaratWeight,
+          color: diamond.Color,
+          clarity: diamond.Clarity,
+          cut: diamond.Cut,
+          shape: diamond.Shape,
+          certification: diamond.Certification,
+        };
+  
+        addToCart(itemToAdd);
+        setOpenModal(true);
+      } else {
+        setWarningOpen(true);
+      }
+    };
 
   const handlePrev = () => {
     if (startIdx > 0) {
@@ -275,11 +280,28 @@ const DiamondDetail = () => {
   const handleChange = (event) => {
     setCollection(event.target.value);
   };
-
+  const handleCancel = () => {
+    setOpenModal(false);
+  }
   const feedbackCount = feedbackDiamond.length;
 
   return (
     <>
+     <Modal
+        open={openModal}
+        // title="Title"
+        onCancel={handleCancel}
+        style={{
+          top: 300,
+        }}
+        footer={[
+          <button className="bt" key="back" onClick={handleCancel}>
+            OK
+          </button>,
+        ]}
+      >
+        <p className="p">ADD TO CART SUCCESSFULLY</p>
+      </Modal>
       <Container
         fullWidth
         maxWidth="100%"

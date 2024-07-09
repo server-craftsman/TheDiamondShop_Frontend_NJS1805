@@ -52,6 +52,7 @@ import { getAllFeedbacks } from "../../feedback-service/getAllFeedbacks";
 import { useCart } from "../../../CartContext";
 import Footer from "../../../components/footer";
 import Warning from "../../../Warning";
+import { Modal } from "antd";
 
 function BridalDetail() {
   const { id } = useParams();
@@ -232,35 +233,41 @@ function BridalDetail() {
   //   setCartItems(updatedCartItems);
   // };
   const handleAddToCart = () => {
-    const updatedCartItems = [...cartItems];
-    const alreadyInCart = updatedCartItems.find(
-      (item) => item.id === bridal.BridalID
+    // const updatedCartItems = [...cartItems];
+    // const alreadyInCart = updatedCartItems.find(
+    //   (item) => item.id === bridal.BridalID
+    // );
+    const alreadyInCart = cartItems.find(
+      (item) => item.id === bridal.BridalID && item.type === "Bridal"
     );
 
     if (!alreadyInCart) {
-      bridal.Type = "Bridal";
+      // bridal.Type = "Bridal";
       const itemToAdd = {
-        id: bridal.BridalsID,
+        id: bridal.BridalID,
         name: bridal.NameBridal,
         image: bridal.ImageBridal,
         material: bridal.Material,
         price: bridal.Price,
-        quantity: parseInt(quantity),
-        type: bridal.Type,
+        type: "Bridal",
+        quantity: 1,
 
         ringSize: bridal.RingSizeRang,
         category: bridal.Category,
-        totalPrice: bridal.Price * parseInt(quantity),
+        // totalPrice: bridal.Price * quantity,
       };
 
-      updatedCartItems.push(itemToAdd);
+      // updatedCartItems.push(itemToAdd);
       addToCart(itemToAdd);
-      setCartItems(updatedCartItems);
+      setOpen(true);
+      // setCartItems(updatedCartItems);
     } else {
       setWarningOpen(true);
     }
   };
-
+  const handleCancel = () => {
+    setOpen(false);
+  };
   // const handleBuyNow = () => {
   //   if (!material || !ringSize || !quantity) {
   //     setOpen(true);
@@ -359,6 +366,21 @@ function BridalDetail() {
 
   return (
     <>
+      <Modal
+        open={open}
+        // title="Title"
+        onCancel={handleCancel}
+        style={{
+          top: 300,
+        }}
+        footer={[
+          <button className="bt" key="back" onClick={handleCancel}>
+            OK
+          </button>,
+        ]}
+      >
+        <p className="p">ADD TO CART SUCCESSFULLY</p>
+      </Modal>
       <Container
         fullWidth
         maxWidth="100%"
@@ -680,7 +702,7 @@ function BridalDetail() {
               </CardContent>
             </Card>
 
-            <Dialog open={open} onClose={handleClose}>
+            {/* <Dialog open={open} onClose={handleClose}>
               <DialogTitle
                 style={{
                   textAlign: "center",
@@ -719,7 +741,7 @@ function BridalDetail() {
                   OK
                 </Button>
               </DialogActions>
-            </Dialog>
+            </Dialog> */}
           </Grid>
         </Grid>
         <br /> <hr />

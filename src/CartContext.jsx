@@ -20,21 +20,14 @@ export const CartProvider = ({ children }) => {
   const addToCart = (item) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find(
-        (cartItem) =>
-          cartItem.id === item.id &&
-          cartItem.material === item.material &&
-          cartItem.ringSize === item.ringSize
+        (cartItem) => cartItem.id === item.id && cartItem.type === item.type
       );
       if (existingItem) {
-        return prevItems.map((cartItem) =>
-          cartItem.id === item.id &&
-          cartItem.material === item.material &&
-          cartItem.ringSize === item.ringSize
-            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
-            : cartItem
-        );
+        // Set warning open if item is already in cart
+        setWarningOpen(true);
+        return prevItems;
       } else {
-        return [...prevItems, { ...item }];
+        return [...prevItems, { ...item, quantity: 1 }]; // Ensure quantity is 1
       }
     });
   };
@@ -43,32 +36,11 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
-  // const updateCartQuantity = (itemId, newQuantity) => {
-  //   setCartItems((prevItems) =>
-  //     prevItems.map((item) =>
-  //       (item.id === itemId && item.type !== "Diamond") ||
-  //       item.type !== "DiamondTimepieces" ||
-  //       item.type !== "DiamondRings" ||
-  //       item.type !== "Bridal" // Assuming this check is correct
-  //         ? { ...item, quantity: newQuantity }
-  //         : item
-  //     )
-  //   );
-  // };
   const updateCartQuantity = (itemId, newQuantity) => {
     setCartItems((prevItems) =>
-      prevItems.map((item) => {
-        const excludedTypes = [
-          "Diamond",
-          "DiamondTimepieces",
-          "DiamondRings",
-          "Bridal",
-        ];
-        if (!excludedTypes.includes(item.type) || item.id !== itemId) {
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      })
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
     );
   };
 

@@ -50,6 +50,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Footer from "../../../components/footer";
 import { useCart } from "../../../CartContext";
 import Warning from "../../../Warning";
+import { Modal } from "antd";
 
 const RingDetail = () => {
   const { id } = useParams();
@@ -79,7 +80,7 @@ const RingDetail = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [warningOpen, setWarningOpen] = useState(false);
-
+  const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     axios
       .get(`http://localhost:8090/products/rings/${id}`)
@@ -233,11 +234,15 @@ const RingDetail = () => {
 
   //   setCartItems(updatedCartItems);
   // };
+  
 
   const handleAddToCart = () => {
-    const updatedCartItems = [...cartItems];
-    const alreadyInCart = updatedCartItems.find(
-      (item) => item.id === ring.DiamondRingsID
+    // const updatedCartItems = [...cartItems];
+    // const alreadyInCart = updatedCartItems.find(
+    //   (item) => item.id === ring.DiamondRingsID
+    // );
+    const alreadyInCart = cartItems.find(
+      (item) => item.id === ring.DiamondRingsID && item.type === "DiamondRings"
     );
 
     if (!alreadyInCart) {
@@ -246,18 +251,19 @@ const RingDetail = () => {
         name: ring.NameRings,
         image: ring.ImageRings,
         price: ring.Price,
-        quantity: parseInt(quantity),
+        quantity: 1,
         type: "DiamondRings", // Assuming this is the correct type for rings
 
         material: ring.Material,
         ringSize: ring.RingSize,
         category: ring.Category,
-        totalPrice: ring.Price * parseInt(quantity),
+        // totalPrice: ring.Price * parseInt(quantity),
       };
 
-      updatedCartItems.push(itemToAdd);
+      // updatedCartItems.push(itemToAdd);
       addToCart(itemToAdd);
-      setCartItems(updatedCartItems);
+      setOpenModal(true);
+      // setCartItems(updatedCartItems);
     } else {
       setWarningOpen(true);
     }
@@ -365,10 +371,28 @@ const RingDetail = () => {
     handleMenuClose();
   };
 
+  const handleCancel = () => {
+    setOpenModal(false);
+  }
   const feedbackCount = feedbackRings.length;
 
   return (
     <>
+        <Modal
+        open={openModal}
+        // title="Title"
+        onCancel={handleCancel}
+        style={{
+          top: 300,
+        }}
+        footer={[
+          <button className="bt" key="back" onClick={handleCancel}>
+            OK
+          </button>,
+        ]}
+      >
+        <p className="p">ADD TO CART SUCCESSFULLY</p>
+      </Modal>
       <Container
         fullWidth
         maxWidth="100%"

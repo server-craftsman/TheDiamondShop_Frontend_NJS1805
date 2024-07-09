@@ -45,6 +45,8 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import Warning from "../../../Warning";
+import { Modal } from "antd";
 
 function TimepieceDetail() {
   const { id } = useParams();
@@ -68,6 +70,8 @@ function TimepieceDetail() {
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [warningOpen, setWarningOpen] = useState(false);
   useEffect(() => {
     axios
       .get(`http://localhost:8090/products/timepieces/${id}`)
@@ -134,23 +138,51 @@ function TimepieceDetail() {
   };
 
   if (!timepieces) return <div>Loading...</div>;
-  const handleAddToCart = () => {
-    const itemToAdd = {
-      id: timepieces.DiamondTimepiecesID,
-      name: timepieces.NameTimepieces,
-      image: timepieces.ImageTimepieces,
-      price: timepieces.Price,
-      type: "DiamondTimepieces",
-      quantity: parseInt(quantity),
-      caseSize: timepieces.CaseSize,
-      crystalType: timepieces.CrystalType,
-      timepiecesStyle: timepieces.TimepiecesStyle,
-      totalPrice: timepieces.Price * parseInt(quantity),
-    };
+  // const handleAddToCart = () => {
+  //   const itemToAdd = {
+  //     id: timepieces.DiamondTimepiecesID,
+  //     name: timepieces.NameTimepieces,
+  //     image: timepieces.ImageTimepieces,
+  //     price: timepieces.Price,
+  //     type: "DiamondTimepieces",
+  //     quantity: parseInt(quantity),
+  //     caseSize: timepieces.CaseSize,
+  //     crystalType: timepieces.CrystalType,
+  //     timepiecesStyle: timepieces.TimepiecesStyle,
+  //     totalPrice: timepieces.Price * parseInt(quantity),
+  //   };
 
-    const updatedCartItems = [...cartItems, itemToAdd];
-    addToCart(itemToAdd);
-    setCartItems(updatedCartItems);
+  //   const updatedCartItems = [...cartItems, itemToAdd];
+  //   addToCart(itemToAdd);
+  //   setCartItems(updatedCartItems);
+  // };
+
+  const handleAddToCart = () => {
+    const alreadyInCart = cartItems.find(
+      (item) =>
+        item.id === timepieces.DiamondTimepiecesID &&
+        item.type === "DiamondTimepieces"
+    );
+
+    if (!alreadyInCart) {
+      const itemToAdd = {
+        id: timepieces.DiamondTimepiecesID,
+        name: timepieces.NameTimepieces,
+        image: timepieces.ImageTimepieces,
+        price: timepieces.Price,
+        type: "DiamondTimepieces",
+        quantity: 1,
+        caseSize: timepieces.CaseSize,
+        crystalType: timepieces.CrystalType,
+        timepiecesStyle: timepieces.TimepiecesStyle,
+        //     totalPrice: timepieces.Price * parseInt(quantity),
+      };
+
+      addToCart(itemToAdd);
+      setOpenModal(true);
+    } else {
+      setWarningOpen(true);
+    }
   };
 
   const handlePrev = () => {
@@ -230,9 +262,29 @@ function TimepieceDetail() {
   const handleQuantityChange = (event) => {
     setQuantity(event.target.value);
   };
+
+  const handleCancel = () => {
+    setOpenModal(false);
+  };
+
   const feedbackCount = feedbackTimepieces.length;
   return (
     <>
+      <Modal
+        open={openModal}
+        // title="Title"
+        onCancel={handleCancel}
+        style={{
+          top: 300,
+        }}
+        footer={[
+          <button className="bt" key="back" onClick={handleCancel}>
+            OK
+          </button>,
+        ]}
+      >
+        <p className="p">ADD TO CART SUCCESSFULLY</p>
+      </Modal>
       <Container
         fullWidth
         maxWidth="100%"
@@ -292,7 +344,15 @@ function TimepieceDetail() {
                       " - " +
                       timepieces.DialColor}
                   </Typography>
-                  <Typography variant="body1" component="p" style={{color: "red", fontWeight: "bold", fontSize: "30px" }}>
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    style={{
+                      color: "red",
+                      fontWeight: "bold",
+                      fontSize: "30px",
+                    }}
+                  >
                     $
                     {Number(timepieces.Price)
                       .toFixed(2)
@@ -300,18 +360,22 @@ function TimepieceDetail() {
                   </Typography>
                   <br />
 
-                  <strong style={{fontSize: "20px", fontWeight: "normal"}}>
-                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>Crystal Type: </span>
+                  <strong style={{ fontSize: "20px", fontWeight: "normal" }}>
+                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      Crystal Type:{" "}
+                    </span>
                     {timepieces.CrystalType}
                   </strong>
                   <br />
-                  <strong style={{fontSize: "20px", fontWeight: "normal"}}>
-                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>Case Size: </span>
+                  <strong style={{ fontSize: "20px", fontWeight: "normal" }}>
+                    <span style={{ fontSize: "25px", fontWeight: "bold" }}>
+                      Case Size:{" "}
+                    </span>
                     {timepieces.CaseSize}
                   </strong>
                   <br />
                   <br />
-                  
+
                   <Box style={{ width: "100%", margin: "0 5px" }}>
                     <Grid
                       container
@@ -569,13 +633,12 @@ function TimepieceDetail() {
                           in={openCertificate}
                           style={{
                             transitionDelay: openCertificate ? "100ms" : "0ms",
-                            
                           }}
                         >
                           <img
                             src="https://24cara.vn/wp-content/uploads/2018/03/4-2.jpg"
                             alt="Zoomed Image"
-                            style={{ width: "100%", height: "auto"}}
+                            style={{ width: "100%", height: "auto" }}
                           />
                         </Zoom>
                       </DialogContent>
@@ -713,151 +776,251 @@ function TimepieceDetail() {
 
             <CSSTransition key="feedback" timeout={300} classNames="fade">
               <TabPanel value={value} index={1}>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginTop: '20px' }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Box mt={4}>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Existing Feedbacks
-            </Typography>
-            <Grid container spacing={3}>
-              {feedbackTimepieces.length > 0 ? (
-                feedbackTimepieces.map((feedback, index) => (
-                  <React.Fragment key={feedback.id}>
-                    <Grid item xs={12} container alignItems="center" sx={{ mb: 2 }}>
-                      {/* Customer Avatar */}
-                      <Grid item xs={2} style={{ marginRight: '-12%' }}>
-                        <Avatar alt={feedback.LastName} src={feedback.Image} />
-                      </Grid>
-                      {/* Feedback Details */}
-                      <Grid item xs={10} sx={{ paddingLeft: '25px' }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold', fontSize: '20px', mb: 1 }}>
-                          {feedback.FirstName} {feedback.LastName}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    marginTop: "20px",
+                  }}
+                >
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} md={6}>
+                      <Box mt={4}>
+                        <Typography
+                          variant="h5"
+                          sx={{ fontWeight: "bold", mb: 2 }}
+                        >
+                          Existing Feedbacks
                         </Typography>
-                        <Typography variant="subtitle2" sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 1 }}>
-                          Evaluation Date: {new Date(feedback.EvaluationDate).toLocaleDateString()}
-                        </Typography>
-                        <Rating
-                          name={`rating-${feedback.id}`}
-                          value={feedback.Rating}
-                          readOnly
-                          precision={0.5}
-                          emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                        />
-                        <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
-                      </Grid>
+                        <Grid container spacing={3}>
+                          {feedbackTimepieces.length > 0 ? (
+                            feedbackTimepieces.map((feedback, index) => (
+                              <React.Fragment key={feedback.id}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  container
+                                  alignItems="center"
+                                  sx={{ mb: 2 }}
+                                >
+                                  {/* Customer Avatar */}
+                                  <Grid
+                                    item
+                                    xs={2}
+                                    style={{ marginRight: "-12%" }}
+                                  >
+                                    <Avatar
+                                      alt={feedback.LastName}
+                                      src={feedback.Image}
+                                    />
+                                  </Grid>
+                                  {/* Feedback Details */}
+                                  <Grid
+                                    item
+                                    xs={10}
+                                    sx={{ paddingLeft: "25px" }}
+                                  >
+                                    <Typography
+                                      variant="subtitle1"
+                                      sx={{
+                                        fontWeight: "bold",
+                                        fontSize: "20px",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      {feedback.FirstName} {feedback.LastName}
+                                    </Typography>
+                                    <Typography
+                                      variant="subtitle2"
+                                      sx={{
+                                        fontStyle: "italic",
+                                        color: "text.secondary",
+                                        mb: 1,
+                                      }}
+                                    >
+                                      Evaluation Date:{" "}
+                                      {new Date(
+                                        feedback.EvaluationDate
+                                      ).toLocaleDateString()}
+                                    </Typography>
+                                    <Rating
+                                      name={`rating-${feedback.id}`}
+                                      value={feedback.Rating}
+                                      readOnly
+                                      precision={0.5}
+                                      emptyIcon={
+                                        <StarIcon
+                                          style={{ opacity: 0.55 }}
+                                          fontSize="inherit"
+                                        />
+                                      }
+                                    />
+                                    <Typography sx={{ mt: 1 }}>
+                                      {feedback.Content}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                                {index < feedbackTimepieces.length - 1 && (
+                                  <Divider
+                                    variant="middle"
+                                    sx={{
+                                      my: 2,
+                                      borderColor: "rgba(0, 0, 0, 0.12)",
+                                    }}
+                                  />
+                                )}
+                                {index < feedbackTimepieces.length - 1 && (
+                                  <hr
+                                    style={{
+                                      width: "100%",
+                                      borderTop: "1px dashed black",
+                                      marginBottom: "16px",
+                                    }}
+                                  />
+                                )}
+                              </React.Fragment>
+                            ))
+                          ) : (
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontStyle: "italic" }}
+                            >
+                              No feedback available
+                            </Typography>
+                          )}
+                        </Grid>
+                      </Box>
                     </Grid>
-                    {index < feedbackTimepieces.length - 1 && (
-                      <Divider variant="middle" sx={{ my: 2, borderColor: 'rgba(0, 0, 0, 0.12)' }} />
-                    )}
-                    {index < feedbackTimepieces.length - 1 && (
-                      <hr style={{ width: '100%', borderTop: '1px dashed black', marginBottom: '16px' }} />
-                    )}
-                  </React.Fragment>
-                ))
-              ) : (
-                <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
-                  No feedback available
-                </Typography>
-              )}
-            </Grid>
-          </Box>
-        </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Box sx={{ p: 4, backgroundColor: '#000', color: '#fff', borderRadius: 2 }}>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Thêm đánh giá
-            </Typography>
-            <form onSubmit={handleFeedbackSubmit}>
-              <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                <Typography component="legend" style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
-                  Đánh giá của bạn *
-                </Typography>
-                <Rating
-                  name="rating"
-                  value={rating}
-                  onChange={(event, newValue) => {
-                    setRating(newValue);
-                  }}
-                  precision={1}
-                  emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
-                />
-              </FormControl>
-              <TextField
-                fullWidth
-                multiline
-                rows={4}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                label="Nhận xét của bạn *"
-                variant="outlined"
-                margin="normal"
-                required
-                InputLabelProps={{
-                  style: { color: '#fff' },
-                }}
-                InputProps={{
-                  style: { color: '#fff', backgroundColor: '#919191' },
-                }}
-              />
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <TextField
-                  fullWidth
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  label="Tên"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-                <TextField
-                  fullWidth
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  label="Email"
-                  variant="outlined"
-                  margin="normal"
-                  InputLabelProps={{
-                    style: { color: '#fff' },
-                  }}
-                  InputProps={{
-                    style: { color: '#fff', backgroundColor: '#919191' },
-                  }}
-                />
-              </Box>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  mt: 2,
-                  backgroundColor: '#FFD700',
-                  color: '#000',
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  '&:hover': {
-                    backgroundColor: '#FFA500',
-                  },
-                }}
-              >
-                GỬI ĐI
-              </Button>
-            </form>
-          </Box>
-        </Grid>
-      </Grid>
-    </div>
+                    <Grid item xs={12} md={6}>
+                      <Box
+                        sx={{
+                          p: 4,
+                          backgroundColor: "#000",
+                          color: "#fff",
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Typography variant="h5" component="h2" gutterBottom>
+                          Thêm đánh giá
+                        </Typography>
+                        <form onSubmit={handleFeedbackSubmit}>
+                          <FormControl
+                            fullWidth
+                            variant="outlined"
+                            sx={{ mt: 2 }}
+                          >
+                            <Typography
+                              component="legend"
+                              style={{
+                                fontSize: "1.2rem",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              Đánh giá của bạn *
+                            </Typography>
+                            <Rating
+                              name="rating"
+                              value={rating}
+                              onChange={(event, newValue) => {
+                                setRating(newValue);
+                              }}
+                              precision={1}
+                              emptyIcon={
+                                <StarIcon
+                                  style={{ opacity: 0.55 }}
+                                  fontSize="inherit"
+                                />
+                              }
+                            />
+                          </FormControl>
+                          <TextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            label="Nhận xét của bạn *"
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            InputLabelProps={{
+                              style: { color: "#fff" },
+                            }}
+                            InputProps={{
+                              style: {
+                                color: "#fff",
+                                backgroundColor: "#919191",
+                              },
+                            }}
+                          />
+                          <Box sx={{ display: "flex", gap: 2 }}>
+                            <TextField
+                              fullWidth
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              label="Tên"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                            <TextField
+                              fullWidth
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              label="Email"
+                              variant="outlined"
+                              margin="normal"
+                              InputLabelProps={{
+                                style: { color: "#fff" },
+                              }}
+                              InputProps={{
+                                style: {
+                                  color: "#fff",
+                                  backgroundColor: "#919191",
+                                },
+                              }}
+                            />
+                          </Box>
+                          <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                              mt: 2,
+                              backgroundColor: "#FFD700",
+                              color: "#000",
+                              fontSize: "1rem",
+                              fontWeight: "bold",
+                              "&:hover": {
+                                backgroundColor: "#FFA500",
+                              },
+                            }}
+                          >
+                            GỬI ĐI
+                          </Button>
+                        </form>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </div>
               </TabPanel>
             </CSSTransition>
           </TransitionGroup>
         </Box>
       </Container>
       <Footer />
+
+      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </>
   );
 }
