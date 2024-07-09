@@ -1,83 +1,81 @@
-// @import url('https://fonts.googleapis.com/css2?family=Playwrite+NZ:wght@100..400&display=swap');
 
-// .order-form{
-//     max-width: 700px;
-//     margin: 40px auto;
-//     margin-top:200px;
-//     padding: 100px 20px;
-//     border: 2px solid #ccc;
-//     border-radius: 10px;
-//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-//     input {
-//         margin-top: 10px;
-//         margin-bottom: 10px;
-//     }
-//     Table {
-//         margin-top: 30px;
-//         background: rgb(36,24,0);
-//         background: linear-gradient(90deg, rgba(36,24,0,0) 0%, rgba(97,9,121,0.4822303921568627) 35%, rgba(8,0,255,0.7455357142857143) 100%);
-
-//     }
-//     h2 {
-//         text-align: center;
-//         color: rgb(34,193,195);
-//         color: linear-gradient(0deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
-//         font-family: "Playwrite NZ", cursive;
-//         font-optical-sizing: auto;
-//         font-weight: weight;
-//         font-style: normal;
-//       }
-//       button {
-//         color:white;
-//         padding: 10px 10px;
-//         background: rgb(63,94,251);
-// background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
-//         border: none;
-//         border-radius: 4px;
-//         cursor: pointer;
-//         font-size: 16px;
-//         margin-right: 30px;
-//         margin-left: 30px;
-//         &:hover {
-//           background-color: #fc0e36;
-//         }
-//       }
-// }
-
-/* styles.css */
 .modal-content {
-  margin-top: 500px;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #fff;
+    margin-top: 500px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+  }
+  
+  .modal-header, .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #ccc;
+  }
+  
+  .modal-body {
+    padding: 10px 0;
+  }
+  
+  .modal-title {
+    font-size: 1.5em;
+    margin: 0;
+  }
+  
+  .modal-close-button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+  }
+
+  // infor order
+// cart-page/index.scss
+.cart-page {
+  padding: 200px 20px;
+  .total-price {
+     margin-top: 20px;
+     text-align: right;
+     font-size: 1.5em;
+   }
+
 }
 
-.modal-header, .modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
+.product-info {
+ display: flex;
+ align-items: center;
 }
 
-.modal-header {
-  border-bottom: 1px solid #ccc;
+.product-image {
+ width: 150px;
+ height: 100px;
+ margin-right: 20px;
+ border-radius: 5px;
 }
 
-.modal-footer {
-  border-top: 1px solid #ccc;
+.diamond-details, .ring-details {
+ flex: 1;
 }
 
-.modal-body {
-  padding: 10px 0;
+.product-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 10px;
 }
 
-.modal-title {
-  font-size: 1.5em;
-  margin: 0;
+.product-detail {
+ margin-bottom: 5px;
 }
 
-.modal-close-button {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
+.diamond-details .ring-details .bridal-details  {
+ color: #333; /* Adjust color as needed */
 }
+  

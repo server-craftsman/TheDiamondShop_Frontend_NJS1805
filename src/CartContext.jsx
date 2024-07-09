@@ -1,4 +1,6 @@
-import { createContext, useState, useContext, useEffect } from "react";
+
+import React, { createContext, useState, useContext, useEffect } from "react";
+import Warning from "./Warning"; // Adjust path if necessary
 
 const CartContext = createContext();
 
@@ -9,41 +11,45 @@ export const CartProvider = ({ children }) => {
     const storedCartItems = localStorage.getItem("cartItems");
     return storedCartItems ? JSON.parse(storedCartItems) : [];
   });
-
   const [warningOpen, setWarningOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (item) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find((cartItem) => cartItem.id === item.id);
+      const existingItem = prevItems.find((cartItem) => cartItem.id === item.id && cartItem.material === item.material && cartItem.ringSize === item.ringSize);
       if (existingItem) {
-        // Cập nhật số lượng cho sản phẩm hiện có
         return prevItems.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1}
+          cartItem.id === item.id && cartItem.material === item.material && cartItem.ringSize === item.ringSize
+            ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
             : cartItem
         );
       } else {
-        // Thêm sản phẩm mới vào giỏ hàng
-        return [...prevItems, { ...item, quantity: 1}];
+        return [...prevItems, { ...item }];
       }
     });
   };
 
- 
   const removeFromCart = (itemId) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
   };
 
+  const updateCartQuantity = (itemId, newQuantity) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId && item.type !== "Diamond" && item.type != "DiamondTimepieces" && item.type !== "DiamondRings"  && item.type !== "Bridal" // Assuming this check is correct
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
+    );
+  };
+
   const selectItemForPayment = (itemId, isSelected) => {
     setSelectedItems((prevSelected) =>
-      isSelected
-        ? [...prevSelected, itemId]
-        : prevSelected.filter((id) => id !== itemId)
+      isSelected ? [...prevSelected, itemId] : prevSelected.filter((id) => id !== itemId)
     );
   };
 
@@ -57,14 +63,14 @@ export const CartProvider = ({ children }) => {
         cartItems,
         addToCart,
         removeFromCart,
+        updateCartQuantity,
         selectedItems,
-        setCartItems,
         selectItemForPayment,
         handleWarningClose,
       }}
     >
       {children}
-      {/* <Warning open={warningOpen} onClose={handleWarningClose} /> */}
+      <Warning open={warningOpen} onClose={handleWarningClose} />
     </CartContext.Provider>
   );
 };
