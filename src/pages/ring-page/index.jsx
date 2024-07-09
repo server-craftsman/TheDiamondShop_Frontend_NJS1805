@@ -1,7 +1,13 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
-//import { useCart } from "../../CartContext";
+import {
+  Card,
+  Image,
+  Col,
+  Row,
+  Pagination,
+  Checkbox,
+} from "antd";
 import { Link } from "react-router-dom";
 import Footer from "../../components/footer";
 
@@ -10,7 +16,6 @@ function RingPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
-  //const { addToCart } = useCart();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,14 +47,14 @@ function RingPage() {
       return (price) => price >= 1001 && price <= 2000;
     }
     if (range === "$2001-$3000") {
-      return (price) => price >= 2001 && price <= 3000;    
+      return (price) => price >= 2001 && price <= 3000;
     }
     if (range === "$3001-$4000") {
-      return (price) => price >= 3001 && price <= 4000;    
+      return (price) => price >= 3001 && price <= 4000;
     }
     if (range === "$4001-$5000") {
-      return (price) => price >= 40001 && price <= 5000;   
-     }
+      return (price) => price >= 40001 && price <= 5000;
+    }
     if (range === "Over $5001") {
       return (price) => price > 5001;
     }
@@ -61,6 +66,7 @@ function RingPage() {
       let passesPrice = true;
       let passesBrandName = true;
       let passesCategory = true;
+      let passesInventory = item.Inventory >= 1; // Filter for Inventory >= 1
 
       if (newFilters.Price && newFilters.Price.length > 0) {
         passesPrice = newFilters.Price.some((range) =>
@@ -76,7 +82,7 @@ function RingPage() {
         passesCategory = newFilters.Category.includes(item.Category);
       }
 
-      return passesPrice && passesBrandName && passesCategory;
+      return passesPrice && passesBrandName && passesCategory && passesInventory;
     });
 
     setFilteredData(filtered);
@@ -88,86 +94,157 @@ function RingPage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-  // function handleAddToCart(item) {
-  //   item.type = "DiamondRings";
-  //   addToCart({
-  //     id: item.RingsID,
-  //     name: item.NameRings,
-  //     image: item.ImageRings,
-  //     price: item.Price,
-  //     quantity: 1,
-  //     type: item.type,
-  //   });
-  // }
   return (
     <div>
       <div className="app">
         <div className="filter-section">
           <h3>Price</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Under $1000" className="Checkbox">Under $1000</Checkbox>
-              <Checkbox value="$1001-$2000" className="Checkbox">$1001-$2000</Checkbox>
-              <Checkbox value="$2001-$3000" className="Checkbox">$2001-$3000</Checkbox>
-              <Checkbox value="$3001-$4000" className="Checkbox">$3001-$4000</Checkbox>
-              <Checkbox value="$4001-$5000" className="Checkbox">$4001-$5000</Checkbox>
-              <Checkbox value="Over $5001" className="Checkbox">Over $5001</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Price: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Under $1000" className="Checkbox">
+                Under $1000
+              </Checkbox>
+              <Checkbox value="$1001-$2000" className="Checkbox">
+                $1001-$2000
+              </Checkbox>
+              <Checkbox value="$2001-$3000" className="Checkbox">
+                $2001-$3000
+              </Checkbox>
+              <Checkbox value="$3001-$4000" className="Checkbox">
+                $3001-$4000
+              </Checkbox>
+              <Checkbox value="$4001-$5000" className="Checkbox">
+                $4001-$5000
+              </Checkbox>
+              <Checkbox value="Over $5001" className="Checkbox">
+                Over $5001
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Color</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ BrandName: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Simon G" className="Checkbox">Simon G</Checkbox>
-              <Checkbox value="Allison Kaufman" className="Checkbox">Allison Kaufman</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ BrandName: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Simon G" className="Checkbox">
+                Simon G
+              </Checkbox>
+              <Checkbox value="Allison Kaufman" className="Checkbox">
+                Allison Kaufman
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Gender</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Category: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Gemstone Fashion Rings" className="Checkbox">Gemstone Fashion Rings</Checkbox>
-              <Checkbox value="Diamond Fashion Rings" className="Checkbox">Diamond Fashion Rings</Checkbox>
-              <Checkbox value="Women`s Wedding Bands" className="Checkbox">Women`s Wedding Bands</Checkbox>
-              <Checkbox value="Rings" className="Checkbox">Rings</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Category: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Gemstone Fashion Rings" className="Checkbox">
+                Gemstone Fashion Rings
+              </Checkbox>
+              <Checkbox value="Diamond Fashion Rings" className="Checkbox">
+                Diamond Fashion Rings
+              </Checkbox>
+              <Checkbox value="Women`s Wedding Bands" className="Checkbox">
+                Women`s Wedding Bands
+              </Checkbox>
+              <Checkbox value="Rings" className="Checkbox">
+                Rings
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
-          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
+          <button onClick={clearFilters} className="buttonfilter">
+            Clear Filters
+          </button>
         </div>
 
         <div className="ringpage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
-              <Col span={8} key={index}> 
+              <Col span={6} key={index}>
                 <Card
                   hoverable
-                  style={{ width: 240 }}
+                  style={{ width: 240, height: "auto" }}
                   cover={
                     <Link to={`/ring-detail/${item.DiamondRingsID}`}>
-                    <Image
-                    
-                      width="100%"
-                      alt={item.NameRings}
-                      src={item.ImageRings}
-                    />
+                      <Image
+                        width="100%"
+                        alt={item.NameRings}
+                        src={item.ImageRings}
+                      />
                     </Link>
                   }
                 >
                   <Card.Meta
-                  title={
-                    <Link to={`/ring-detail/${item.DiamondRingsID}`}>
-                      {item.RingStyle.toUpperCase()}
-                    </Link>
-                  }
-                  description={`${item.Price}$`}
-                />
-          
-                  <Button onClick={() => handleAddToCart(item)}>
-                    Add to Cart
-                  </Button>
+                    title={
+                      <Link to={`/ring-detail/${item.DiamondRingsID}`}>
+                        <div
+                          style={{
+                            maxHeight: "500px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "pre-line", // Correct the property name
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4, // Correct the property name
+                            WebkitBoxOrient: "vertical", // Correct the property name
+                            fontSize: "0.9rem",
+                            color: "#000000"
+                          }}
+                        >
+                          {item.NameRings.toUpperCase()}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.8rem",
+                            color: "#888888",
+                            maxHeight: "500px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "pre-line", // Correct the property name
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4, // Correct the property name
+                            WebkitBoxOrient: "vertical", // Correct the property name
+                        
+                          }}
+                        >
+                        {item.Material.toUpperCase()} - {item.Category.toUpperCase()}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1.2em",
+                            color: "#000000",
+                            fontWeight: "bolder"
+                          }}
+                        >
+                        Size: {item.RingSize}
+                        </div>
+
+                        <div
+                    style={{
+                      fontSize: "1.5em",
+                      fontWeight: "bold",
+                      color: "#FFFFFF",
+                      backgroundColor: "#000000",
+                      padding: "8px 16px",
+                      marginTop: "8px",
+                      borderRadius: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {`${item.Price}$`}
+                  </div>
+
+                      </Link>
+                    }
+                  />
+
+                 
                 </Card>
-                
               </Col>
             ))}
           </Row>
@@ -185,7 +262,7 @@ function RingPage() {
         </div>
       </div>
 
-     <Footer />
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Table } from "antd";
+import { Button, Empty, Form, Input, Modal, Table } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -9,6 +9,8 @@ function ManageCertificate() {
     useState(false);
   const [form] = Form.useForm();
   const [editingCertificate, setEditingCertificate] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [filteredCertificates, setFilteredCertificates] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -20,6 +22,7 @@ function ManageCertificate() {
         "http://localhost:8090/certificate/lookup"
       );
       setCertificates(response.data);
+      setFilteredCertificates(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -49,6 +52,15 @@ function ManageCertificate() {
     setEditingCertificate(record);
     setIsEditCertificateVisible(true); // Show the modal
     form.setFieldsValue(record);
+  };
+
+  const handleSearch = () => {
+    const filtered = certificates.filter((certificate) =>
+      certificate.GIAReportNumber.toLowerCase().includes(
+        searchText.toLowerCase()
+      )
+    );
+    setFilteredCertificates(filtered);
   };
 
   ////delete still have many problem in DB & BE
@@ -142,14 +154,35 @@ function ManageCertificate() {
 
   return (
     <div>
-      <Button type="primary" onClick={() => setIsAddCertificateVisible(true)}>
-        Add Certificate
-      </Button>
-      <Table
-        dataSource={certificates}
-        columns={columns}
-        rowKey="CertificateID"
-      />
+      <div style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search by GIA Report Number"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ marginBottom: 16, width: 300 }}
+        />
+        <Button type="primary" onClick={handleSearch} style={{ marginLeft: 8 }}>
+          Search
+        </Button>
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <Button
+          type="primary"
+          onClick={() => setIsAddCertificateVisible(true)}
+          style={{ marginLeft: 8 }}
+        >
+          Add Certificate
+        </Button>
+      </div>
+      {filteredCertificates.length === 0 ? (
+        <Empty description="No certificate data found" />
+      ) : (
+        <Table
+          dataSource={filteredCertificates}
+          columns={columns}
+          rowKey="CertificateID"
+        />
+      )}
       <Modal
         title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
         visible={isAddCertificateVisible || isEditCertificateVisible}

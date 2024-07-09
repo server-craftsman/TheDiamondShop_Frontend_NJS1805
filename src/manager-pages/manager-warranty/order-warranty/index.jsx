@@ -7,6 +7,7 @@ import {
   Table,
   DatePicker,
   Popconfirm,
+  Empty,
 } from "antd";
 import axios from "axios";
 import moment from "moment";
@@ -16,6 +17,8 @@ function ManageWarranty() {
   const [isEditWarrantyVisible, setIsEditWarrantyVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingWarranty, setEditingWarranty] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [filteredWarranties, setFilteredWarranties] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -27,6 +30,7 @@ function ManageWarranty() {
         "http://localhost:8090/warranty/view-warranty"
       );
       setWarranties(response.data);
+      setFilteredWarranties(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -90,6 +94,13 @@ function ManageWarranty() {
     } catch (error) {
       console.error("Error deleting warranty:", error);
     }
+  };
+
+  const handleSearch = () => {
+    const filtered = warranties.filter((warranty) =>
+      warranty.ReportNo.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setFilteredWarranties(filtered);
   };
 
   const columns = [
@@ -170,7 +181,26 @@ function ManageWarranty() {
 
   return (
     <>
-      <Table dataSource={warranties} columns={columns} rowKey="ReportNo" />
+      <div style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search by Report Number"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300, marginRight: 8 }}
+        />
+        <Button type="primary" onClick={handleSearch}>
+          Search
+        </Button>
+      </div>
+      {filteredWarranties.length === 0 ? (
+        <Empty description="No Data Found" />
+      ) : (
+        <Table
+          dataSource={filteredWarranties}
+          columns={columns}
+          rowKey="ReportNo"
+        />
+      )}
       <Modal
         title="Edit Warranty"
         visible={isEditWarrantyVisible}

@@ -2,8 +2,8 @@ import "./index.scss";
 import { useEffect, useState } from "react";
 import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
 import { Link } from "react-router-dom";
-import Footer from "../../components/footer";
-
+import { Footer } from "antd/es/layout/layout";
+import './index.scss';
 function DiamondPage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,8 +15,12 @@ function DiamondPage() {
       try {
         const response = await fetch("http://localhost:8090/products/diamonds");
         const data = await response.json();
-        setDataSource(data);
-        setFilteredData(data); // Initialize filteredData with all data
+        // Filter out diamonds with Inventory < 1
+        const filteredDiamonds = data.filter(
+          (diamond) => diamond.Inventory >= 1
+        );
+        setDataSource(filteredDiamonds);
+        setFilteredData(filteredDiamonds); // Initialize filteredData with filtered diamonds
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -84,145 +88,159 @@ function DiamondPage() {
     setCurrentPage(1); // Reset to first page when filters clear
   };
 
-
-
   return (
     <>
-    <div className="app">
-      <div className="filter-section">
-        <h3>Price</h3>
-        <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
-          <Row className="row-column">
-            <Checkbox value="Under $1000" className="Checkbox">
-              Under $1000
-            </Checkbox>
-            <Checkbox value="$1001-$2000" className="Checkbox">
-              $1001-$2000
-            </Checkbox>
-            <Checkbox value="$2001-$3000" className="Checkbox">
-              $2001-$3000
-            </Checkbox>
-            <Checkbox value="$3001-$4000" className="Checkbox">
-              $3001-$4000
-            </Checkbox>
-            <Checkbox value="$4001-$5000" className="Checkbox">
-              $4001-$5000
-            </Checkbox>
-            <Checkbox value="Over $5001" className="Checkbox">
-              Over $5001
-            </Checkbox>
-          </Row>
-        </Checkbox.Group>
-        <hr />
-        <h3>Color</h3>
-        <Checkbox.Group onChange={(values) => handleFilters({ Color: values })}>
-          <Row>
-            <Checkbox value="D" className="Checkbox">
-              D
-            </Checkbox>
-            <Checkbox value="E" className="Checkbox">
-              E
-            </Checkbox>
-            <Checkbox value="F" className="Checkbox">
-              F
-            </Checkbox>
-            <Checkbox value="H" className="Checkbox">
-              H
-            </Checkbox>
-            <Checkbox value="I" className="Checkbox">
-              I
-            </Checkbox>
-            <Checkbox value="J" className="Checkbox">
-              J
-            </Checkbox>
-            <Checkbox value="K" className="Checkbox">
-              K
-            </Checkbox>
-          </Row>
-        </Checkbox.Group>
-        <hr />
-        <h3>Shape</h3>
-        <Checkbox.Group onChange={(values) => handleFilters({ Shape: values })}>
-          <Row className="row-column">
-            <Checkbox value="Round" className="Checkbox">
-              Round
-            </Checkbox>
-            <Checkbox value="Princess" className="Checkbox">
-              Princess
-            </Checkbox>
-            <Checkbox value="Cushion" className="Checkbox">
-              Cushion
-            </Checkbox>
-            <Checkbox value="Emerald" className="Checkbox">
-              Emerald
-            </Checkbox>
-          </Row>
-        </Checkbox.Group>
-        <hr />
-        <button onClick={clearFilters} className="buttonfilter">
-          Clear Filters
-        </button>
-      </div>
-      <div className="diamondpage">
-      <Row gutter={16}>
+      <div className="app">
+        <div className="filter-section">
+          <h3>Price</h3>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Price: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Under $1000" className="Checkbox">
+                Under $1000
+              </Checkbox>
+              <Checkbox value="$1001-$2000" className="Checkbox">
+                $1001-$2000
+              </Checkbox>
+              <Checkbox value="$2001-$3000" className="Checkbox">
+                $2001-$3000
+              </Checkbox>
+              <Checkbox value="$3001-$4000" className="Checkbox">
+                $3001-$4000
+              </Checkbox>
+              <Checkbox value="$4001-$5000" className="Checkbox">
+                $4001-$5000
+              </Checkbox>
+              <Checkbox value="Over $5001" className="Checkbox">
+                Over $5001
+              </Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Color</h3>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Color: values })}
+          >
+            <Row>
+              <Checkbox value="D" className="Checkbox">
+                D
+              </Checkbox>
+              <Checkbox value="E" className="Checkbox">
+                E
+              </Checkbox>
+              <Checkbox value="F" className="Checkbox">
+                F
+              </Checkbox>
+              <Checkbox value="H" className="Checkbox">
+                H
+              </Checkbox>
+              <Checkbox value="I" className="Checkbox">
+                I
+              </Checkbox>
+              <Checkbox value="J" className="Checkbox">
+                J
+              </Checkbox>
+              <Checkbox value="K" className="Checkbox">
+                K
+              </Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Shape</h3>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Shape: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Round" className="Checkbox">
+                Round
+              </Checkbox>
+              <Checkbox value="Princess" className="Checkbox">
+                Princess
+              </Checkbox>
+              <Checkbox value="Cushion" className="Checkbox">
+                Cushion
+              </Checkbox>
+              <Checkbox value="Emerald" className="Checkbox">
+                Emerald
+              </Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <button onClick={clearFilters} className="buttonfilter">
+            Clear Filters
+          </button>
+        </div>
+        <div className="diamondpage">
+          <Row gutter={16}>
             {currentPageData.map((item, index) => (
-              <Col span={8} key={index}>
+              <Col span={6} key={index}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
-                    // <Link to={`/diamond-detail/${item.DiamondID}`}>
+                    <Link to={`/diamond-detail/${item.DiamondID}`}>
                       <Image
                         maxWidth="100%"
                         maxHeight="100%"
                         alt={item.DiamondOrigin}
                         src={item.Image}
                       />
-                    // </Link>
+                    </Link>
                   }
                 >
-                  <Card.Meta
-                    title={
-                      <Link
-                        to={`/diamond-detail/${item.DiamondID}`}
-                        style={{ textDecoration: "none", color: "inherit" }}
-                      >
-                        <div style={{ fontSize: "1.2em", fontWeight: "bold" }}>
-                          {item.StockNumber.toUpperCase()}
-                        </div>
-                        <div style={{ fontSize: "1em", color: "#757575" }}>
-                          {item.Clarity}
-                        </div>
-                        <div style={{ fontSize: "1em", color: "#757575" }}>
-                          {item.Color}
-                        </div>
-                      </Link>
-                    }
-                    description={
-                      <div style={{ fontSize: "1.5em", fontWeight: "bold" }}>
-                        {`${item.Price}$`}
+                  <Card.Grid hoverable={false} maxWidth="100%" style={{width: "100%"}}>
+                    <Link
+                      to={`/diamond-detail/${item.DiamondID}`}
+                      style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      <div style={{ fontSize: "1.2em", fontWeight: "bold" }}>
+                        {item.StockNumber.toUpperCase()}
                       </div>
-                    }
-                  />
+                      <div style={{ fontSize: "1em", color: "#757575" }}>
+                        {item.Clarity}
+                      </div>
+                      <div style={{ fontSize: "1.2em", color: "#000000", fontWeight: "bolder" }}>
+                        Color: {item.Color}
+                      </div>
+
+                      <div
+                      style={{
+                        fontSize: "1.5em",
+                        fontWeight: "bold",
+                        color: "#FFFFFF",
+                        backgroundColor: "#000000",
+                        padding: "8px 16px",
+                        marginTop: "8px",
+                        borderRadius: "4px",
+                        textAlign: "center",
+                      }}
+                    >
+                      {`${item.Price}$`}
+                    </div>
+                    </Link>
+                    
+                  </Card.Grid>
                 </Card>
               </Col>
             ))}
           </Row>
-        <Pagination
-          current={currentPage}
-          total={filteredData.length}
-          pageSize={itemsPerPage}
-          onChange={handlePageChange}
-          onShowSizeChange={(currentPage, size) => {
-            setItemsPerPage(size);
-          }}
-          showQuickJumper
-          showTotal={(total) => `Total ${total} item`}
-        />
+
+          <Pagination
+            current={currentPage}
+            total={filteredData.length}
+            pageSize={itemsPerPage}
+            onChange={handlePageChange}
+            onShowSizeChange={(currentPage, size) => {
+              setItemsPerPage(size);
+            }}
+            showQuickJumper
+            showTotal={(total) => `Total ${total} item`}
+          />
+        </div>
       </div>
-    </div>
-<Footer />
-      </>
+      <Footer />
+    </>
   );
 }
 

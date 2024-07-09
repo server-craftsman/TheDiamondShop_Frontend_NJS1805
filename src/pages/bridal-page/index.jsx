@@ -11,7 +11,7 @@ function BridalPage() {
   const [itemsPerPage, setItemsPerPage] = useState(12); // Default items per page
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
-  
+
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -46,14 +46,14 @@ function BridalPage() {
       return (price) => price >= 1001 && price <= 2000;
     }
     if (range === "$2001-$3000") {
-      return (price) => price >= 2001 && price <= 3000;    
+      return (price) => price >= 2001 && price <= 3000;
     }
     if (range === "$3001-$4000") {
-      return (price) => price >= 3001 && price <= 4000;    
+      return (price) => price >= 3001 && price <= 4000;
     }
     if (range === "$4001-$5000") {
-      return (price) => price >= 40001 && price <= 5000;   
-     }
+      return (price) => price >= 40001 && price <= 5000;
+    }
     if (range === "Over $5001") {
       return (price) => price > 5001;
     }
@@ -109,70 +109,148 @@ function BridalPage() {
       <div className="app">
         <div className="filter-section">
           <h3>Price</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Price: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Under $1000" className="Checkbox">Under $1000</Checkbox>
-              <Checkbox value="$1001-$2000" className="Checkbox">$1001-$2000</Checkbox>
-              <Checkbox value="$2001-$3000" className="Checkbox">$2001-$3000</Checkbox>
-              <Checkbox value="$3001-$4000" className="Checkbox">$3001-$4000</Checkbox>
-              <Checkbox value="$4001-$5000" className="Checkbox">$4001-$5000</Checkbox>
-              <Checkbox value="Over $5001" className="Checkbox">Over $5001</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Price: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Under $1000" className="Checkbox">
+                Under $1000
+              </Checkbox>
+              <Checkbox value="$1001-$2000" className="Checkbox">
+                $1001-$2000
+              </Checkbox>
+              <Checkbox value="$2001-$3000" className="Checkbox">
+                $2001-$3000
+              </Checkbox>
+              <Checkbox value="$3001-$4000" className="Checkbox">
+                $3001-$4000
+              </Checkbox>
+              <Checkbox value="$4001-$5000" className="Checkbox">
+                $4001-$5000
+              </Checkbox>
+              <Checkbox value="Over $5001" className="Checkbox">
+                Over $5001
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Color</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Material: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Platinum" className="Checkbox">Platinum</Checkbox>
-              <Checkbox value="14K White Gold" className="Checkbox">14K White Gold</Checkbox>
-              <Checkbox value="18K White Gold" className="Checkbox">18K White Gold</Checkbox>
-              <Checkbox value="14K Yellow Gold" className="Checkbox">14K Yellow Gold</Checkbox>
-              <Checkbox value="18K Yellow Gold" className="Checkbox">18K Yellow Gold</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Material: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Platinum" className="Checkbox">
+                Platinum
+              </Checkbox>
+              <Checkbox value="14K White Gold" className="Checkbox">
+                14K White Gold
+              </Checkbox>
+              <Checkbox value="18K White Gold" className="Checkbox">
+                18K White Gold
+              </Checkbox>
+              <Checkbox value="14K Yellow Gold" className="Checkbox">
+                14K Yellow Gold
+              </Checkbox>
+              <Checkbox value="18K Yellow Gold" className="Checkbox">
+                18K Yellow Gold
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
           <h3>Gender</h3>
-          <Checkbox.Group onChange={(values) => handleFilters({ Gender: values })}>
-            <Row className = "row-column">
-              <Checkbox value="Womens" className="Checkbox">Womens</Checkbox>
-              <Checkbox value="Mans" className="Checkbox">Mans</Checkbox>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ Gender: values })}
+          >
+            <Row className="row-column">
+              <Checkbox value="Womens" className="Checkbox">
+                Womens
+              </Checkbox>
+              <Checkbox value="Mans" className="Checkbox">
+                Mans
+              </Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
-          <button onClick={clearFilters} className="buttonfilter">Clear Filters</button>
+          <button onClick={clearFilters} className="buttonfilter">
+            Clear Filters
+          </button>
         </div>
 
         <div className="bridalpage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
-              <Col span={8} key={index}>
-                
+              <Col span={6} key={index}>
                 <Card
                   hoverable
                   style={{ width: 240 }}
                   cover={
                     <Link to={`/bridal-detail/${item.BridalID}`}>
-                    <Image
-                      width="100%"
-                      alt={item.NameBridal}
-                      src={item.ImageBridal}
-                    />  
+                      <Image
+                        width="100%"
+                        alt={item.NameBridal}
+                        src={item.ImageBridal}
+                      />
                     </Link>
                   }
                 >
                   <Card.Meta
                     title={
                       <Link to={`/bridal-detail/${item.BridalID}`}>
-                        {item.BridalStyle.toUpperCase()}
+                        <div
+                          style={{
+                            maxHeight: "500px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "pre-line", // Correct the property name
+                            display: "-webkit-box",
+                            WebkitLineClamp: 4, // Correct the property name
+                            WebkitBoxOrient: "vertical", // Correct the property name
+                            fontSize: "0.9rem",
+                            color: "#000000",
+                          }}
+                        >
+                          {item.NameBridal.toUpperCase()}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "0.8em",
+                            marginTop: "4px",
+                            color: "#888888",
+                          }}
+                        > 
+                        {item.Material} - {item.Gender}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1.2em",
+                            marginTop: "4px",
+                            color: "#000000",
+                            fontWeight: "bolder"
+                          }}
+                        > 
+                        Size: {item.RingSizeRang}
+                        </div>
+
+                        <div
+                    style={{
+                      fontSize: "1.5em",
+                      fontWeight: "bold",
+                      color: "#FFFFFF",
+                      backgroundColor: "#000000",
+                      padding: "8px 16px",
+                      marginTop: "8px",
+                      borderRadius: "4px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {`${item.Price}$`}
+                  </div>
                       </Link>
                     }
-                    description={`${item.Price}$`}
                   />
-                  {/* <Button onClick={() => handleAddToCart(item)}>
-                    Add to Cart
-                  </Button> */}
+
+                 
                 </Card>
-                
               </Col>
             ))}
           </Row>
@@ -190,7 +268,7 @@ function BridalPage() {
         </div>
       </div>
 
-    <Footer />
+      <Footer />
     </div>
   );
 }
