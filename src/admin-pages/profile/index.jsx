@@ -233,26 +233,7 @@ function ProfileAdmin() {
                 </Col>
 
               </Row>
-              {/* <!-- <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item label="Image">
-                    <Input.TextArea
-                      rows={4}
-                      defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                      placeholder="Here can be your description"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row> -->
-              <!-- <Form.Item>
-                <Button
-                  type="submit"
-
-                  style={{ float: "right" }}
-                >
-                  Update Profile
-                </Button>
-              </Form.Item> --> */}
+              
             </Form>
           </Card>
         </Col>

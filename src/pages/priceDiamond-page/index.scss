@@ -1,17 +1,11 @@
-.header {
+.menu {
     background-color: white;
-    position: fixed;
+    position: flex;
     width: 100%;
     z-index: 10;
     display: flex;
     justify-content: center;
-
-    .logo {
-        // margin-right: 40px;
-        margin-left: -150px;
-        display: flex;
-        justify-content: start;
-    }
+    
 }
 
 .content {
@@ -26,7 +20,7 @@
     size: 500px;
 
     img {
-        margin-top: 80px;
+        margin-top: 0px;
         width: 98%;
         max-width: 98%;
         height: auto;

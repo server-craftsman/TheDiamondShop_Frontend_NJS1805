@@ -795,14 +795,16 @@ function PriceDiamond() {
   });
 
   return (
-    <Layout>
-      <Header className='header'>
+    <div>
 
-        <Link className='logo' to={"/"}>
-          <img src={logo} alt="" width={180} />
-        </Link>
+      {/* Content */}
 
-        <Menu mode="horizontal" defaultSelectedKeys={['home']}>
+      <div className='banner'>
+          <img src={banner} alt="" />
+        </div>
+
+      <Content className='content' >
+      <Menu className='menu' mode="horizontal" defaultSelectedKeys={['home']}>
           <Menu.Item key="3.6mm">
             <a href="#3.6mm">3.6mm</a>
           </Menu.Item>
@@ -846,16 +848,6 @@ function PriceDiamond() {
             <a href="#8.1mm">8.1mm</a>
           </Menu.Item>
         </Menu>
-      </Header>
-
-      {/* Content */}
-
-      <div className='banner'>
-          <img src={banner} alt="" />
-        </div>
-
-
-      <Content className='content' >
         <div id="3.6mm" style={{ padding: '100px 0 100px 0', borderBottom: '1px solid #e8e8e8' }}>
           <br />
           <h2 style={{ textAlign: "center" }}>Super Cheap Diamond Price 3.6mm</h2>
@@ -966,7 +958,8 @@ function PriceDiamond() {
       </Content>
 
       <Footer />
-    </Layout>
+
+    </div>
   );
 }
 
