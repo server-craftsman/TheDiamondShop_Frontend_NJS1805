@@ -7,6 +7,7 @@ import {
   CaretDownOutlined,
   DashboardOutlined,
   LaptopOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Dropdown, Menu } from "antd";
 import {
@@ -51,7 +52,7 @@ function HeaderAdmin() {
             <li className="menu-item">
               <Link to="/admin-page" className="menu-link active">
                 <span className="menu-link-icon">
-                  <DashboardOutlined size={18} />
+                  <DashboardOutlined style={{fontSize: "20px"}} />
                 </span>
                 <span className="menu-link-text">Dashboard</span>
               </Link>
@@ -59,7 +60,7 @@ function HeaderAdmin() {
             <li className="menu-item">
               <Link to="account-page" className="menu-link active">
                 <span className="menu-link-icon">
-                  <DashboardOutlined size={18} />
+                  <UserOutlined style={{fontSize: "20px"}}/>
                 </span>
                 <span className="menu-link-text">Account</span>
               </Link>
@@ -67,7 +68,7 @@ function HeaderAdmin() {
             <li className="menu-item">
               <Link to="profileAdmin-page" className="menu-link">
                 <span className="menu-link-icon">
-                  <FaUserCircle size={20} />
+                  <FaUserCircle style={{fontSize: "20px"}} />
                 </span>
                 <span className="menu-link-text">Profile</span>
               </Link>
@@ -75,7 +76,7 @@ function HeaderAdmin() {
             <li className="menu-item">
               <Link to="mapAdmin-page" className="menu-link">
                 <span className="menu-link-icon">
-                  <FaMap size={18} />
+                  <FaMap style={{fontSize: "20px"}} />
                 </span>
                 <span className="menu-link-text">Map</span>
               </Link>
@@ -88,7 +89,7 @@ function HeaderAdmin() {
             <li className="menu-item">
               <Link to="/login" onClick={logout} className="menu-link">
                 <span className="menu-link-icon">
-                  <FaSignOutAlt size={20} />
+                  <FaSignOutAlt style={{fontSize: "20px"}} />
                 </span>
                 <span className="menu-link-text">Logout</span>
               </Link>
