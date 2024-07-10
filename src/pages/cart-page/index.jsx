@@ -37,24 +37,23 @@ const CartPage = () => {
     selectItemForPayment(record.type, checked);
   };
 
+  const handleSelectAllChange = (e) => {
+    const checked = e.target.checked;
+    const allItemTypes = cartItems.map((item) => item.type);
+  
+    allItemTypes.forEach((type) => {
+      selectItemForPayment(type, checked);
+    });
+  
+    setSelectAllChecked(checked);
+  };
+
   const handleDeleteItem = (item) => {
     removeFromCart(item.id, item.type);
   };
 
   const handleQuantityChange = (value, item) => {
     updateCartQuantity(item.id, value);
-  };
-
-  const handleSelectAllChange = (e) => {
-    const checked = e.target.checked;
-    const allItemTypes = cartItems.map((item) => item.type);
-    if (checked) {
-      // Chọn tất cả
-      selectItemForPayment("all", true);
-    } else {
-      // Bỏ chọn tất cả
-      selectItemForPayment("all", false);
-    }
   };
 
   const handlePayment = () => {
