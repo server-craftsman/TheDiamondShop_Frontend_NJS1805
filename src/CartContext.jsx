@@ -1,3 +1,4 @@
+// CartContext.js
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Warning from "./Warning"; // Adjust path if necessary
 
@@ -23,17 +24,18 @@ export const CartProvider = ({ children }) => {
         (cartItem) => cartItem.id === item.id && cartItem.type === item.type
       );
       if (existingItem) {
-        // Set warning open if item is already in cart
         setWarningOpen(true);
         return prevItems;
       } else {
-        return [...prevItems, { ...item, quantity: 1 }]; // Ensure quantity is 1
+        return [...prevItems, { ...item, quantity: 1 }];
       }
     });
   };
 
-  const removeFromCart = (itemId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  const removeFromCart = (itemId, itemType) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => !(item.id === itemId && item.type === itemType))
+    );
   };
 
   const updateCartQuantity = (itemId, newQuantity) => {
@@ -45,6 +47,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const selectItemForPayment = (itemId, isSelected) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, selected: isSelected } : item
+      )
+    );
     setSelectedItems((prevSelected) =>
       isSelected
         ? [...prevSelected, itemId]

@@ -77,12 +77,12 @@ function DeliveryConfirm() {
                 </p>
                 <div className="delivery__actions">
                   <Popconfirm
-                    title="Are you sure you want to update the status to Shipped?"
-                    onConfirm={() => updateStatus(order.OrderID, "Shipped")}
+                    title="Are you sure you want to update the status to Shipping?"
+                    onConfirm={() => updateStatus(order.OrderID, "Shipping")}
                     okText="Yes"
                     cancelText="No"
                   >
-                    <button>Shipped</button>
+                    <button>Shipping</button>
                   </Popconfirm>
                 </div>
               </li>
