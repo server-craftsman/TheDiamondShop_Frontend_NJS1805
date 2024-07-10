@@ -19,8 +19,11 @@ function TimepiecePage() {
           "http://localhost:8090/products/timepieces"
         );
         const data = await response.json();
-        setDataSource(data);
-        setFilteredData(data); // Initialize filteredData with all data
+        const filteredDiamondTimepieces = data.filter(
+          (timepieces) => timepieces.Inventory >= 1
+        );
+        setDataSource(filteredDiamondTimepieces);
+        setFilteredData(filteredDiamondTimepieces); // Initialize filteredData with all data
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -192,7 +195,7 @@ function TimepiecePage() {
                         >
                           {item.NameTimepieces.toUpperCase()}
                         </div>
-                        
+
                         <div
                           style={{
                             marginTop: "8px",
@@ -200,7 +203,7 @@ function TimepiecePage() {
                             color: "#999999",
                           }}
                         >
-                        Gender: {item.Gender}
+                          Gender: {item.Gender}
                         </div>
                         <div
                           style={{
@@ -213,10 +216,10 @@ function TimepiecePage() {
                             whiteSpace: "pre-line", // Correct the property name
                             display: "-webkit-box",
                             WebkitLineClamp: 4, // Correct the property name
-                            WebkitBoxOrient: "vertical", // Correct the property name                          
+                            WebkitBoxOrient: "vertical", // Correct the property name
                           }}
                         >
-                        Collection: {item.Collection}
+                          Collection: {item.Collection}
                         </div>
 
                         <div
@@ -227,29 +230,26 @@ function TimepiecePage() {
                             color: "#000000",
                           }}
                         >
-                        CaseSize: {item.CaseSize}
+                          CaseSize: {item.CaseSize}
                         </div>
 
                         <div
-                    style={{
-                      fontSize: "1.5em",
-                      fontWeight: "bold",
-                      color: "#FFFFFF",
-                      backgroundColor: "#000000",
-                      padding: "8px 16px",
-                      marginTop: "8px",
-                      borderRadius: "4px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {`${item.Price}$`}
-                  </div>
-                        
+                          style={{
+                            fontSize: "1.5em",
+                            fontWeight: "bold",
+                            color: "#FFFFFF",
+                            backgroundColor: "#000000",
+                            padding: "8px 16px",
+                            marginTop: "8px",
+                            borderRadius: "4px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {`${item.Price}$`}
+                        </div>
                       </Link>
                     }
                   />
-
-                  
                 </Card>
               </Col>
             ))}

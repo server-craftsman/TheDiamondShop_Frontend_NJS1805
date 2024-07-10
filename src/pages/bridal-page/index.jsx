@@ -18,8 +18,10 @@ function BridalPage() {
       try {
         const response = await fetch("http://localhost:8090/products/bridals");
         const data = await response.json();
-        setDataSource(data); // Update state with data from the API
-        setFilteredData(data); // Initialize filteredData with all data
+
+        const filteredBridals = data.filter((bridal) => bridal.Inventory >= 1);
+        setDataSource(filteredBridals); // Update state with data from the API
+        setFilteredData(filteredBridals); // Initialize filteredData with all data
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -217,39 +219,37 @@ function BridalPage() {
                             marginTop: "4px",
                             color: "#888888",
                           }}
-                        > 
-                        {item.Material} - {item.Gender}
+                        >
+                          {item.Material} - {item.Gender}
                         </div>
                         <div
                           style={{
                             fontSize: "1.2em",
                             marginTop: "4px",
                             color: "#000000",
-                            fontWeight: "bolder"
+                            fontWeight: "bolder",
                           }}
-                        > 
-                        Size: {item.RingSizeRang}
+                        >
+                          Size: {item.RingSizeRang}
                         </div>
 
                         <div
-                    style={{
-                      fontSize: "1.5em",
-                      fontWeight: "bold",
-                      color: "#FFFFFF",
-                      backgroundColor: "#000000",
-                      padding: "8px 16px",
-                      marginTop: "8px",
-                      borderRadius: "4px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {`${item.Price}$`}
-                  </div>
+                          style={{
+                            fontSize: "1.5em",
+                            fontWeight: "bold",
+                            color: "#FFFFFF",
+                            backgroundColor: "#000000",
+                            padding: "8px 16px",
+                            marginTop: "8px",
+                            borderRadius: "4px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {`${item.Price}$`}
+                        </div>
                       </Link>
                     }
                   />
-
-                 
                 </Card>
               </Col>
             ))}

@@ -1,13 +1,6 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import {
-  Card,
-  Image,
-  Col,
-  Row,
-  Pagination,
-  Checkbox,
-} from "antd";
+import { Card, Image, Col, Row, Pagination, Checkbox } from "antd";
 import { Link } from "react-router-dom";
 import Footer from "../../components/footer";
 
@@ -23,8 +16,9 @@ function RingPage() {
           "http://localhost:8090/products/diamond-rings"
         );
         const data = await response.json();
-        setDataSource(data);
-        setFilteredData(data); // Initialize filteredData with all data
+        const filteredDiamondRings = data.filter((ring) => ring.Inventory >= 1);
+        setDataSource(filteredDiamondRings);
+        setFilteredData(filteredDiamondRings); // Initialize filteredData with all data
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -82,7 +76,9 @@ function RingPage() {
         passesCategory = newFilters.Category.includes(item.Category);
       }
 
-      return passesPrice && passesBrandName && passesCategory && passesInventory;
+      return (
+        passesPrice && passesBrandName && passesCategory && passesInventory
+      );
     });
 
     setFilteredData(filtered);
@@ -193,7 +189,7 @@ function RingPage() {
                             WebkitLineClamp: 4, // Correct the property name
                             WebkitBoxOrient: "vertical", // Correct the property name
                             fontSize: "0.9rem",
-                            color: "#000000"
+                            color: "#000000",
                           }}
                         >
                           {item.NameRings.toUpperCase()}
@@ -209,41 +205,38 @@ function RingPage() {
                             display: "-webkit-box",
                             WebkitLineClamp: 4, // Correct the property name
                             WebkitBoxOrient: "vertical", // Correct the property name
-                        
                           }}
                         >
-                        {item.Material.toUpperCase()} - {item.Category.toUpperCase()}
+                          {item.Material.toUpperCase()} -{" "}
+                          {item.Category.toUpperCase()}
                         </div>
                         <div
                           style={{
                             fontSize: "1.2em",
                             color: "#000000",
-                            fontWeight: "bolder"
+                            fontWeight: "bolder",
                           }}
                         >
-                        Size: {item.RingSize}
+                          Size: {item.RingSize}
                         </div>
 
                         <div
-                    style={{
-                      fontSize: "1.5em",
-                      fontWeight: "bold",
-                      color: "#FFFFFF",
-                      backgroundColor: "#000000",
-                      padding: "8px 16px",
-                      marginTop: "8px",
-                      borderRadius: "4px",
-                      textAlign: "center",
-                    }}
-                  >
-                    {`${item.Price}$`}
-                  </div>
-
+                          style={{
+                            fontSize: "1.5em",
+                            fontWeight: "bold",
+                            color: "#FFFFFF",
+                            backgroundColor: "#000000",
+                            padding: "8px 16px",
+                            marginTop: "8px",
+                            borderRadius: "4px",
+                            textAlign: "center",
+                          }}
+                        >
+                          {`${item.Price}$`}
+                        </div>
                       </Link>
                     }
                   />
-
-                 
                 </Card>
               </Col>
             ))}
