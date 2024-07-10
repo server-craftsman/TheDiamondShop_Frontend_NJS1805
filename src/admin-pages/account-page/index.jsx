@@ -23,19 +23,17 @@ const Account = () => {
     setIsModalVisible(false);
   };
 
-  const onFinish = async (values) => {
+  const handleAddAccount = async (values) => {
     try {
-
       const response = await axios.post('http://localhost:8090/auth/createAccount', {
         ...values,
         birthday: values.birthday.format('YYYY-MM-DD'),
-
       });
-      
+
       const { data } = response;
       message.success(data.message);
       setIsModalVisible(false);
-      
+
       // Optionally, you might handle token storage or redirection here
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -144,7 +142,7 @@ const Account = () => {
       >
         <Form
           name="accountCreation"
-          onFinish={onFinish}
+          onFinish={handleAddAccount}
           initialValues={{ gender: 'Male', roleName: 'Customer' }}
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
@@ -246,29 +244,18 @@ const Account = () => {
           <Form.Item
             label="Transportation"
             name="transportation"
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Role Name"
-            name="roleName"
+            rules={[{ required: true, message: 'Please input transportation!' }]}
           >
             <Input />
           </Form.Item>
 
-          {/* <Form.Item
-            label="Role"
+          <Form.Item
+            label="Role Name"
             name="roleName"
-            rules={[{ required: true, message: 'Please select a role!' }]}
+            rules={[{ required: true, message: 'Please input role name!' }]}
           >
-            <Select>
-              <Option value="Admin">Admin</Option>
-              <Option value="Customer">Customer</Option>
-              <Option value="Sale">Sale Staff</Option>
-              <Option value="Manager">Manager</Option>
-              <Option value="Delivery">Delivery</Option>
-            </Select>
-          </Form.Item> */}
+            <Input />
+          </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">

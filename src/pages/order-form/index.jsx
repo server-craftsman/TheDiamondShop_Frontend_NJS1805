@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "../login-page/axios-instance/index";
 import {
   Button,
@@ -30,9 +30,11 @@ import { Link, useLocation } from "react-router-dom";
 import { Image, Result } from "antd";
 import { Footer } from "antd/es/layout/layout";
 import { useCart } from "../../CartContext";
+import { AuthContext } from "../../AuthContext";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import QRCode from "qrcode.react";
 import "./index.scss";
+import ErrorDialog from "../../FailOrder"; // Import the ErrorDialog component
 
 const OrderForm = () => {
   const location = useLocation();
@@ -45,10 +47,12 @@ const OrderForm = () => {
     totalPrice: initialTotalPrice,
   } = location.state;
 
+  const { user } = useContext(AuthContext);
+
   const [orderData, setOrderData] = useState({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
+    firstName: user ? user.FirstName || "" : "",
+    lastName: user ? user.LastName || "" : "",
+    phoneNumber: user ? user.PhoneNumber || "" : "",
     deliveryAddress: "",
     shippingMethod: "Express",
     paymentMethod: "",
@@ -72,6 +76,20 @@ const OrderForm = () => {
   const [paypalOrderId, setPaypalOrderId] = useState(null);
   // PayPal
   const [sdkReady, setSdkReady] = useState(false);
+
+
+
+  useEffect(() => {
+    // Update orderData if user context changes
+    if (user) {
+      setOrderData((prevOrderData) => ({
+        ...prevOrderData,
+        firstName: user.FirstName || "",
+        lastName: user.LastName || "",
+        phoneNumber: user.PhoneNumber || "",
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (initialTotalPrice !== null && typeof initialTotalPrice === "number") {
@@ -139,6 +157,169 @@ const OrderForm = () => {
     );
     return filteredVouchers;
   };
+
+  // const handleApplyVoucher = () => {
+  //   if (selectedVoucher && initialTotalPrice !== null) {
+  //     const discount = selectedVoucher.Discount / 100;
+  //     const newDiscountedPrice = initialTotalPrice * discount;
+  //     const newTotalPrice = initialTotalPrice - newDiscountedPrice;
+
+  //     setDiscountedPrice(newDiscountedPrice.toFixed(2));
+  //     setTotalPrice(newTotalPrice.toFixed(2));
+  //   } else {
+  //     setDiscountedPrice(null);
+  //     setTotalPrice(initialTotalPrice.toFixed(2));
+  //   }
+  // };
+
+  // const handleConfirmOrder = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = localStorage.getItem("accessToken");
+  //     if (!token) {
+  //       throw new Error("User token not found. Please log in again.");
+  //     }
+
+  //     // Prepare order items based on item type
+  //     const orderItems = cart.map((item, index) => {
+  //       const orderItem = {
+  //         Quantity: item.quantity,
+  //         Price: item.price,
+  //         key: index, // Add a unique key prop
+  //       };
+
+  //       if (item.type === "Diamond") {
+  //         orderItem.DiamondID = item.id;
+  //         orderItem.DiamondName = item.name;
+  //         orderItem.DiamondColor = item.color;
+  //         orderItem.DiamondClarity = item.clarity;
+  //         orderItem.DiamondCarat = item.caratWeight;
+  //         orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
+  //         orderItem.DiamondOrigin = item.diamondOrigin;
+  //       } else if (item.type === "DiamondRings") {
+  //         orderItem.RingDetails = ring; // Assuming ring details are passed separately
+  //         orderItem.DiamondRingsID = item.id;
+  //         orderItem.RingSize = item.ringSize;
+  //         orderItem.Material = item.material;
+  //         orderItem.NameRings = item.name;
+  //       } else if (item.type === "Bridal") {
+  //         orderItem.BridalDetails = bridal;
+  //         orderItem.BridalID = item.id;
+  //         orderItem.NameBridal = item.name;
+  //         orderItem.Material = item.material;
+  //         orderItem.RingSizeRang = item.ringSize;
+  //         orderItem.BridalQuantity = item.quantity;
+  //         orderItem.Category = item.Category;
+  //       } else if (item.type === "DiamondTimepieces") {
+  //         orderItem.TimepiecesDetails = timepieces;
+  //         orderItem.DiamondTimepiecesID = item.id;
+  //         orderItem.NameTimepieces = item.name;
+  //         orderItem.CrystalType = item.crystalType;
+  //         orderItem.CaseSize = item.caseSize;
+  //         orderItem.timepiecesStyle = item.timepiecesStyle;
+  //         orderItem.TimepiecesQuantity = item.quantity;
+  //       }
+
+  //       return orderItem;
+  //     });
+
+  //     const quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+  //     const totalPrice = cart.reduce(
+  //       (total, item) => total + item.price * item.quantity,
+  //       0
+  //     );
+
+  //     // Determine ProductType based on cart contents
+  //     let productType;
+  //     const typesInCart = cart.map((item) => item.type);
+  //     if (typesInCart.includes("DiamondRings")) {
+  //       productType = "DiamondRings";
+  //     } else if (typesInCart.includes("Bridal")) {
+  //       productType = "Bridal";
+  //     } else if (typesInCart.includes("DiamondTimepieces")) {
+  //       productType = "DiamondTimepieces";
+  //     } else {
+  //       productType = "Diamond"; // Default to "Diamond" if not specified
+  //     }
+
+  //     // Construct order data object
+  //     const orderDataPayload = {
+  //       firstName: orderData.firstName,
+  //       lastName: orderData.lastName,
+  //       phoneNumber: orderData.phoneNumber,
+  //       address: orderData.address,
+  //       deliveryAddress: orderData.deliveryAddress,
+  //       shippingMethod: orderData.shippingMethod,
+  //       paymentMethod: orderData.paymentMethod,
+  //     };
+
+  //     const orderPayload = {
+  //       orderData: {
+  //         ...orderDataPayload,
+  //         DiamondID:
+  //           productType === "Diamond"
+  //             ? cart.find((item) => item.type === "Diamond")?.id || null
+  //             : null,
+  //         DiamondRingsID:
+  //           productType === "DiamondRings"
+  //             ? cart.find((item) => item.type === "DiamondRings")?.id || null
+  //             : null,
+  //         BridalID:
+  //           productType === "Bridal"
+  //             ? cart.find((item) => item.type === "Bridal")?.id || null
+  //             : null,
+  //         DiamondTimepiecesID:
+  //           productType === "DiamondTimepieces"
+  //             ? cart.find((item) => item.type === "DiamondTimepieces")?.id ||
+  //               null
+  //             : null,
+  //         ProductType: productType,
+  //         Quantity: quantity,
+  //         TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
+  //         VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
+  //         Shipping: orderData.shippingMethod,
+  //         PaymentMethod: orderData.paymentMethod,
+  //         OrderItems: orderItems,
+  //         DeliveryAddress: orderDataPayload.deliveryAddress,
+  //       },
+  //     };
+
+  //     // Check if any required fields are missing
+  //     if (
+  //       !orderPayload.orderData.firstName ||
+  //       !orderPayload.orderData.lastName ||
+  //       !orderPayload.orderData.phoneNumber ||
+  //       !orderPayload.orderData.deliveryAddress
+  //     ) {
+  //       throw new Error("Please fill out all required fields.");
+  //     }
+
+  //     const response = await axios.post(
+  //       "http://localhost:8090/orders/create",
+  //       orderPayload,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("Order created successfully:", response.data);
+  //     setSuccess(true);
+  //     setOrderSubmitted(true);
+  //     setIsModalOpen(true);
+  //   } catch (error) {
+  //     console.error("Error creating order:", error);
+  //     setError("Failed to create order. Please try again.");
+  //     setErrorDialogOpen(true); // Open error dialog
+  //     // Log Axios error response for debugging
+  //     if (error.response) {
+  //       console.log("Error details:", error.response);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleApplyVoucher = () => {
     if (selectedVoucher && initialTotalPrice !== null) {
@@ -311,7 +492,6 @@ const OrderForm = () => {
     }));
   };
 
-
   const handleModalClose = () => {
     setIsModalOpen(false);
     setOrderSubmitted(false); // options
@@ -390,6 +570,8 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="First Name"
+                    id="firstName"
+                    name="firstName"
                     value={orderData.firstName}
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
@@ -403,11 +585,15 @@ const OrderForm = () => {
                     }}
                   />
                 </FormControl>
+
+               
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <TextField
                     label="Last Name"
+                    id="lastName"
+                    name="lastName"
                     value={orderData.lastName}
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
@@ -426,6 +612,10 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Phone Number"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     value={orderData.phoneNumber}
                     onChange={(e) =>
                       handleInputChange("phoneNumber", e.target.value)
@@ -459,7 +649,9 @@ const OrderForm = () => {
                     }}
                   />
                 </FormControl>
+                
               </Grid>
+         
 
               <Grid item xs={12}>
                 <FormControl component="fieldset">
@@ -517,6 +709,7 @@ const OrderForm = () => {
                   </RadioGroup>
                 </FormControl>
               </Grid>
+           
 
               {/* <Grid item xs={12}>
                 <FormControl component="fieldset">
@@ -578,6 +771,7 @@ const OrderForm = () => {
                 <Typography variant="h6">Total Price: ${totalPrice}</Typography>
               </Grid>
             </Grid>
+           
           </Box>
           <Grid container spacing={3} mt={3} marginLeft={5} marginTop={7}>
             <Grid item>
@@ -658,7 +852,7 @@ const OrderForm = () => {
                     extra={[]}
                   />
                 )}
-                {error && (
+                {/* {error && (
                   <Result
                     status="error"
                     title="Order Failed"
@@ -674,7 +868,7 @@ const OrderForm = () => {
                       </Button>,
                     ]}
                   />
-                )}
+                )} */}
               </DialogContent>
               <DialogActions
                 style={{
@@ -770,20 +964,22 @@ const OrderForm = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody style={{margin: "0 10px"}}>
+              <TableBody style={{ margin: "0 10px" }}>
                 {cart.length > 0 ? (
-                  cart.map((item) => (
-                    <TableRow key={item.id} style={{margin: "0 50px"}}>
+                  cart.map((item, index) => (
+                    <TableRow key={`${item.id}-${index}`}>
                       <TableCell style={{ fontWeight: "bold" }}>
                         <div className="product-info">
-                          <img
+                          <Image
                             src={item.image}
                             alt={item.name}
                             className="product-image"
                           />
                           {item.type === "Diamond" && (
                             <div className="diamond-details">
-                              <h3 className="product-title">Diamond</h3>
+                              <Typography className="product-title">
+                                Diamond
+                              </Typography>
                               <div className="product-detail">
                                 <strong>Stock Number:</strong>{" "}
                                 {item.stockNumber}
@@ -805,7 +1001,9 @@ const OrderForm = () => {
                           )}
                           {item.type === "DiamondRings" && (
                             <div className="ring-details">
-                              <h3 className="product-title" style={{margin: "0 20px"}}>{item.name}</h3>
+                              <Typography className="product-title">
+                                {item.name}
+                              </Typography>
                               <div className="product-detail">
                                 <strong>Category:</strong> {item.category}
                               </div>
@@ -817,10 +1015,11 @@ const OrderForm = () => {
                               </div>
                             </div>
                           )}
-
                           {item.type === "Bridal" && (
                             <div className="bridal-details">
-                              <h3 className="product-title">{item.name}</h3>
+                              <Typography className="product-title">
+                                {item.name}
+                              </Typography>
                               <div className="product-detail">
                                 <strong>Material:</strong> {item.material}
                               </div>
@@ -834,12 +1033,16 @@ const OrderForm = () => {
                           )}
                           {item.type === "DiamondTimepieces" && (
                             <div className="timepieces-details">
-                              <h3 className="product-title">{item.name}</h3>
+                              <Typography className="product-title">
+                                {item.name}
+                              </Typography>
                               <div className="product-detail">
-                                <strong>TimepiecesStyle:</strong> {item.timepiecesStyle}
+                                <strong>Timepieces Style:</strong>{" "}
+                                {item.timepiecesStyle}
                               </div>
                               <div className="product-detail">
-                                <strong>Crystal Type:</strong> {item.crystalType}
+                                <strong>Crystal Type:</strong>{" "}
+                                {item.crystalType}
                               </div>
                               <div className="product-detail">
                                 <strong>Case Size:</strong> {item.caseSize}
@@ -860,7 +1063,6 @@ const OrderForm = () => {
                           color: "red",
                           fontSize: "20px",
                           paddingRight: "20px",
-                          
                         }}
                       >
                         {item.price}$
@@ -868,7 +1070,7 @@ const OrderForm = () => {
                     </TableRow>
                   ))
                 ) : (
-                  <TableRow>
+                  <TableRow key="empty-cart">
                     <TableCell colSpan={3} align="center">
                       No items in the cart.
                     </TableCell>
@@ -976,7 +1178,7 @@ const OrderForm = () => {
           </Box>
         </Box>
 
-        {error && (
+        {/* {error && (
           <Typography
             variant="body1"
             color="error"
@@ -984,9 +1186,14 @@ const OrderForm = () => {
           >
             {error}
           </Typography>
-        )}
+        )} */}
       </Box>
       <Footer />
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorModal}
+        errorMessage={error}
+      />
     </>
   );
 };

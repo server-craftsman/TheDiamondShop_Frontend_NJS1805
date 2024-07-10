@@ -1,81 +1,80 @@
 
 .modal-content {
-    margin-top: 500px;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #fff;
-  }
-  
-  .modal-header, .modal-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .modal-header {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .modal-footer {
-    border-top: 1px solid #ccc;
-  }
-  
-  .modal-body {
-    padding: 10px 0;
-  }
-  
-  .modal-title {
-    font-size: 1.5em;
-    margin: 0;
-  }
-  
-  .modal-close-button {
-    background: none;
-    border: none;
-    font-size: 1.2em;
-    cursor: pointer;
-  }
+  margin-top: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+}
 
-  // infor order
+.modal-header, .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header {
+  border-bottom: 1px solid #ccc;
+}
+
+.modal-footer {
+  border-top: 1px solid #ccc;
+}
+
+.modal-body {
+  padding: 10px 0;
+}
+
+.modal-title {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+// infor order
 // cart-page/index.scss
 .cart-page {
-  padding: 200px 20px;
-  .total-price {
-     margin-top: 20px;
-     text-align: right;
-     font-size: 1.5em;
-   }
+padding: 200px 20px;
+.total-price {
+   margin-top: 20px;
+   text-align: right;
+   font-size: 1.5em;
+ }
 
 }
 
 
 .product-info {
- display: flex;
- align-items: center;
+display: flex;
+align-items: center;
 }
 
 .product-image {
- width: 150px;
- height: 100px;
- margin-right: 20px;
- border-radius: 5px;
+width: 150px;
+height: 100px;
+margin-right: 20px;
+border-radius: 5px;
 }
 
 .diamond-details, .ring-details {
- flex: 1;
+flex: 1;
 }
 
 .product-title {
- font-size: 18px;
- font-weight: bold;
- margin-bottom: 10px;
+font-size: 18px;
+font-weight: bold;
+margin-bottom: 10px;
 }
 
 .product-detail {
- margin-bottom: 5px;
+margin-bottom: 5px;
 }
 
 .diamond-details .ring-details .bridal-details  {
- color: #333; /* Adjust color as needed */
+color: #333; /* Adjust color as needed */
 }
-  
