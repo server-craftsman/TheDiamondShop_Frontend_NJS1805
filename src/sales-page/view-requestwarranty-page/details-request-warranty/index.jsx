@@ -116,7 +116,7 @@ function ViewWarrantyDetails() {
         </>
       ) : null}
 
-      {warrantyDetails.OrderID || warrantyDetails.OrderDate || warrantyDetails.Quantity || warrantyDetails.AttachedAccessories || warrantyDetails.Shipping || warrantyDetails.ReportNo || warrantyDetails.DeliveryAddress || warrantyDetails.OrderStatus || warrantyDetails.TotalPrice || warrantyDetails.ResquestWarranty ? (
+      {warrantyDetails.OrderID || warrantyDetails.OrderDate || warrantyDetails.Quantity || warrantyDetails.AttachedAccessories || warrantyDetails.Shipping || warrantyDetails.ReportNo || warrantyDetails.DeliveryAddress || warrantyDetails.OrderStatus || warrantyDetails.TotalPrice || warrantyDetails.RequestWarranty ? (
         <>
           <h2>Order</h2>
           <Descriptions bordered>
@@ -165,9 +165,9 @@ function ViewWarrantyDetails() {
                 {warrantyDetails.TotalPrice}
               </Descriptions.Item>
             )}
-            {warrantyDetails.ResquestWarranty && (
+            {warrantyDetails.RequestWarranty && (
               <Descriptions.Item label="Request Warranty">
-                {warrantyDetails.ResquestWarranty}
+                {warrantyDetails.RequestWarranty}
               </Descriptions.Item>
             )}
           </Descriptions>
@@ -267,12 +267,12 @@ function ViewWarrantyDetails() {
       ) : null}
 
       {/* Render the buttons based on warranty request status */}
-      {warrantyDetails.ResquestWarranty === "Assign" && (
+      {warrantyDetails.RequestWarranty === "Assign" && (
         <Button onClick={() => handleStatusChange(orderId, "Processing")}>
           Processing
         </Button>
       )}
-      {warrantyDetails.ResquestWarranty === "Processing" && (
+      {warrantyDetails.RequestWarranty === "Processing" && (
         <Select
           style={{ width: 120 }}
           onChange={(value) => handleStatusChange(orderId, value)}

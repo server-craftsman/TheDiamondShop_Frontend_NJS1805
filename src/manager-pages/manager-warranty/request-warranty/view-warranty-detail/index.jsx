@@ -128,7 +128,7 @@ function ManagerViewWarrantyDetails() {
       warrantyDetails.DeliveryAddress ||
       warrantyDetails.OrderStatus ||
       warrantyDetails.TotalPrice ||
-      warrantyDetails.ResquestWarranty ? (
+      warrantyDetails.RequestWarranty ? (
         <>
           <h2>Order</h2>
           <Descriptions bordered>
@@ -177,9 +177,9 @@ function ManagerViewWarrantyDetails() {
                 {warrantyDetails.TotalPrice}
               </Descriptions.Item>
             )}
-            {warrantyDetails.ResquestWarranty && (
+            {warrantyDetails.RequestWarranty && (
               <Descriptions.Item label="Request Warranty">
-                {warrantyDetails.ResquestWarranty}
+                {warrantyDetails.RequestWarranty}
               </Descriptions.Item>
             )}
           </Descriptions>
@@ -309,7 +309,7 @@ function ManagerViewWarrantyDetails() {
       <Select
         style={{ width: 120 }}
         onChange={(value) => handleStatusChange(orderId, value)}
-        defaultValue={warrantyDetails.ResquestWarranty}
+        defaultValue={warrantyDetails.RequestWarranty}
       >
         <Select.Option value="Assign">Assign</Select.Option>
         <Select.Option value="Processing">Processing</Select.Option>

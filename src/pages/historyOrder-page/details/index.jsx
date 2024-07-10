@@ -7,11 +7,14 @@ import {
   Paper,
   CircularProgress,
   Button,
-  IconButton,
 } from "@mui/material"; // Import Material-UI components
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Import ArrowBack icon
-
+import Snackbar from "@mui/material/Snackbar";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 function HistoryOrderDetails() {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const { user } = useContext(AuthContext);
   const { orderId } = useParams(); // Get OrderID from URL params
   const navigate = useNavigate(); // Hook for navigation
@@ -57,6 +60,17 @@ function HistoryOrderDetails() {
     }
   };
 
+  const handleClick = () => {
+    setSnackbarOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const handleBack = () => {
     navigate("/historyOrder-page"); // Navigate back to history-order page
   };
@@ -90,6 +104,8 @@ function HistoryOrderDetails() {
       console.log("Update response:", data);
       // Assuming `fetchOrderDetails` will update the state with new data
       fetchOrderDetails();
+      setSnackbarMessage("Update Request Warranty successful");
+      handleClick();
     } catch (error) {
       console.error("Update error:", error);
       // Handle error using Material-UI Snackbar or similar
@@ -291,7 +307,7 @@ function HistoryOrderDetails() {
                   </Link>
                 )}
               </Grid>
-              {orderDetails.ResquestWarranty !== null && (
+              {orderDetails.RequestWarranty !== null && (
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="subtitle1"
@@ -300,17 +316,17 @@ function HistoryOrderDetails() {
                     Request Warranty
                   </Typography>
                   <Typography variant="body1" style={{ fontSize: "1.125rem" }}>
-                    {orderDetails.ResquestWarranty}
+                    {orderDetails.RequestWarranty}
                   </Typography>
                 </Grid>
               )}
               <Grid item xs={12} sm={6}>
-                {orderDetails.ResquestWarranty !== "Request" &&
+                {orderDetails.RequestWarranty !== "Request" &&
                   orderDetails.OrderStatus === "Completed" &&
-                  orderDetails.ResquestWarranty !== "Assign" &&
-                  orderDetails.ResquestWarranty !== "Approved" &&
-                  orderDetails.ResquestWarranty !== "Processing" &&
-                  orderDetails.ResquestWarranty !== "Refused" && (
+                  orderDetails.RequestWarranty !== "Assign" &&
+                  orderDetails.RequestWarranty !== "Approved" &&
+                  orderDetails.RequestWarranty !== "Processing" &&
+                  orderDetails.RequestWarranty !== "Refused" && (
                     <Button
                       variant="contained"
                       color="primary"
@@ -323,6 +339,33 @@ function HistoryOrderDetails() {
             </Grid>
           </Paper>
         </div>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={snackbarMessage}
+          ContentProps={{
+            style: {
+              fontSize: "1.5rem", // Adjust the font size as needed
+              backgroundColor: "#000", // Optional: Change background color
+              color: "#fff", // Optional: Change text color
+              textAlign: "center", // Align text to center
+              minWidth: "50%", // Set minimum width to avoid overflowing content
+              margin: "auto", // Center the snackbar horizontally
+            },
+          }}
+          action={
+            <React.Fragment>
+              <IconButton
+                size="medium"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+                style={{ position: "absolute", right: 10, top: 10 }} // Adjust position of close button
+              ></IconButton>
+            </React.Fragment>
+          }
+        />
       </div>
     </>
   );
