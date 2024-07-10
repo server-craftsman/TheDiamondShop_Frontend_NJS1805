@@ -35,7 +35,7 @@ function HistoryOrder() {
       console.log('Fetch response:', data);
 
       if (response.ok) {
-        setHistoryOrders(data.historyOrder);
+        setHistoryOrders(data.historyOrder || []);
       } else {
         if (response.status === 401) {
           console.error('Access denied. Invalid token.');

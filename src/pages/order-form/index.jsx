@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "../login-page/axios-instance/index";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import {
   Button,
   TextField,
@@ -21,6 +22,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Card,
+  CardContent,
+  CardActions,
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -49,14 +53,90 @@ const OrderForm = () => {
 
   const { user } = useContext(AuthContext);
 
+  const bull = (
+    <Box
+      component="span"
+      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+    >
+      •
+    </Box>
+  );
+
+  // const [orderData, setOrderData] = useState({
+  //   firstName: user ? user.FirstName || "" : "",
+  //   lastName: user ? user.LastName || "" : "",
+  //   phoneNumber: user ? user.PhoneNumber || "" : "",
+  //   deliveryAddress: "",
+  //   shippingMethod: "Express",
+  //   paymentMethod: "",
+  // });
+
+  // useEffect(() => {
+  //   const userJSON = localStorage.getItem('user');
+  //   if (userJSON) {
+  //     try {
+  //       const user = JSON.parse(userJSON);
+  //       setOrderData(prevOrderData => ({
+  //         ...prevOrderData,
+  //         firstName: user.FirstName || "",
+  //         lastName: user.LastName || "",
+  //         phoneNumber: user.PhoneNumber || "",
+  //       }));
+  //     } catch (error) {
+  //       console.error('Error parsing JSON from localStorage:', error);
+  //     }
+  //   }
+  // }, []);
+
   const [orderData, setOrderData] = useState({
-    firstName: user ? user.FirstName || "" : "",
-    lastName: user ? user.LastName || "" : "",
-    phoneNumber: user ? user.PhoneNumber || "" : "",
-    deliveryAddress: "",
-    shippingMethod: "Express",
-    paymentMethod: "",
+    FirstName: '',
+    LastName: '',
+    PhoneNumber: '',
+    Address: '',
   });
+
+  useEffect(() => {
+    if (user) {
+      fetchOrderData();
+    }
+  }, [user]);
+
+  const fetchOrderData = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        setFetchError('Token not found in AuthContext');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching user profile with token:', token);
+
+      const response = await axios.get('http://localhost:8090/features/view-profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Ensure credentials are sent
+      });
+
+      console.log('Fetch response status:', response.status);
+
+      if (response.status === 200) {
+        setOrderData(response.data.user); // Assuming 'user' key in response contains profile data
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const [eligibleVouchers, setEligibleVouchers] = useState([]);
   const [enteredVoucherName, setEnteredVoucherName] = useState("");
@@ -79,17 +159,17 @@ const OrderForm = () => {
 
 
 
-  useEffect(() => {
-    // Update orderData if user context changes
-    if (user) {
-      setOrderData((prevOrderData) => ({
-        ...prevOrderData,
-        firstName: user.FirstName || "",
-        lastName: user.LastName || "",
-        phoneNumber: user.PhoneNumber || "",
-      }));
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   // Update orderData if user context changes
+  //   if (user) {
+  //     setOrderData((prevOrderData) => ({
+  //       ...prevOrderData,
+  //       firstName: user.FirstName || "",
+  //       lastName: user.LastName || "",
+  //       phoneNumber: user.PhoneNumber || "",
+  //     }));
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (initialTotalPrice !== null && typeof initialTotalPrice === "number") {
@@ -157,169 +237,6 @@ const OrderForm = () => {
     );
     return filteredVouchers;
   };
-
-  // const handleApplyVoucher = () => {
-  //   if (selectedVoucher && initialTotalPrice !== null) {
-  //     const discount = selectedVoucher.Discount / 100;
-  //     const newDiscountedPrice = initialTotalPrice * discount;
-  //     const newTotalPrice = initialTotalPrice - newDiscountedPrice;
-
-  //     setDiscountedPrice(newDiscountedPrice.toFixed(2));
-  //     setTotalPrice(newTotalPrice.toFixed(2));
-  //   } else {
-  //     setDiscountedPrice(null);
-  //     setTotalPrice(initialTotalPrice.toFixed(2));
-  //   }
-  // };
-
-  // const handleConfirmOrder = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const token = localStorage.getItem("accessToken");
-  //     if (!token) {
-  //       throw new Error("User token not found. Please log in again.");
-  //     }
-
-  //     // Prepare order items based on item type
-  //     const orderItems = cart.map((item, index) => {
-  //       const orderItem = {
-  //         Quantity: item.quantity,
-  //         Price: item.price,
-  //         key: index, // Add a unique key prop
-  //       };
-
-  //       if (item.type === "Diamond") {
-  //         orderItem.DiamondID = item.id;
-  //         orderItem.DiamondName = item.name;
-  //         orderItem.DiamondColor = item.color;
-  //         orderItem.DiamondClarity = item.clarity;
-  //         orderItem.DiamondCarat = item.caratWeight;
-  //         orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
-  //         orderItem.DiamondOrigin = item.diamondOrigin;
-  //       } else if (item.type === "DiamondRings") {
-  //         orderItem.RingDetails = ring; // Assuming ring details are passed separately
-  //         orderItem.DiamondRingsID = item.id;
-  //         orderItem.RingSize = item.ringSize;
-  //         orderItem.Material = item.material;
-  //         orderItem.NameRings = item.name;
-  //       } else if (item.type === "Bridal") {
-  //         orderItem.BridalDetails = bridal;
-  //         orderItem.BridalID = item.id;
-  //         orderItem.NameBridal = item.name;
-  //         orderItem.Material = item.material;
-  //         orderItem.RingSizeRang = item.ringSize;
-  //         orderItem.BridalQuantity = item.quantity;
-  //         orderItem.Category = item.Category;
-  //       } else if (item.type === "DiamondTimepieces") {
-  //         orderItem.TimepiecesDetails = timepieces;
-  //         orderItem.DiamondTimepiecesID = item.id;
-  //         orderItem.NameTimepieces = item.name;
-  //         orderItem.CrystalType = item.crystalType;
-  //         orderItem.CaseSize = item.caseSize;
-  //         orderItem.timepiecesStyle = item.timepiecesStyle;
-  //         orderItem.TimepiecesQuantity = item.quantity;
-  //       }
-
-  //       return orderItem;
-  //     });
-
-  //     const quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
-  //     const totalPrice = cart.reduce(
-  //       (total, item) => total + item.price * item.quantity,
-  //       0
-  //     );
-
-  //     // Determine ProductType based on cart contents
-  //     let productType;
-  //     const typesInCart = cart.map((item) => item.type);
-  //     if (typesInCart.includes("DiamondRings")) {
-  //       productType = "DiamondRings";
-  //     } else if (typesInCart.includes("Bridal")) {
-  //       productType = "Bridal";
-  //     } else if (typesInCart.includes("DiamondTimepieces")) {
-  //       productType = "DiamondTimepieces";
-  //     } else {
-  //       productType = "Diamond"; // Default to "Diamond" if not specified
-  //     }
-
-  //     // Construct order data object
-  //     const orderDataPayload = {
-  //       firstName: orderData.firstName,
-  //       lastName: orderData.lastName,
-  //       phoneNumber: orderData.phoneNumber,
-  //       address: orderData.address,
-  //       deliveryAddress: orderData.deliveryAddress,
-  //       shippingMethod: orderData.shippingMethod,
-  //       paymentMethod: orderData.paymentMethod,
-  //     };
-
-  //     const orderPayload = {
-  //       orderData: {
-  //         ...orderDataPayload,
-  //         DiamondID:
-  //           productType === "Diamond"
-  //             ? cart.find((item) => item.type === "Diamond")?.id || null
-  //             : null,
-  //         DiamondRingsID:
-  //           productType === "DiamondRings"
-  //             ? cart.find((item) => item.type === "DiamondRings")?.id || null
-  //             : null,
-  //         BridalID:
-  //           productType === "Bridal"
-  //             ? cart.find((item) => item.type === "Bridal")?.id || null
-  //             : null,
-  //         DiamondTimepiecesID:
-  //           productType === "DiamondTimepieces"
-  //             ? cart.find((item) => item.type === "DiamondTimepieces")?.id ||
-  //               null
-  //             : null,
-  //         ProductType: productType,
-  //         Quantity: quantity,
-  //         TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
-  //         VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
-  //         Shipping: orderData.shippingMethod,
-  //         PaymentMethod: orderData.paymentMethod,
-  //         OrderItems: orderItems,
-  //         DeliveryAddress: orderDataPayload.deliveryAddress,
-  //       },
-  //     };
-
-  //     // Check if any required fields are missing
-  //     if (
-  //       !orderPayload.orderData.firstName ||
-  //       !orderPayload.orderData.lastName ||
-  //       !orderPayload.orderData.phoneNumber ||
-  //       !orderPayload.orderData.deliveryAddress
-  //     ) {
-  //       throw new Error("Please fill out all required fields.");
-  //     }
-
-  //     const response = await axios.post(
-  //       "http://localhost:8090/orders/create",
-  //       orderPayload,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     console.log("Order created successfully:", response.data);
-  //     setSuccess(true);
-  //     setOrderSubmitted(true);
-  //     setIsModalOpen(true);
-  //   } catch (error) {
-  //     console.error("Error creating order:", error);
-  //     setError("Failed to create order. Please try again.");
-  //     setErrorDialogOpen(true); // Open error dialog
-  //     // Log Axios error response for debugging
-  //     if (error.response) {
-  //       console.log("Error details:", error.response);
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleApplyVoucher = () => {
     if (selectedVoucher && initialTotalPrice !== null) {
@@ -392,18 +309,8 @@ const OrderForm = () => {
         0
       );
 
-      // Determine ProductType based on cart contents
-      let productType;
-      const typesInCart = cart.map((item) => item.type);
-      if (typesInCart.includes("DiamondRings")) {
-        productType = "DiamondRings";
-      } else if (typesInCart.includes("Bridal")) {
-        productType = "Bridal";
-      } else if (typesInCart.includes("DiamondTimepieces")) {
-        productType = "DiamondTimepieces";
-      } else {
-        productType = "Diamond"; // Default to "Diamond" if not specified
-      }
+      // Determine ProductType based on cart contents, default to "Diamond"
+      let productType = "Diamond";
 
       // Construct order data object
       const orderDataPayload = {
@@ -420,22 +327,13 @@ const OrderForm = () => {
         orderData: {
           ...orderDataPayload,
           DiamondID:
-            productType === "Diamond"
-              ? cart.find((item) => item.type === "Diamond")?.id || null
-              : null,
+            cart.find((item) => item.type === "Diamond")?.id || null,
           DiamondRingsID:
-            productType === "DiamondRings"
-              ? cart.find((item) => item.type === "DiamondRings")?.id || null
-              : null,
+            cart.find((item) => item.type === "DiamondRings")?.id || null,
           BridalID:
-            productType === "Bridal"
-              ? cart.find((item) => item.type === "Bridal")?.id || null
-              : null,
+            cart.find((item) => item.type === "Bridal")?.id || null,
           DiamondTimepiecesID:
-            productType === "DiamondTimepieces"
-              ? cart.find((item) => item.type === "DiamondTimepieces")?.id ||
-                null
-              : null,
+            cart.find((item) => item.type === "DiamondTimepieces")?.id || null,
           ProductType: productType,
           Quantity: quantity,
           TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
@@ -498,8 +396,9 @@ const OrderForm = () => {
   };
 
   const handleCloseErrorModal = () => {
-    setError("");
+    // setError("");
     setOrderSubmitted(false);
+    setErrorDialogOpen(false);
   };
 
   const handleContinueShopping = () => {
@@ -531,6 +430,7 @@ const OrderForm = () => {
       deliveryAddress: value,
     });
   };
+
 
   const handleInputChangeTotalPrice = (e) => {
     setTotalPrice(parseFloat(e.target.value));
@@ -566,13 +466,30 @@ const OrderForm = () => {
           <Divider />
           <Box component="form" mt={3} marginLeft={3} borderRadius={16}>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+
+              <Card sx={{ minWidth: 800 }} style={{marginLeft: "30px", marginTop: "20px"}}>
+                <CardContent>
+                  <Typography variant="h6" component="div" fontWeight="bold">
+                  <FaMapMarkerAlt /> {orderData.FirstName} {orderData.LastName} - {orderData.PhoneNumber}
+                  </Typography>
+                  
+                  <Typography variant="body1" marginTop="5px">
+                    {orderData.Address}
+                  </Typography>
+                </CardContent>
+                
+              </Card>
+              
+
+              {/* <Grid item xs={6}>
+
                 <FormControl fullWidth>
                   <TextField
                     label="First Name"
                     id="firstName"
-                    name="firstName"
-                    value={orderData.firstName}
+                    name="FirstName"
+                    value={orderData.FirstName}
+                    defaultValue="Quan Nguyen"
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
                     }
@@ -586,7 +503,7 @@ const OrderForm = () => {
                   />
                 </FormControl>
 
-               
+
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth>
@@ -594,7 +511,8 @@ const OrderForm = () => {
                     label="Last Name"
                     id="lastName"
                     name="lastName"
-                    value={orderData.lastName}
+                    value={orderData.LastName}
+                    defaultValue="Quan Nguyen"
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
                     }
@@ -616,7 +534,8 @@ const OrderForm = () => {
                     name="phoneNumber"
                     type="tel"
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                    value={orderData.phoneNumber}
+                    value={orderData.PhoneNumber}
+                    defaultValue="Quan Nguyen"
                     onChange={(e) =>
                       handleInputChange("phoneNumber", e.target.value)
                     }
@@ -635,7 +554,8 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Delivery Address"
-                    value={orderData.deliveryAddress}
+                    value={orderData.Address}
+                    defaultValue="Quan Nguyen"
                     name="DeliveryAddress"
                     onChange={(e) =>
                       handleDeliveryAddressChange(e.target.value)
@@ -649,9 +569,9 @@ const OrderForm = () => {
                     }}
                   />
                 </FormControl>
-                
-              </Grid>
-         
+
+              </Grid> */}
+
 
               <Grid item xs={12}>
                 <FormControl component="fieldset">
@@ -709,7 +629,7 @@ const OrderForm = () => {
                   </RadioGroup>
                 </FormControl>
               </Grid>
-           
+
 
               {/* <Grid item xs={12}>
                 <FormControl component="fieldset">
@@ -771,7 +691,7 @@ const OrderForm = () => {
                 <Typography variant="h6">Total Price: ${totalPrice}</Typography>
               </Grid>
             </Grid>
-           
+
           </Box>
           <Grid container spacing={3} mt={3} marginLeft={5} marginTop={7}>
             <Grid item>
@@ -937,7 +857,7 @@ const OrderForm = () => {
                     style={{
                       fontWeight: "bolder",
                       fontSize: "20px",
-                      paddingLeft: "150px",
+                      paddingLeft: "180px",
                     }}
                   >
                     Product
@@ -947,7 +867,7 @@ const OrderForm = () => {
                     style={{
                       fontWeight: "bolder",
                       fontSize: "20px",
-                      paddingRight: "10px",
+                      paddingRight: "40px",
                     }}
                   >
                     Quantity
@@ -971,6 +891,7 @@ const OrderForm = () => {
                       <TableCell style={{ fontWeight: "bold" }}>
                         <div className="product-info">
                           <Image
+                            style={{ width: '120px', height: '120px', objectFit: 'cover', marginRight: "50px" }}
                             src={item.image}
                             alt={item.name}
                             className="product-image"
