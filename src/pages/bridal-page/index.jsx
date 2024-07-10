@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./index.scss";
-import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
+import { Card, Image, Col, Row, Pagination, Button, Checkbox, Input } from "antd";
 import { useCart } from "../../CartContext";
 import { Link } from "react-router-dom";
 import Footer from "../../components/footer";
@@ -11,7 +11,15 @@ function BridalPage() {
   const [itemsPerPage, setItemsPerPage] = useState(12); // Default items per page
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priceDisabled, setPriceDisabled] = useState("");
+  const [materialDisabled, setMaterialDisabled] = useState("");
+  const [genderDisabled, setGenderDisabled] = useState("");
+  const [ringsizerangDisabled, setRingSizeRangDisabled] = useState("");
+  const [priceFilters, setPriceFilters] = useState([]);
+  const [materialFilters, setMaterialFilters] = useState([]);
+  const [genderFilters, setGenderFilters] = useState([]);
+  const [ringsizerangFilters, setRingSizeRangFilters] = useState([]);
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -67,6 +75,7 @@ function BridalPage() {
       let passesPrice = true;
       let passesMaterial = true;
       let passesGender = true;
+      let passesRingSizeRang = true;
 
       if (newFilters.Price && newFilters.Price.length > 0) {
         passesPrice = newFilters.Price.some((range) =>
@@ -82,8 +91,42 @@ function BridalPage() {
         passesGender = newFilters.Gender.includes(item.Gender);
       }
 
-      return passesPrice && passesMaterial && passesGender;
+      if (newFilters.RingSizeRang && newFilters.RingSizeRang.length > 0) {
+        passesRingSizeRang = newFilters.RingSizeRang.some(
+          (size) => parseFloat(size) === item.RingSizeRang
+        );
+      }
+
+      return passesPrice && passesMaterial && passesGender && passesRingSizeRang;
     });
+
+    if (newFilters.Price && newFilters.Price.length > 0) {
+      setPriceDisabled(false);
+      setMaterialDisabled(true);
+      setGenderDisabled(true);
+      setRingSizeRangDisabled(true);
+    } else if (newFilters.Material && newFilters.Material.length > 0) {
+      setPriceDisabled(true);
+      setMaterialDisabled(false);
+      setGenderDisabled(true);
+      setRingSizeRangDisabled(true);
+    } else if (newFilters.Gender && newFilters.Gender.length > 0) {
+      setPriceDisabled(true);
+      setMaterialDisabled(true);
+      setGenderDisabled(false);
+      setRingSizeRangDisabled(true);
+    } else if (newFilters.RingSizeRang && newFilters.RingSizeRang.length > 0) {
+
+      setPriceDisabled(true);
+      setMaterialDisabled(true);
+      setGenderDisabled(true);
+      setRingSizeRangDisabled(false);
+    } else {
+      setPriceDisabled(false);
+      setMaterialDisabled(false);
+      setGenderDisabled(false);
+      setRingSizeRangDisabled(false);
+    }
 
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when filters change
@@ -92,7 +135,39 @@ function BridalPage() {
   const clearFilters = () => {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
+  
+    setPriceFilters([]);
+    setGenderFilters([]);
+    setMaterialFilters([]);
+    setRingSizeRangFilters([]);
+
+    setPriceDisabled(false);
+    setMaterialDisabled(false);
+    setGenderDisabled(false);
+    setRingSizeRangDisabled(false);
+
   };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+  
+    const filtered = dataSource.filter((item) => {
+      return Object.values(item).some((value) => {
+        if (typeof value === "string") {
+          return value.toLowerCase().includes(searchTerm);
+        } else if (typeof value === "number") {
+          // Check if the numeric value includes the search term when converted to a string
+          return value.toString().toLowerCase().includes(searchTerm);
+        }
+        return false;
+      });
+    });
+  
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when search term changes
+  };
+
   function handleAddToCart(item) {
     // Thay vì setCartItems, sử dụng addToCart từ useCart
     item.type = "Bridal";
@@ -110,9 +185,19 @@ function BridalPage() {
     <div>
       <div className="app">
         <div className="filter-section">
+        <h3>Search</h3>
+        <Input
+            placeholder="Search"
+            onChange={handleSearch}
+            style={{ marginBottom: 16, 
+              width: "100%", 
+              height: "50px", 
+              fontSize: "20px"}}
+          />
           <h3>Price</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Price: values })}
+            disabled={priceDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Under $1000" className="Checkbox">
@@ -139,6 +224,7 @@ function BridalPage() {
           <h3>Color</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Material: values })}
+            disabled={materialDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Platinum" className="Checkbox">
@@ -162,6 +248,7 @@ function BridalPage() {
           <h3>Gender</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Gender: values })}
+            disabled={genderDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Womens" className="Checkbox">
@@ -172,6 +259,30 @@ function BridalPage() {
               </Checkbox>
             </Row>
           </Checkbox.Group>
+          <hr />
+        <h3>Ring Size Range</h3>
+        <Checkbox.Group
+          onChange={(values) => handleFilters({ RingSizeRang: values })}
+          disabled={ringsizerangDisabled}
+        >
+          <Row className="row-column">
+            <Checkbox value="5.00" className="Checkbox">5.00</Checkbox>
+            <Checkbox value="5.25" className="Checkbox">5.25</Checkbox>
+            <Checkbox value="5.50" className="Checkbox">5.50</Checkbox>
+            <Checkbox value="5.75" className="Checkbox">5.75</Checkbox>
+            <Checkbox value="6.00" className="Checkbox">6.00</Checkbox>
+            <Checkbox value="6.25" className="Checkbox">6.25</Checkbox>
+            <Checkbox value="6.50" className="Checkbox">6.50</Checkbox>
+            <Checkbox value="6.75" className="Checkbox">6.75</Checkbox>
+            <Checkbox value="7.00" className="Checkbox">7.00</Checkbox>
+            <Checkbox value="7.25" className="Checkbox">7.25</Checkbox>
+            <Checkbox value="7.50" className="Checkbox">7.50</Checkbox>
+            <Checkbox value="7.75" className="Checkbox">7.75</Checkbox>
+            <Checkbox value="8.00" className="Checkbox">8.00</Checkbox>
+            <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
+            <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
+          </Row>
+        </Checkbox.Group>
           <hr />
           <button onClick={clearFilters} className="buttonfilter">
             Clear Filters

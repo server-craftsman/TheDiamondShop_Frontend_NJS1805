@@ -1,6 +1,6 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Button, Checkbox } from "antd";
+import { Card, Image, Col, Row, Pagination, Button, Checkbox, Input } from "antd";
 import { Link } from "react-router-dom";
 import { Footer } from "antd/es/layout/layout";
 import './index.scss';
@@ -9,7 +9,13 @@ function DiamondPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priceDisabled, setPriceDisabled] = useState("");
+  const [colorDisabled, setColorDisabled] = useState("");
+  const [shapeDisabled, setShapeDisabled] = useState("");
+  const [priceFilters, setPriceFilters] = useState([]);
+  const [colorFilters, setColorFilters] = useState([]);
+  const [shapeFilters, setShapeFilters] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,6 +85,29 @@ function DiamondPage() {
       return passesPrice && passesColor && passesShape;
     });
 
+    // Disable checkboxes in other groups when one group is selected
+    if (newFilters.Price && newFilters.Price.length > 0) {
+      // Price is selected, disable Color and Shape checkboxes
+      setPriceDisabled(false);
+      setColorDisabled(true);
+      setShapeDisabled(true);
+    } else if (newFilters.Color && newFilters.Color.length > 0) {
+      // Color is selected, disable Price and Shape checkboxes
+      setPriceDisabled(true);
+      setColorDisabled(false);
+      setShapeDisabled(true);
+    } else if (newFilters.Shape && newFilters.Shape.length > 0) {
+      // Shape is selected, disable Price and Color checkboxes
+      setPriceDisabled(true);
+      setColorDisabled(true);
+      setShapeDisabled(false);
+    } else {
+      // No filters selected, enable all checkboxes
+      setPriceDisabled(false);
+      setColorDisabled(false);
+      setShapeDisabled(false);
+    }
+
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when filters change
   };
@@ -86,15 +115,56 @@ function DiamondPage() {
   const clearFilters = () => {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
+  
+     // Clear checkbox selections by resetting state variables
+     setPriceFilters([]); // Replace with your state variable for Price filters
+     setColorFilters([]); // Replace with your state variable for Color filters
+     setShapeFilters([]); // Replace with your state variable for Shape filters
+   
+     // Reset checkbox disable states if needed
+     setPriceDisabled(false);
+     setColorDisabled(false);
+     setShapeDisabled(false);
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+  
+    const filtered = dataSource.filter((item) => {
+      // General search in all attributes
+      return Object.values(item).some((value) => {
+        if (typeof value === "string") {
+          return value.toLowerCase().includes(searchTerm);
+        } else if (typeof value === "number") {
+          // Check if the numeric value includes the search term when converted to a string
+          return value.toString().toLowerCase().includes(searchTerm);
+        }
+        return false;
+      });
+    });
+  
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when search term changes
   };
 
   return (
     <>
       <div className="app">
         <div className="filter-section">
+        <h3>Search</h3>
+          <Input
+            placeholder="Search"
+            onChange={handleSearch}
+            style={{ marginBottom: 16, 
+              width: "100%", 
+              height: "50px", 
+              fontSize: "20px"}}
+          />
           <h3>Price</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Price: values })}
+            disabled={priceDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Under $1000" className="Checkbox">
@@ -121,6 +191,7 @@ function DiamondPage() {
           <h3>Color</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Color: values })}
+            disabled={colorDisabled}
           >
             <Row>
               <Checkbox value="D" className="Checkbox">
@@ -150,6 +221,7 @@ function DiamondPage() {
           <h3>Shape</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Shape: values })}
+            disabled={shapeDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Round" className="Checkbox">

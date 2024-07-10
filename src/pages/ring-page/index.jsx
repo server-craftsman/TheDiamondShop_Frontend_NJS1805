@@ -1,6 +1,6 @@
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { Card, Image, Col, Row, Pagination, Checkbox } from "antd";
+import { Card, Image, Col, Row, Pagination, Checkbox, Input } from "antd";
 import { Link } from "react-router-dom";
 import Footer from "../../components/footer";
 
@@ -9,6 +9,15 @@ function RingPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priceDisabled, setPriceDisabled] = useState("");
+  const [brandnameDisabled, setBrandNameDisabled] = useState("");
+  const [categoryDisabled, setCategoryDisabled] = useState("");
+  const [ringsizeDisabled, setRingSizeDisabled] = useState("");
+  const [priceFilters, setPriceFilters] = useState([]);
+  const [brandnameFilters, setBrandNameFilters] = useState([]);
+  const [categoryFilters, setCategoryFilters] = useState([]);
+  const [ringsizeFilters, setRingSizeFilters] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -61,6 +70,7 @@ function RingPage() {
       let passesBrandName = true;
       let passesCategory = true;
       let passesInventory = item.Inventory >= 1; // Filter for Inventory >= 1
+      let passesRingSize = true;
 
       if (newFilters.Price && newFilters.Price.length > 0) {
         passesPrice = newFilters.Price.some((range) =>
@@ -76,10 +86,44 @@ function RingPage() {
         passesCategory = newFilters.Category.includes(item.Category);
       }
 
+      if (newFilters.RingSize && newFilters.RingSize.length > 0) {
+        passesRingSize = newFilters.RingSize.some(
+          (size) => parseFloat(size) === item.RingSize
+        );
+      }
+
       return (
-        passesPrice && passesBrandName && passesCategory && passesInventory
+        passesPrice && passesBrandName && passesCategory && passesInventory && passesRingSize
       );
     });
+
+    if (newFilters.Price && newFilters.Price.length > 0) {
+      setPriceDisabled(false);
+      setBrandNameDisabled(true);
+      setCategoryDisabled(true);
+      setRingSizeDisabled(true);
+    } else if (newFilters.BrandName && newFilters.BrandName.length > 0) {
+      setPriceDisabled(true);
+      setBrandNameDisabled(false);
+      setCategoryDisabled(true);
+      setRingSizeDisabled(true);
+    } else if (newFilters.Category && newFilters.Category.length > 0) {
+      setPriceDisabled(true);
+      setBrandNameDisabled(true);
+      setCategoryDisabled(false);
+      setRingSizeDisabled(true);
+    } else if (newFilters.RingSize && newFilters.RingSize.length > 0) {
+
+      setPriceDisabled(true);
+      setBrandNameDisabled(true);
+      setCategoryDisabled(true);
+      setRingSizeDisabled(false);
+    } else {
+      setPriceDisabled(false);
+      setBrandNameDisabled(false);
+      setCategoryDisabled(false);
+      setRingSizeDisabled(false);
+    }
 
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when filters change
@@ -88,15 +132,56 @@ function RingPage() {
   const clearFilters = () => {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
+  
+    setPriceFilters([]);
+    setBrandNameFilters([]);
+    setCategoryFilters([]);
+    setRingSizeFilters([]);
+
+    setPriceDisabled(false);
+    setBrandNameDisabled(false);
+    setCategoryDisabled(false);
+    setRingSizeDisabled(false);
+
+  };
+
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
+  
+    const filtered = dataSource.filter((item) => {
+      return Object.values(item).some((value) => {
+        if (typeof value === "string") {
+          return value.toLowerCase().includes(searchTerm);
+        } else if (typeof value === "number") {
+          // Check if the numeric value includes the search term when converted to a string
+          return value.toString().toLowerCase().includes(searchTerm);
+        }
+        return false;
+      });
+    });
+  
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page when search term changes
   };
 
   return (
     <div>
       <div className="app">
         <div className="filter-section">
+        <h3>Search</h3>
+        <Input
+            placeholder="Search"
+            onChange={handleSearch}
+            style={{ marginBottom: 16, 
+              width: "100%", 
+              height: "50px", 
+              fontSize: "20px"}}
+          />
           <h3>Price</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Price: values })}
+            disabled={priceDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Under $1000" className="Checkbox">
@@ -123,6 +208,7 @@ function RingPage() {
           <h3>Color</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ BrandName: values })}
+            disabled={brandnameDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Simon G" className="Checkbox">
@@ -137,6 +223,7 @@ function RingPage() {
           <h3>Gender</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Category: values })}
+            disabled={categoryDisabled}
           >
             <Row className="row-column">
               <Checkbox value="Gemstone Fashion Rings" className="Checkbox">
@@ -151,6 +238,27 @@ function RingPage() {
               <Checkbox value="Rings" className="Checkbox">
                 Rings
               </Checkbox>
+            </Row>
+          </Checkbox.Group>
+          <hr />
+          <h3>Size</h3>
+          <Checkbox.Group onChange={(values) => handleFilters({ RingSize: values })} disabled={ringsizeDisabled}>
+            <Row className = "row-column">
+            <Checkbox value="5.00" className="Checkbox">5.00</Checkbox>
+              <Checkbox value="5.25" className="Checkbox">5.25</Checkbox>
+              <Checkbox value="5.50" className="Checkbox">5.50</Checkbox>
+              <Checkbox value="5.75" className="Checkbox">5.75</Checkbox>
+              <Checkbox value="6.00" className="Checkbox">6.00</Checkbox>
+              <Checkbox value="6.25" className="Checkbox">6.25</Checkbox>
+              <Checkbox value="6.50" className="Checkbox">6.50</Checkbox>
+              <Checkbox value="6.75" className="Checkbox">6.75</Checkbox>
+              <Checkbox value="7.00" className="Checkbox">7.00</Checkbox>
+              <Checkbox value="7.25" className="Checkbox">7.25</Checkbox>
+              <Checkbox value="7.50" className="Checkbox">7.50</Checkbox>
+              <Checkbox value="7.75" className="Checkbox">7.75</Checkbox>
+              <Checkbox value="8.00" className="Checkbox">8.00</Checkbox>
+              <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
+              <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
             </Row>
           </Checkbox.Group>
           <hr />
