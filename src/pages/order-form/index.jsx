@@ -53,90 +53,14 @@ const OrderForm = () => {
 
   const { user } = useContext(AuthContext);
 
-  const bull = (
-    <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-      •
-    </Box>
-  );
-
-  // const [orderData, setOrderData] = useState({
-  //   firstName: user ? user.FirstName || "" : "",
-  //   lastName: user ? user.LastName || "" : "",
-  //   phoneNumber: user ? user.PhoneNumber || "" : "",
-  //   deliveryAddress: "",
-  //   shippingMethod: "Express",
-  //   paymentMethod: "",
-  // });
-
-  // useEffect(() => {
-  //   const userJSON = localStorage.getItem('user');
-  //   if (userJSON) {
-  //     try {
-  //       const user = JSON.parse(userJSON);
-  //       setOrderData(prevOrderData => ({
-  //         ...prevOrderData,
-  //         firstName: user.FirstName || "",
-  //         lastName: user.LastName || "",
-  //         phoneNumber: user.PhoneNumber || "",
-  //       }));
-  //     } catch (error) {
-  //       console.error('Error parsing JSON from localStorage:', error);
-  //     }
-  //   }
-  // }, []);
-
   const [orderData, setOrderData] = useState({
-    FirstName: '',
-    LastName: '',
-    PhoneNumber: '',
-    Address: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    deliveryAddress: '',
+    shippingMethod: "Express",
+    paymentMethod: "",
   });
-
-  useEffect(() => {
-    if (user) {
-      fetchOrderData();
-    }
-  }, [user]);
-
-  const fetchOrderData = async () => {
-    setLoading(true);
-    try {
-      const token = user?.token;
-
-      if (!token) {
-        console.error('Token not found in AuthContext');
-        setFetchError('Token not found in AuthContext');
-        setLoading(false);
-        return;
-      }
-
-      console.log('Fetching user profile with token:', token);
-
-      const response = await axios.get('http://localhost:8090/features/view-profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true, // Ensure credentials are sent
-      });
-
-      console.log('Fetch response status:', response.status);
-
-      if (response.status === 200) {
-        setOrderData(response.data.user); // Assuming 'user' key in response contains profile data
-      } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Fetch error:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   const [eligibleVouchers, setEligibleVouchers] = useState([]);
   const [enteredVoucherName, setEnteredVoucherName] = useState("");
@@ -156,20 +80,6 @@ const OrderForm = () => {
   const [paypalOrderId, setPaypalOrderId] = useState(null);
   // PayPal
   const [sdkReady, setSdkReady] = useState(false);
-
-
-
-  // useEffect(() => {
-  //   // Update orderData if user context changes
-  //   if (user) {
-  //     setOrderData((prevOrderData) => ({
-  //       ...prevOrderData,
-  //       firstName: user.FirstName || "",
-  //       lastName: user.LastName || "",
-  //       phoneNumber: user.PhoneNumber || "",
-  //     }));
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     if (initialTotalPrice !== null && typeof initialTotalPrice === "number") {
@@ -222,6 +132,57 @@ const OrderForm = () => {
       document.body.appendChild(script);
     });
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchOrderData();
+    }
+  }, [user]);
+
+ 
+  const fetchOrderData = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching user profile with token:', token);
+
+      const response = await axios.get('http://localhost:8090/features/view-profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      console.log('Fetch response status:', response.status);
+
+      if (response.status === 200) {
+        const userData = response.data.user;
+        setOrderData({
+          firstName: userData.FirstName,
+          lastName: userData.LastName,
+          phoneNumber: userData.PhoneNumber,
+          deliveryAddress: userData.Address,
+          shippingMethod: "Express",
+          paymentMethod: "",
+        });
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   // Function to handle changes in the voucher name input
   const handleVoucherNameChange = (e) => {
@@ -467,29 +428,15 @@ const OrderForm = () => {
           <Box component="form" mt={3} marginLeft={3} borderRadius={16}>
             <Grid container spacing={3}>
 
-              <Card sx={{ minWidth: 800 }} style={{marginLeft: "30px", marginTop: "20px"}}>
-                <CardContent>
-                  <Typography variant="h6" component="div" fontWeight="bold">
-                  <FaMapMarkerAlt /> {orderData.FirstName} {orderData.LastName} - {orderData.PhoneNumber}
-                  </Typography>
-                  
-                  <Typography variant="body1" marginTop="5px">
-                    {orderData.Address}
-                  </Typography>
-                </CardContent>
-                
-              </Card>
-              
-
-              {/* <Grid item xs={6}>
+              <Grid item xs={6}>
 
                 <FormControl fullWidth>
                   <TextField
                     label="First Name"
-                    id="firstName"
-                    name="FirstName"
-                    value={orderData.FirstName}
-                    defaultValue="Quan Nguyen"
+                    id="FirstName"
+                    name={orderData.FirstName}
+                    value={orderData.firstName}
+                   
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
                     }
@@ -509,10 +456,10 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Last Name"
-                    id="lastName"
-                    name="lastName"
-                    value={orderData.LastName}
-                    defaultValue="Quan Nguyen"
+                    id="LastName"
+                    name={orderData.LastName}
+                    value={orderData.lastName}
+                   
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
                     }
@@ -530,12 +477,12 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Phone Number"
-                    id="phoneNumber"
-                    name="phoneNumber"
+                    id="PhoneNumber"
+                    name={orderData.PhoneNumber}
                     type="tel"
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                    value={orderData.PhoneNumber}
-                    defaultValue="Quan Nguyen"
+                    value={orderData.phoneNumber}
+                    
                     onChange={(e) =>
                       handleInputChange("phoneNumber", e.target.value)
                     }
@@ -554,9 +501,9 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Delivery Address"
-                    value={orderData.Address}
-                    defaultValue="Quan Nguyen"
-                    name="DeliveryAddress"
+                    value={orderData.deliveryAddress}
+                    
+                    name={orderData.Address}
                     onChange={(e) =>
                       handleDeliveryAddressChange(e.target.value)
                     }
@@ -570,7 +517,20 @@ const OrderForm = () => {
                   />
                 </FormControl>
 
-              </Grid> */}
+                <Card sx={{ minWidth: 800 }} style={{marginLeft: "0px", marginTop: "20px"}}>
+                <CardContent>
+                  <Typography variant="h6" component="div" fontWeight="bold">
+                  <FaMapMarkerAlt /> {orderData.firstName} {orderData.lastName} - {orderData.phoneNumber}
+                  </Typography>
+                  
+                  <Typography variant="body1" marginTop="5px">
+                    {orderData.deliveryAddress}
+                  </Typography>
+                </CardContent>
+                
+              </Card>
+
+              </Grid>
 
 
               <Grid item xs={12}>
@@ -772,7 +732,7 @@ const OrderForm = () => {
                     extra={[]}
                   />
                 )}
-                {/* {error && (
+                {error && (
                   <Result
                     status="error"
                     title="Order Failed"
@@ -788,7 +748,7 @@ const OrderForm = () => {
                       </Button>,
                     ]}
                   />
-                )} */}
+                )}
               </DialogContent>
               <DialogActions
                 style={{

@@ -8,6 +8,7 @@ import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from
 
 import axios from "axios";
 import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd";
+import moment from 'moment';
 
 const Context = React.createContext({
   name: 'Default',
@@ -68,6 +69,13 @@ function RegisterForm() {
     }
   };
 
+  const disabledDate = (current) => {
+    const startYear = 1960;
+    const endYear = moment().year();
+    return current && (current.year() < startYear || current.year() > endYear);
+  };
+
+
   return (
     <div className="register-form">
       {contextHolder}
@@ -108,13 +116,19 @@ function RegisterForm() {
                     name="birthday"
                     rules={[{ required: true, message: 'Please select your birthday!' }]}
                   >
-                    <Input type='date'/>
+                    <DatePicker
+                      style={{ width: "202px", height: "37px" }}
+                      format="YYYY-MM-DD"
+                      disabledDate={disabledDate}
+                      placeholder='1960-MM-DD'
+                    />
+
                   </Form.Item>
 
                   <Form.Item
                     label="Gender"
                     name="gender"
-                    style={{marginTop: "5px"}}
+                    style={{ marginTop: "5px" }}
                   >
                     <Radio.Group>
                       <Radio value="Male">Male</Radio>
