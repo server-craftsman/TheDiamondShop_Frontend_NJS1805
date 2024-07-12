@@ -517,7 +517,9 @@ const OrderForm = () => {
                   />
                 </FormControl>
 
-                <Card sx={{ minWidth: 800 }} style={{marginLeft: "0px", marginTop: "20px"}}>
+              </Grid>
+              
+              <Card sx={{ minWidth: 800 }} style={{marginLeft: "30px", marginTop: "20px"}}>
                 <CardContent>
                   <Typography variant="h6" component="div" fontWeight="bold">
                   <FaMapMarkerAlt /> {orderData.firstName} {orderData.lastName} - {orderData.phoneNumber}
@@ -529,8 +531,7 @@ const OrderForm = () => {
                 </CardContent>
                 
               </Card>
-
-              </Grid>
+              
 
 
               <Grid item xs={12}>
