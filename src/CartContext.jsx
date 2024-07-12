@@ -18,23 +18,38 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // const addToCart = (item) => {
+  //   setCartItems((prevItems) => {
+  //     const existingItem = prevItems.find(
+  //       (cartItem) => cartItem.id === item.id && cartItem.type === item.type
+  //     );
+  //     if (existingItem) {
+  //       setWarningOpen(true);
+  //       return prevItems;
+  //     } else {
+  //       return [...prevItems, { ...item, quantity: 1 }];
+  //     }
+  //   });
+  // };
   const addToCart = (item) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find(
         (cartItem) => cartItem.id === item.id && cartItem.type === item.type
       );
       if (existingItem) {
-        setWarningOpen(true);
+        setWarningOpen(true); // Show warning if item already exists
         return prevItems;
       } else {
-        return [...prevItems, { ...item, quantity: 1 }];
+        return [...prevItems, { ...item, quantity: 1, selected: false }];
       }
     });
   };
 
   const removeFromCart = (itemId, itemType) => {
     setCartItems((prevItems) =>
-      prevItems.filter((item) => !(item.id === itemId && item.type === itemType))
+      prevItems.filter(
+        (item) => !(item.id === itemId && item.type === itemType)
+      )
     );
   };
 
@@ -46,16 +61,33 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const selectItemForPayment = (itemId, isSelected) => {
+  // const selectItemForPayment = (itemId, isSelected) => {
+  //   setCartItems((prevItems) =>
+  //     prevItems.map((item) =>
+  //       item.id === itemId ? { ...item, selected: isSelected } : item
+  //     )
+  //   );
+  //   setSelectedItems((prevSelected) =>
+  //     isSelected
+  //       ? [...prevSelected, itemId]
+  //       : prevSelected.filter((id) => id !== itemId)
+  //   );
+  // };
+  const selectItemForPayment = (itemId, itemType, isSelected) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === itemId ? { ...item, selected: isSelected } : item
+        item.id === itemId && item.type === itemType
+          ? { ...item, selected: isSelected }
+          : item
       )
     );
     setSelectedItems((prevSelected) =>
       isSelected
-        ? [...prevSelected, itemId]
-        : prevSelected.filter((id) => id !== itemId)
+        ? [...prevSelected, { id: itemId, type: itemType }]
+        : prevSelected.filter(
+            (selectedItem) =>
+              !(selectedItem.id === itemId && selectedItem.type === itemType)
+          )
     );
   };
 

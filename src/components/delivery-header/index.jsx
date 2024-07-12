@@ -11,9 +11,15 @@ function DeliveryHeader() {
     <div>
       <header className="delivery__header">
         <h1>Diamond Shop</h1>
-       <li><Link to="/delivery-completed">View complete</Link></li> 
-        <li><Link to="/delivery">View shipping</Link></li>
-        <li><Link to="/delivery-confirm">View confirm</Link></li>
+        <li>
+          <Link to="/delivery-completed">View complete</Link>
+        </li>
+        <li>
+          <Link to="/delivery">View shipping</Link>
+        </li>
+        <li>
+          <Link to="/delivery-confirm">View confirm</Link>
+        </li>
         {user ? (
           <li className="user-menu">
             <UserOutlined />

@@ -4,6 +4,7 @@ import { useCart } from "../../CartContext";
 import { Table, Button, Checkbox, Popconfirm, Modal, InputNumber } from "antd";
 import Warning from "../../Warning";
 import "./index.scss";
+import { RestOutlined } from "@ant-design/icons";
 
 const CartPage = () => {
   const {
@@ -25,26 +26,54 @@ const CartPage = () => {
     );
   }, [cartItems]);
 
+  // useEffect(() => {
+  //   // Kiểm tra nếu tất cả các mục đều đã được chọn thì set checkbox tất cả là true
+  //   const allSelected =
+  //     cartItems.length > 0 &&
+  //     cartItems.every((item) => selectedItems.includes(item.type));
+  //   setSelectAllChecked(allSelected);
+  // }, [cartItems, selectedItems]);
+
   useEffect(() => {
-    // Kiểm tra nếu tất cả các mục đều đã được chọn thì set checkbox tất cả là true
     const allSelected =
       cartItems.length > 0 &&
-      cartItems.every((item) => selectedItems.includes(item.type));
+      cartItems.every((item) =>
+        selectedItems.some(
+          (selectedItem) =>
+            selectedItem.id === item.id && selectedItem.type === item.type
+        )
+      );
     setSelectAllChecked(allSelected);
   }, [cartItems, selectedItems]);
 
+  // const handleCheckboxChange = (record, checked) => {
+  //   selectItemForPayment(record.type, checked);
+  // };
   const handleCheckboxChange = (record, checked) => {
-    selectItemForPayment(record.type, checked);
+    selectItemForPayment(record.id, record.type, checked);
   };
 
+  // const handleSelectAllChange = (e) => {
+  //   const checked = e.target.checked;
+  //   const allItemTypes = cartItems.map((item) => item.type);
+
+  //   allItemTypes.forEach((type) => {
+  //     selectItemForPayment(type, checked);
+  //   });
+
+  //   setSelectAllChecked(checked);
+  // };
   const handleSelectAllChange = (e) => {
     const checked = e.target.checked;
-    const allItemTypes = cartItems.map((item) => item.type);
-  
-    allItemTypes.forEach((type) => {
-      selectItemForPayment(type, checked);
+    const allItemIds = cartItems.map((item) => ({
+      id: item.id,
+      type: item.type,
+    }));
+
+    allItemIds.forEach((item) => {
+      selectItemForPayment(item.id, item.type, checked);
     });
-  
+
     setSelectAllChecked(checked);
   };
 
@@ -56,9 +85,35 @@ const CartPage = () => {
     updateCartQuantity(item.id, value);
   };
 
+  // const handlePayment = () => {
+  //   const selectedItemsData = cartItems.filter((item) =>
+  //     selectedItems.includes(item.type)
+  //   );
+
+  //   if (selectedItemsData.length > 0) {
+  //     sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+  //     navigate("/order-form", {
+  //       state: {
+  //         cart: selectedItemsData,
+  //         totalPrice: selectedItemsData.reduce(
+  //           (total, item) => total + item.price * item.quantity,
+  //           0
+  //         ),
+  //       },
+  //     });
+  //   } else {
+  //     Modal.warning({
+  //       title: "Warning",
+  //       content: "Please select at least one item to proceed to order.",
+  //     });
+  //   }
+  // };
   const handlePayment = () => {
     const selectedItemsData = cartItems.filter((item) =>
-      selectedItems.includes(item.type)
+      selectedItems.some(
+        (selectedItem) =>
+          selectedItem.id === item.id && selectedItem.type === item.type
+      )
     );
 
     if (selectedItemsData.length > 0) {
@@ -81,6 +136,27 @@ const CartPage = () => {
   };
 
   const columns = [
+    // {
+    //   title: (
+    //     <Checkbox
+    //       onChange={handleSelectAllChange}
+    //       checked={selectAllChecked}
+    //       indeterminate={
+    //         cartItems.length > 0 &&
+    //         !selectAllChecked &&
+    //         selectedItems.length > 0 &&
+    //         selectedItems.length < cartItems.length
+    //       }
+    //     />
+    //   ),
+    //   dataIndex: "checkbox",
+    //   render: (_, record) => (
+    //     <Checkbox
+    //       onChange={(e) => handleCheckboxChange(record, e.target.checked)}
+    //       checked={selectedItems.includes(record.type)}
+    //     />
+    //   ),
+    // },
     {
       title: (
         <Checkbox
@@ -98,7 +174,10 @@ const CartPage = () => {
       render: (_, record) => (
         <Checkbox
           onChange={(e) => handleCheckboxChange(record, e.target.checked)}
-          checked={selectedItems.includes(record.type)}
+          checked={selectedItems.some(
+            (selectedItem) =>
+              selectedItem.id === record.id && selectedItem.type === record.type
+          )}
         />
       ),
     },
@@ -188,7 +267,12 @@ const CartPage = () => {
           min={1}
           value={record.quantity}
           onChange={(value) => handleQuantityChange(value, record)}
-          disabled={record.type === "Diamond" || "Bridal" || "DiamondRings" || "DiamondTimepieces"} // Disable input if item is a diamond
+          disabled={
+            record.type === "Diamond" ||
+            "Bridal" ||
+            "DiamondRings" ||
+            "DiamondTimepieces"
+          } // Disable input if item is a diamond
         />
       ),
     },
@@ -215,7 +299,8 @@ const CartPage = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button type="danger">Delete</Button>
+          <RestOutlined className="custom-icon" />
+          {/* <Button type="danger">Delete</Button> */}
         </Popconfirm>
       ),
     },
@@ -231,7 +316,7 @@ const CartPage = () => {
   );
 
   return (
-    <div className="cart-page">
+    <div className="cart__page">
       <Table
         columns={columns}
         dataSource={data}
@@ -242,7 +327,7 @@ const CartPage = () => {
         <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
       </div>
       <Button onClick={handlePayment} disabled={selectedItems.length === 0}>
-        Proceed to Checkout
+        Checkout
       </Button>
       <Warning open={warningOpen} onClose={handleWarningClose} />
     </div>
