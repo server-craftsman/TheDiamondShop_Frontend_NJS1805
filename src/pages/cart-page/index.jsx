@@ -118,6 +118,9 @@ const CartPage = () => {
 
     if (selectedItemsData.length > 0) {
       sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+      selectedItemsData.forEach((item) => {
+        removeFromCart(item.id, item.type);
+      });
       navigate("/order-form", {
         state: {
           cart: selectedItemsData,

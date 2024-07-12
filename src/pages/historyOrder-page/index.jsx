@@ -4,7 +4,7 @@ import "../historyOrder-page/index.scss";
 import { AuthContext } from "../../AuthContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+import moment from "moment";
 function HistoryOrder() {
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [historyOrders, setHistoryOrders] = useState([]);
@@ -62,6 +62,7 @@ function HistoryOrder() {
       title: "Order Date",
       dataIndex: "OrderDate",
       key: "OrderDate",
+      render: (text) => moment(text).format("YYYY-MM-DD"), // Format the date here
     },
     {
       title: "Quantity",

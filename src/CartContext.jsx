@@ -95,6 +95,11 @@ export const CartProvider = ({ children }) => {
     setWarningOpen(false);
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+    setSelectedItems([]);
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -105,6 +110,7 @@ export const CartProvider = ({ children }) => {
         selectedItems,
         selectItemForPayment,
         handleWarningClose,
+        clearCart,
       }}
     >
       {children}
