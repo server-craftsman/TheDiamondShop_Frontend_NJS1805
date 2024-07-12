@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Button,
-  Layout,
-  Menu,
-  theme,
   Table,
   Form,
   Input,
@@ -17,7 +14,6 @@ function ManageTimepiecesPage() {
   const [timepieces, setTimepieces] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddTimepiecesVisible, setIsAddTimepiecesVisible] = useState(false);
-  const [isEditTimepiecesVisible, setIsEditTimepiecesVisible] = useState(false);
   const [form] = Form.useForm();
   // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
@@ -43,53 +39,6 @@ function ManageTimepiecesPage() {
       form.resetFields(); // Reset the form fields
     } catch (error) {
       console.error("Error adding diamond:", error);
-    }
-  };
-
-  const handleEditTimepieces = (record) => {
-    //setEditingDiamond(record); // Set the diamond to be edited
-    setIsEditTimepiecesVisible(true); // Show the modal
-    form.setFieldsValue({
-      timepiecesStyle: record.TimepiecesStyle,
-      nameTimepieces: record.NameTimepieces,
-      collection: record.Collection,
-      waterResistance: record.WaterResistance,
-      crystalType: record.CrystalType,
-      braceletMaterial: record.BraceletMaterial,
-      caseSize: record.CaseSize,
-      dialColor: record.DialColor,
-      movement: record.Movement,
-      gender: record.Gender,
-      category: record.Category,
-      brandName: record.BrandName,
-      dialType: record.DialType,
-      description: record.Description,
-      price: record.Price,
-      imageTimepieces: record.ImageTimepieces,
-      imageBrand: record.ImageBrand,
-      inventory: record.Inventory,
-    });
-  };
-
-  const handleUpdateTimepieces = async (values) => {
-    try {
-      await axios.put("http://localhost:8090/products/edit-timepieces", values);
-      fetchData(); // Refresh the list
-      setIsEditTimepiecesVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-    } catch (error) {
-      console.error("Error updating diamond:", error);
-    }
-  };
-
-  const handleDeleteTimepieces = async (diamondTimepiecesId) => {
-    try {
-      await axios.delete("http://localhost:8090/products/delete-timepieces", {
-        data: { diamondTimepiecesId },
-      });
-      fetchData(); // Refresh the list
-    } catch (error) {
-      console.error("Error deleting diamond:", error);
     }
   };
 
@@ -155,20 +104,7 @@ function ManageTimepiecesPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <div>
-          <Button type="link" onClick={() => handleEditTimepieces(record)}>
-            Edit
-          </Button>
-          <Button
-            type="link"
-            danger
-            onClick={() => handleDeleteTimepieces(record.DiamondTimepiecesID)}
-          >
-            Delete
-          </Button>
-          <br />
           <Link to={`/timepieces-details/${record.DiamondTimepiecesID}`}>View Details</Link>
-        </div>
       ),
     },
   ];
@@ -260,156 +196,63 @@ function ManageTimepiecesPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="movement" label="Movement">
+          <Form.Item name="movement" label="Movement"
+          rules={[
+            { required: true, message: "Please input the movement!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="gender" label="Gender">
+          <Form.Item name="gender" label="Gender"
+          rules={[
+            { required: true, message: "Please input the gender!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="category" label="Category">
+          <Form.Item name="category" label="Category"
+          rules={[
+            { required: true, message: "Please input the category!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="brandName" label="Brand Name">
+          <Form.Item name="brandName" label="Brand Name"
+          rules={[
+            { required: true, message: "Please input the brand Name!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="dialType" label="Dial Type">
+          <Form.Item name="dialType" label="Dial Type"
+          rules={[
+            { required: true, message: "Please input the dial Type!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="Description"
+          rules={[
+            { required: true, message: "Please input the description!" },
+          ]}>
             <Input />
           </Form.Item>
           <Form.Item name="price" label="Price">
+          rules={[
+            { required: true, message: "Please input the price!" },
+          ]}
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="imageTimepieces" label="Image Timepieces">
+          <Form.Item name="imageTimepieces" label="Image Timepieces"
+          rules={[
+            { required: true, message: "Please input the image Timepieces!" },
+          ]}>
             <Input />
           </Form.Item>
-          <Form.Item name="imageBrand" label="Image Brand">
+          <Form.Item name="imageBrand" label="Image Brand"
+          rules={[
+            { required: true, message: "Please input the image Brand!" },
+          ]}>
             <Input />
-          </Form.Item>
-          <Form.Item name="inventory" label="Inventory">
-            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Add Timepieces
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Edit Timepieces"
-        open={isEditTimepiecesVisible}
-        onCancel={() => setIsEditTimepiecesVisible(false)}
-        footer={null}
-      >
-        <Form form={form} layout="vertical" onFinish={handleUpdateTimepieces}>
-          <Form.Item
-            name="timepiecesStyle"
-            label="Timepieces Style"
-            rules={[
-              { required: true, message: "Please input the Timepieces Style!" },
-            ]}
-          >
-            <Input disabled />
-          </Form.Item>
-          <Form.Item
-            name="nameTimepieces"
-            label="Name Timepieces"
-            rules={[
-              { required: true, message: "Please input the name Timepieces!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="collection"
-            label="Collection"
-            rules={[
-              { required: true, message: "Please input the collection!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="waterResistance"
-            label="Water Resistance"
-            rules={[
-              { required: true, message: "Please input water resistance!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="crystalType"
-            label="Crystal Type"
-            rules={[
-              { required: true, message: "Please input the crystal type!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="braceletMaterial"
-            label="BraceletMaterial"
-            rules={[
-              {
-                required: true,
-                message: "Please input the bracelet material!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="caseSize"
-            label="CaseSize"
-            rules={[{ required: true, message: "Please input the case size!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="dialColor"
-            label="DialColor"
-            rules={[
-              { required: true, message: "Please input the dial color!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="movement" label="Movement">
-            <Input />
-          </Form.Item>
-          <Form.Item name="gender" label="Gender">
-            <Input />
-          </Form.Item>
-          <Form.Item name="category" label="Category">
-            <Input />
-          </Form.Item>
-          <Form.Item name="brandName" label="Brand Name">
-            <Input />
-          </Form.Item>
-          <Form.Item name="dialType" label="Dial Type">
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input />
-          </Form.Item>
-          <Form.Item name="price" label="Price">
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item name="imageTimepieces" label="Image Timepieces">
-            <Input />
-          </Form.Item>
-          <Form.Item name="imageBrand" label="Image Brand">
-            <Input />
-          </Form.Item>
-          <Form.Item name="inventory" label="Inventory">
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Update Timepieces
             </Button>
           </Form.Item>
         </Form>

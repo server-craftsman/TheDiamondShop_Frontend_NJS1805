@@ -1,29 +1,80 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Button, Descriptions, Spin } from "antd";
+import { Button, Descriptions, Form, Input, InputNumber, Modal, Spin } from "antd";
 import "./index.scss"
 function ViewBridalDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
   const [bridalDetail, setBridalDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [materials, setMaterials] = useState([]);
+  const [ringSizes, setRingSizes] = useState([]);
+  const [isEditBridalVisible, setIsEditBridalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const [editingBridal, setEditingBridal] = useState(null);
 
   useEffect(() => {
-    const fetchBridalDetail = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8090/products/bridals/${id}`
-        );
-        setBridalDetail(response.data);
-      } catch (error) {
-        console.error("Error fetching bridal details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBridalDetail();
+    fetchData();
   }, [id]);
+
+  const fetchData = async () => {
+    try {
+      const brialDetailResponse = await axios.get(`http://localhost:8090/products/bridals/${id}`);
+      setBridalDetail(brialDetailResponse.data);
+
+      const materialsResponse = await axios.get('http://localhost:8090/products/material-details');
+      setMaterials(materialsResponse.data);
+
+      const ringSizesResponse = await axios.get('http://localhost:8090/products/ring-size-details');
+      setRingSizes(ringSizesResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleEditBridals = (record) => {
+    setEditingBridal(record);
+    setIsEditBridalVisible(true); // Show the modal
+    form.setFieldsValue({
+      bridalStyle: record.BridalStyle,
+      nameBridal: record.NameBridal,
+      category: record.Category,
+      brandName: record.BrandName,
+      material: record.Material,
+      settingType: record.SettingType,
+      gender: record.Gender,
+      weight: record.Weight,
+      centerDiamond: record.CenterDiamond,
+      diamondCaratRange: record.DiamondCaratRange,
+      ringSizeRange: record.RingSizeRang,
+      totalCaratweight: record.TotalCaratWeight,
+      totalDiamond: record.TotalDiamond,
+      description: record.Description,
+      price: record.Price,
+      imageBridal: record.ImageBridal,
+      imageBrand: record.ImageBrand,
+      inventory: record.Inventory,
+    });
+  };
+
+  const handleUpdateBridals = async (values) => {
+    try {
+      await axios.put(`http://localhost:8090/products/edit-bridals/`, values);
+      fetchData(); // Refresh the list
+      setIsEditBridalVisible(false); // Close the modal
+      form.resetFields(); // Reset the form fields
+    } catch (error) {
+      console.error("Error updating bridals:", error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditBridalVisible(false);
+    form.resetFields();
+  };
 
   if (loading) {
     return <Spin size="large" />;
@@ -52,10 +103,22 @@ function ViewBridalDetailPage() {
           />
         </Descriptions.Item>
         <Descriptions.Item label="Material">
-          {bridalDetail?.Material}
+          <div className="materials-container">
+            {materials.map((material) => (
+              <div key={material.MaterialID} className="material-item">
+                {material.MaterialName}
+              </div>
+            ))}
+          </div>
         </Descriptions.Item>
-        <Descriptions.Item label="Ring Size Range">
-          {bridalDetail?.RingSizeRange}
+        <Descriptions.Item label="Ring Size Rang">
+          <div className="ring-sizes-container">
+            {ringSizes.map((size) => (
+              <div key={size.RingSizeID} className="ring-size-item">
+                {size.RingSize}
+              </div>
+            ))}
+          </div>
         </Descriptions.Item>
         <Descriptions.Item label="Price">
           {bridalDetail?.Price}
@@ -93,7 +156,113 @@ function ViewBridalDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
+      <Button onClick={() => handleEditBridals(bridalDetail)}>Edit</Button>
       <Button onClick={() => window.history.back()}>Back</Button>
+      <Modal
+        title="Edit Bridal"
+        open={isEditBridalVisible}
+        onCancel={handleCancelEdit}
+        footer={[
+          <Button key="cancel" onClick={handleCancelEdit}>
+            Cancel
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => form.submit()}>
+            Save
+          </Button>,
+        ]}
+      >
+        <Form
+          form={form}
+          onFinish={handleUpdateBridals}
+          layout="vertical"
+        >
+          <Form.Item
+            name="bridalStyle"
+            label="Bridal Style"
+            rules={[
+              { required: true, message: "Please input the Bridal Style!" },
+            ]}
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            name="nameBridal"
+            label="Name Bridal"
+            rules={[
+              { required: true, message: "Please input the Name Bridal!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: "Please input the Category!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="brandName"
+            label="Brand Name"
+            rules={[{ required: true, message: "Please input the Brand Name!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="settingType"
+            label="Setting Type"
+            rules={[
+              { required: true, message: "Please input the Setting Type!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: "Please input the Gender!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="imageBridal"
+            label="Image Bridal URL"
+            rules={[
+              { required: true, message: "Please input the Image Bridal URL!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="weight" label="Weight"
+          rules={[{ required: true, message: "Please input the weight!" }]}>
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item name="centerDiamond" label="Center Diamond"
+          rules={[{ required: true, message: "Please input the center Diamond!" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="diamondCaratRange" label="Diamond Carat Range"
+          rules={[{ required: true, message: "Please input the diamond Carat Range!" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="totalCaratweight" label="Total Carat Weight"
+          rules={[{ required: true, message: "Please input the total Carat weight!" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="totalDiamond" label="Total Diamond"
+          rules={[{ required: true, message: "Please input the total Diamond!" }]}>
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item name="description" label="Description"
+          rules={[{ required: true, message: "Please input the description!" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="price" label="Price"
+          rules={[{ required: true, message: "Please input the price!" }]}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }
