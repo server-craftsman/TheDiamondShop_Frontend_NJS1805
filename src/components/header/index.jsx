@@ -1,10 +1,12 @@
 import "./index.scss";
 import { Link } from "react-router-dom";
 import { SearchOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Button, Dropdown, Menu } from "antd";
-
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import DescriptionIcon from "@mui/icons-material/Description";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useCart } from "../../CartContext";
 import { AuthContext } from "../../AuthContext";
@@ -13,6 +15,7 @@ function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const { cartItems, clearCart } = useCart();
+  const [userProfile, setUserProfile] = useState(null);
   const { user, logout } = useContext(AuthContext);
   const handleSearchSubmit = () => {
     // Xử lý tìm kiếm (ví dụ: lấy kết quả)
@@ -21,7 +24,7 @@ function Header() {
   };
   const handleLogout = () => {
     clearCart(); // Clear cart when user logs out
-    logout();   // Call logout function from AuthContext
+    logout(); // Call logout function from AuthContext
   };
   // const userMenu = (
   //   <Menu>
@@ -36,6 +39,38 @@ function Header() {
   //     </Menu.Item>
   //   </Menu>
   // );
+  const fetchUserProfile = async () => {
+    try {
+      const token = user?.token; // Retrieve token from AuthContext
+
+      if (!token) {
+        console.error('Token not found in AuthContext');
+        return;
+      }
+
+      const response = await fetch(
+        "http://localhost:8090/auth/account",
+        {
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Assuming you store the token in localStorage
+          },
+        }
+      );
+      const data = await response.json();
+      setUserProfile(data.user);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
   return (
     <header className="header">
       <div className={`header__search ${showSearch === true ? "active" : ""}`}>
@@ -107,8 +142,24 @@ function Header() {
                 <UserOutlined style={{ fontSize: "25px" }} />
               </a>
               <ul className="login-dropdown">
+              {userProfile && (
+                  <>
+                    <li>
+                      <img src={userProfile.Image} alt="User" />
+                    </li>
+                    <li>
+                      <div>
+                        {userProfile.FirstName} {userProfile.LastName}
+                      </div>
+                    </li>
+                    <li>
+                      <div>{userProfile.Email}</div>
+                    </li>
+                  </>
+                )}
                 <li>
                   <Button>
+                    <AccountCircleIcon />
                     <Link className="link" to="/userProfile-page">
                       Profile
                     </Link>
@@ -116,6 +167,7 @@ function Header() {
                 </li>
                 <li>
                   <Button>
+                    <DescriptionIcon />
                     <Link className="link" to="/historyOrder-page">
                       History Order
                     </Link>
@@ -123,6 +175,7 @@ function Header() {
                 </li>
                 <li>
                   <Button onClick={handleLogout}>
+                    <LogoutIcon />
                     <Link className="link" to="/login">
                       Logout
                     </Link>
