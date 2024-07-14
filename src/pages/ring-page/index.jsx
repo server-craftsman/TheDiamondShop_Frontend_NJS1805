@@ -318,7 +318,7 @@ function RingPage() {
                           {item.Material.toUpperCase()} -{" "}
                           {item.Category.toUpperCase()}
                         </div>
-                        <div
+                        {/* <div
                           style={{
                             fontSize: "1.2em",
                             color: "#000000",
@@ -326,7 +326,7 @@ function RingPage() {
                           }}
                         >
                           Size: {item.RingSize}
-                        </div>
+                        </div> */}
 
                         <div
                           style={{

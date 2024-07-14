@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material"; // Import necessary components
+import { Link } from "react-router-dom";
 
 const FailOrder = ({ open, onClose, errorMessage }) => {
   return (
@@ -9,9 +10,11 @@ const FailOrder = ({ open, onClose, errorMessage }) => {
         <p>{errorMessage}</p>
       </DialogContent>
       <DialogActions>
+      <Link to="/">
         <Button onClick={onClose} color="primary">
           Close
         </Button>
+        </Link>
       </DialogActions>
     </Dialog>
   );

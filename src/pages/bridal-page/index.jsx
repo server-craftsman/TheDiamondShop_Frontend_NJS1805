@@ -333,7 +333,7 @@ function BridalPage() {
                         >
                           {item.Material} - {item.Gender}
                         </div>
-                        <div
+                        {/* <div
                           style={{
                             fontSize: "1.2em",
                             marginTop: "4px",
@@ -342,7 +342,7 @@ function BridalPage() {
                           }}
                         >
                           Size: {item.RingSizeRang}
-                        </div>
+                        </div> */}
 
                         <div
                           style={{
