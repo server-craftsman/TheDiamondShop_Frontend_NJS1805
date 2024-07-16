@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext";
 import {
   Typography,
@@ -7,25 +7,37 @@ import {
   Paper,
   CircularProgress,
   Button,
-} from "@mui/material"; // Import Material-UI components
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Import ArrowBack icon
-import Snackbar from "@mui/material/Snackbar";
-import IconButton from "@mui/material/IconButton";
+  IconButton,
+  Snackbar,
+  TextField,
+  FormControl,
+  Box,
+  
+} from "@mui/material";
+import Rating from "@mui/material/Rating";
+import StarIcon from "@mui/icons-material/Star";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
+
 function HistoryOrderDetails() {
+  const { user } = useContext(AuthContext);
+  const { orderId } = useParams();
+  const navigate = useNavigate();
+  const [orderDetails, setOrderDetails] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const { user } = useContext(AuthContext);
-  const { orderId } = useParams(); // Get OrderID from URL params
-  const navigate = useNavigate(); // Hook for navigation
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [feedbackContent, setFeedbackContent] = useState("");
 
   useEffect(() => {
     if (user && orderId) {
       fetchOrderDetails();
     }
-  }, [user, orderId]); // Fetch again when user or orderId changes
-
+  }, [user, orderId]);
   const fetchOrderDetails = async () => {
     try {
       const token = user?.token;
@@ -53,13 +65,58 @@ function HistoryOrderDetails() {
 
       const data = await response.json();
       console.log("Fetch response:", data);
-      setOrderDetails(data.orderDetails); // Ensure `data` structure matches your expected JSON format
+      setOrderDetails(data.orderDetails);
     } catch (error) {
       console.error("Fetch error:", error);
-      // Handle error using Material-UI Snackbar or similar
+      setSnackbarMessage("Failed to fetch order details.");
+      setSnackbarOpen(true);
     }
   };
 
+  const handleCreateFeedback = async (event) => {
+    event.preventDefault();
+  
+    try {
+      if (!orderDetails) {
+        throw new Error("Order details not available");
+      }
+  
+      const { OrderDetailID, DiamondID, BridalID, DiamondRingsID, DiamondTimepiecesID } = orderDetails;
+  
+      const token = user?.token;
+  
+      const response = await axios.post(
+        'http://localhost:8090/features/feedback',
+        {
+          orderDetailID: OrderDetailID,
+          feedbackContent,
+          rating,
+          diamondId: DiamondID,
+          bridalId: BridalID,
+          diamondRingsId: DiamondRingsID,
+          diamondTimepiecesId: DiamondTimepiecesID,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200 || response.status === 201) {
+        setSnackbarMessage("Feedback submitted successfully!");
+      } else {
+        setSnackbarMessage("Failed to submit feedback.");
+      }
+  
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error("Error creating feedback:", error);
+      setSnackbarMessage(`Failed to submit feedback. ${error.message}`);
+      setSnackbarOpen(true);
+    }
+  };
+  
   const handleClick = () => {
     setSnackbarOpen(true);
   };
@@ -71,9 +128,7 @@ function HistoryOrderDetails() {
     setSnackbarOpen(false);
   };
 
-  const handleBack = () => {
-    navigate("/historyOrder-page"); // Navigate back to history-order page
-  };
+
 
   const updateRequestWarranty = async () => {
     try {
@@ -110,6 +165,17 @@ function HistoryOrderDetails() {
       console.error("Update error:", error);
       // Handle error using Material-UI Snackbar or similar
     }
+  };
+  
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const handleBack = () => {
+    navigate("/historyOrder-page");
   };
 
   if (!orderDetails) {
@@ -151,6 +217,7 @@ function HistoryOrderDetails() {
           <ArrowBackIcon />
         </IconButton>
 
+        
         <div style={{ maxWidth: "800px", margin: "0 0 0 10px" }}>
           <Typography
             variant="h3"
@@ -339,34 +406,163 @@ function HistoryOrderDetails() {
             </Grid>
           </Paper>
         </div>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          message={snackbarMessage}
-          ContentProps={{
-            style: {
-              fontSize: "1.5rem", // Adjust the font size as needed
-              backgroundColor: "#000", // Optional: Change background color
-              color: "#fff", // Optional: Change text color
-              textAlign: "center", // Align text to center
-              minWidth: "50%", // Set minimum width to avoid overflowing content
-              margin: "auto", // Center the snackbar horizontally
-            },
-          }}
-          action={
-            <React.Fragment>
-              <IconButton
-                size="medium"
-                aria-label="close"
-                color="inherit"
-                onClick={handleClose}
-                style={{ position: "absolute", right: 10, top: 10 }} // Adjust position of close button
-              ></IconButton>
-            </React.Fragment>
-          }
-        />
       </div>
+
+      {orderDetails && (
+        <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              p: 4,
+              backgroundColor: "#000",
+              color: "#fff",
+              borderRadius: 2,
+              marginTop: "24px",
+            }}
+          >
+            <Typography variant="h5" component="h2" gutterBottom>
+              Thêm đánh giá
+            </Typography>
+            <form onSubmit={handleCreateFeedback}>
+              <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
+                <Typography
+                  component="legend"
+                  style={{ fontSize: "1.2rem", marginBottom: "8px" }}
+                >
+                  Đánh giá của bạn *
+                </Typography>
+                <Rating
+                  name="rating"
+                  value={rating}
+                  onChange={(e, newValue) => setRating(newValue)}
+                  precision={1}
+                  emptyIcon={
+                    <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
+                  }
+                />
+              </FormControl>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                value={feedbackContent}
+                onChange={(e) => setFeedbackContent(e.target.value)}
+                label="Nhận xét của bạn *"
+                variant="outlined"
+                margin="normal"
+                required
+                InputLabelProps={{
+                  style: { color: "#fff" },
+                }}
+                InputProps={{
+                  style: {
+                    color: "#fff",
+                    backgroundColor: "#919191",
+                  },
+                }}
+              />
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <TextField
+                  fullWidth
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  label="Tên"
+                  variant="outlined"
+                  margin="normal"
+                  InputLabelProps={{
+                    style: { color: "#fff" },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "#fff",
+                      backgroundColor: "#919191",
+                    },
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  label="Email"
+                  variant="outlined"
+                  margin="normal"
+                  InputLabelProps={{
+                    style: { color: "#fff" },
+                  }}
+                  InputProps={{
+                    style: {
+                      color: "#fff",
+                      backgroundColor: "#919191",
+                    },
+                  }}
+                />
+              </Box>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  mt: 2,
+                  backgroundColor: "#FFD700",
+                  color: "#000",
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "#FFA500",
+                  },
+                }}
+              >
+                GỬI ĐI
+              </Button>
+            </form>
+          </Box>
+        </Grid>
+      )}
+
+      {/* <div>
+          <TextField
+            label="Feedback"
+            multiline
+            rows={4}
+            value={feedbackContent}
+            onChange={(e) => setFeedbackContent(e.target.value)}
+          />
+          <Rating
+            name="rating"
+            value={rating}
+            onChange={(e, newValue) => setRating(newValue)}
+          />
+          <Button variant="contained" color="primary" onClick={handleCreateFeedback}>
+            Submit Feedback
+          </Button>
+        </div> */}
+
+      {/* Snackbar for feedback submission message */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+        ContentProps={{
+          style: {
+            fontSize: "1.5rem", // Adjust the font size as needed
+            backgroundColor: "#000", // Optional: Change background color
+            color: "#fff", // Optional: Change text color
+            textAlign: "center", // Align text to center
+            minWidth: "50%", // Set minimum width to avoid overflowing content
+            margin: "auto", // Center the snackbar horizontally
+          },
+        }}
+        action={
+          <IconButton
+            size="medium"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseSnackbar}
+            style={{ position: "absolute", right: 10, top: 10 }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </>
   );
 }

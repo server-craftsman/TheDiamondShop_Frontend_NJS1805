@@ -344,8 +344,8 @@ useEffect(() => {
         type: "Bridal",
         material: material,
         ringSize: ringSize,
-        BridalsMaterialsID: materialID, // Ensure unique name
-        BridalsSizesID: ringSizeID, // Ensure unique name
+        materialID: materialID, // Ensure unique name
+        ringSizeID: ringSizeID, // Ensure unique name
         category: bridal.Category,
       };
   
