@@ -10,6 +10,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useCart } from "../../CartContext";
 import { AuthContext } from "../../AuthContext";
+import { Avatar } from "@mui/material";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
@@ -17,6 +18,9 @@ function Header() {
   const { cartItems, clearCart } = useCart();
   const [userProfile, setUserProfile] = useState(null);
   const { user, logout } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
+
   const handleSearchSubmit = () => {
     // Xử lý tìm kiếm (ví dụ: lấy kết quả)
     console.log("Tìm kiếm:", searchInput);
@@ -26,36 +30,35 @@ function Header() {
     clearCart(); // Clear cart when user logs out
     logout(); // Call logout function from AuthContext
   };
-  // const userMenu = (
-  //   <Menu>
-  //     <Menu.Item key="0">
-  //       <Link to="/userProfile-page">Profile</Link>
-  //     </Menu.Item>
-  //     <Menu.Item key="1">
-  //       <Link to="/historyOrder-page">History Order</Link>
-  //     </Menu.Item>
-  //     <Menu.Item key="2" onClick={logout}>
-  //     <Link to="/login">Logout</Link>
-  //     </Menu.Item>
-  //   </Menu>
-  // );
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
   const fetchUserProfile = async () => {
+    setLoading(true);
     try {
-      const token = user?.token; // Retrieve token from AuthContext
+      const token = user?.token;
 
       if (!token) {
-        console.error('Token not found in AuthContext');
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
+        setLoading(false);
         return;
       }
 
+      console.log("Fetching user profile with token:", token);
+
       const response = await fetch(
-        "http://localhost:8090/auth/account",
+        "http://localhost:8090/features/view-profile",
         {
           method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Assuming you store the token in localStorage
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Assuming you store the token in localStorage
           },
+          withCredentials: true, // Ensure credentials are sent
         }
       );
       const data = await response.json();
@@ -64,12 +67,6 @@ function Header() {
       console.error("Failed to fetch user profile:", error);
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      fetchUserProfile();
-    }
-  }, [user]);
 
   return (
     <header className="header">
@@ -123,9 +120,6 @@ function Header() {
       </nav>
       <nav className="header-end">
         <ul>
-          <li onClick={() => setShowSearch(true)}>
-            <SearchOutlined />
-          </li>
           <li className="cart">
             <span>{cartItems.length}</span>
             <Link to="/cart-page">
@@ -138,21 +132,26 @@ function Header() {
             // </Dropdown>
 
             <li>
-              <a>
+              <a style={{ display: "flex", listStyle: "none", gap: "20px" }}>
                 <UserOutlined style={{ fontSize: "25px" }} />
+                <div>Welcome,
+                  <div>
+                  {/* {userProfile.LastName} */}
+                  </div>
+                </div>
               </a>
               <ul className="login-dropdown">
-              {userProfile && (
+                {userProfile && (
                   <>
-                    <li>
+                    <Avatar style={{ marginLeft: "20px" }}>
                       <img src={userProfile.Image} alt="User" />
-                    </li>
-                    <li>
+                    </Avatar>
+                    <li style={{ marginLeft: "20px" }}>
                       <div>
                         {userProfile.FirstName} {userProfile.LastName}
                       </div>
                     </li>
-                    <li>
+                    <li style={{ marginLeft: "20px" }}>
                       <div>{userProfile.Email}</div>
                     </li>
                   </>
@@ -184,7 +183,7 @@ function Header() {
               </ul>
             </li>
           ) : (
-            <li>
+            <li style={{ paddingTop: "20px"}}>
               <a>SIGN UP</a>
               <ul className="login-dropdown">
                 <li>
