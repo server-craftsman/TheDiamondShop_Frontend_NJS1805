@@ -46,6 +46,8 @@ export default function CarouselBridal({
     navigate(`/bridal-detail/${BridalID}`);
   };
 
+  // <Link to={`/bridal-detail/${item.BridalID}`}></Link>
+
   return (
     <Card
       title={

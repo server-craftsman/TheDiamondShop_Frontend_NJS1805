@@ -42,8 +42,8 @@ export default function CarouselTimepiece({
     fetchHighestPricedProducts();
   }, []);
 
-  const handleCardClick = (TimepieceID) => {
-    navigate(`/timepieces-detail/${TimepieceID}`);
+  const handleCardClick = (DiamondTimepiecesID) => {
+    navigate(`/timepieces-detail/${DiamondTimepiecesID}`);
   };
 
   return (
@@ -77,7 +77,7 @@ export default function CarouselTimepiece({
         {highestPricedProducts.map((product) => (
           <SwiperSlide key={product.TimepieceID}>
             <Card
-              onClick={() => handleCardClick(product.TimepieceID)}
+              onClick={() => handleCardClick(product.DiamondTimepiecesID)}
               key={product.TimepieceID}
               hoverable
               cover={
