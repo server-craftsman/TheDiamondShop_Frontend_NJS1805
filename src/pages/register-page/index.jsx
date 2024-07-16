@@ -52,19 +52,22 @@ function RegisterForm() {
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);
-      } else {
-        notification.error({
-          message: 'Registration Failed',
-          description: response.data.message || 'Registration failed. Please try again.',
-        });
       }
-    } catch (error) {
-      console.error("Error response:", error.response); // Log the error response for debugging
+     } catch (error) {
+      //console.error("Error response:", error.response); // Log the error response for debugging
       if (error.response && error.response.data) {
-        notification.error({
-          message: 'success',
-          description: error.response.data.message || 'Registration failed. Please try again.',
-        });
+        // Handle duplicate email error
+        if (error.response.status === 400 && error.response.data.error === 'Email already exists.') {
+          notification.error({
+            message: 'Duplicate Email',
+            description: 'This email is already registered. Please use a different email.',
+          });
+        } else {
+          notification.error({
+            message: 'Registration Failed',
+            description: error.response.data.error || 'Registration failed. Please try again.',
+          });
+        }
       } else {
         notification.error({
           message: 'Registration Failed',
