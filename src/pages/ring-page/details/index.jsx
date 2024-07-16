@@ -56,9 +56,7 @@ const RingDetail = () => {
   const { id } = useParams();
   const { addToCart, cartItems, setCartItems } = useCart();
   const [ring, setRing] = useState(null);
-  const [material, setMaterial] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [ringSize, setSelectedSize] = useState("");
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [isProcessingBuyNow, setIsProcessingBuyNow] = useState(false);
@@ -72,6 +70,11 @@ const RingDetail = () => {
   const [certification, setCertification] = useState("");
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
+
+  const [material, setMaterial] = useState("");
+  const [ringSize, setSelectedSize] = useState("");
+  const [materialOptions, setMaterialOptions] = useState([]);
+  const [ringSizeOptions, setRingSizeOptions] = useState([]);
 
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [feedbackRings, setFeedbackRings] = useState([]);
@@ -116,7 +119,44 @@ const RingDetail = () => {
     if (user) {
       fetchFeedback();
     }
-  }, [useParams.id, user]);
+  }, [id, user]);
+
+
+  // Fetch material details
+  useEffect(() => {
+    const fetchMaterialDetails = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8090/products/material-details"
+        );
+        setMaterialOptions(response.data);
+        if (!material || !response.data.some(option => option.MaterialName === material)) {
+          setMaterial(response.data.length > 0 ? response.data[0].MaterialName : '');
+        }
+      } catch (error) {
+        console.error("Error fetching material details:", error);
+      }
+    };
+    fetchMaterialDetails();
+  }, []);
+
+  // Fetch ring size details
+  useEffect(() => {
+    const fetchRingSizeDetails = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8090/products/ring-size-details"
+        );
+        setRingSizeOptions(response.data);
+        if (!ringSize || !response.data.some(option => option.RingSize === ringSize)) {
+          setSelectedSize(response.data.length > 0 ? response.data[0].RingSize : '');
+        }
+      } catch (error) {
+        console.error("Error fetching ring size details:", error);
+      }
+    };
+    fetchRingSizeDetails();
+  }, []);
 
   if (!ring) return <div>Loading...</div>;
 
@@ -234,28 +274,37 @@ const RingDetail = () => {
 
   //   setCartItems(updatedCartItems);
   // };
-  
+
 
   const handleAddToCart = () => {
-    // const updatedCartItems = [...cartItems];
-    // const alreadyInCart = updatedCartItems.find(
-    //   (item) => item.id === ring.DiamondRingsID
-    // );
     const alreadyInCart = cartItems.find(
       (item) => item.id === ring.DiamondRingsID && item.type === "DiamondRings"
     );
 
     if (!alreadyInCart) {
+      // Find selected material and its ID
+      const selectedMaterial = materialOptions.find(
+        (option) => option.MaterialName === material
+      );
+      const materialID = selectedMaterial ? selectedMaterial.MaterialID : null;
+
+      // Find selected ring size and its ID
+      const selectedRingSize = ringSizeOptions.find(
+        (option) => option.RingSize === ringSize
+      );
+      const ringSizeID = selectedRingSize ? selectedRingSize.RingSizeID : null;
+
       const itemToAdd = {
         id: ring.DiamondRingsID,
         name: ring.NameRings,
         image: ring.ImageRings,
         price: ring.Price,
         quantity: 1,
-        type: "DiamondRings", // Assuming this is the correct type for rings
-
-        material: ring.Material,
-        ringSize: ring.RingSize,
+        type: "DiamondRings",
+        material: material,
+        ringSize: ringSize,
+        materialID: materialID, // Ensure unique name
+        ringSizeID: ringSizeID, // Ensure unique name
         category: ring.Category,
         // totalPrice: ring.Price * parseInt(quantity),
       };
@@ -268,38 +317,8 @@ const RingDetail = () => {
       setWarningOpen(true);
     }
   };
-  // const handleBuyNow = () => {
-  //   if (!material || !ringSize || !quantity) {
-  //     setOpen(true);
-  //     return;
-  //   }
 
-  //   const itemToAdd = {
-  //     id: ring.DiamondRingsID,
-  //     name: ring.NameRings,
-  //     image: ring.ImageRings,
-  //     price: ring.Price,
-  //     quantity: parseInt(quantity),
-  //     type: "DiamondRings",
 
-  //     material,
-  //     ringSize,
-  //     category: ring.Category,
-  //     totalPrice: ring.Price * parseInt(quantity),
-  //   };
-
-  //   // Disable the button to prevent multiple clicks during processing
-  //   setIsProcessingBuyNow(true);
-
-  //   // Add item to cart
-  //   addToCart(itemToAdd);
-
-  //   // Navigate to cart-page after a short delay to allow addToCart to complete
-  //   setTimeout(() => {
-  //     setIsProcessingBuyNow(false); // Reset the processing state after navigation
-  //     navigate("/cart-page"); // Navigate to cart-page after adding to cart
-  //   }, 0);
-  // };
   const handleBuyNow = () => {
     handleAddToCart();
     navigate("/cart-page"); // Ensure the correct path
@@ -335,6 +354,8 @@ const RingDetail = () => {
         }
       });
   };
+
+
 
   const handleNavigateButtonClick = () => {
     handleDetailNavigation(); // Kích hoạt hàm handleDetailNavigation khi nút được nhấn
@@ -378,7 +399,7 @@ const RingDetail = () => {
 
   return (
     <>
-        <Modal
+      <Modal
         open={openModal}
         // title="Title"
         onCancel={handleCancel}
@@ -451,60 +472,47 @@ const RingDetail = () => {
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
-                  {/* <FormControl
-                    fullWidth
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    style={{ borderColor: "#000000" }}
-                  >
-                    <InputLabel
-                      id="material-label"
-                      style={{
-                        color: "black",
-                        borderColor: "#000000",
-                        fontWeight: "bolder",
-                      }}
-                    >
-                      Material
-                    </InputLabel>
-                    <Select
-                      labelId="material-label"
-                      value={material}
-                      onChange={handleMaterialChange}
-                      label="Material"
-                      required
-                      style={{ fontWeight: "bolder", borderColor: "#000000" }}
-                    >
-                      <MenuItem value="18k White Gold">18k White Gold</MenuItem>
-                      <MenuItem value="18K White & Rose Gold">
-                        18K White & Rose Gold
-                      </MenuItem>
-                      <MenuItem value="18k White Gold Gemstone Fashion Ring">
-                        18k White Gold Gemstone Fashion Ring
-                      </MenuItem>
 
-                      <MenuItem value="18k Rose Gold">18k Rose Gold</MenuItem>
-                      <MenuItem value="14K Rose Gold">14K Rose Gold</MenuItem>
-                      <MenuItem value="18k Yellow Gold">
-                        18k Yellow Gold
-                      </MenuItem>
-                      <MenuItem value="14K Yellow Gold">
-                        14K Yellow Gold
-                      </MenuItem>
-                      <MenuItem value="Platinum">Platinum</MenuItem>
-                      <MenuItem value="14KT Gold">14KT Gold</MenuItem>
-                      <MenuItem value="14KT Gold Ladies">
-                        14KT Gold Ladies
-                      </MenuItem>
-                      <MenuItem value="18k Tri-color Gold">
-                        18k Tri-color Gold
-                      </MenuItem>
-                      <MenuItem value="18k Two-tone Gold">
-                        18k Two-tone Gold
-                      </MenuItem>
-                    </Select>
-                  </FormControl> */}
+                  <div>
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                      <InputLabel id="material-label">Material</InputLabel>
+                      <Select
+                        labelId="material-label"
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                      >
+                        {materialOptions.map((materialOption) => (
+                          <MenuItem
+                            key={materialOption.MaterialID}
+                            value={materialOption.MaterialName}
+                          >
+                            {materialOption.MaterialName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                      <InputLabel id="ring-size-label">Ring Size</InputLabel>
+                      <Select
+                        labelId="ring-size-label"
+                        value={ringSize}
+                        onChange={(e) => setSelectedSize(e.target.value)}
+                      >
+                        {ringSizeOptions.map((ringSizeOption) => (
+                          <MenuItem
+                            key={ringSizeOption.RingSizeID}
+                            value={ringSizeOption.RingSize}
+                          >
+                            {ringSizeOption.RingSize}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+
+
+                  </div>
 
                   <div style={{ display: "flex" }}>
                     {/* <Box mt={3}>
@@ -569,6 +577,8 @@ const RingDetail = () => {
                         </Typography>
                       )}
                     </Box> */}
+
+
                     <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
                       <span style={{ fontSize: "25px", fontWeight: "bold" }}>
                         Ring size:{" "}
@@ -967,12 +977,12 @@ const RingDetail = () => {
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1.2)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                       }
                                     />
                                     <CardContent>

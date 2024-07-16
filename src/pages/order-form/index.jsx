@@ -186,11 +186,6 @@ const OrderForm = () => {
           deliveryAddress: userData.Address,
           shippingMethod: "Express",
           paymentMethod: "",
-
-
-
-
-
           // deliveryAddress: '',
           // AttachedAccessories: '',
           // shippingMethod: "Express",
@@ -242,179 +237,6 @@ const OrderForm = () => {
     }
   };
 
-
-  //   const handleConfirmOrder = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const token = localStorage.getItem("accessToken");
-  //       if (!token) {
-  //         throw new Error("User token not found. Please log in again.");
-  //       }
-
-  //       // Prepare order items based on item type
-  //       const orderItems = cart.map((item, index) => {
-  //         const orderItem = {
-  //           Quantity: item.quantity,
-  //           Price: item.price,
-  //           key: index, // Add a unique key prop
-  //         };
-
-  //         if (item.type === "Diamond") {
-  //           orderItem.DiamondID = item.id;
-  //           orderItem.DiamondName = item.name;
-  //           orderItem.DiamondColor = item.color;
-  //           orderItem.DiamondClarity = item.clarity;
-  //           orderItem.DiamondCarat = item.caratWeight;
-  //           orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
-  //           orderItem.DiamondOrigin = item.diamondOrigin;
-  //         } else if (item.type === "DiamondRings") {
-  //           orderItem.RingDetails = ring; // Assuming ring details are passed separately
-  //           orderItem.DiamondRingsID = item.id;
-  //           orderItem.RingSize = item.ringSize;
-  //           orderItem.Material = item.material;
-  //           orderItem.NameRings = item.name;
-  //         } else if (item.type === "Bridal") {
-  //           orderItem.BridalDetails = bridal;
-  //           orderItem.BridalID = item.id; // Use item.id directly for BridalID
-  //           orderItem.NameBridal = item.name;
-  //           orderItem.BridalQuantity = item.quantity;
-  //           orderItem.Category = item.category; // Assuming category is available
-  //           orderItem.MaterialID = item.BridalsMaterialsID; // Use BridalsMaterialsID
-  //           orderItem.RingSizeID = item.BridalsSizesID; // Use BridalsSizesID
-  //         } else if (item.type === "DiamondTimepieces") {
-  //           orderItem.TimepiecesDetails = timepieces;
-  //           orderItem.DiamondTimepiecesID = item.id;
-  //           orderItem.NameTimepieces = item.name;
-  //           orderItem.CrystalType = item.crystalType;
-  //           orderItem.CaseSize = item.caseSize;
-  //           orderItem.timepiecesStyle = item.timepiecesStyle;
-  //           orderItem.TimepiecesQuantity = item.quantity;
-  //         }
-
-  //         return orderItem;
-  //       });
-
-  //       const quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
-  //       const totalPrice = cart.reduce(
-  //         (total, item) => total + item.price * item.quantity,
-  //         0
-  //       );
-
-  //       // Determine ProductType based on cart contents, default to "Diamond"
-  //       let productType = "Diamond";
-
-  //       // Extract unique Bridal IDs
-  //       // const uniqueBridalIDs = [...new Set(
-  //       //   cart
-  //       //     .filter((item) => item.type === "Bridal")
-  //       //     .map((item) => item.id)
-  //       // )];
-
-
-  // // Extract unique Bridal IDs
-  // const uniqueBridalIDs = [...new Set(
-  //   cart
-  //     .filter((item) => item.type === "Bridal")
-  //     .map((item) => item.id)
-  // )];
-
-  // // Ensure unique BridalIDs in OrderItems
-  // orderItems.forEach(orderItem => {
-  //   if (orderItem.BridalID && Array.isArray(orderItem.BridalID)) {
-  //     orderItem.BridalID = [...new Set(orderItem.BridalID)];
-  //   }
-  // });
-
-
-
-
-
-  //       // Construct order data object
-  //       const orderDataPayload = {
-  //         firstName: orderData.firstName,
-  //         lastName: orderData.lastName,
-  //         phoneNumber: orderData.phoneNumber,
-  //         address: orderData.address,
-  //         deliveryAddress: orderData.deliveryAddress,
-  //         shippingMethod: orderData.shippingMethod,
-  //         paymentMethod: orderData.paymentMethod,
-  //         AttachedAccessories: orderData.AttachedAccessories,
-  //       };
-
-  //       const orderPayload = {
-  //         orderData: {
-  //           ...orderDataPayload,
-  //           DiamondID: cart
-  //             .filter((item) => item.type === "Diamond")
-  //             .map((item) => item.id),
-  //           DiamondRingsID: cart
-  //             .filter((item) => item.type === "DiamondRings")
-  //             .map((item) => item.id),
-  //           // BridalID: uniqueBridalIDs.length > 0 ? uniqueBridalIDs[0] : null, // Take the first unique Bridal ID
-  //           // BridalID: uniqueBridalIDs.length > 0 ? uniqueBridalIDs[0] : [],
-  //           BridalID: cart
-  //             .filter((item) => item.type === "Bridal")
-  //             .map((item) => item.id),
-
-  //           DiamondTimepiecesID: cart
-  //             .filter((item) => item.type === "DiamondTimepieces")
-  //             .map((item) => item.id),
-  //           ProductType: productType,
-  //           Quantity: quantity,
-  //           TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
-  //           VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
-  //           Shipping: orderData.shippingMethod,
-  //           PaymentMethod: orderData.paymentMethod,
-  //           OrderItems: orderItems,
-  //           DeliveryAddress: orderDataPayload.deliveryAddress,
-  //           FirstName: orderData.firstName,
-  //           LastName: orderData.lastName,
-  //           PhoneNumber: orderData.phoneNumber,
-  //           AttachedAccessories: orderData.AttachedAccessories,
-  //         },
-  //       };
-
-  //       // Check if any required fields are missing
-  //       if (
-  //         !orderPayload.orderData.firstName ||
-  //         !orderPayload.orderData.lastName ||
-  //         !orderPayload.orderData.phoneNumber ||
-  //         !orderPayload.orderData.deliveryAddress ||
-  //         !orderPayload.orderData.shippingMethod ||
-  //         !orderPayload.orderData.paymentMethod ||
-  //         !orderPayload.orderData.AttachedAccessories
-  //       ) {
-  //         throw new Error("Please fill out all required fields.");
-  //       }
-
-  //       const response = await axios.post(
-  //         "http://localhost:8090/orders/create",
-  //         orderPayload,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       console.log("Order created successfully:", response.data);
-  //       setSuccess(true);
-  //       setOrderSubmitted(true);
-  //       setIsModalOpen(true);
-  //     } catch (error) {
-  //       console.error("Error creating order:", error);
-  //       setError("Failed to create order. Please try again.");
-  //       setErrorDialogOpen(true); // Open error dialog
-  //       // Log Axios error response for debugging
-  //       if (error.response) {
-  //         console.log("Error details:", error.response);
-  //       }
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-
   const handleConfirmOrder = async () => {
     setLoading(true);
     try {
@@ -440,10 +262,14 @@ const OrderForm = () => {
           orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
           orderItem.DiamondOrigin = item.diamondOrigin;
         } else if (item.type === "DiamondRings") {
+          const uniqueDiamondRingsIDs = Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id];
+          const materials = Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID];
+          const ringSizes = Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID];
+
           orderItem.RingDetails = ring; // Assuming ring details are passed separately
-          orderItem.DiamondRingsID = item.id;
-          orderItem.RingSize = item.ringSize;
-          orderItem.Material = item.material;
+          orderItem.DiamondRingsID = uniqueDiamondRingsIDs;
+          orderItem.RingSize = ringSizes;
+          orderItem.Material = materials;
           orderItem.NameRings = item.name;
         } else if (item.type === "Bridal") {
           // Ensure BridalID, Material, RingSizeRang are arrays
@@ -503,7 +329,7 @@ const OrderForm = () => {
           DiamondRingsID:
             cart
               .filter((item) => item.type === "DiamondRings")
-              .map((item) => item.id) || [],
+              .map((item) => Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id]) || [],
           BridalID:
             cart
               .filter((item) => item.type === "Bridal")
@@ -528,6 +354,12 @@ const OrderForm = () => {
             .flatMap((item) => Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID]) || [],
           BridalsMaterials: cart
             .filter((item) => item.type === "Bridal")
+            .flatMap((item) => Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID]) || [],
+          DiamondRingsMaterials: cart
+            .filter((item) => item.type === "DiamondRings")
+            .flatMap((item) => Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID]) || [],
+          DiamondRingSizes: cart
+            .filter((item) => item.type === "DiamondRings")
             .flatMap((item) => Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID]) || [],
         },
       };
@@ -1208,7 +1040,7 @@ const OrderForm = () => {
                           )}
                           {item.type === "Bridal" && (
                             <div className="bridal-details">
-                            <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
                                 Bridal
                               </Typography>
                               <Typography className="product-title" fontWeight={"bold"}>
@@ -1227,7 +1059,7 @@ const OrderForm = () => {
                           )}
                           {item.type === "DiamondTimepieces" && (
                             <div className="timepieces-details">
-                            <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
                                 Diamond Timepieces
                               </Typography>
                               <Typography className="product-title" fontWeight={"bold"}>
@@ -1349,9 +1181,11 @@ const OrderForm = () => {
                         key={voucher.VoucherID}
                         value={voucher.VoucherID}
                       >
-                        <Typography style={{fontWeight: "bold",
-                fontSize: "1.2em",
-                color: "#3393FF",}}>
+                        <Typography style={{
+                          fontWeight: "bold",
+                          fontSize: "1.2em",
+                          color: "#3393FF",
+                        }}>
                           {`${voucher.VoucherName} - ${voucher.Discount}% Off`}
                         </Typography>
                       </MenuItem>
@@ -1403,9 +1237,11 @@ const OrderForm = () => {
                 <Typography
                   variant="body1"
                   mb={1}
-                  style={{ fontWeight: "bold",
-                fontSize: "1.2em",
-                color: "#3393FF", }}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "1.2em",
+                    color: "#3393FF",
+                  }}
                 >
                   Discount: -${discountedPrice}
                 </Typography>
