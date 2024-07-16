@@ -215,7 +215,7 @@ useEffect(() => {
       }
     };
     fetchRingSizeDetails();
-  }, []); 
+  }, []);
 
 
   const handleFeedbackSubmit = async (e) => {
@@ -314,61 +314,27 @@ useEffect(() => {
     setQuantity(event.target.value);
   };
 
-  // const handleAddToCart = () => {
-  //   const alreadyInCart = cartItems.find(
-  //     (item) => item.id === bridal.BridalID && item.type === "Bridal"
-  //   );
-
-  //   if (!alreadyInCart) {
-  //     // Lấy MaterialID từ database
-  //     const selectedMaterial = materialOptions.find(
-  //       (option) => option.MaterialName === material
-  //     );
-  //     const materialID = selectedMaterial ? selectedMaterial.MaterialID : null;
-
-  //     // Lấy RingSizeID từ database
-  //     const selectedRingSize = ringSizeOptions.find(
-  //       (option) => option.RingSize === ringSize
-  //     );
-  //     const ringSizeID = selectedRingSize ? selectedRingSize.RingSizeID : null;
-
-  //     const itemToAdd = {
-  //       id: bridal.BridalID,
-  //       name: bridal.NameBridal,
-  //       image: bridal.ImageBridal,
-  //       price: bridal.Price,
-  //       quantity: 1,
-  //       type: "Bridal",
-  //       material: material,
-  //       ringSize: ringSize,
-  //       materialID: materialID, // Thêm MaterialID vào itemToAdd
-  //       ringSizeID: ringSizeID, // Thêm RingSizeID vào itemToAdd
-  //       category: bridal.Category,
-  //     };
-
-  //     addToCart(itemToAdd);
-  //     setOpen(true);
-  //   } else {
-  //     setWarningOpen(true);
-  //   }
-  // };
+ 
 
   const handleAddToCart = () => {
     const alreadyInCart = cartItems.find(
       (item) => item.id === bridal.BridalID && item.type === "Bridal"
     );
-
+  
     if (!alreadyInCart) {
+      // Find selected material and its ID
       const selectedMaterial = materialOptions.find(
         (option) => option.MaterialName === material
       );
       const materialID = selectedMaterial ? selectedMaterial.MaterialID : null;
-
+  
+      // Find selected ring size and its ID
       const selectedRingSize = ringSizeOptions.find(
         (option) => option.RingSize === ringSize
       );
       const ringSizeID = selectedRingSize ? selectedRingSize.RingSizeID : null;
-
+  
+      // Create item to add to cart
       const itemToAdd = {
         id: bridal.BridalID,
         name: bridal.NameBridal,
@@ -378,17 +344,21 @@ useEffect(() => {
         type: "Bridal",
         material: material,
         ringSize: ringSize,
-        materialID: materialID,
-        ringSizeID: ringSizeID,
+        BridalsMaterialsID: materialID, // Ensure unique name
+        BridalsSizesID: ringSizeID, // Ensure unique name
         category: bridal.Category,
       };
-
+  
+      // Add item to cart
       addToCart(itemToAdd);
       setOpen(true);
     } else {
+      // Show warning if item is already in cart
       setWarningOpen(true);
     }
   };
+  
+  
   
   const handleCancel = () => {
     setOpen(false);
@@ -494,40 +464,42 @@ useEffect(() => {
 
                   <div>
                   <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
-                      <InputLabel id="material-label">Material</InputLabel>
-                      <Select
-                        labelId="material-label"
-                        value={material}
-                        onChange={(e) => setMaterial(e.target.value)}
-                      >
-                        {materialOptions.map((materialOption) => (
-                          <MenuItem
-                            key={materialOption.MaterialID}
-                            value={materialOption.MaterialName}
-                          >
-                            {materialOption.MaterialName}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+  <InputLabel id="material-label">Material</InputLabel>
+  <Select
+    labelId="material-label"
+    value={material}
+    onChange={(e) => setMaterial(e.target.value)}
+  >
+    {materialOptions.map((materialOption) => (
+      <MenuItem
+        key={materialOption.MaterialID}
+        value={materialOption.MaterialName}
+      >
+        {materialOption.MaterialName}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 
-                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
-                      <InputLabel id="bridal-label">Ring Sizes:</InputLabel>
-                      <Select
-                        labelId="bridal-label"
-                        value={ringSize}
-                        onChange={(e) => setSelectedSize(e.target.value)}
-                      >
-                        {ringSizeOptions.map((ringSizeOption) => (
-                          <MenuItem
-                            key={ringSizeOption.RingSizeID}
-                            value={ringSizeOption.RingSize}
-                          >
-                            {ringSizeOption.RingSize}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+<FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+  <InputLabel id="ring-size-label">Ring Size</InputLabel>
+  <Select
+    labelId="ring-size-label"
+    value={ringSize}
+    onChange={(e) => setSelectedSize(e.target.value)}
+  >
+    {ringSizeOptions.map((ringSizeOption) => (
+      <MenuItem
+        key={ringSizeOption.RingSizeID}
+        value={ringSizeOption.RingSize}
+      >
+        {ringSizeOption.RingSize}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
+
 
                   </div>
 

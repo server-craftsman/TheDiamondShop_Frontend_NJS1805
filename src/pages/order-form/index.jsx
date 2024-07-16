@@ -62,13 +62,13 @@ const OrderForm = () => {
     // paymentMethod: "",
 
     deliveryAddress: '',
-    AttachedAccessories: '',
+
     shippingMethod: "Express",
     paymentMethod: '',
-    DiamondRingsMaterials: [],
-    DiamondRingSizes: [],
-    BridalsSizes: [],
-    BridalsMaterials: [],
+    // DiamondRingsMaterials: [],
+    // DiamondRingSizes: [],
+    // BridalsSizes: [],
+    // BridalsMaterials: [],
     firstName: '',
     lastName: '',
     phoneNumber: '',
@@ -186,11 +186,9 @@ const OrderForm = () => {
           deliveryAddress: userData.Address,
           shippingMethod: "Express",
           paymentMethod: "",
-          AttachedAccessories: "",
-          DiamondRingsMaterials: [],
-          DiamondRingSizes: [],
-          BridalsSizes: [],
-          BridalsMaterials: [],
+
+
+
 
 
           // deliveryAddress: '',
@@ -244,6 +242,179 @@ const OrderForm = () => {
     }
   };
 
+
+  //   const handleConfirmOrder = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const token = localStorage.getItem("accessToken");
+  //       if (!token) {
+  //         throw new Error("User token not found. Please log in again.");
+  //       }
+
+  //       // Prepare order items based on item type
+  //       const orderItems = cart.map((item, index) => {
+  //         const orderItem = {
+  //           Quantity: item.quantity,
+  //           Price: item.price,
+  //           key: index, // Add a unique key prop
+  //         };
+
+  //         if (item.type === "Diamond") {
+  //           orderItem.DiamondID = item.id;
+  //           orderItem.DiamondName = item.name;
+  //           orderItem.DiamondColor = item.color;
+  //           orderItem.DiamondClarity = item.clarity;
+  //           orderItem.DiamondCarat = item.caratWeight;
+  //           orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
+  //           orderItem.DiamondOrigin = item.diamondOrigin;
+  //         } else if (item.type === "DiamondRings") {
+  //           orderItem.RingDetails = ring; // Assuming ring details are passed separately
+  //           orderItem.DiamondRingsID = item.id;
+  //           orderItem.RingSize = item.ringSize;
+  //           orderItem.Material = item.material;
+  //           orderItem.NameRings = item.name;
+  //         } else if (item.type === "Bridal") {
+  //           orderItem.BridalDetails = bridal;
+  //           orderItem.BridalID = item.id; // Use item.id directly for BridalID
+  //           orderItem.NameBridal = item.name;
+  //           orderItem.BridalQuantity = item.quantity;
+  //           orderItem.Category = item.category; // Assuming category is available
+  //           orderItem.MaterialID = item.BridalsMaterialsID; // Use BridalsMaterialsID
+  //           orderItem.RingSizeID = item.BridalsSizesID; // Use BridalsSizesID
+  //         } else if (item.type === "DiamondTimepieces") {
+  //           orderItem.TimepiecesDetails = timepieces;
+  //           orderItem.DiamondTimepiecesID = item.id;
+  //           orderItem.NameTimepieces = item.name;
+  //           orderItem.CrystalType = item.crystalType;
+  //           orderItem.CaseSize = item.caseSize;
+  //           orderItem.timepiecesStyle = item.timepiecesStyle;
+  //           orderItem.TimepiecesQuantity = item.quantity;
+  //         }
+
+  //         return orderItem;
+  //       });
+
+  //       const quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+  //       const totalPrice = cart.reduce(
+  //         (total, item) => total + item.price * item.quantity,
+  //         0
+  //       );
+
+  //       // Determine ProductType based on cart contents, default to "Diamond"
+  //       let productType = "Diamond";
+
+  //       // Extract unique Bridal IDs
+  //       // const uniqueBridalIDs = [...new Set(
+  //       //   cart
+  //       //     .filter((item) => item.type === "Bridal")
+  //       //     .map((item) => item.id)
+  //       // )];
+
+
+  // // Extract unique Bridal IDs
+  // const uniqueBridalIDs = [...new Set(
+  //   cart
+  //     .filter((item) => item.type === "Bridal")
+  //     .map((item) => item.id)
+  // )];
+
+  // // Ensure unique BridalIDs in OrderItems
+  // orderItems.forEach(orderItem => {
+  //   if (orderItem.BridalID && Array.isArray(orderItem.BridalID)) {
+  //     orderItem.BridalID = [...new Set(orderItem.BridalID)];
+  //   }
+  // });
+
+
+
+
+
+  //       // Construct order data object
+  //       const orderDataPayload = {
+  //         firstName: orderData.firstName,
+  //         lastName: orderData.lastName,
+  //         phoneNumber: orderData.phoneNumber,
+  //         address: orderData.address,
+  //         deliveryAddress: orderData.deliveryAddress,
+  //         shippingMethod: orderData.shippingMethod,
+  //         paymentMethod: orderData.paymentMethod,
+  //         AttachedAccessories: orderData.AttachedAccessories,
+  //       };
+
+  //       const orderPayload = {
+  //         orderData: {
+  //           ...orderDataPayload,
+  //           DiamondID: cart
+  //             .filter((item) => item.type === "Diamond")
+  //             .map((item) => item.id),
+  //           DiamondRingsID: cart
+  //             .filter((item) => item.type === "DiamondRings")
+  //             .map((item) => item.id),
+  //           // BridalID: uniqueBridalIDs.length > 0 ? uniqueBridalIDs[0] : null, // Take the first unique Bridal ID
+  //           // BridalID: uniqueBridalIDs.length > 0 ? uniqueBridalIDs[0] : [],
+  //           BridalID: cart
+  //             .filter((item) => item.type === "Bridal")
+  //             .map((item) => item.id),
+
+  //           DiamondTimepiecesID: cart
+  //             .filter((item) => item.type === "DiamondTimepieces")
+  //             .map((item) => item.id),
+  //           ProductType: productType,
+  //           Quantity: quantity,
+  //           TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
+  //           VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
+  //           Shipping: orderData.shippingMethod,
+  //           PaymentMethod: orderData.paymentMethod,
+  //           OrderItems: orderItems,
+  //           DeliveryAddress: orderDataPayload.deliveryAddress,
+  //           FirstName: orderData.firstName,
+  //           LastName: orderData.lastName,
+  //           PhoneNumber: orderData.phoneNumber,
+  //           AttachedAccessories: orderData.AttachedAccessories,
+  //         },
+  //       };
+
+  //       // Check if any required fields are missing
+  //       if (
+  //         !orderPayload.orderData.firstName ||
+  //         !orderPayload.orderData.lastName ||
+  //         !orderPayload.orderData.phoneNumber ||
+  //         !orderPayload.orderData.deliveryAddress ||
+  //         !orderPayload.orderData.shippingMethod ||
+  //         !orderPayload.orderData.paymentMethod ||
+  //         !orderPayload.orderData.AttachedAccessories
+  //       ) {
+  //         throw new Error("Please fill out all required fields.");
+  //       }
+
+  //       const response = await axios.post(
+  //         "http://localhost:8090/orders/create",
+  //         orderPayload,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+
+  //       console.log("Order created successfully:", response.data);
+  //       setSuccess(true);
+  //       setOrderSubmitted(true);
+  //       setIsModalOpen(true);
+  //     } catch (error) {
+  //       console.error("Error creating order:", error);
+  //       setError("Failed to create order. Please try again.");
+  //       setErrorDialogOpen(true); // Open error dialog
+  //       // Log Axios error response for debugging
+  //       if (error.response) {
+  //         console.log("Error details:", error.response);
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+
   const handleConfirmOrder = async () => {
     setLoading(true);
     try {
@@ -275,11 +446,16 @@ const OrderForm = () => {
           orderItem.Material = item.material;
           orderItem.NameRings = item.name;
         } else if (item.type === "Bridal") {
+          // Ensure BridalID, Material, RingSizeRang are arrays
+          const uniqueBridalIDs = Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id];
+          const materials = Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID];
+          const ringSizes = Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID];
+
           orderItem.BridalDetails = bridal;
-          orderItem.BridalID = item.id;
+          orderItem.BridalID = uniqueBridalIDs;
           orderItem.NameBridal = item.name;
-          orderItem.Material = item.material;
-          orderItem.RingSizeRang = item.ringSize;
+          orderItem.Material = materials;
+          orderItem.RingSizeRang = ringSizes;
           orderItem.BridalQuantity = item.quantity;
           orderItem.Category = item.Category;
         } else if (item.type === "DiamondTimepieces") {
@@ -313,25 +489,29 @@ const OrderForm = () => {
         deliveryAddress: orderData.deliveryAddress,
         shippingMethod: orderData.shippingMethod,
         paymentMethod: orderData.paymentMethod,
-        AttachedAccessories: orderData.AttachedAccessories,
-        //after to do
-        DiamondRingsMaterials: orderData.DiamondRingsMaterials,
-        DiamondRingSizes: orderData.DiamondRingSizes,
-        BridalsSizes: orderData.BridalsSizes,
-        BridalsMaterials: orderData.BridalsMaterials,
+
+
       };
 
       const orderPayload = {
         orderData: {
           ...orderDataPayload,
           DiamondID:
-            cart.filter((item) => item.type === "Diamond").map((item) => item.id) || [],
+            cart
+              .filter((item) => item.type === "Diamond")
+              .map((item) => item.id) || [],
           DiamondRingsID:
-            cart.filter((item) => item.type === "DiamondRings").map((item) => item.id) || [],
+            cart
+              .filter((item) => item.type === "DiamondRings")
+              .map((item) => item.id) || [],
           BridalID:
-            cart.filter((item) => item.type === "Bridal").map((item) => item.id) || [],
+            cart
+              .filter((item) => item.type === "Bridal")
+              .flatMap((item) => Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id]) || [],
           DiamondTimepiecesID:
-            cart.filter((item) => item.type === "DiamondTimepieces").map((item) => item.id) || [],
+            cart
+              .filter((item) => item.type === "DiamondTimepieces")
+              .map((item) => item.id) || [],
           ProductType: productType,
           Quantity: quantity,
           TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
@@ -340,30 +520,15 @@ const OrderForm = () => {
           PaymentMethod: orderData.paymentMethod,
           OrderItems: orderItems,
           DeliveryAddress: orderDataPayload.deliveryAddress,
-          firstName: orderData.firstName,
-          lastName: orderData.lastName,
-          phoneNumber: orderData.phoneNumber,
-
-          AttachedAccessories: orderData.AttachedAccessories,
-          //after to do
-          DiamondRingsMaterials: orderData.DiamondRingsMaterials,
-          DiamondRingSizes: orderData.DiamondRingSizes,
-          BridalsSizes: orderData.BridalsSizes,
-          BridalsMaterials: orderData.BridalsMaterials,
-
-          // firstName: orderData.firstName,
-          // lastName: orderData.lastName,
-          // phoneNumber: orderData.phoneNumber,
-          // address: orderData.address,
-          // deliveryAddress: orderData.deliveryAddress,
-          // shippingMethod: orderData.shippingMethod,
-          // paymentMethod: orderData.paymentMethod,
-          // AttachedAccessories: orderData.AttachedAccessories,
-          // //after to do
-          // DiamondRingsMaterials: orderData.DiamondRingsMaterials,
-          // DiamondRingSizes: orderData.DiamondRingSizes,
-          // BridalsSizes: orderData.BridalsSizes,
-          // BridalsMaterials: orderData.BridalsMaterials,
+          FirstName: orderDataPayload.firstName,
+          LastName: orderDataPayload.lastName,
+          PhoneNumber: orderDataPayload.phoneNumber,
+          BridalsSizes: cart
+            .filter((item) => item.type === "Bridal")
+            .flatMap((item) => Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID]) || [],
+          BridalsMaterials: cart
+            .filter((item) => item.type === "Bridal")
+            .flatMap((item) => Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID]) || [],
         },
       };
 
@@ -374,12 +539,7 @@ const OrderForm = () => {
         !orderPayload.orderData.phoneNumber ||
         !orderPayload.orderData.deliveryAddress ||
         !orderPayload.orderData.shippingMethod ||
-        !orderPayload.orderData.paymentMethod ||
-        !orderPayload.orderData.AttachedAccessories ||
-        !orderPayload.orderData.DiamondRingsMaterials ||
-        !orderPayload.orderData.DiamondRingSizes ||
-        !orderPayload.orderData.BridalsSizes ||
-        !orderPayload.orderData.BridalsMaterials
+        !orderPayload.orderData.paymentMethod
 
       ) {
         throw new Error("Please fill out all required fields.");
@@ -411,7 +571,6 @@ const OrderForm = () => {
       setLoading(false);
     }
   };
-
 
   const handlePaymentMethodChange = (event) => {
     const selectedPaymentMethod = event.target.value;
@@ -506,15 +665,32 @@ const OrderForm = () => {
                     id="FirstName"
                     name={orderData.FirstName}
                     value={orderData.firstName}
-                    // onChange={(e) =>
-                    //   handleInputChange("firstName", e.target.value)
-                    // }
-                    onChange={handleInputChange}
+                    onChange={(e) =>
+                      handleInputChange("firstName", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
@@ -527,15 +703,32 @@ const OrderForm = () => {
                     id="LastName"
                     name={orderData.LastName}
                     value={orderData.lastName}
-                    // onChange={(e) =>
-                    //   handleInputChange("lastName", e.target.value)
-                    // }
-                    onChange={handleInputChange}
+                    onChange={(e) =>
+                      handleInputChange("lastName", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
@@ -550,15 +743,32 @@ const OrderForm = () => {
                     type="tel"
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     value={orderData.phoneNumber}
-                    // onChange={(e) =>
-                    //   handleInputChange("phoneNumber", e.target.value)
-                    // }
-                    onChange={handleInputChange}
+                    onChange={(e) =>
+                      handleInputChange("phoneNumber", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
@@ -572,29 +782,44 @@ const OrderForm = () => {
                   fullWidth
                   value={orderData.deliveryAddress}
                   onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="AttachedAccessories"
-                  label="Attached Accessories"
-                  fullWidth
-                  value={orderData.AttachedAccessories}
-                  onChange={handleInputChange}
+                  InputProps={{
+                    sx: {
+                      color: "#2391FF",
+                      background: "#f9f9f9",
+                      borderRadius: 8,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                    },
+                  }}
+                  InputLabelProps={{
+                    sx: {
+                      color: "#FF1471",
+                      '&.Mui-focused': {
+                        color: "#FF1471",
+                      },
+                    },
+                  }}
                 />
               </Grid>
 
               <Card
                 sx={{ minWidth: 800 }}
-                style={{ marginLeft: "30px", marginTop: "20px" }}
+                style={{ marginLeft: "25px", marginTop: "20px" }}
               >
                 <CardContent>
-                  <Typography variant="h6" component="div" fontWeight="bold">
+                  <Typography variant="h6" component="div" fontWeight="bold" color={"#FF3E14"}>
                     <FaMapMarkerAlt /> {orderData.firstName}{" "}
                     {orderData.lastName} - {orderData.phoneNumber}
                   </Typography>
 
-                  <Typography variant="body1" marginTop="5px">
+                  <Typography variant="body1" marginTop="5px" color={"#FF8A23"}>
                     {orderData.deliveryAddress}
                   </Typography>
                 </CardContent>
@@ -631,7 +856,7 @@ const OrderForm = () => {
                             alt="Standard"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#333">
+                          <Typography color="#FF8A23" fontWeight={"bolder"}>
                             Standard Shipping($5)
                           </Typography>
                         </>
@@ -647,7 +872,7 @@ const OrderForm = () => {
                             alt="Express"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#333">
+                          <Typography color="#FF8A23" fontWeight={"bolder"}>
                             Express Shipping($10)
                           </Typography>
                         </>
@@ -693,7 +918,12 @@ const OrderForm = () => {
 
               <Grid item xs={12} md={6}>
                 <FormControl component="fieldset">
-                  <Typography component="legend">Payment Method</Typography>
+                  <Typography component="legend" style={{
+                    marginBottom: "1em",
+                    color: "#077BFF",
+                    fontStyle: "italic",
+                    fontWeight: "bold",
+                  }}>Payment Method</Typography>
                   <RadioGroup
                     aria-label="paymentMethod"
                     name="paymentMethod"
@@ -704,23 +934,25 @@ const OrderForm = () => {
                       value="Cash on Delivery"
                       control={<Radio />}
                       label="Cash on Delivery"
+                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
                     />
                     <FormControlLabel
                       value="PayPal"
                       control={<Radio />}
                       label="PayPal"
+                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
                     />
                   </RadioGroup>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Typography variant="h6">Total Price: ${totalPrice}</Typography>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
           <Grid container spacing={3} mt={3} marginLeft={5} marginTop={7}>
             <Grid item>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="primary"
                 style={{
@@ -739,7 +971,7 @@ const OrderForm = () => {
                 >
                   Cart
                 </Link>
-              </Button>
+              </Button> */}
             </Grid>
             <Grid item>
               <Button
@@ -753,6 +985,8 @@ const OrderForm = () => {
                   fontSize: "1.5em",
                   padding: "10px 20px",
                   boxShadow: "0px 0px 15px 5px rgba(0,0,0,0.2)",
+                  margin: "0px 50px 30px 0px",
+                  backgroundColor: "#FF1471"
                 }}
               >
                 {loading ? "Placing Order..." : "Place Order"}
@@ -883,6 +1117,7 @@ const OrderForm = () => {
                       fontWeight: "bolder",
                       fontSize: "20px",
                       paddingLeft: "180px",
+                      color: "#FF1471"
                     }}
                   >
                     Product
@@ -893,6 +1128,7 @@ const OrderForm = () => {
                       fontWeight: "bolder",
                       fontSize: "20px",
                       paddingRight: "40px",
+                      color: "#FF1471"
                     }}
                   >
                     Quantity
@@ -903,6 +1139,7 @@ const OrderForm = () => {
                       fontWeight: "bolder",
                       fontSize: "20px",
                       marginRight: "200px",
+                      color: "#FF1471"
                     }}
                   >
                     Origin Price
@@ -928,7 +1165,7 @@ const OrderForm = () => {
                           />
                           {item.type === "Diamond" && (
                             <div className="diamond-details">
-                              <Typography className="product-title">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
                                 Diamond
                               </Typography>
                               <div className="product-detail">
@@ -952,23 +1189,29 @@ const OrderForm = () => {
                           )}
                           {item.type === "DiamondRings" && (
                             <div className="ring-details">
-                              <Typography className="product-title">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Diamond Rings
+                              </Typography>
+                              <Typography className="product-title" color={"#333"} fontWeight={"bold"}>
                                 {item.name}
                               </Typography>
-                              <div className="product-detail">
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
                                 <strong>Category:</strong> {item.category}
                               </div>
-                              <div className="product-detail">
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
                                 <strong>Material:</strong> {item.material}
                               </div>
-                              <div className="product-detail">
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
                                 <strong>Size:</strong> {item.ringSize}
                               </div>
                             </div>
                           )}
                           {item.type === "Bridal" && (
                             <div className="bridal-details">
-                              <Typography className="product-title">
+                            <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Bridal
+                              </Typography>
+                              <Typography className="product-title" fontWeight={"bold"}>
                                 {item.name}
                               </Typography>
                               <div className="product-detail">
@@ -984,7 +1227,10 @@ const OrderForm = () => {
                           )}
                           {item.type === "DiamondTimepieces" && (
                             <div className="timepieces-details">
-                              <Typography className="product-title">
+                            <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Diamond Timepieces
+                              </Typography>
+                              <Typography className="product-title" fontWeight={"bold"}>
                                 {item.name}
                               </Typography>
                               <div className="product-detail">
@@ -1042,15 +1288,43 @@ const OrderForm = () => {
                 Eligible Vouchers
               </Typography>
               <div>
-                <TextField
+                {/* <TextField
                   label="Enter Voucher Name"
                   value={enteredVoucherName}
                   onChange={handleVoucherNameChange}
                   fullWidth
                   margin="normal"
-                />
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Select Voucher</InputLabel>
+                /> */}
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      color: "#2391FF",
+                      background: "#f9f9f9",
+                      borderRadius: 8,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                    },
+                  }}
+                >
+                  <InputLabel
+                    sx={{
+                      color: "#FF1471",
+                      '&.Mui-focused': {
+                        color: "#FF1471",
+                      },
+                    }}
+                  >
+                    Select Voucher
+                  </InputLabel>
                   <Select
                     value={selectedVoucher ? selectedVoucher.VoucherID : ""}
                     onChange={(e) => {
@@ -1060,22 +1334,35 @@ const OrderForm = () => {
                       );
                       setSelectedVoucher(voucher || null);
                     }}
+                    label="Select Voucher"
+                    sx={{
+                      '& .MuiSelect-outlined': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiSelect-outlined': {
+                        borderColor: "#FF1471",
+                      },
+                    }}
                   >
                     {handleFilterVouchers().map((voucher) => (
                       <MenuItem
                         key={voucher.VoucherID}
                         value={voucher.VoucherID}
                       >
-                        <Typography>
+                        <Typography style={{fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF",}}>
                           {`${voucher.VoucherName} - ${voucher.Discount}% Off`}
                         </Typography>
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
+
                 <Button
                   variant="contained"
                   color="primary"
+                  style={{ backgroundColor: "#FF1471", color: "#FFFFFF" }}
                   onClick={handleApplyVoucher}
                   disabled={!selectedVoucher}
                 >
@@ -1089,26 +1376,36 @@ const OrderForm = () => {
                 component="h2"
                 mb={2}
                 style={{
-                  color: "#757575",
                   fontWeight: "bold",
                   fontSize: "2em",
+                  color: "#3393FF",
                 }}
               >
                 Total Price
               </Typography>
               <hr />
               <br />
-              <Typography variant="body1" mb={1} style={{ fontSize: "1.2em" }}>
+              <Typography variant="body1" mb={1} style={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF",
+              }}>
                 Initial Price: ${initialTotalPrice.toFixed(2)}
               </Typography>
-              <Typography variant="body1" mb={1} style={{ fontSize: "1.2em" }}>
+              <Typography variant="body1" mb={1} style={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF",
+              }}>
                 Shipping Fee: ${shippingCost}
               </Typography>
               {discountedPrice !== null && (
                 <Typography
                   variant="body1"
                   mb={1}
-                  style={{ color: "#333", fontSize: "1.2em" }}
+                  style={{ fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF", }}
                 >
                   Discount: -${discountedPrice}
                 </Typography>
