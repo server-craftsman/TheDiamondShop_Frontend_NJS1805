@@ -2,11 +2,16 @@ import { useContext } from "react";
 import { AuthContext } from "../../AuthContext";
 import { UserOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./index.scss";
 
 function DeliveryHeader() {
   const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout(); // Perform logout action
+    navigate("/login"); // Navigate to login page
+  };
   return (
     <div>
       <header className="delivery__header">
@@ -30,8 +35,9 @@ function DeliveryHeader() {
                 </Button>
               </li>
               <li>
-                <Button type="primary" onClick={logout}>
-                  <Link to="/login">Logout</Link>
+                <Button type="primary" onClick={handleLogout}>
+                  {/* <Link to="/login">Logout</Link> */}
+                  Logout
                 </Button>
               </li>
             </ul>
