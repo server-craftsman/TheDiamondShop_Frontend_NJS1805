@@ -72,7 +72,9 @@ import DeliveryPage from "./delivery-page/delivery-shipping";
 import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
-
+import DeliveryProfile from "./delivery-page/delivery-profile/view-profile";
+import EditDeliveryProfile from "./delivery-page/delivery-profile/edit-profile";
+//==================================//
 import EditProfile from "./pages/userProfile-page/editProfile";
 import HistoryOrderDetails from "./pages/historyOrder-page/details";
 import BridalDetail from "./pages/bridal-page/details";
@@ -86,6 +88,8 @@ import FeedbackForm from "./pages/feedback-page/createFeedback";
 import PriceDiamond from "./pages/priceDiamond-page";
 import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cus-view-warrant-byreportno";
 import MapAdmin from "./admin-pages/map-page";
+
+
 
 function App() {
   const router = createBrowserRouter([
@@ -365,6 +369,14 @@ function App() {
         {
           path: "/delivery-confirm",
           element: <DeliveryConfirm />,
+        },
+        {
+          path: "/delivery-profile-page",
+          element: <DeliveryProfile />,
+        },
+        {
+          path: "/deliveryProfile-edit",
+          element: <EditDeliveryProfile />,
         },
       ],
     },

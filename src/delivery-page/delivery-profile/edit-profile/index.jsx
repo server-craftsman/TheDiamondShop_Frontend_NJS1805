@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext"; // Adjust the path as needed
-import "./index.scss";
+// import "./index.scss";
 import axios from "axios";
 import moment from "moment";
 import {
@@ -14,10 +14,9 @@ import {
   DatePicker,
   notification,
   Select,
-  Upload,
 } from "antd";
 
-function EditProfileManager() {
+function EditDeliveryProfile() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null); // Initial state is null
@@ -91,6 +90,7 @@ function EditProfileManager() {
     const imageUrlPattern = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))/i;
     return imageUrlPattern.test(url);
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "Image") {
@@ -158,7 +158,7 @@ function EditProfileManager() {
   };
 
   const handleBack = () => {
-    navigate("/manager-page");
+    navigate("/delivery-profile-page");
   };
 
   useEffect(() => {
@@ -168,7 +168,7 @@ function EditProfileManager() {
   return (
     <div
       className="profile"
-      style={{ padding: "24px" }}
+      style={{ padding: "24px", backgroundColor: "aqua" }}
       onSubmit={handleSubmit}
     >
       <Row gutter={16}>
@@ -186,7 +186,7 @@ function EditProfileManager() {
                 src={
                   formData.Image
                     ? formData.Image
-                    : "https://img.freepik.com/premium-vector/avatar-male-manager-office-worker_805465-3.jpg"
+                    : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
                 }
               />
             }
@@ -200,7 +200,7 @@ function EditProfileManager() {
               <p>
                 "Welcome to Diamond Store <br />
                 where elegance meets brilliance <br />
-                Diamonds - Rings - Timepiesces."
+                Diamonds - Rings - Timepieces."
               </p>
             </div>
           </Card>
@@ -233,22 +233,20 @@ function EditProfileManager() {
                 </Row>
                 <Row gutter={16}>
                   <Col span={12}>
-                    <Form>
-                      <Form.Item label="Gender">
-                        <Select
-                          name="Gender"
-                          value={formData.Gender}
-                          onChange={(value) =>
-                            handleChange({ target: { name: "Gender", value } })
-                          }
-                          style={{ width: "50%" }}
-                        >
-                          <Option value="Male">Male</Option>
-                          <Option value="Female">Female</Option>
-                          <Option value="Orther">Orther</Option>
-                        </Select>
-                      </Form.Item>
-                    </Form>
+                    <Form.Item label="Gender">
+                      <Select
+                        name="Gender"
+                        value={formData.Gender}
+                        onChange={(value) =>
+                          handleChange({ target: { name: "Gender", value } })
+                        }
+                        style={{ width: "100%" }}
+                      >
+                        <Option value="Male">Male</Option>
+                        <Option value="Female">Female</Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="Birthday">
@@ -322,7 +320,7 @@ function EditProfileManager() {
                     </Form.Item>
                   </Col>
                 </Row>
-                <Row gutter={12}>
+                <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item label="Postal Code">
                       <Input
@@ -333,7 +331,6 @@ function EditProfileManager() {
                       />
                     </Form.Item>
                   </Col>
-
                   <Col span={12}>
                     <Form.Item label="Image URL">
                       <Input
@@ -375,4 +372,4 @@ function EditProfileManager() {
   );
 }
 
-export default EditProfileManager;
+export default EditDeliveryProfile;

@@ -30,9 +30,9 @@ function DeliveryHeader() {
             <UserOutlined />
             <ul className="dropdown">
               <li>
-                <Button type="primary">
-                  <Link to="/userProfile-page">Profile</Link>
-                </Button>
+                <Link to="/delivery-profile-page">
+                  <Button type="primary">Profile</Button>
+                </Link>
               </li>
               <li>
                 <Button type="primary" onClick={handleLogout}>
