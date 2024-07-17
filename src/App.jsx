@@ -88,6 +88,8 @@ import FeedbackForm from "./pages/feedback-page/createFeedback";
 import PriceDiamond from "./pages/priceDiamond-page";
 import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cus-view-warrant-byreportno";
 import MapAdmin from "./admin-pages/map-page";
+import TakeWarranty from "./delivery-page/take-warranty";
+import ReturnWarranty from "./delivery-page/return-warranty";
 
 
 
@@ -377,6 +379,14 @@ function App() {
         {
           path: "/deliveryProfile-edit",
           element: <EditDeliveryProfile />,
+        },
+        {
+          path: "/take-item-warranty",
+          element: <TakeWarranty />,
+        },
+        {
+          path: "/return-item-warranty",
+          element: <ReturnWarranty />,
         },
       ],
     },

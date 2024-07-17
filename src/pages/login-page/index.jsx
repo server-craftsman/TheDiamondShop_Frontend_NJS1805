@@ -40,18 +40,22 @@ function LoginForm() {
       console.log("Login response:", response);
 
       if (response.data.token) {
-        const { token, roleName, message, FirstName, LastName, PhoneNumber } = response.data;
+        const { token, roleName, message, FirstName, LastName, PhoneNumber } =
+          response.data;
         setMessage(message);
 
         // Store token in localStorage
-        localStorage.setItem('accessToken', token);
+        localStorage.setItem("accessToken", token);
 
         // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify({
-          FirstName,
-          LastName,
-          PhoneNumber
-        }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            FirstName,
+            LastName,
+            PhoneNumber,
+          })
+        );
 
         // Update context with user info
         login({ token, FirstName, LastName, PhoneNumber });
@@ -70,7 +74,7 @@ function LoginForm() {
             navigate("/sale-page");
             break;
           case "Delivery":
-            navigate("/delivery");
+            navigate("/delivery-profile-page");
             break;
           default:
             navigate("/");

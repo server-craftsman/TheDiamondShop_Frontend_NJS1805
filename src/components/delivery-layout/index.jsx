@@ -1,12 +1,32 @@
-import { Outlet } from "react-router-dom";
+import React from "react";
 import DeliveryHeader from "../delivery-header";
+import { Layout, theme } from "antd";
+import { Outlet } from "react-router-dom";
+
+const { Content } = Layout;
 
 function DeliveryLayout() {
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+
   return (
-    <div>
+    <Layout style={{ minHeight: "100vh" }}>
       <DeliveryHeader />
-      <Outlet/>
-    </div>
+      <Layout className="site-layout">
+        <Content
+          style={{
+            margin: "16px",
+            padding: "24px",
+            minHeight: "280px",
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Outlet />
+        </Content>
+      </Layout>
+    </Layout>
   );
 }
 
