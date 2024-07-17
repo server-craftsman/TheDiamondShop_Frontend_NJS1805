@@ -1,23 +1,15 @@
 //import React from 'react'
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Button,
-  Table,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-} from "antd";
+import { Button, Table, Form, Input, InputNumber, Modal, notification } from "antd";
 import { Link } from "react-router-dom";
 
 function ManageDiamondPage() {
-  
   const [diamonds, setDiamonds] = useState([]);
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [form] = Form.useForm();
- // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
+  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
   useEffect(() => {
     fetchData();
@@ -39,6 +31,10 @@ function ManageDiamondPage() {
       fetchData(); // Refresh the list
       setIsAddModalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Diamond added successfully!',
+      });
     } catch (error) {
       console.error("Error adding diamond:", error);
     }
@@ -100,19 +96,20 @@ function ManageDiamondPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-          <Link to={`/diamonds-detail/${record.DiamondID}`}>View Details</Link>
+        <Link to={`/diamonds-detail/${record.DiamondID}`}>View Details</Link>
       ),
     },
-    
+
     // Add other necessary columns here
   ];
 
   return (
     <>
-            <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
-              Add Diamond
-            </Button>
-            <Table dataSource={diamonds} columns={columns} rowKey="DiamondID" />
+      <h1>Diamond</h1>
+      <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
+        Add Diamond
+      </Button>
+      <Table dataSource={diamonds} columns={columns} rowKey="DiamondID" />
       <Modal
         title="Add Diamond"
         open={isAddModalVisible}
@@ -180,52 +177,110 @@ function ManageDiamondPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="polish" label="Polish"
-          rules={[{ required: true, message: "Please input the polish!" }]}>
+          <Form.Item
+            name="polish"
+            label="Polish"
+            rules={[{ required: true, message: "Please input the polish!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="symmetry" label="Symmetry"
-          rules={[{ required: true, message: "Please input the symmetry!" }]}>
+          <Form.Item
+            name="symmetry"
+            label="Symmetry"
+            rules={[{ required: true, message: "Please input the symmetry!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="tablePercentage" label="Table Percentage"
-          rules={[{ required: true, message: "Please input the table Percentage!" }]}>
+          <Form.Item
+            name="tablePercentage"
+            label="Table Percentage"
+            rules={[
+              { required: true, message: "Please input the table Percentage!" },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="depth" label="Depth"
-          rules={[{ required: true, message: "Please input the depth!" }]}>
+          <Form.Item
+            name="depth"
+            label="Depth"
+            rules={[{ required: true, message: "Please input the depth!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="measurements" label="Measurements"
-          rules={[{ required: true, message: "Please input the measurements!" }]}>
+          <Form.Item
+            name="measurements"
+            label="Measurements"
+            rules={[
+              { required: true, message: "Please input the measurements!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="giaReportNumber" label="GIA Report Number"
-          rules={[{ required: true, message: "Please input the gia Report Number!" }]}>
+          <Form.Item
+            name="giaReportNumber"
+            label="GIA Report Number"
+            rules={[
+              {
+                required: true,
+                message: "Please input the gia Report Number!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="stockNumber" label="Stock Number"
-          rules={[{ required: true, message: "Please input the stock Number!" }]}>
+          <Form.Item
+            name="stockNumber"
+            label="Stock Number"
+            rules={[
+              { required: true, message: "Please input the stock Number!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="labReportNumber" label="Lab Report Number"
-          rules={[{ required: true, message: "Please input the lab Report Number!" }]}>
+          <Form.Item
+            name="labReportNumber"
+            label="Lab Report Number"
+            rules={[
+              {
+                required: true,
+                message: "Please input the lab Report Number!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gemstone" label="Gemstone"
-          rules={[{ required: true, message: "Please input the gemstone!" }]}>
+          <Form.Item
+            name="gemstone"
+            label="Gemstone"
+            rules={[{ required: true, message: "Please input the gemstone!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gradingReport" label="Grading Report"
-          rules={[{ required: true, message: "Please input the grading Report!" }]}>
+          <Form.Item
+            name="gradingReport"
+            label="Grading Report"
+            rules={[
+              { required: true, message: "Please input the grading Report!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="descriptors" label="Descriptors"
-          rules={[{ required: true, message: "Please input the descriptors!" }]}>
+          <Form.Item
+            name="descriptors"
+            label="Descriptors"
+            rules={[
+              { required: true, message: "Please input the descriptors!" },
+            ]}
+          >
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="fluorescence" label="Fluorescence"
-          rules={[{ required: true, message: "Please input the fluorescence!" }]}>
+          <Form.Item
+            name="fluorescence"
+            label="Fluorescence"
+            rules={[
+              { required: true, message: "Please input the fluorescence!" },
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item>

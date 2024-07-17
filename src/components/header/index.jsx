@@ -217,14 +217,14 @@ const styles = {
           <ul style={styles.dropdownMenu} className="login-dropdown">
             <li>
               <Button style={styles.button}>
-                <Link className="link" to="/login" style={{ color: '#fff', textDecoration: 'none' }}>
+                <Link className="link" to="/login" style={{  textDecoration: 'none' }}>
                   Login
                 </Link>
               </Button>
             </li>
             <li>
               <Button style={styles.button}>
-                <Link className="link" to="/register-page" style={{ color: '#fff', textDecoration: 'none' }}>
+                <Link className="link" to="/register-page" style={{  textDecoration: 'none' }}>
                   Register
                 </Link>
               </Button>

@@ -10,8 +10,10 @@ function ViewWarrantyByReportNo() {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    if(user, reportNo){
     fetchWarrantyDetails();
-  }, [reportNo]);
+    }
+  }, [user, reportNo]);
 
   const fetchWarrantyDetails = async () => {
     try {
@@ -106,17 +108,20 @@ function ViewWarrantyByReportNo() {
       <div className="warranty-section">
         <h2>Warranty Details</h2>
         <Descriptions bordered>
-          <Descriptions.Item label="Warranty Description">
+          <Descriptions.Item label="Warranty Description" span={3}>
             {details.Descriptions}
+          </Descriptions.Item>
+          <Descriptions.Item label="Report No">
+            {details.ReportNo}
           </Descriptions.Item>
           <Descriptions.Item label="Warranty Date">
             {formatDate(details.Date)}
-          </Descriptions.Item>
+          </Descriptions.Item>  
           <Descriptions.Item label="Place to Buy">
             {details.PlaceToBuy}
           </Descriptions.Item>
           <Descriptions.Item label="Warranty Period">
-            {details.Period}
+            {formatDate(details.Period)}
           </Descriptions.Item>
           <Descriptions.Item label="Warranty Type">
             {details.WarrantyType}

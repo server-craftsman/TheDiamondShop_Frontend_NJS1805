@@ -11,6 +11,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
 } from "antd";
 import { Link } from "react-router-dom";
 
@@ -44,6 +45,10 @@ function ManageRingPage() {
       fetchData(); // Refresh the list
       setIsAddRingVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Diamond Ring added successfully!',
+      });
     } catch (error) {
       console.error("Error adding diamond:", error);
     }
@@ -102,6 +107,7 @@ function ManageRingPage() {
 
   return (
     <>
+    <h1>Diamond Ring</h1>
       <Button type="primary" onClick={() => setIsAddRingVisible(true)}>
         Add Ring
       </Button>

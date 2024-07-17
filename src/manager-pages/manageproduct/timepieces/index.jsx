@@ -1,21 +1,12 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Button,
-  Table,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-} from "antd";
+import { Button, Table, Form, Input, InputNumber, Modal, notification } from "antd";
 import { Link } from "react-router-dom";
+
 function ManageTimepiecesPage() {
   const [timepieces, setTimepieces] = useState([]);
-  //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isAddTimepiecesVisible, setIsAddTimepiecesVisible] = useState(false);
   const [form] = Form.useForm();
-  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
   useEffect(() => {
     fetchData();
@@ -23,22 +14,29 @@ function ManageTimepiecesPage() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8090/products/timepieces"
-      );
+      const response = await axios.get("http://localhost:8090/products/timepieces");
       setTimepieces(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   const handleAddTimepieces = async (values) => {
     try {
       await axios.post("http://localhost:8090/products/add-timepieces", values);
       fetchData(); // Refresh the list
       setIsAddTimepiecesVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Timepieces added successfully!',
+      });
     } catch (error) {
-      console.error("Error adding diamond:", error);
+      console.error("Error adding timepieces:", error);
+      notification.error({
+        message: 'Error',
+        description: 'Failed to add timepieces.',
+      });
     }
   };
 
@@ -91,11 +89,10 @@ function ManageTimepiecesPage() {
     {
       title: "Image Timepieces",
       dataIndex: "ImageTimepieces",
-      key: "TimepiecesStyle",
       render: (text, record) => (
         <img
           src={record.ImageTimepieces}
-          alt="Rings"
+          alt="Timepieces"
           style={{ width: "100px", height: "auto" }}
         />
       ),
@@ -104,20 +101,23 @@ function ManageTimepiecesPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-          <Link to={`/timepieces-details/${record.DiamondTimepiecesID}`}>View Details</Link>
+        <Link to={`/timepieces-details/${record.DiamondTimepiecesID}`}>
+          View Details
+        </Link>
       ),
     },
   ];
 
   return (
     <>
+      <h1>Timepieces</h1>
       <Button type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
         Add Timepieces
       </Button>
       <Table dataSource={timepieces} columns={columns} rowKey="DiamondID" />
 
       <Modal
-        title="Add Timepiecs"
+        title="Add Timepieces"
         open={isAddTimepiecesVisible}
         onCancel={() => setIsAddTimepiecesVisible(false)}
         footer={null}
@@ -126,128 +126,120 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="timepiecesStyle"
             label="Timepieces Style"
-            rules={[
-              { required: true, message: "Please input the Timepieces Style!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Timepieces Style!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="nameTimepieces"
             label="Name Timepieces"
-            rules={[
-              { required: true, message: "Please input the name Timepieces!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Name Timepieces!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="collection"
             label="Collection"
-            rules={[
-              { required: true, message: "Please input the collection!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Collection!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="waterResistance"
             label="Water Resistance"
-            rules={[
-              { required: true, message: "Please input water resistance!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Water Resistance!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="crystalType"
             label="Crystal Type"
-            rules={[
-              { required: true, message: "Please input the crystal type!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Crystal Type!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="braceletMaterial"
-            label="BraceletMaterial"
-            rules={[
-              {
-                required: true,
-                message: "Please input the bracelet material!",
-              },
-            ]}
+            label="Bracelet Material"
+            rules={[{ required: true, message: "Please input the Bracelet Material!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="caseSize"
-            label="CaseSize"
-            rules={[{ required: true, message: "Please input the case size!" }]}
+            label="Case Size"
+            rules={[{ required: true, message: "Please input the Case Size!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="dialColor"
-            label="DialColor"
-            rules={[
-              { required: true, message: "Please input the dial color!" },
-            ]}
+            label="Dial Color"
+            rules={[{ required: true, message: "Please input the Dial Color!" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="movement" label="Movement"
-          rules={[
-            { required: true, message: "Please input the movement!" },
-          ]}>
+          <Form.Item
+            name="movement"
+            label="Movement"
+            rules={[{ required: true, message: "Please input the Movement!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gender" label="Gender"
-          rules={[
-            { required: true, message: "Please input the gender!" },
-          ]}>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: "Please input the Gender!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="category" label="Category"
-          rules={[
-            { required: true, message: "Please input the category!" },
-          ]}>
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: "Please input the Category!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="brandName" label="Brand Name"
-          rules={[
-            { required: true, message: "Please input the brand Name!" },
-          ]}>
+          <Form.Item
+            name="brandName"
+            label="Brand Name"
+            rules={[{ required: true, message: "Please input the Brand Name!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="dialType" label="Dial Type"
-          rules={[
-            { required: true, message: "Please input the dial Type!" },
-          ]}>
+          <Form.Item
+            name="dialType"
+            label="Dial Type"
+            rules={[{ required: true, message: "Please input the Dial Type!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description"
-          rules={[
-            { required: true, message: "Please input the description!" },
-          ]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[{ required: true, message: "Please input the Description!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Price">
-          rules={[
-            { required: true, message: "Please input the price!" },
-          ]}
+          <Form.Item
+            name="price"
+            label="Price"
+            rules={[{ required: true, message: "Please input the Price!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="imageTimepieces" label="Image Timepieces"
-          rules={[
-            { required: true, message: "Please input the image Timepieces!" },
-          ]}>
+          <Form.Item
+            name="imageTimepieces"
+            label="Image Timepieces"
+            rules={[{ required: true, message: "Please input the Image Timepieces!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="imageBrand" label="Image Brand"
-          rules={[
-            { required: true, message: "Please input the image Brand!" },
-          ]}>
+          <Form.Item
+            name="imageBrand"
+            label="Image Brand"
+            rules={[{ required: true, message: "Please input the Image Brand!" }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item>
