@@ -227,10 +227,25 @@ function TimepiecePage() {
         <div className="timepiecepage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
-              <Col span={6} key={index}>
+              <Col span={6} key={index} sx={{
+                  maxWidth: '100%',
+                  width: '240px',
+                  margin: '3px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height:'520px',
+                  textAlign: "center"
+                }}>
                 <Card
                   hoverable
-                  style={{ width: 240 }}
+                  style={{
+                    width: '240px',
+                    height: '520px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
                   cover={
                     <Link to={`/timepieces-detail/${item.DiamondTimepiecesID}`}>
                       <Image

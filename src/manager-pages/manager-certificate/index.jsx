@@ -32,7 +32,7 @@ function ManageCertificate() {
     try {
       if (editingCertificate) {
         await axios.put(
-          `http://localhost:8090/certificate/update-event/${editingCertificate.GIAReportNumber}`,
+          `http://localhost:8090/certificate/update-cert/${editingCertificate.GIAReportNumber}`,
           values
         );
       } else {

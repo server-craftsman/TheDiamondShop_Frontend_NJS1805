@@ -246,10 +246,10 @@ function DiamondPage() {
         <div className="diamondpage">
           <Row gutter={16}>
             {currentPageData.map((item, index) => (
-              <Col span={6} key={index}>
+              <Col span={6} key={index} sx={{ maxWidth: '100%', width: '240px', margin: '3px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '450px', textAlign: "center" }}>
                 <Card
                   hoverable
-                  style={{ width: 240 }}
+                  style={{ width: '240px', height: '450px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
                   cover={
                     <Link to={`/diamond-detail/${item.DiamondID}`}>
                       <Image
