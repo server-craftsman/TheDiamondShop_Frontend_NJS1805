@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { SearchOutlined, CloseOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Typography } from "antd";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { useCart } from "../../CartContext";
 import { AuthContext } from "../../AuthContext";
-import { Avatar } from "@mui/material";
+import { Avatar, Box } from "@mui/material";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
@@ -68,6 +68,36 @@ function Header() {
     }
   };
 
+  // Custom styles
+const styles = {
+  navbarItem: {
+    display: 'flex',
+    listStyle: 'none',
+    gap: '20px',
+    alignItems: 'center',
+    color: '#333',
+    fontWeight: 'bold',
+    fontFamily: 'Playfair Display, serif', // Example of an elegant font
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',  
+    borderRadius: '8px',
+    zIndex: 1000,
+  },
+  avatar: {
+    width: '50px',
+    height: '50px',
+  },
+  button: {
+    margin: '10px 0',
+    backgroundColor: '#FFFFFF', // Gold color for luxury
+    color: '#000000',
+    fontWeight: 'bold',
+  },
+};
+
   return (
     <header className="header">
       <div className={`header__search ${showSearch === true ? "active" : ""}`}>
@@ -108,7 +138,7 @@ function Header() {
             <Link to="/designer-page">DESIGNERS</Link>
           </li>
           <li>
-            <Link to="/ourstore-page">OUR STORE</Link>
+            <Link to="/ourstore-page">OURSTORE</Link>
           </li>
           <li>
             <Link to="/instruct-page">INSTRUCT</Link>
@@ -126,83 +156,83 @@ function Header() {
               <AiOutlineShoppingCart />
             </Link>
           </li>
+      
           {user ? (
-            // <Dropdown overlay={userMenu} trigger={["hover"]}>
-            //   <UserOutlined style={{ fontSize: "1.5em", cursor: "pointer" }} />
-            // </Dropdown>
-
-            <li>
-              <a style={{ display: "flex", listStyle: "none", gap: "20px" }}>
-                <UserOutlined style={{ fontSize: "25px" }} />
-                <div>Welcome,
-                  <div>
-                  {/* {userProfile.LastName} */}
-                  </div>
-                </div>
-              </a>
-              <ul className="login-dropdown">
-                {userProfile && (
-                  <>
-                    <Avatar style={{ marginLeft: "20px" }}>
-                      <img src={userProfile.Image} alt="User" />
-                    </Avatar>
-                    <li style={{ marginLeft: "20px" }}>
-                      <div>
-                        {userProfile.FirstName} {userProfile.LastName}
-                      </div>
-                    </li>
-                    <li style={{ marginLeft: "20px" }}>
-                      <div>{userProfile.Email}</div>
-                    </li>
-                  </>
+        <li style={{marginLeft: "20px"}}>
+          <a style={styles.navbarItem}>
+            {userProfile?.Image && (
+              <Avatar src={userProfile.Image} alt="Avatar Account" style={styles.avatar} />
+            )}
+            <Typography variant="h6" component="span">
+              Welcome, {userProfile?.LastName || 'Guest'}
+            </Typography>
+          </a>
+          <ul style={styles.dropdownMenu} className="login-dropdown">
+            {userProfile && (
+              <div style={{display: "flex", justifyContent: "center"}}>
+                {userProfile.Image && (
+                  <img src={userProfile.Image} style={{width: "60px", height: "60px"}} />
                 )}
-                <li>
-                  <Button>
-                    <AccountCircleIcon />
-                    <Link className="link" to="/userProfile-page">
-                      Profile
-                    </Link>
-                  </Button>
+                <div>
+                <li style={{ marginLeft: '20px' }}>
+                  <Typography variant="body1" style={{fontWeight: "bold"}}>
+                    {userProfile.FirstName} {userProfile.LastName}
+                  </Typography>
                 </li>
-                <li>
-                  <Button>
-                    <DescriptionIcon />
-                    <Link className="link" to="/historyOrder-page">
-                      History Order
-                    </Link>
-                  </Button>
+                <li style={{ marginLeft: '20px', fontWeight: "bold" }}>
+                  <Typography variant="body2">{userProfile.Email}</Typography>
                 </li>
-                <li>
-                  <Button onClick={handleLogout}>
-                    <LogoutIcon />
-                    <Link className="link" to="/login">
-                      Logout
-                    </Link>
-                  </Button>
-                </li>
-              </ul>
+                </div>
+              </div>
+            )}
+            <li>
+              <Button style={styles.button}>
+                <AccountCircleIcon />
+                <Link className="link" to="/userProfile-page" style={{ color: '#000000', textDecoration: 'none' }}>
+                  Profile
+                </Link>
+              </Button>
             </li>
-          ) : (
-            <li style={{ paddingTop: "20px"}}>
-              <a>SIGN UP</a>
-              <ul className="login-dropdown">
-                <li>
-                  <Button>
-                    <Link className="link" to="/login">
-                      Login
-                    </Link>
-                  </Button>
-                </li>
-                <li>
-                  <Button>
-                    <Link className="link" to="/register-page">
-                      Register
-                    </Link>
-                  </Button>
-                </li>
-              </ul>
+            <li>
+              <Button style={styles.button}>
+                <DescriptionIcon />
+                <Link className="link" to="/historyOrder-page" style={{ color: '#000000', textDecoration: 'none' }}>
+                  History Order
+                </Link>
+              </Button>
             </li>
-          )}
+            <li style={{backgroundColor: "#2A67FF", borderRadius: "5px", textAlign: "center"}}>
+              <Button style={{backgroundColor: "#2A67FF" }} onClick={handleLogout}>
+                {/* <LogoutIcon /> */}
+                <Link className="link" to="/login" style={{ color: '#FFFFFF', textDecoration: 'none', marginLeft: "60px"}}>
+                  Logout
+                </Link>
+              </Button>
+            </li>
+          </ul>
+        </li>
+      ) : (
+        <li style={{ paddingTop: '20px' }}>
+          <a>SIGN UP</a>
+          <ul style={styles.dropdownMenu} className="login-dropdown">
+            <li>
+              <Button style={styles.button}>
+                <Link className="link" to="/login" style={{ color: '#fff', textDecoration: 'none' }}>
+                  Login
+                </Link>
+              </Button>
+            </li>
+            <li>
+              <Button style={styles.button}>
+                <Link className="link" to="/register-page" style={{ color: '#fff', textDecoration: 'none' }}>
+                  Register
+                </Link>
+              </Button>
+            </li>
+          </ul>
+        </li>
+      )}
+
         </ul>
       </nav>
     </header>

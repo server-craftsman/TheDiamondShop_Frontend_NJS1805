@@ -56,8 +56,13 @@ import { Modal } from "antd";
 
 function BridalDetail() {
   const { id } = useParams();
-  const [bridal, setBridal] = useState(null);
   const { addToCart, cartItems, setCartItems } = useCart();
+  const [bridal, setBridal] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const [warningOpen, setWarningOpen] = useState(false);
 
   const [materialDetails, setMaterialDetails] = useState([]);
@@ -70,16 +75,13 @@ function BridalDetail() {
 
   const [loadingRingSizes, setLoadingRingSizes] = useState(true);
 
-  const [quantity, setQuantity] = useState(1);
   // const [ringSize, setSelectedSize] = useState("Custom");
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [startIdx, setStartIdx] = useState(0);
   const itemsPerPage = 12;
   const [value, setValue] = useState(0);
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
 
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [feedbackBridal, setFeedbackBridal] = useState([]);
@@ -88,98 +90,46 @@ function BridalDetail() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:8090/products/bridals/${id}`)
-  //     // .then((response) => setBridal(response.data))
-  //     .then((response) => {
-  //       if (response.data) {
-  //         response.data.RingSizes = response.data.RingSizes || "Custom";
-  //       }
-  //       setBridal(response.data);
-  //     })
-  //     .catch((error) => console.error("Error fetching bridals:", error));
 
-  //   axios
-  //     .get(`http://localhost:8090/products/bridals/`)
-  //     .then((response) => setSimilarProducts(response.data))
-  //     .catch((error) =>
-  //       console.error("Error fetching similar products:", error)
-  //     );
+  // useEffect để fetch dữ liệu Bridal và Feedback
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8090/products/bridals/${id}`)
+      .then((response) => {
 
-  //   async function fetchFeedback() {
-  //     try {
-  //       if (!user || !user.token) {
-  //         console.error("User or token not available");
-  //         return;
-  //       }
+        setBridal({
+          ...response.data,
+        });
+      })
+      .catch((error) => console.error("Error fetching bridals", error));
 
-  //       const productType = "Bridal"; // Adjust based on your logic
-  //       const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
-  //       setFeedbackBridal(feedbacks);
-  //     } catch (error) {
-  //       console.error("Error fetching feedback:", error);
-  //     }
-  //   }
-
-  //   if (user) {
-  //     fetchFeedback();
-  //   }
-
-  //   axios
-  //     .get(`http://localhost:8090/products/material-details`)
-  //     .then((response) => setMaterialDetails(response.data))
-  //     .catch((error) =>
-  //       console.error("Error fetching material details:", error)
-  //     );
-
-  //   axios
-  //     .get(`http://localhost:8090/products/ring-size-details`)
-  //     .then((response) => setRingSizeDetails(response.data))
-  //     .catch((error) =>
-  //       console.error("Error fetching ring size details:", error)
-  //     );
-  // }, [id, user]);
-
-// useEffect để fetch dữ liệu Bridal và Feedback
-useEffect(() => {
-  const fetchBridal = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8090/products/bridals/${id}`
+    axios
+      .get(`http://localhost:8090/products/bridals/`)
+      .then((response) => setSimilarProducts(response.data))
+      .catch((error) =>
+        console.error("Error fetching similar products:", error)
       );
-      if (response.data) {
-        response.data.RingSizes = response.data.RingSizes || "Custom";
+
+    async function fetchFeedback() {
+      try {
+        if (!user || !user.token) {
+          console.error("User or token not available");
+          return;
+        }
+
+        const productType = "Bridal"; // Adjust based on your logic
+        const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
+        setFeedbackBridal(feedbacks);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
       }
-      setBridal(response.data);
-    } catch (error) {
-      console.error("Error fetching bridal:", error);
     }
-  };
 
-  async function fetchFeedback() {
-    try {
-      if (!user || !user.token) {
-        console.error("User or token not available");
-        return;
-      }
-
-      const productType = "Bridal"; // Adjust based on your logic
-      const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
-      setFeedbackBridal(feedbacks);
-    } catch (error) {
-      console.error("Error fetching feedback:", error);
+    if (user) {
+      fetchFeedback();
     }
-  }
 
-  if (user) {
-    fetchFeedback();
-  }
-
-  if (id) {
-    fetchBridal();
-  }
-}, [id, user]);
+  }, [id, user]);
 
   // Fetch material details
   useEffect(() => {
@@ -197,7 +147,7 @@ useEffect(() => {
       }
     };
     fetchMaterialDetails();
-  }, []); 
+  }, []);
 
   // Fetch ring size details
   useEffect(() => {
@@ -298,10 +248,6 @@ useEffect(() => {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleClickCertificate = () => {
     setOpenCertificate(true);
   };
@@ -310,30 +256,34 @@ useEffect(() => {
     setOpenCertificate(false);
   };
 
-  const handleQuantityChange = (event) => {
-    setQuantity(event.target.value);
-  };
+  // const handleQuantityChange = (event) => {
+  //   setQuantity(event.target.value);
+  // };
 
- 
+
+  // const handleMaterialChange = (event) => {
+  //   setMaterial(event.target.value);
+  // };
+
 
   const handleAddToCart = () => {
     const alreadyInCart = cartItems.find(
       (item) => item.id === bridal.BridalID && item.type === "Bridal"
     );
-  
+
     if (!alreadyInCart) {
       // Find selected material and its ID
       const selectedMaterial = materialOptions.find(
         (option) => option.MaterialName === material
       );
       const materialID = selectedMaterial ? selectedMaterial.MaterialID : null;
-  
+
       // Find selected ring size and its ID
       const selectedRingSize = ringSizeOptions.find(
         (option) => option.RingSize === ringSize
       );
       const ringSizeID = selectedRingSize ? selectedRingSize.RingSizeID : null;
-  
+
       // Create item to add to cart
       const itemToAdd = {
         id: bridal.BridalID,
@@ -348,26 +298,23 @@ useEffect(() => {
         ringSizeID: ringSizeID, // Ensure unique name
         category: bridal.Category,
       };
-  
+
       // Add item to cart
       addToCart(itemToAdd);
-      setOpen(true);
+      setOpenModal(true);
     } else {
-      // Show warning if item is already in cart
       setWarningOpen(true);
     }
-  };
-  
-  
-  
-  const handleCancel = () => {
-    setOpen(false);
   };
 
   const handleBuyNow = () => {
     handleAddToCart();
     navigate("/cart-page"); // Ensure the correct path
   };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleCombinedWithJewelry = () => {
     navigate("/diamond-page");
   };
@@ -384,13 +331,16 @@ useEffect(() => {
     setSelectedSize(size);
     handleMenuClose();
   };
+  const handleCancel = () => {
+    setOpenModal(false);
+  }
 
   const feedbackCount = feedbackBridal.length;
 
   return (
     <>
-      <Modal
-        open={open}
+       <Modal
+        open={openModal}
         // title="Title"
         onCancel={handleCancel}
         style={{
@@ -463,41 +413,41 @@ useEffect(() => {
                   </Typography>
 
                   <div>
-                  <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
-  <InputLabel id="material-label">Material</InputLabel>
-  <Select
-    labelId="material-label"
-    value={material}
-    onChange={(e) => setMaterial(e.target.value)}
-  >
-    {materialOptions.map((materialOption) => (
-      <MenuItem
-        key={materialOption.MaterialID}
-        value={materialOption.MaterialName}
-      >
-        {materialOption.MaterialName}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                      <InputLabel id="material-label">Material</InputLabel>
+                      <Select
+                        labelId="material-label"
+                        value={material}
+                        onChange={(e) => setMaterial(e.target.value)}
+                      >
+                        {materialOptions.map((materialOption) => (
+                          <MenuItem
+                            key={materialOption.MaterialID}
+                            value={materialOption.MaterialName}
+                          >
+                            {materialOption.MaterialName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
-<FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
-  <InputLabel id="ring-size-label">Ring Size</InputLabel>
-  <Select
-    labelId="ring-size-label"
-    value={ringSize}
-    onChange={(e) => setSelectedSize(e.target.value)}
-  >
-    {ringSizeOptions.map((ringSizeOption) => (
-      <MenuItem
-        key={ringSizeOption.RingSizeID}
-        value={ringSizeOption.RingSize}
-      >
-        {ringSizeOption.RingSize}
-      </MenuItem>
-    ))}
-  </Select>
-</FormControl>
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                      <InputLabel id="ring-size-label">Ring Size</InputLabel>
+                      <Select
+                        labelId="ring-size-label"
+                        value={ringSize}
+                        onChange={(e) => setSelectedSize(e.target.value)}
+                      >
+                        {ringSizeOptions.map((ringSizeOption) => (
+                          <MenuItem
+                            key={ringSizeOption.RingSizeID}
+                            value={ringSizeOption.RingSize}
+                          >
+                            {ringSizeOption.RingSize}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
 
 
 
@@ -724,7 +674,7 @@ useEffect(() => {
               </CardContent>
             </Card>
 
-            {/* <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose}>
               <DialogTitle
                 style={{
                   textAlign: "center",
@@ -763,7 +713,7 @@ useEffect(() => {
                   OK
                 </Button>
               </DialogActions>
-            </Dialog> */}
+            </Dialog>
           </Grid>
         </Grid>
         <br /> <hr />
@@ -969,12 +919,12 @@ useEffect(() => {
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1.2)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                       }
                                     />
                                     <CardContent>
@@ -1284,7 +1234,10 @@ useEffect(() => {
         </Box>
       </Container>
       <Footer />
+      {/* <Warning open={warningOpen} onClose={() => setWarningOpen(false)} /> */}
+   
       <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
+
     </>
   );
 }

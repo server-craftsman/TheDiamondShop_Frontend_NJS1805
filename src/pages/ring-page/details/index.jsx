@@ -248,34 +248,6 @@ const RingDetail = () => {
     setQuantity(event.target.value);
   };
 
-  // const handleAddToCart = () => {
-  //   if (!material || !ringSize || !quantity) {
-  //     setOpen(true);
-  //     return;
-  //   }
-
-  //   const updatedCartItems = [...cartItems];
-  //   const itemToAdd = {
-  //     id: ring.DiamondRingsID,
-  //     name: ring.NameRings,
-  //     image: ring.ImageRings,
-  //     price: ring.Price,
-  //     quantity: parseInt(quantity),
-  //     type: "DiamondRings", // Assuming this is the correct type for rings
-
-  //     material,
-  //     ringSize,
-  //     category: ring.Category,
-  //     totalPrice: ring.Price * parseInt(quantity),
-  //   };
-
-  //   updatedCartItems.push(itemToAdd);
-  //   addToCart(itemToAdd);
-
-  //   setCartItems(updatedCartItems);
-  // };
-
-
   const handleAddToCart = () => {
     const alreadyInCart = cartItems.find(
       (item) => item.id === ring.DiamondRingsID && item.type === "DiamondRings"
@@ -361,23 +333,7 @@ const RingDetail = () => {
     handleDetailNavigation(); // Kích hoạt hàm handleDetailNavigation khi nút được nhấn
   };
 
-  const ringSizes = [
-    "5",
-    "5.25",
-    "5.5",
-    "5.75",
-    "6",
-    "6.25",
-    "6.5",
-    "6.75",
-    "7",
-    "7.25",
-    "7.5",
-    "7.75",
-    "8",
-    "8.25",
-    "8.5",
-  ];
+ 
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);

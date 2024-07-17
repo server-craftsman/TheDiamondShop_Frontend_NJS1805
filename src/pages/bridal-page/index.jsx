@@ -10,7 +10,6 @@ function BridalPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12); // Default items per page
   const [filteredData, setFilteredData] = useState([]);
-  const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceDisabled, setPriceDisabled] = useState("");
   const [materialDisabled, setMaterialDisabled] = useState("");
@@ -135,7 +134,7 @@ function BridalPage() {
   const clearFilters = () => {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
-  
+
     setPriceFilters([]);
     setGenderFilters([]);
     setMaterialFilters([]);
@@ -151,7 +150,7 @@ function BridalPage() {
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-  
+
     const filtered = dataSource.filter((item) => {
       return Object.values(item).some((value) => {
         if (typeof value === "string") {
@@ -163,36 +162,25 @@ function BridalPage() {
         return false;
       });
     });
-  
+
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when search term changes
   };
-
-  function handleAddToCart(item) {
-    // Thay vì setCartItems, sử dụng addToCart từ useCart
-    item.type = "Bridal";
-    addToCart({
-      id: item.BridalID,
-      name: item.NameBridal,
-      image: item.ImageBridal,
-      price: item.Price,
-      quantity: 1,
-      type: item.type, // Hoặc số lượng mà người dùng chọn
-    });
-  }
 
   return (
     <div>
       <div className="app">
         <div className="filter-section">
-        <h3>Search</h3>
-        <Input
+          <h3>Search</h3>
+          <Input
             placeholder="Search"
             onChange={handleSearch}
-            style={{ marginBottom: 16, 
-              width: "100%", 
-              height: "50px", 
-              fontSize: "20px"}}
+            style={{
+              marginBottom: 16,
+              width: "100%",
+              height: "50px",
+              fontSize: "20px"
+            }}
           />
           <h3>Price</h3>
           <Checkbox.Group
@@ -260,29 +248,29 @@ function BridalPage() {
             </Row>
           </Checkbox.Group>
           <hr />
-        <h3>Ring Size Range</h3>
-        <Checkbox.Group
-          onChange={(values) => handleFilters({ RingSizeRang: values })}
-          disabled={ringsizerangDisabled}
-        >
-          <Row className="row-column">
-            <Checkbox value="5.00" className="Checkbox">5.00</Checkbox>
-            <Checkbox value="5.25" className="Checkbox">5.25</Checkbox>
-            <Checkbox value="5.50" className="Checkbox">5.50</Checkbox>
-            <Checkbox value="5.75" className="Checkbox">5.75</Checkbox>
-            <Checkbox value="6.00" className="Checkbox">6.00</Checkbox>
-            <Checkbox value="6.25" className="Checkbox">6.25</Checkbox>
-            <Checkbox value="6.50" className="Checkbox">6.50</Checkbox>
-            <Checkbox value="6.75" className="Checkbox">6.75</Checkbox>
-            <Checkbox value="7.00" className="Checkbox">7.00</Checkbox>
-            <Checkbox value="7.25" className="Checkbox">7.25</Checkbox>
-            <Checkbox value="7.50" className="Checkbox">7.50</Checkbox>
-            <Checkbox value="7.75" className="Checkbox">7.75</Checkbox>
-            <Checkbox value="8.00" className="Checkbox">8.00</Checkbox>
-            <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
-            <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
-          </Row>
-        </Checkbox.Group>
+          <h3>Ring Size Range</h3>
+          <Checkbox.Group
+            onChange={(values) => handleFilters({ RingSizeRang: values })}
+            disabled={ringsizerangDisabled}
+          >
+            <Row className="row-column">
+              <Checkbox value="5.00" className="Checkbox">5.00</Checkbox>
+              <Checkbox value="5.25" className="Checkbox">5.25</Checkbox>
+              <Checkbox value="5.50" className="Checkbox">5.50</Checkbox>
+              <Checkbox value="5.75" className="Checkbox">5.75</Checkbox>
+              <Checkbox value="6.00" className="Checkbox">6.00</Checkbox>
+              <Checkbox value="6.25" className="Checkbox">6.25</Checkbox>
+              <Checkbox value="6.50" className="Checkbox">6.50</Checkbox>
+              <Checkbox value="6.75" className="Checkbox">6.75</Checkbox>
+              <Checkbox value="7.00" className="Checkbox">7.00</Checkbox>
+              <Checkbox value="7.25" className="Checkbox">7.25</Checkbox>
+              <Checkbox value="7.50" className="Checkbox">7.50</Checkbox>
+              <Checkbox value="7.75" className="Checkbox">7.75</Checkbox>
+              <Checkbox value="8.00" className="Checkbox">8.00</Checkbox>
+              <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
+              <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
+            </Row>
+          </Checkbox.Group>
           <hr />
           <button onClick={clearFilters} className="buttonfilter">
             Clear Filters
