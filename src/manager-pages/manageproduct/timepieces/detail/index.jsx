@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {  useParams } from "react-router-dom";
-import { Button, Descriptions, Input, InputNumber, Modal, Spin, Form } from "antd";
+import { useParams } from "react-router-dom";
+import {
+  Button,
+  Descriptions,
+  Input,
+  InputNumber,
+  Modal,
+  Spin,
+  Form,
+  notification,
+} from "antd";
 //import "./index.scss"
 function ViewTimepiecesDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
@@ -55,9 +64,13 @@ function ViewTimepiecesDetailPage() {
   const handleUpdateTimepieces = async (values) => {
     try {
       await axios.put("http://localhost:8090/products/edit-timepieces", values);
-      fetchBridalDetail(); // Refresh the list
+      fetchTimepiecesDetail(); // Refresh the list
       setIsEditTimepiecesVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Timepieces edited successfully!',
+      });
     } catch (error) {
       console.error("Error updating diamond:", error);
     }
@@ -139,9 +152,11 @@ function ViewTimepiecesDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button onClick={() => handleEditTimepieces(timepiecesDetail)}>Edit</Button>
+      <Button onClick={() => handleEditTimepieces(timepiecesDetail)}>
+        Edit
+      </Button>
       <Button onClick={() => window.history.back()}>Back</Button>
-    
+
       <Modal
         title="Edit Rings"
         open={isEditTimepiecesVisible}
@@ -155,11 +170,7 @@ function ViewTimepiecesDetailPage() {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={handleUpdateTimepieces}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleUpdateTimepieces} layout="vertical">
           <Form.Item
             name="timepiecesStyle"
             label="Timepieces Style"
@@ -233,68 +244,101 @@ function ViewTimepiecesDetailPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="movement" label="Movement"
-          rules={[
-            { required: true, message: "Please input the movement!" },
-          ]}>
+          <Form.Item
+            name="movement"
+            label="Movement"
+            rules={[{ required: true, message: "Please input the movement!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gender" label="Gender"
-          rules={[
-            { required: true, message: "Please input the gender!" },
-          ]}>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: "Please input the gender!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="category" label="Category"
-          rules={[
-            { required: true, message: "Please input the category!" },
-          ]}>
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: "Please input the category!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="brandName" label="Brand Name"
-          rules={[
-            { required: true, message: "Please input the brand Name!" },
-          ]}>
+          <Form.Item
+            name="brandName"
+            label="Brand Name"
+            rules={[
+              { required: true, message: "Please input the brand Name!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="dialType" label="Dial Type"
-          rules={[
-            { required: true, message: "Please input the dial Type!" },
-          ]}>
+          <Form.Item
+            name="dialType"
+            label="Dial Type"
+            rules={[{ required: true, message: "Please input the dial Type!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description"
-          rules={[
-            { required: true, message: "Please input the description!" },
-          ]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: "Please input the description!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Price"
-          rules={[
-            { required: true, message: "Please input the price!" },
-          ]}>
+          <Form.Item
+            name="price"
+            label="Price"
+            rules={[{ required: true, message: "Please input the price!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="imageTimepieces" label="Image Timepieces"
-          rules={[
-            { required: true, message: "Please input the image Timepieces!" },
-          ]}>
+          <Form.Item
+            name="imageTimepieces"
+            label="Image Timepieces"
+            rules={[
+              { required: true, message: "Please input the image Timepieces!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="imageBrand" label="Image Brand"
-          rules={[
-            { required: true, message: "Please input the image Brand!" },
-          ]}>
+          <Form.Item
+            name="imageBrand"
+            label="Image Brand"
+            rules={[
+              { required: true, message: "Please input the image Brand!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Update Timepieces
-            </Button>
+          <Form.Item
+            name="inventory"
+            label="Inventory"
+            rules={[
+              {
+                required: true,
+                message: "Please input the inventory (1 or 0)!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value === 1 || value === 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Inventory must be either 1 or 0!")
+                  );
+                },
+              },
+            ]}
+          >
+            <InputNumber style={{ width: "100%" }}/>
           </Form.Item>
         </Form>
       </Modal>
-
     </div>
   );
 }

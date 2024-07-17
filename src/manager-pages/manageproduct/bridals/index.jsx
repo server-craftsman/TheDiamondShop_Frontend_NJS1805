@@ -7,6 +7,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  notification,
 } from "antd";
 import { Link } from "react-router-dom";
 
@@ -38,6 +39,10 @@ function ManageBridalPage() {
       fetchData(); // Refresh the list
       setIsAddBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Bridals added successfully!',
+      });
     } catch (error) {
       console.error("Error adding bridals:", error);
     }

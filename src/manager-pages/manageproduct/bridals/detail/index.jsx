@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Button, Descriptions, Form, Input, InputNumber, Modal, Spin } from "antd";
+import { Button, Descriptions, Form, Input, InputNumber, Modal, notification, Spin } from "antd";
 import "./index.scss"
 function ViewBridalDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
@@ -66,6 +66,10 @@ function ViewBridalDetailPage() {
       fetchData(); // Refresh the list
       setIsEditBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
+      notification.success({
+        message: 'Success',
+        description: 'Bridals edited successfully!',
+      });
     } catch (error) {
       console.error("Error updating bridals:", error);
     }
@@ -260,6 +264,28 @@ function ViewBridalDetailPage() {
           <Form.Item name="price" label="Price"
           rules={[{ required: true, message: "Please input the price!" }]}>
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="inventory"
+            label="Inventory"
+            rules={[
+              {
+                required: true,
+                message: "Please input the inventory (1 or 0)!",
+              },
+              {
+                validator: (_, value) => {
+                  if (value === 1 || value === 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Inventory must be either 1 or 0!")
+                  );
+                },
+              },
+            ]}
+          >
+            <InputNumber style={{ width: "100%" }}/>
           </Form.Item>
         </Form>
       </Modal>
