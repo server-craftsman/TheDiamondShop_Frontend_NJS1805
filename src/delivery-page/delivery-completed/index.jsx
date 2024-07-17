@@ -60,18 +60,6 @@ function DeliveryCompleted() {
               <p>
                 <strong>Delivery Address:</strong> {order.DeliveryAddress}
               </p>
-              {/* <div className="delivery__actions">
-                <button
-                  onClick={() => updateStatus(order.OrderID, "Shipped")}
-                >
-                  Shipped
-                </button>
-                <button
-                  onClick={() => updateStatus(order.OrderID, "Completed")}
-                >
-                  Completed
-                </button>
-              </div> */}
             </li>
           ))}
         </ul>

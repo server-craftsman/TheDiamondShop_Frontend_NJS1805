@@ -39,17 +39,17 @@ function DeliveryHeader() {
         {
           key: "Completed",
           icon: <OrderedListOutlined />,
-          label: <Link to="/delivery-completed">View completed</Link>,
+          label: <Link to="/delivery-completed">Completed</Link>,
         },
         {
           key: "Shipping",
           icon: <DeliveredProcedureOutlined />,
-          label: <Link to="/delivery">View shipping</Link>,
+          label: <Link to="/delivery">Shipping</Link>,
         },
         {
           key: "Confirmation",
           icon: <FileDoneOutlined />,
-          label: <Link to="/delivery-confirm">View confirmation</Link>,
+          label: <Link to="/delivery-confirm">Confirmation</Link>,
         },
       ],
     },

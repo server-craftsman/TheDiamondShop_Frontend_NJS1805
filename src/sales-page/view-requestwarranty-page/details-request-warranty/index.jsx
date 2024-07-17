@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button, Descriptions, message, Select } from "antd";
+import { Button, Descriptions, message, Popconfirm, Select } from "antd";
 import axios from "axios";
 import { AuthContext } from "../../../AuthContext";
 import moment from "moment";
@@ -96,6 +96,47 @@ function ViewWarrantyDetails() {
     }
   };
 
+  const handleWarrantyStatusChange = async (orderId, warrantyStatus) => {
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        return;
+      }
+
+      const response = await axios.put(
+        "http://localhost:8090/warranty/update-warrantystatus",
+        {
+          orderId,
+          warrantyStatus,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        message.success("Warranty status updated successfully");
+        fetchWarrantyDetails(); // Refresh the data
+      } else {
+        message.error(
+          response.data.message || "Failed to update warranty status"
+        );
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      message.error("Failed to update warranty status");
+    }
+  };
+
+  const confirmProcessing = () => {
+    handleWarrantyStatusChange(orderId, "Processing");
+  };
+
   if (!warrantyDetails) {
     return <div>Loading...</div>;
   }
@@ -151,6 +192,11 @@ function ViewWarrantyDetails() {
         {warrantyDetails[0]?.RequestWarranty && (
           <Descriptions.Item label="Request Warranty">
             {warrantyDetails[0].RequestWarranty}
+          </Descriptions.Item>
+        )}
+        {warrantyDetails[0]?.WarrantyStatus && (
+          <Descriptions.Item label="Warranty Status">
+            {warrantyDetails[0].WarrantyStatus}
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -316,7 +362,16 @@ function ViewWarrantyDetails() {
           <Select.Option value="Refused">Refused</Select.Option>
         </Select>
       )}
-
+      {warrantyDetails[0].RequestWarranty === "Approved" && warrantyDetails[0].WarrantyStatus !== "Processing" && warrantyDetails[0].WarrantyStatus !== "Completed" && (
+        <Popconfirm
+        title="Are you sure you want to change the status to Processing?"
+        onConfirm={confirmProcessing}
+        okText="Yes"
+        cancelText="No"
+      >
+        <Button>Processing</Button>
+      </Popconfirm>
+      )}
       <Button onClick={() => window.history.back()}>Back</Button>
     </div>
   );
