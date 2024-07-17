@@ -4,10 +4,11 @@ import "./index.scss";
 import "../login-page/index";
 import logo from "../../assets/logo.png";
 
-import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 
 import axios from "axios";
 import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd";
+import moment from 'moment';
 
 const Context = React.createContext({
   name: 'Default',
@@ -15,7 +16,6 @@ const Context = React.createContext({
 
 function RegisterForm() {
   const [api, contextHolder] = notification.useNotification();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -30,10 +30,14 @@ function RegisterForm() {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (values) => {
-    const { confirmPassword, ...data } = values;
-    if (values.password !== confirmPassword) {
+    const { confirmPassword, Birthday, ...data } = values;
+    if (values.Password !== confirmPassword) {
       setMessage("Passwords do not match!");
       return;
+    }
+
+    if (Birthday) {
+      data.Birthday = moment(Birthday).format("YYYY-MM-DD");
     }
 
     try {
@@ -42,23 +46,28 @@ function RegisterForm() {
         "http://localhost:8090/auth/register",
         data
       );
-      if (response.status === 201) {
+      console.log("Response:", response); // Log the response for debugging
+      if (response.status === 200) {
         openNotification();
         setTimeout(() => {
           window.location.href = "/login";
         }, 2000);
-      } else {
-        notification.error({
-          message: 'Registration Failed',
-          description: response.data.message || 'Registration failed. Please try again.',
-        });
       }
-    } catch (error) {
+     } catch (error) {
+      //console.error("Error response:", error.response); // Log the error response for debugging
       if (error.response && error.response.data) {
-        notification.error({
-          message: 'Registration Failed',
-          description: error.response.data.message || 'Registration failed. Please try again.',
-        });
+        // Handle duplicate email error
+        if (error.response.status === 400 && error.response.data.error === 'Email already exists.') {
+          notification.error({
+            message: 'Duplicate Email',
+            description: 'This email is already registered. Please use a different email.',
+          });
+        } else {
+          notification.error({
+            message: 'Registration Failed',
+            description: error.response.data.error || 'Registration failed. Please try again.',
+          });
+        }
       } else {
         notification.error({
           message: 'Registration Failed',
@@ -66,6 +75,12 @@ function RegisterForm() {
         });
       }
     }
+  };
+
+  const disabledDate = (current) => {
+    const startYear = 1960;
+    const endYear = moment().year();
+    return current && (current.year() < startYear || current.year() > endYear);
   };
 
   return (
@@ -85,7 +100,7 @@ function RegisterForm() {
                   <Form.Item
                     className='form-item name'
                     label="First Name"
-                    name="firstName"
+                    name="FirstName"
                     rules={[{ required: true, message: 'Please input your first name!' }]}
                   >
                     <Input />
@@ -94,7 +109,7 @@ function RegisterForm() {
                   <Form.Item
                     className='name'
                     label="Last Name"
-                    name="lastName"
+                    name="LastName"
                     rules={[{ required: true, message: 'Please input your last name!' }]}
                   >
                     <Input />
@@ -105,16 +120,22 @@ function RegisterForm() {
                   <Form.Item
                     className='form-item name'
                     label="Birthday"
-                    name="birthday"
+                    name="Birthday"
                     rules={[{ required: true, message: 'Please select your birthday!' }]}
                   >
-                    <Input type='date'/>
+                    <DatePicker
+                      style={{ width: "202px", height: "37px" }}
+                      format="YYYY-MM-DD"
+                      disabledDate={disabledDate}
+                      placeholder='1960-MM-DD'
+                    />
+
                   </Form.Item>
 
                   <Form.Item
                     label="Gender"
-                    name="gender"
-                    style={{marginTop: "5px"}}
+                    name="Gender"
+                    style={{ marginTop: "5px" }}
                   >
                     <Radio.Group>
                       <Radio value="Male">Male</Radio>
@@ -125,7 +146,7 @@ function RegisterForm() {
 
                 <Form.Item
                   label="Email"
-                  name="email"
+                  name="Email"
                   rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
                 >
                   <Input />
@@ -133,7 +154,7 @@ function RegisterForm() {
 
                 <Form.Item
                   label="Phone Number"
-                  name="phoneNumber"
+                  name="PhoneNumber"
                   rules={[{ required: true, message: 'Please input your phone number!' }]}
                 >
                   <Input />
@@ -141,7 +162,7 @@ function RegisterForm() {
 
                 <Form.Item
                   label="Address"
-                  name="address"
+                  name="Address"
                   rules={[{ required: true, message: 'Please input your address!' }]}
                 >
                   <Input />
@@ -150,7 +171,7 @@ function RegisterForm() {
                   <Form.Item
                     className='form-item name'
                     label="Country"
-                    name="country"
+                    name="Country"
                     rules={[{ required: true, message: 'Please input your country!' }]}
                   >
                     <Input />
@@ -159,7 +180,7 @@ function RegisterForm() {
                   <Form.Item
                     className='name'
                     label="City"
-                    name="city"
+                    name="City"
                     rules={[{ required: true, message: 'Please input your city!' }]}
                   >
                     <Input />
@@ -170,7 +191,7 @@ function RegisterForm() {
                   <Form.Item
                     className='form-item name'
                     label="Province"
-                    name="province"
+                    name="Province"
                     rules={[{ required: true, message: 'Please input your province!' }]}
                   >
                     <Input />
@@ -179,49 +200,80 @@ function RegisterForm() {
                   <Form.Item
                     className='name'
                     label="Postal Code"
-                    name="postalCode"
+                    name="PostalCode"
                     rules={[{ required: true, message: 'Please input your postal code!' }]}
                   >
                     <Input />
                   </Form.Item>
                 </Row>
 
-                <Row>
-                  <Form.Item
-                    className='form-item'
+                <Form.Item
+                  name="Image"
+                  label="Image URL"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your Image!",
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Row gutter={16}>
+                   <Form.Item
+                    className="form-item"
+                    name="Password"
                     label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!', min: 8 }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your password!",
+                        min: 8,
+                      },
+                    ]}
                   >
                     <Input.Password
                       type={showPassword ? "text" : "password"}
-                      iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                      iconRender={(visible) =>
+                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                      }
                     />
                   </Form.Item>
 
                   <Form.Item
-                    label="Confirm Password"
+                    className="form-item"
                     name="confirmPassword"
-                    dependencies={['password']}
+                    label="Confirm Password"
+                    dependencies={["Password"]}
                     hasFeedback
                     rules={[
-                      { required: true, message: 'Please confirm your password!', min: 8 },
+                      {
+                        required: true,
+                        message: "Please confirm your password!",
+                        min: 8,
+                      },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
-                          if (!value || getFieldValue('password') === value) {
+                          if (!value || getFieldValue("Password") === value) {
                             return Promise.resolve();
                           }
-                          return Promise.reject(new Error('The two passwords do not match!'));
+                          return Promise.reject(
+                            new Error("The two passwords do not match!")
+                          );
                         },
                       }),
                     ]}
                   >
                     <Input.Password
-                      type={showConfirmPassword ? "text" : "password"}
-                      iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                      type={showConfirmPassword ? "text" : "Password"}
+                      iconRender={(visible) =>
+                        visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                      }
                     />
                   </Form.Item>
                 </Row>
+
 
                 {message && (
                   <p className="message">

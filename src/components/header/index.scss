@@ -1,166 +1,211 @@
 .header {
-    height: 90px;
-    // background-color: rgba(0, 0, 0, 0.25);
-    background-color:#fff ;
+  height: 90px;
+  // background-color: rgba(0, 0, 0, 0.25);
+  background-color:#fff ;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 340px;
+  // backdrop-filter: blur(4.5px);
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+
+  & .header__logo{
+    margin-left: -150px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 340px;
-    // backdrop-filter: blur(4.5px);
-  
-    position: fixed;
-    top: 0;
-    right: 0;
+    justify-content: start;
+  }
+
+  &__nav {
+    display: flex;
+    justify-content: center;
+    ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+      padding-top: 10px;
+      li {
+        color: black;
+        font-size: 18px;
+        a {
+          text-decoration: none;
+          color: black;
+        }
+      }
+    }
+  }
+
+  &__search{
+    position: absolute;
+    top: -100%;
     left: 0;
-    z-index: 10;
+    right: 0;
+    background-color: #fff;
+    padding: 10px 350px;
+    display: flex;
+    transition:all 1s;
+    // opacity: 0;
+    z-index: 1;
 
-    & .header__logo{
-      margin-left: -150px;
-      display: flex;
-      justify-content: start;
+    input{
+      border: none;
+      outline: none;
+      flex-grow: 1;
+      font-size: 20px;
     }
 
-    &__nav {
-      display: flex;
-      justify-content: center;
-      ul {
-        display: flex;
-        list-style: none;
-        gap: 30px;
-  
-        li {
-          color: black;
-          font-size: 18px;
-          a {
-            text-decoration: none;
-            color: black;
-          }
-        }
-      }
+    &.active{
+      top: 100%;
     }
+  }
 
-    &__search{
-      position: absolute;
-      top: -100%;
-      left: 0;
-      right: 0;
-      background-color: #fff;
-      padding: 10px 350px;
-      display: flex;
-      transition:all 1s;
-      // opacity: 0;
-      z-index: 1;
-  
-      input{
-        border: none;
-        outline: none;
-        flex-grow: 1;
-        font-size: 20px;
-      }
+  .header-end{
+    display: flex;
+    justify-content: end;
+    display: flex;
+    justify-content: center;
 
-      &.active{
-        top: 100%;
+    .cart{
+      font-size: 20px;
+      margin-left: -10px;
+      margin-right: 0px;
+      padding-left: 20px;
+      margin-top: 20px;
+      span {
+        position: absolute;
+        top: 20px;
+        right: -10px;
+        background: red;
+        font-size: 10px;
+        color: #fff;
+        padding: 3px 5px;
+        border-radius: 50%;
+        z-index: -1;
       }
     }
 
-    .header-end{
+    ul {
       display: flex;
-      justify-content: end;
-      display: flex;
-      justify-content: center;
-
-      .cart{
-        font-size: 20px;
-        margin-left: -10px;
-        margin-right: 10px;
-        span {
-          position: absolute;
-          top: 20px;
-          right: -10px;
-          background: red;
-          font-size: 10px;
-          color: #fff;
-          padding: 3px 5px;
-          border-radius: 50%;
-          z-index: -1;
-        }
-      }
-
-      ul {
-        display: flex;
-        list-style: none;
-        gap: 30px;
-  
-        li {
-          color: black;
-          font-size: 18px;
-          a {
-            text-decoration: none;
-            color: black;
-          }
-        }
-      }
+      list-style: none;
+      gap: 30px;
 
       li {
-        margin-right: 20px;
-        position: relative; /* Để tạo vùng chứa cho dropdown */    
-        align-items: center;
-
-        .login-dropdown {
-          display: none; /* Ẩn dropdown ban đầu */
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background-color: white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          padding: 10px;
-          border-radius: 10px;
-          
-          
-          li {
-            margin: 0;
-            padding: 5px 0;
-            display: flex;
-            justify-content: space-between;
-            
-            button {
-              flex: 1; // Mỗi nút sẽ chiếm 1 phần không gian bằng nhau
-              margin: 0 10px; // Khoảng cách giữa các nút
-              border-radius: 20px;
-              background-color: white;
-          
-            background: #fff;
-            border: none;
-            outline: none;
-            border-radius: 40px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-            cursor: pointer;
-            font-size: 16px;
-            color: #333;
-            font-weight: bolder;
-
-             .link{
-              color: black;
-              
-             }
-            }
-            a {
-              color: #fff;
-              text-decoration: none;
-            }
-          }
+        color: black;
+        font-size: 18px;
+        a {
+          text-decoration: none;
+          color: black;
         }
-        
-        &:hover {
-          .login-dropdown {
-            display: block; /* Hiển thị dropdown khi hover */
-          }
-        }
-      } 
+      }
     }
 
+    a {      
+      .MuiAvatar-root {
+        margin-left: 20px; /* Adjust avatar margin */
+        width: 40px; /* Adjust avatar width */
+        height: 40px; /* Adjust avatar height */
+        
+        img {
+          width: 100%; /* Ensure image fills avatar */
+          height: 100%; /* Ensure image fills avatar */
+          object-fit: cover; /* Maintain aspect ratio */
+          border-radius: 50%; /* Make avatar image circular */
+        }
+      }
     
-    
-}
+      p {
+        margin-left: 10px; /* Adjust margin between avatar and text */
+        //font-weight: bold; /* Adjust text weight */
+      }
+    }
+
+    li {
+      margin-right: 20px;
+      position: relative; /* Để tạo vùng chứa cho dropdown */    
+      align-items: center;
+
+      .login-dropdown {
+        // display: none; /* Ẩn dropdown ban đầu */
+        // position: absolute;
+        // top: 100%;
+        // left: 0;
+        // //right: 0;
+        // background-color: white;
+        // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        // padding: 10px;
+        // margin-right: 500px;
+        // border-radius: 10px;
+      display: none; /* Hide dropdown initially */
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 10; /* Ensure dropdown appears above other content */
+
+      .MuiAvatar-root {
+        margin-left: 20px; /* Adjust avatar margin */
+        width: 40px; /* Adjust avatar width */
+        height: 40px; /* Adjust avatar height */
+        
+        img {
+          width: 100%; /* Ensure image fills avatar */
+          height: 100%; /* Ensure image fills avatar */
+          object-fit: cover; /* Maintain aspect ratio */
+          border-radius: 50%; /* Make avatar image circular */
+        }
+      }
+
+        li {
+          margin: 10px 0; /* Adjust spacing between dropdown items */
+          //display: flex;
+          //align-items: center;
+
+          button {
+            flex: 1; // Mỗi nút sẽ chiếm 1 phần không gian bằng nhau
+            margin: 10px 0; // Khoảng cách giữa các nút
+            padding-right: 75px;
+            margin-right: 10px;
+            //border-radius: 20px;
+            background-color: white;
+        
+          background: #fff;
+          border: none;
+          outline: none;
+          //border-radius: 40px;
+          //box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+          cursor: pointer;
+          font-size: 16px;
+          color: #333;
+          font-weight: bolder;
+
+           .link{
+            color: black;
+            
+           }
+          }
+          a {
+            color: #fff;
+            text-decoration: none;
+          }
+        }
+      }
+      
+      &:hover {
+        .login-dropdown {
+          display: block; /* Hiển thị dropdown khi hover */
+        }
+      }
+    } 
+  }
 
   
+  
+}
+

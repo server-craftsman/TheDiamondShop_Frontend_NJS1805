@@ -1,6 +1,10 @@
+// .body{
+//   background-color: #B4B6B6;
+// }
+
 .instruct {
-    padding: 150px 20px;
-    max-width: 800px;
+    padding: 150px 60px;
+    max-width: 1000px;
     margin: auto;
     font-family: Arial, sans-serif;
   }
@@ -16,5 +20,12 @@
     margin-top: 10px;
   }
   
+  h1{
+    color: red;
+    font-size: 40px;
+    text-align: center;
+  }
 
-  
+  h2{
+    font-style: italic;
+  }

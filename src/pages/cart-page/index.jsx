@@ -1,70 +1,90 @@
-import React, { useMemo, useState, useContext, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../CartContext";
-import { Table, Button, Checkbox, Popconfirm, Modal } from "antd";
-import Warning from "../../Warning"; // Adjust path if necessary
-import { AuthContext } from "../../AuthContext";
+import { Table, Button, Checkbox, Popconfirm, Modal, InputNumber } from "antd";
+import Warning from "../../Warning";
+import { RestOutlined } from "@ant-design/icons";
 import "./index.scss";
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, setCartItems } = useCart();
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [warningOpen, setWarningOpen] = useState(false);
+  const {
+    cartItems,
+    removeFromCart,
+    updateCartQuantity,
+    selectedItems,
+    selectItemForPayment,
+    handleWarningClose,
+  } = useCart();
   const navigate = useNavigate();
-  // const { user, token } = useContext(AuthContext); // Ensure AuthContext provides 'user' and 'token'
-
+  const [warningOpen, setWarningOpen] = useState(false);
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
 
   const totalPrice = useMemo(() => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   }, [cartItems]);
 
-  const handleCheckboxChange = (e, record) => {
-    const checked = e.target.checked;
-    selectItemForPayment(record.key, checked);
-    setSelectedOptions((prev) =>
-      checked ? [...prev, record.key] : prev.filter((id) => id !== record.key)
-    );
+  useEffect(() => {
+    const allSelected =
+      cartItems.length > 0 &&
+      cartItems.every((item) =>
+        selectedItems.some(
+          (selectedItem) =>
+            selectedItem.id === item.id && selectedItem.type === item.type
+        )
+      );
+    setSelectAllChecked(allSelected);
+  }, [cartItems, selectedItems]);
+
+  const handleCheckboxChange = (record, checked) => {
+    selectItemForPayment(record.id, record.type, checked);
   };
 
-  const handleQuantityChange = (item, amount) => {
-    const updatedCart = cartItems.map((cartItem) =>
-      cartItem.key === item.key
-        ? { ...cartItem, quantity: cartItem.quantity + amount }
-        : cartItem
-    );
+  const handleSelectAllChange = (e) => {
+    const checked = e.target.checked;
+    const allItemIds = cartItems.map((item) => ({
+      id: item.id,
+      type: item.type,
+    }));
 
-    if (amount < 0 && item.quantity === 1) {
-      removeFromCart(item.key);
-    } else {
-      setCartItems(updatedCart);
-    }
+    allItemIds.forEach((item) => {
+      selectItemForPayment(item.id, item.type, checked);
+    });
+
+    setSelectAllChecked(checked);
   };
 
   const handleDeleteItem = (item) => {
-    removeFromCart(item.id);
-    setSelectedOptions(selectedOptions.filter((id) => id !== item.id));
+    removeFromCart(item.id, item.type);
   };
 
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      setWarningOpen(false);
-    }
-  }, [cartItems]);
+  const handleQuantityChange = (value, item) => {
+    updateCartQuantity(item.id, value);
+  };
 
   const handlePayment = () => {
-    if (selectedOptions.length > 0) {
-      const selectedItems = cartItems.filter((item) =>
-      selectedOptions.includes(item.id));
+    const selectedItemsData = cartItems.filter((item) =>
+      selectedItems.some(
+        (selectedItem) =>
+          selectedItem.id === item.id && selectedItem.type === item.type
+      )
+    );
 
-      sessionStorage.setItem(
-        "selectedOptions",
-        JSON.stringify(selectedOptions)
-      );
+    if (selectedItemsData.length > 0) {
+      sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
+      selectedItemsData.forEach((item) => {
+        removeFromCart(item.id, item.type);
+      });
       navigate("/order-form", {
         state: {
-          cart: selectedItems,
-          totalPrice: selectedItems.reduce((total, item) => total + item.price * item.quantity, 0),
-        }
+          cart: selectedItemsData,
+          totalPrice: selectedItemsData.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+          ),
+        },
       });
     } else {
       Modal.warning({
@@ -76,52 +96,131 @@ const CartPage = () => {
 
   const columns = [
     {
-      title: "",
+      title: (
+        <Checkbox
+          onChange={handleSelectAllChange}
+          checked={selectAllChecked}
+          indeterminate={
+            cartItems.length > 0 &&
+            !selectAllChecked &&
+            selectedItems.length > 0 &&
+            selectedItems.length < cartItems.length
+          }
+        />
+      ),
       dataIndex: "checkbox",
       render: (_, record) => (
-        <Checkbox onChange={(e) => handleCheckboxChange(e, record)} 
-        checked={selectedOptions.includes(record.key)}/>
-      ),
-    },
-    {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (text, record) => (
-        <img
-          src={record.image}
-          alt={record.name}
-          style={{ width: "50px", height: "auto" }}
+        <Checkbox
+          onChange={(e) => handleCheckboxChange(record, e.target.checked)}
+          checked={selectedItems.some(
+            (selectedItem) =>
+              selectedItem.id === record.id && selectedItem.type === record.type
+          )}
         />
       ),
     },
     {
+      title: "No",
+      dataIndex: "orderNumber",
+      key: "orderNumber",
+    },
+    {
       title: "Product",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "productName",
+      key: "productName",
+      render: (text, record) => (
+        <div className="product-info">
+          <img src={record.image} alt={record.name} className="product-image" />
+          {record.type === "Diamond" && (
+            <div className="diamond-details">
+              <h3 className="product-title">Diamond</h3>
+              <div className="product-detail">
+                <strong>Stock Number:</strong> {record.stockNumber}
+              </div>
+              <div className="product-detail">
+                <strong>Carat Weight:</strong> {record.caratWeight} ct
+              </div>
+              <div className="product-detail">
+                <strong>Color:</strong> {record.color}
+              </div>
+              <div className="product-detail">
+                <strong>Clarity:</strong> {record.clarity}
+              </div>
+              <div className="product-detail">
+                <strong>Cut:</strong> {record.cut}
+              </div>
+            </div>
+          )}
+          {record.type === "DiamondRings" && (
+            <div className="ring-details">
+              <h3 className="product-title">{record.name}</h3>
+              <div className="product-detail">
+                <strong>Category:</strong> {record.category}
+              </div>
+              <div className="product-detail">
+                <strong>Material:</strong> {record.material}
+              </div>
+              <div className="product-detail">
+                <strong>Size:</strong> {record.ringSize}
+              </div>
+            </div>
+          )}
+          {record.type === "Bridal" && (
+            <div className="ring-details">
+              <h3 className="product-title">{record.name}</h3>
+              <div className="product-detail">
+                <strong>Material:</strong> {record.material}
+              </div>
+              <div className="product-detail">
+                <strong>Size:</strong> {record.ringSize}
+              </div>
+              <div className="product-detail">
+                <strong>Category:</strong> {record.category}
+              </div>
+            </div>
+          )}
+          {record.type === "DiamondTimepieces" && (
+            <div className="timepieces-details">
+              <h3 className="product-title">{record.name}</h3>
+              <div className="product-detail">
+                <strong>TimepiecesStyle:</strong> {record.timepiecesStyle}
+              </div>
+              <div className="product-detail">
+                <strong>CaseSize:</strong> {record.caseSize}
+              </div>
+              <div className="product-detail">
+                <strong>Crystal Type:</strong> {record.crystalType}
+              </div>
+            </div>
+          )}
+        </div>
+      ),
     },
     {
-      title: "Stock Number",
-      dataIndex: "stockNumber",
-      key: "stockNumber",
-    },
-    {
-
-      title: "Carat Weight",
-      dataIndex: "caratWeight",
-      key: "caratWeight",
-    },
-    {
-
-      title: "Color",
-      dataIndex: "color",
-      key: "color",
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text, record) => (
+        <InputNumber
+          min={1}
+          value={record.quantity}
+          onChange={(value) => handleQuantityChange(value, record)}
+          disabled={record.type === "Diamond" || "Bridal" || "DiamondRings" || "DiamondTimepieces"}
+        />
+      ),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (text, record) => `$${record.price.toFixed(2)}`, // Display price formatted as currency
+      render: (text, record) => `$${record.price.toFixed(2)}`,
+    },
+    {
+      title: "Total Price",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (text, record) =>
+        `$${(record.price * record.quantity).toFixed(2)}`,
     },
     {
       title: "Actions",
@@ -133,7 +232,7 @@ const CartPage = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button type="danger">Delete</Button>
+          <RestOutlined className="custom-icon" />
         </Popconfirm>
       ),
     },
@@ -141,53 +240,32 @@ const CartPage = () => {
 
   const data = useMemo(
     () =>
-      cartItems.map((item) => ({
-        key: item.id,
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image,
-        type: item.type,
-        stockNumber: item.stockNumber,
-        caratWeight: item.caratWeight,
-        clarity: item.clarity,
-        cut: item.cut,
-        polish: item.polish,
-        symmetry: item.symmetry,
-        fluorescence: item.fluorescence,
-        description: item.description,
-        gender: item.gender,
-        stoneType: item.stoneType,
-        stoneShape: item.stoneShape,
-        stoneSize: item.stoneSize,
-        stoneClarity: item.stoneClarity,
-        stoneCut: item.stoneCut,
-        stonePolish: item.stonePolish,
-        stoneSymmetry: item.stoneSymmetry,
-        stoneFluorescence: item.stoneFluorescence,
-        stoneDescription: item.stoneDescription,
-        stoneGender: item.stoneGender,
-        stoneCaratWeight: item.stoneCaratWeight,
-        color: item.color,
-        totalPrice: item.price * item.quantity,
-        checkbox: selectedOptions.includes(item.id),
+      cartItems.map((item, index) => ({
+        ...item,
+        orderNumber: index + 1,
       })),
-    [cartItems, selectedOptions]
+    [cartItems]
   );
 
   return (
-    <div className="cart-page">
-      <Table columns={columns} dataSource={data} pagination={false} />
-      <div className="total-price">
-        <strong>Total Price: ${totalPrice.toFixed(2)}</strong>
+    <div className="cart__page">
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        pagination={false}
+        className="cart-table"
+      />
+      <div className="cart__page__total">
+        <h2>Total Price: ${totalPrice.toFixed(2)}</h2>
+        <Button type="primary" onClick={handlePayment}>
+          Proceed to Order Form
+        </Button>
       </div>
-      <Button onClick={handlePayment} disabled={selectedOptions.length === 0}>
-      Proceed to Checkout
-      </Button>
-      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
+      <Warning open={warningOpen} onClose={handleWarningClose} />
     </div>
   );
 };
 
 export default CartPage;
+

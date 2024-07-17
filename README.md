@@ -10,4 +10,4 @@ Currently, two official plugins are available:
 ### Installation
 1. Clone the repo
    ```sh
-   git clone https://github.com/server-craftsman/FE_DiamondShop.git
+   git clone https://github.com/server-craftsman/TheDiamondShop_FE_NJS1805.git

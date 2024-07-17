@@ -10,7 +10,11 @@ function DeliveryCompleted() {
       const response = await axios.get(
         "http://localhost:8090/features/view-order-conpleted"
       );
-      setOrders(response.data);
+      // Remove duplicates based on OrderID
+      const uniqueOrders = Array.from(new Set(response.data.map(order => order.OrderID)))
+        .map(OrderID => response.data.find(order => order.OrderID === OrderID));
+
+      setOrders(uniqueOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -56,18 +60,6 @@ function DeliveryCompleted() {
               <p>
                 <strong>Delivery Address:</strong> {order.DeliveryAddress}
               </p>
-              {/* <div className="delivery__actions">
-                <button
-                  onClick={() => updateStatus(order.OrderID, "Shipped")}
-                >
-                  Shipped
-                </button>
-                <button
-                  onClick={() => updateStatus(order.OrderID, "Completed")}
-                >
-                  Completed
-                </button>
-              </div> */}
             </li>
           ))}
         </ul>

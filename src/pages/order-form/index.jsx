@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCart } from "../../CartContext";
-import axios from "axios";
-import "./index.scss";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "../login-page/axios-instance/index";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import {
   Button,
   TextField,
@@ -21,72 +19,80 @@ import {
   TableHead,
   TableRow,
   Paper,
+  InputLabel,
+  Select,
+  MenuItem,
+  Card,
+  CardContent,
+  CardActions,
 } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { Link, useLocation } from "react-router-dom";
-import { Result } from "antd";
+import { Image, Result } from "antd";
+import { Footer } from "antd/es/layout/layout";
+import { useCart } from "../../CartContext";
+import { AuthContext } from "../../AuthContext";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import QRCode from "qrcode.react";
+import "./index.scss";
+import ErrorDialog from "../../FailOrder"; // Import the ErrorDialog component
 
 const OrderForm = () => {
-  // const { cartItems } = useCart();
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
   const location = useLocation();
-
-  // const { cart = [], diamond, totalPrice: initialTotalPrice } = location.state;
-
   const {
-    cart: useCart = {},
-    totalPrice: initialTotalPrice = 0,
-    diamond = {},
-  } = location.state || {};
-  const cartItems = useCart.cartItems || [];
+    cart = [],
+    diamond,
+    ring,
+    bridal,
+    timepieces,
+    totalPrice: initialTotalPrice,
+  } = location.state;
 
-  const getProductDetails = (type, id) => {
-    return diamond[type]?.find((product) => product.id === id) || {};
-  };
+  const { user } = useContext(AuthContext);
 
   const [orderData, setOrderData] = useState({
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    deliveryAddress: "",
+    // firstName: "",
+    // lastName: "",
+    // phoneNumber: "",
+    // deliveryAddress: "",
+    // shippingMethod: "Express",
+    // paymentMethod: "",
+
+    deliveryAddress: '',
+
     shippingMethod: "Express",
-    paymentMethod: "Cash on delivery",
-    DiamondID: getProductDetails("Diamond", cartItems[0]?.id)?.id || diamond?.id || null,
-    StockNumber: cartItems[0]?.stockNumber || diamond?.stockNumber || "",
-    DiamondOrigin: cartItems[0]?.diamondOrigin || diamond?.diamondOrigin || "",
-    Price: cartItems[0]?.price || diamond?.price || "",
-    Clarity: cartItems[0]?.clarity || diamond?.clarity || "",
-    Color: cartItems[0]?.color || diamond?.color || "",
-    Type: cartItems[0]?.type || diamond?.type || "",
-    CaratWeight: cartItems[0]?.caratWeight || diamond?.caratWeight || "",
-    Quantity: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-    DeliveryAddress: "",
-    ProductType: "Diamond",
-    TotalPrice: initialTotalPrice,
-    VoucherID: "",
-    Shipping: "Standard",
-    PaymentMethod: "Cash on Delivery",
+    paymentMethod: '',
+    // DiamondRingsMaterials: [],
+    // DiamondRingSizes: [],
+    // BridalsSizes: [],
+    // BridalsMaterials: [],
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
   });
 
   const [eligibleVouchers, setEligibleVouchers] = useState([]);
+  const [enteredVoucherName, setEnteredVoucherName] = useState("");
   const [selectedVoucher, setSelectedVoucher] = useState(null);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [orderSummaryVisible, setOrderSummaryVisible] = useState(false);
+  const [totalPrice, setTotalPrice] = useState("0.00");
   const [discountedPrice, setDiscountedPrice] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [shippingCost, setShippingCost] = useState(10);
+  const [showPayPalForm, setShowPayPalForm] = useState(false);
 
-  const [selectedCartItem, setSelectedCartItem] = useState(null);
+  const [qrCodeData, setQrCodeData] = useState(null);
+  const [paypalOrderId, setPaypalOrderId] = useState(null);
+  // PayPal
+  const [sdkReady, setSdkReady] = useState(false);
 
-  //Paypal
   useEffect(() => {
     if (initialTotalPrice !== null && typeof initialTotalPrice === "number") {
       setTotalPrice(initialTotalPrice.toFixed(2));
@@ -109,6 +115,7 @@ const OrderForm = () => {
         setEligibleVouchers(response.data);
       } catch (error) {
         setError("Failed to fetch vouchers. Please try again.");
+        setErrorDialogOpen(true); // Open error dialog
       }
     };
 
@@ -126,6 +133,7 @@ const OrderForm = () => {
         "https://www.paypal.com/sdk/js?client-id=ATsGZqbqx2kZEsZj4L6hi_Bbez0lX6gP8Tek64uRuk4WQVXSQZabHX-Uj1pSHzq2iiYGmF7Hqa6zWWgf";
       script.onload = () => {
         if (window.paypal) {
+          setSdkReady(true);
           resolve();
         } else {
           reject(new Error("PayPal SDK could not be loaded."));
@@ -137,165 +145,83 @@ const OrderForm = () => {
     });
   };
 
-  const handlePayPalPayment = async (orderId) => {
-    await loadPayPalScript();
+  useEffect(() => {
+    if (user) {
+      fetchOrderData();
+    }
+  }, [user]);
 
-    if (window.paypal) {
-      window.paypal
-        .Buttons({
-          createOrder: () => orderId,
-          onApprove: async (data, actions) => {
-            try {
-              const captureOrderResponse = await axios.post(
-                "http://localhost:8090/paypal/capture-paypal-order",
-                { orderId }
-              );
-              console.log(
-                "PayPal payment captured successfully:",
-                captureOrderResponse.data
-              );
-              setSuccess(true);
-              setOrderSubmitted(true);
-              setIsModalOpen(true);
-            } catch (error) {
-              console.error("Error capturing PayPal order:", error);
-              setError("Failed to capture PayPal payment. Please try again.");
-            }
+  const fetchOrderData = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetching user profile with token:", token);
+
+      const response = await axios.get(
+        "http://localhost:8090/features/view-profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          onError: (err) => {
-            console.error("PayPal payment error:", err);
-            setError("PayPal payment failed. Please try again.");
-          },
-        })
-        .render("#paypal-button-container");
-    } else {
-      console.error("PayPal SDK not available.");
-      setError("PayPal SDK not available. Please try again.");
+          withCredentials: true,
+        }
+      );
+
+      console.log("Fetch response status:", response.status);
+
+      if (response.status === 200) {
+        const userData = response.data.user;
+        setOrderData({
+          firstName: userData.FirstName,
+          lastName: userData.LastName,
+          phoneNumber: userData.PhoneNumber,
+          deliveryAddress: userData.Address,
+          shippingMethod: "Express",
+          paymentMethod: "",
+          // deliveryAddress: '',
+          // AttachedAccessories: '',
+          // shippingMethod: "Express",
+          // paymentMethod: '',
+          // DiamondRingsMaterials: [],
+          // DiamondRingSizes: [],
+          // BridalsSizes: [],
+          // BridalsMaterials: [],
+          // firstName: '',
+          // lastName: '',
+          // phoneNumber: '',
+        });
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // const handleSubmit = async () => {
-  //   setLoading(true);
-  //   try {
-  //     // Apply voucher if selected
-  //     let finalTotalPrice = totalPrice;
-  //     if (selectedVoucher) {
-  //       const voucherResponse = await applyVoucher(selectedVoucher.VoucherID);
-  //       if (voucherResponse.discountAmount) {
-  //         finalTotalPrice -= voucherResponse.discountAmount;
-  //       }
-  //     }
-
-  //     const orderDetails = {
-  //       ...orderData,
-  //       cartItems,
-  //       totalPrice: finalTotalPrice,
-  //       voucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
-  //       orderDate: new Date().toISOString().split("T")[0],
-  //     };
-
-  //     // Create new order
-  //     const response = await axios.post(
-  //       "http://localhost:8090/orders/create-order",
-  //       orderDetails,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     const orderID = response.data.OrderID;
-
-  //     // Update inventory after successful order creation
-  //     await axios.put(
-  //       "http://localhost:8090/orders/update-inventory",
-  //       {
-  //         cartItems,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     navigate("/order-success", { state: { orderID: orderID } });
-  //   } catch (error) {
-  //     console.error("Error creating order:", error);
-  //     setError("Error creating order. Please try again later.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const handleInputChange = (name, value) => {
-    if (name === "shippingMethod") {
-      const cost = value === "Standard" ? 5 : 10;
-      setShippingCost(cost);
-
-      const newTotalPrice =
-        initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
-      setTotalPrice(newTotalPrice.toFixed(2));
-    }
-
-    setOrderData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  // Function to handle changes in the voucher name input
+  const handleVoucherNameChange = (e) => {
+    setEnteredVoucherName(e.target.value);
   };
 
-  const handleVoucherChange = (e) => {
-    const voucherId = parseInt(e.target.value, 10);
-    const voucher = eligibleVouchers.find((v) => v.VoucherID === voucherId);
-    setSelectedVoucher(voucher || null);
+  // Function to filter and set eligible vouchers based on entered name
+  const handleFilterVouchers = () => {
+    const filteredVouchers = eligibleVouchers.filter((voucher) =>
+      voucher.VoucherName.toLowerCase().includes(
+        enteredVoucherName.toLowerCase()
+      )
+    );
+    return filteredVouchers;
   };
-
-  // const applyVoucher = async (voucherID) => {
-  //   try {
-  //     const response = await fetch("http://localhost:8090/orders/apply-voucher", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //       },
-  //       body: JSON.stringify({ voucherID }),
-  //     });
-
-  //     if (response.status === 401) {
-  //       const refreshResponse = await fetch(
-  //         "http://localhost:8090/orders/refresh-token",
-  //         {
-  //           method: "POST",
-  //           headers: { "Content-Type": "application/json" },
-  //           body: JSON.stringify({
-  //             refreshToken: localStorage.getItem("refreshToken"),
-  //           }),
-  //         }
-  //       );
-
-  //       if (refreshResponse.ok) {
-  //         const { token } = await refreshResponse.json();
-  //         localStorage.setItem("token", token);
-
-  //         return applyVoucher(voucherID);
-  //       } else {
-  //         throw new Error("Failed to refresh token.");
-  //       }
-  //     } else if (!response.ok) {
-  //       const errorText = await response.text();
-  //       throw new Error(`Failed to apply voucher. Server responded with: ${errorText}`);
-  //     }
-
-  //     const data = await response.json();
-  //     message.success("Voucher applied successfully!");
-  //     return data;
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     message.error("Error applying voucher. Please try again.");
-  //     throw error;
-  //   }
-  // };
 
   const handleApplyVoucher = () => {
     if (selectedVoucher && initialTotalPrice !== null) {
@@ -311,71 +237,149 @@ const OrderForm = () => {
     }
   };
 
-  // const toggleOrderSummary = () => {
-  //   setOrderSummaryVisible(!orderSummaryVisible);
-  // };
-
-  // const handleApplyVoucherClick = async () => {
-  //   if (selectedVoucher) {
-  //     try {
-  //       await applyVoucher(selectedVoucher.VoucherID);
-  //     } catch (error) {
-  //       setError("Failed to apply voucher. Please try again.");
-  //     }
-  //   } else {
-  //     message.warning("Please select a voucher to apply.");
-  //   }
-  // };
-
   const handleConfirmOrder = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        setError("User token not found. Please log in again.");
-        setLoading(false);
-        return;
+        throw new Error("User token not found. Please log in again.");
       }
 
+      // Prepare order items based on item type
+      const orderItems = cart.map((item, index) => {
+        const orderItem = {
+          Quantity: item.quantity,
+          Price: item.price,
+          key: index, // Add a unique key prop
+        };
 
-      // Assuming `DiamondDetails` is fetched and available
-      const { diamond } = location.state; // Assuming `diamond` is fetched from `DiamondDetails`
+        if (item.type === "Diamond") {
+          orderItem.DiamondID = item.id;
+          orderItem.DiamondName = item.name;
+          orderItem.DiamondColor = item.color;
+          orderItem.DiamondClarity = item.clarity;
+          orderItem.DiamondCarat = item.caratWeight;
+          orderItem.DiamondDetails = diamond; // Assuming diamond details are passed separately
+          orderItem.DiamondOrigin = item.diamondOrigin;
+        } else if (item.type === "DiamondRings") {
+          const uniqueDiamondRingsIDs = Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id];
+          const materials = Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID];
+          const ringSizes = Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID];
 
-      const orderItems = cart.map((item) => ({
-        DiamondID: item.DiamondID, // Assuming `DiamondID` is correctly named in your cart item object
-        DiamondName: item.name,
-        DiamondColor: item.Color,
-        DiamondClarity: item.Clarity,
-        DiamondCarat: item.CaratWeight,
-        Quantity: item.quantity,
-        Price: item.price,
-      }));
+          orderItem.RingDetails = ring; // Assuming ring details are passed separately
+          orderItem.DiamondRingsID = uniqueDiamondRingsIDs;
+          orderItem.RingSize = ringSizes;
+          orderItem.Material = materials;
+          orderItem.NameRings = item.name;
+        } else if (item.type === "Bridal") {
+          // Ensure BridalID, Material, RingSizeRang are arrays
+          const uniqueBridalIDs = Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id];
+          const materials = Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID];
+          const ringSizes = Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID];
 
-      const productType = "Diamond"; // Assuming all items are of type "Diamond"
+          orderItem.BridalDetails = bridal;
+          orderItem.BridalID = uniqueBridalIDs;
+          orderItem.NameBridal = item.name;
+          orderItem.Material = materials;
+          orderItem.RingSizeRang = ringSizes;
+          orderItem.BridalQuantity = item.quantity;
+          orderItem.Category = item.Category;
+        } else if (item.type === "DiamondTimepieces") {
+          orderItem.TimepiecesDetails = timepieces;
+          orderItem.DiamondTimepiecesID = item.id;
+          orderItem.NameTimepieces = item.name;
+          orderItem.CrystalType = item.crystalType;
+          orderItem.CaseSize = item.caseSize;
+          orderItem.timepiecesStyle = item.timepiecesStyle;
+          orderItem.TimepiecesQuantity = item.quantity;
+        }
+
+        return orderItem;
+      });
+
       const quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
       const totalPrice = cart.reduce(
         (total, item) => total + item.price * item.quantity,
         0
       );
 
+      // Determine ProductType based on cart contents, default to "Diamond"
+      let productType = "Diamond";
+
+      // Construct order data object
+      const orderDataPayload = {
+        firstName: orderData.firstName,
+        lastName: orderData.lastName,
+        phoneNumber: orderData.phoneNumber,
+        address: orderData.address,
+        deliveryAddress: orderData.deliveryAddress,
+        shippingMethod: orderData.shippingMethod,
+        paymentMethod: orderData.paymentMethod,
+
+
+      };
+
       const orderPayload = {
         orderData: {
-          ...orderData,
-          DiamondID: diamond?.DiamondID || cart[0]?.id, // Lấy từ diamond nếu có, nếu không thì lấy từ cart
-          ProductType: productType, // Chắc chắn rằng productType được định nghĩa ở đây
-          Quantity: quantity, // Chắc chắn rằng quantity được định nghĩa ở đây
-          TotalPrice: parseFloat(totalPrice),
+          ...orderDataPayload,
+          DiamondID:
+            cart
+              .filter((item) => item.type === "Diamond")
+              .map((item) => item.id) || [],
+          DiamondRingsID:
+            cart
+              .filter((item) => item.type === "DiamondRings")
+              .map((item) => Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id]) || [],
+          BridalID:
+            cart
+              .filter((item) => item.type === "Bridal")
+              .flatMap((item) => Array.isArray(item.id) ? Array.from(new Set(item.id)) : [item.id]) || [],
+          DiamondTimepiecesID:
+            cart
+              .filter((item) => item.type === "DiamondTimepieces")
+              .map((item) => item.id) || [],
+          ProductType: productType,
+          Quantity: quantity,
+          TotalPrice: parseFloat(totalPrice.toFixed(2)), // Ensure total price is formatted properly
           VoucherID: selectedVoucher ? selectedVoucher.VoucherID : null,
           Shipping: orderData.shippingMethod,
           PaymentMethod: orderData.paymentMethod,
           OrderItems: orderItems,
-          [`${productType}ID`]: productID,
+          DeliveryAddress: orderDataPayload.deliveryAddress,
+          FirstName: orderDataPayload.firstName,
+          LastName: orderDataPayload.lastName,
+          PhoneNumber: orderDataPayload.phoneNumber,
+          BridalsSizes: cart
+            .filter((item) => item.type === "Bridal")
+            .flatMap((item) => Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID]) || [],
+          BridalsMaterials: cart
+            .filter((item) => item.type === "Bridal")
+            .flatMap((item) => Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID]) || [],
+          DiamondRingsMaterials: cart
+            .filter((item) => item.type === "DiamondRings")
+            .flatMap((item) => Array.isArray(item.ringSizeID) ? Array.from(new Set(item.ringSizeID)) : [item.ringSizeID]) || [],
+          DiamondRingSizes: cart
+            .filter((item) => item.type === "DiamondRings")
+            .flatMap((item) => Array.isArray(item.materialID) ? Array.from(new Set(item.materialID)) : [item.materialID]) || [],
         },
       };
 
+      // Check if any required fields are missing
+      if (
+        !orderPayload.orderData.firstName ||
+        !orderPayload.orderData.lastName ||
+        !orderPayload.orderData.phoneNumber ||
+        !orderPayload.orderData.deliveryAddress ||
+        !orderPayload.orderData.shippingMethod ||
+        !orderPayload.orderData.paymentMethod
+
+      ) {
+        throw new Error("Please fill out all required fields.");
+      }
+
       const response = await axios.post(
         "http://localhost:8090/orders/create",
-        { orderData: orderPayload },
+        orderPayload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -383,60 +387,40 @@ const OrderForm = () => {
         }
       );
 
-
-      if (!selectedCartItems) {
-        setError("No items selected for order.");
-        setLoading(false);
-        return;
-      }
-
-      const selectedCartItems = cartItems.filter((item) =>
-        selectedCartItems.includes(item.id)
-      );
-      if (!selectedCartItems.length) {
-        setError("No valid cart item selected.");
-        setLoading(false);
-        return;
-      }
-
-      // const { id: productID, productType, price, quantity } = selectedCartItems[0];
-
-      if (
-        !productType ||
-        !["Diamond", "DiamondRings", "DiamondTimepieces", "Bridal"].includes(
-          productType
-        )
-      ) {
-        setError("Invalid product type specified.");
-        setLoading(false);
-        return;
-      }
-
       console.log("Order created successfully:", response.data);
       setSuccess(true);
       setOrderSubmitted(true);
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error creating order:", error);
-      if (error.response) {
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-      }
       setError("Failed to create order. Please try again.");
+      setErrorDialogOpen(true); // Open error dialog
+      // Log Axios error response for debugging
+      if (error.response) {
+        console.log("Error details:", error.response);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  const handlePaymentMethodChange = (event) => {
+    const selectedPaymentMethod = event.target.value;
+    setOrderData((prevData) => ({
+      ...prevData,
+      paymentMethod: selectedPaymentMethod,
+    }));
+  };
+
   const handleModalClose = () => {
     setIsModalOpen(false);
-    setOrderSubmitted(false);
+    setOrderSubmitted(false); // options
   };
 
   const handleCloseErrorModal = () => {
-    setError("");
+    // setError("");
     setOrderSubmitted(false);
+    setErrorDialogOpen(false);
   };
 
   const handleContinueShopping = () => {
@@ -445,6 +429,36 @@ const OrderForm = () => {
     window.location.href = "/diamond-page";
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "Shipping") {
+      const cost = value === "Standard" ? 5 : 10;
+      setShippingCost(cost);
+
+      let newTotalPrice =
+        initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
+      setTotalPrice(newTotalPrice.toFixed(2));
+    }
+
+    // Update orderData state
+    setOrderData({
+      ...orderData,
+      [name]: value,
+
+    });
+  };
+
+  // const handleDeliveryAddressChange = (value) => {
+  //   setOrderData({
+  //     ...orderData,
+  //     deliveryAddress: value,
+  //   });
+  // };
+
+  // const handleInputChangeTotalPrice = (e) => {
+  //   setTotalPrice(parseFloat(e.target.value));
+  // };
 
   return (
     <>
@@ -453,7 +467,7 @@ const OrderForm = () => {
         display="grid"
         gridTemplateColumns="1fr 1fr"
         columnGap={20}
-        boxShadow="0px 8px 15px rgba(0, 0, 0, 0.1)"
+        boxShadow="5px 8px 200px rgba(0, 0, 0, 0.1)"
         borderRadius={16}
         margin="120px 20px 20px 30px"
       >
@@ -473,20 +487,42 @@ const OrderForm = () => {
           >
             Delivery Information
           </Typography>
-
-          <Box component="form" mt={3} marginLeft={3}>
+          <Divider />
+          <Box component="form" mt={3} marginLeft={3} borderRadius={16}>
             <Grid container spacing={3}>
               <Grid item xs={6}>
                 <FormControl fullWidth>
                   <TextField
                     label="First Name"
+                    id="FirstName"
+                    name={orderData.FirstName}
                     value={orderData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("firstName", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
@@ -496,13 +532,35 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Last Name"
+                    id="LastName"
+                    name={orderData.LastName}
                     value={orderData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("lastName", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
@@ -512,36 +570,93 @@ const OrderForm = () => {
                 <FormControl fullWidth>
                   <TextField
                     label="Phone Number"
+                    id="PhoneNumber"
+                    name={orderData.PhoneNumber}
+                    type="tel"
+                    pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     value={orderData.phoneNumber}
-                    onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("phoneNumber", e.target.value)
+                    }
                     variant="outlined"
                     InputProps={{
-                      style: {
+                      sx: {
+                        color: "#2391FF",
                         background: "#f9f9f9",
                         borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#FF1471",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#FF1471",
+                        '&.Mui-focused': {
+                          color: "#FF1471",
+                        },
                       },
                     }}
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <TextField
-                    label="Delivery Address"
-                    value={orderData.deliveryAddress}
 
-                    name={orderData.deliveryAddress}
-                    onChange={(e) => handleInputChange("deliveryAddress", e.target.value)}
-                    variant="outlined"
-                    InputProps={{
-                      style: {
-                        background: "#f9f9f9",
-                        borderRadius: 8,
+              <Grid item xs={12}>
+                <TextField
+                  name="Address"
+                  label="Delivery Address"
+                  fullWidth
+                  value={orderData.deliveryAddress}
+                  onChange={handleInputChange}
+                  InputProps={{
+                    sx: {
+                      color: "#2391FF",
+                      background: "#f9f9f9",
+                      borderRadius: 8,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
                       },
-                    }}
-                  />
-                </FormControl>
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                    },
+                  }}
+                  InputLabelProps={{
+                    sx: {
+                      color: "#FF1471",
+                      '&.Mui-focused': {
+                        color: "#FF1471",
+                      },
+                    },
+                  }}
+                />
               </Grid>
+
+              <Card
+                sx={{ minWidth: 800 }}
+                style={{ marginLeft: "25px", marginTop: "20px" }}
+              >
+                <CardContent>
+                  <Typography variant="h6" component="div" fontWeight="bold" color={"#FF3E14"}>
+                    <FaMapMarkerAlt /> {orderData.firstName}{" "}
+                    {orderData.lastName} - {orderData.phoneNumber}
+                  </Typography>
+
+                  <Typography variant="body1" marginTop="5px" color={"#FF8A23"}>
+                    {orderData.deliveryAddress}
+                  </Typography>
+                </CardContent>
+              </Card>
+
               <Grid item xs={12}>
                 <FormControl component="fieldset">
                   <Typography
@@ -559,7 +674,9 @@ const OrderForm = () => {
                     row
                     name="shippingMethod"
                     value={orderData.shippingMethod}
-                    onChange={(e) => handleInputChange("shippingMethod", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("shippingMethod", e.target.value)
+                    }
                   >
                     <FormControlLabel
                       value="Standard"
@@ -571,7 +688,7 @@ const OrderForm = () => {
                             alt="Standard"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#333">
+                          <Typography color="#FF8A23" fontWeight={"bolder"}>
                             Standard Shipping($5)
                           </Typography>
                         </>
@@ -587,7 +704,7 @@ const OrderForm = () => {
                             alt="Express"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#333">
+                          <Typography color="#FF8A23" fontWeight={"bolder"}>
                             Express Shipping($10)
                           </Typography>
                         </>
@@ -597,13 +714,24 @@ const OrderForm = () => {
                 </FormControl>
               </Grid>
 
-              {/* Payment Method */}
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <FormControl component="fieldset">
-                  <Typography variant="subtitle1">Payment Method</Typography>
+                  <Typography
+                    variant="subtitle1"
+                    color="#077BFF"
+                    fontStyle="italic"
+                    fontWeight="bold"
+                  >
+                    Payment Method:
+                  </Typography>
                   <RadioGroup
                     value={orderData.paymentMethod}
-                    onChange={(e) => setOrderData({ ...orderData, paymentMethod: e.target.value })}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        paymentMethod: e.target.value,
+                      })
+                    }
                   >
                     <FormControlLabel
                       value="Cash"
@@ -618,12 +746,45 @@ const OrderForm = () => {
                     />
                   </RadioGroup>
                 </FormControl>
+              </Grid> */}
+
+              <Grid item xs={12} md={6}>
+                <FormControl component="fieldset">
+                  <Typography component="legend" style={{
+                    marginBottom: "1em",
+                    color: "#077BFF",
+                    fontStyle: "italic",
+                    fontWeight: "bold",
+                  }}>Payment Method</Typography>
+                  <RadioGroup
+                    aria-label="paymentMethod"
+                    name="paymentMethod"
+                    value={orderData.paymentMethod}
+                    onChange={handlePaymentMethodChange}
+                  >
+                    <FormControlLabel
+                      value="Cash on Delivery"
+                      control={<Radio />}
+                      label="Cash on Delivery"
+                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
+                    />
+                    <FormControlLabel
+                      value="PayPal"
+                      control={<Radio />}
+                      label="PayPal"
+                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
+                    />
+                  </RadioGroup>
+                </FormControl>
               </Grid>
+              {/* <Grid item xs={12}>
+                <Typography variant="h6">Total Price: ${totalPrice}</Typography>
+              </Grid> */}
             </Grid>
           </Box>
           <Grid container spacing={3} mt={3} marginLeft={5} marginTop={7}>
             <Grid item>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="primary"
                 style={{
@@ -642,7 +803,7 @@ const OrderForm = () => {
                 >
                   Cart
                 </Link>
-              </Button>
+              </Button> */}
             </Grid>
             <Grid item>
               <Button
@@ -656,12 +817,13 @@ const OrderForm = () => {
                   fontSize: "1.5em",
                   padding: "10px 20px",
                   boxShadow: "0px 0px 15px 5px rgba(0,0,0,0.2)",
+                  margin: "0px 50px 30px 0px",
+                  backgroundColor: "#FF1471"
                 }}
               >
-                Confirm Order
+                {loading ? "Placing Order..." : "Place Order"}
               </Button>
             </Grid>
-
 
             <Dialog
               open={isModalOpen}
@@ -760,39 +922,12 @@ const OrderForm = () => {
                 </Button>
               </DialogActions>
             </Dialog>
-
           </Grid>
         </Box>
-
-        {/* DONT DISPLAY DATA */}
-        <Box>
-          <TableContainer
-            component={Paper}
-            style={{ maxHeight: 250, maxWidth: 400, overflow: "auto", marginTop: 30 }}
-          >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product Name</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Price</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {cartItems.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item.ProductName}</TableCell>
-                    <TableCell>{item.Quantity}</TableCell>
-                    <TableCell>${item.Price}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
+        <Box marginRight={2}>
           <Typography
-            variant="subtitle1"
-            component="h4"
+            variant="h4"
+            component="h2"
             style={{
               textAlign: "center",
               background: "linear-gradient(to right, #007BFF 0%, #00BFFF 100%)",
@@ -800,71 +935,171 @@ const OrderForm = () => {
               WebkitTextFillColor: "transparent",
               fontWeight: "900",
               textTransform: "uppercase",
-              fontSize: "2em",
-              marginTop: 30,
-              marginBottom: 10,
+              fontSize: "3em",
             }}
           >
-            Summary
+            Order Details
           </Typography>
-
           <TableContainer component={Paper} mt={2}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ fontWeight: "bolder", fontSize: "20px" }}>
+                  <TableCell
+                    style={{
+                      fontWeight: "bolder",
+                      fontSize: "20px",
+                      paddingLeft: "180px",
+                      color: "#FF1471"
+                    }}
+                  >
                     Product
                   </TableCell>
                   <TableCell
-                    align="center"
-                    style={{ fontWeight: "bolder", fontSize: "20px" }}
+                    align="right"
+                    style={{
+                      fontWeight: "bolder",
+                      fontSize: "20px",
+                      paddingRight: "40px",
+                      color: "#FF1471"
+                    }}
                   >
-                    Image
+                    Quantity
                   </TableCell>
                   <TableCell
                     align="right"
-                    style={{ fontWeight: "bolder", fontSize: "20px" }}
+                    style={{
+                      fontWeight: "bolder",
+                      fontSize: "20px",
+                      marginRight: "200px",
+                      color: "#FF1471"
+                    }}
                   >
-                    Price
+                    Origin Price
                   </TableCell>
                 </TableRow>
               </TableHead>
-
-              <TableBody>
-
-                {cartItems.length > 0 ? (
-                  cartItems.map((item) => {
-                    const matchingDiamond = diamond && diamond.find((d) => d.DiamondID === item.DiamondID);
-
-                    return (
-                      <TableRow key={item.id}>
-                        <TableCell style={{ fontWeight: "bold" }}>
-                          {item.stockNumber || (matchingDiamond ? matchingDiamond.StockNumber : "")} -
-                          {item.caratWeight || (matchingDiamond ? matchingDiamond.CaratWeight : "")} grams -
-                          {item.color || (matchingDiamond ? matchingDiamond.Color : "")}
-                        </TableCell>
-                        <TableCell align="center">
-                          <img
-                            src={item.image || (matchingDiamond ? matchingDiamond.Image : "")}
-                            alt={item.name || (matchingDiamond ? matchingDiamond.DiamondOrigin : "")}
-                            style={{ width: 100, height: 100, borderRadius: 8 }}
+              <TableBody style={{ margin: "0 10px" }}>
+                {cart.length > 0 ? (
+                  cart.map((item, index) => (
+                    <TableRow key={`${item.id}-${index}`}>
+                      <TableCell style={{ fontWeight: "bold" }}>
+                        <div className="product-info">
+                          <Image
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              objectFit: "cover",
+                              marginRight: "50px",
+                            }}
+                            src={item.image}
+                            alt={item.name}
+                            className="product-image"
                           />
-                        </TableCell>
-                        <TableCell
-                          align="right"
-                          style={{
-                            fontWeight: "bold",
-                            color: "red",
-                            fontSize: "25px",
-                          }}
-                        >
-                          {item.price}$
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
+                          {item.type === "Diamond" && (
+                            <div className="diamond-details">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Diamond
+                              </Typography>
+                              <div className="product-detail">
+                                <strong>Stock Number:</strong>{" "}
+                                {item.stockNumber}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Carat Weight:</strong>{" "}
+                                {item.caratWeight} ct
+                              </div>
+                              <div className="product-detail">
+                                <strong>Color:</strong> {item.color}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Clarity:</strong> {item.clarity}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Cut:</strong> {item.cut}
+                              </div>
+                            </div>
+                          )}
+                          {item.type === "DiamondRings" && (
+                            <div className="ring-details">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Diamond Rings
+                              </Typography>
+                              <Typography className="product-title" color={"#333"} fontWeight={"bold"}>
+                                {item.name}
+                              </Typography>
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
+                                <strong>Category:</strong> {item.category}
+                              </div>
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
+                                <strong>Material:</strong> {item.material}
+                              </div>
+                              <div className="product-detail" color={"#333"} fontWeight={"bold"}>
+                                <strong>Size:</strong> {item.ringSize}
+                              </div>
+                            </div>
+                          )}
+                          {item.type === "Bridal" && (
+                            <div className="bridal-details">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Bridal
+                              </Typography>
+                              <Typography className="product-title" fontWeight={"bold"}>
+                                {item.name}
+                              </Typography>
+                              <div className="product-detail">
+                                <strong>Material:</strong> {item.material}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Category:</strong> {item.category}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Size:</strong> {item.ringSize}
+                              </div>
+                            </div>
+                          )}
+                          {item.type === "DiamondTimepieces" && (
+                            <div className="timepieces-details">
+                              <Typography className="product-title" color={"#3393FF"} fontWeight={"bold"}>
+                                Diamond Timepieces
+                              </Typography>
+                              <Typography className="product-title" fontWeight={"bold"}>
+                                {item.name}
+                              </Typography>
+                              <div className="product-detail">
+                                <strong>Timepieces Style:</strong>{" "}
+                                {item.timepiecesStyle}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Crystal Type:</strong>{" "}
+                                {item.crystalType}
+                              </div>
+                              <div className="product-detail">
+                                <strong>Case Size:</strong> {item.caseSize}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell
+                        style={{ fontWeight: "bold", paddingLeft: "50px" }}
+                      >
+                        {item.quantity}
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        style={{
+                          fontWeight: "bold",
+                          color: "red",
+                          fontSize: "20px",
+                          paddingRight: "20px",
+                        }}
+                      >
+                        {item.price}$
+                      </TableCell>
+                    </TableRow>
+                  ))
                 ) : (
-                  <TableRow>
+                  <TableRow key="empty-cart">
                     <TableCell colSpan={3} align="center">
                       No items in the cart.
                     </TableCell>
@@ -877,83 +1112,162 @@ const OrderForm = () => {
           <Box display="flex" mt={3} mb={2}>
             <Box flex={1}>
               <Typography
-                style={{
-                  fontWeight: "bold",
-                  fontStyle: "italic",
-                  color: "#007BFF",
-                  textDecoration: "underline",
-                  marginLeft: 20,
-                  marginTop: 5,
-                  fontSize: "1.1em",
-                }}
+                variant="h4"
+                component="h2"
+                color="#3393FF"
+                fontWeight="bold"
               >
-                Voucher
+                Eligible Vouchers
               </Typography>
-              <FormControl fullWidth style={{ marginTop: 10, marginLeft: 5 }}>
-                <TextField
-                  select
-                  label="Select a Voucher"
-                  value={selectedVoucher ? selectedVoucher.VoucherID : ''}
-                  onChange={handleVoucherChange}
-                  variant="outlined"
-                  SelectProps={{
-                    native: true,
-                    style: {
+              <div>
+                {/* <TextField
+                  label="Enter Voucher Name"
+                  value={enteredVoucherName}
+                  onChange={handleVoucherNameChange}
+                  fullWidth
+                  margin="normal"
+                /> */}
+                <FormControl
+                  fullWidth
+                  margin="normal"
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      color: "#2391FF",
                       background: "#f9f9f9",
                       borderRadius: 8,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#FF1471",
+                      },
                     },
                   }}
                 >
-                  <option value=""></option>
-                  {eligibleVouchers.map((voucher) => (
-                    <option key={voucher.VoucherID} value={voucher.VoucherID}>
-                      {voucher.VoucherName}
-                    </option>
-                  ))}
-                </TextField>
-              </FormControl>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleApplyVoucher}
-                style={{ marginTop: 10, fontSize: "0.85em", padding: "8px 16px", boxShadow: "0px 0px 15px 5px rgba(0,0,0,0.2)" }}
-              >
-                Apply Voucher
-              </Button>
+                  <InputLabel
+                    sx={{
+                      color: "#FF1471",
+                      '&.Mui-focused': {
+                        color: "#FF1471",
+                      },
+                    }}
+                  >
+                    Select Voucher
+                  </InputLabel>
+                  <Select
+                    value={selectedVoucher ? selectedVoucher.VoucherID : ""}
+                    onChange={(e) => {
+                      const voucherId = parseInt(e.target.value, 10);
+                      const voucher = eligibleVouchers.find(
+                        (v) => v.VoucherID === voucherId
+                      );
+                      setSelectedVoucher(voucher || null);
+                    }}
+                    label="Select Voucher"
+                    sx={{
+                      '& .MuiSelect-outlined': {
+                        borderColor: "#FF1471",
+                      },
+                      '&.Mui-focused .MuiSelect-outlined': {
+                        borderColor: "#FF1471",
+                      },
+                    }}
+                  >
+                    {handleFilterVouchers().map((voucher) => (
+                      <MenuItem
+                        key={voucher.VoucherID}
+                        value={voucher.VoucherID}
+                      >
+                        <Typography style={{
+                          fontWeight: "bold",
+                          fontSize: "1.2em",
+                          color: "#3393FF",
+                        }}>
+                          {`${voucher.VoucherName} - ${voucher.Discount}% Off`}
+                        </Typography>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
-              <Box mt={3} ml={3}>
-                <Typography variant="body1" gutterBottom>
-                  Initial Total Price: ${initialTotalPrice}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ backgroundColor: "#FF1471", color: "#FFFFFF" }}
+                  onClick={handleApplyVoucher}
+                  disabled={!selectedVoucher}
+                >
+                  Apply Voucher
+                </Button>
+              </div>
+            </Box>
+            <Box flex={1} ml={4}>
+              <Typography
+                variant="h3"
+                component="h2"
+                mb={2}
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "2em",
+                  color: "#3393FF",
+                }}
+              >
+                Total Price
+              </Typography>
+              <hr />
+              <br />
+              <Typography variant="body1" mb={1} style={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF",
+              }}>
+                Initial Price: ${initialTotalPrice.toFixed(2)}
+              </Typography>
+              <Typography variant="body1" mb={1} style={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                color: "#3393FF",
+              }}>
+                Shipping Fee: ${shippingCost}
+              </Typography>
+              {discountedPrice !== null && (
+                <Typography
+                  variant="body1"
+                  mb={1}
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "1.2em",
+                    color: "#3393FF",
+                  }}
+                >
+                  Discount: -${discountedPrice}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Discounted Price: ${discountedPrice}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Shipping Cost: ${shippingCost}
-                </Typography>
-                <Typography variant="h6">
-                  Total Price: ${totalPrice}
-                </Typography>
-              </Box>
+              )}
+              <hr />
+              <Typography
+                variant="body1"
+                mb={1}
+                style={{
+                  fontSize: "2em",
+                  fontWeight: "bold",
+                  color: "#FF0042",
+                }}
+              >
+                Total: ${totalPrice}
+              </Typography>
             </Box>
           </Box>
         </Box>
-
       </Box>
-      <Dialog open={isModalOpen} onClose={handleModalClose}>
-        <DialogTitle>Order Confirmation</DialogTitle>
-        <DialogContent>
-          <Typography>Your order has been submitted successfully!</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleContinueShopping} color="primary">
-            Continue Shopping
-          </Button>
-          <Button onClick={handleModalClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Footer />
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorModal}
+        errorMessage={error}
+      />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import "./index.scss";
-
 import { useEffect, useState } from "react";
+import { message, Popconfirm } from "antd";
 
 function DeliveryConfirm() {
   const [orders, setOrders] = useState([]);
@@ -9,9 +9,13 @@ function DeliveryConfirm() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8090/features/view-order-confirm"
+        "http://localhost:8090/features/orderstatus-delivery"
       );
-      setOrders(response.data);
+      // Remove duplicates based on OrderID
+      const uniqueOrders = Array.from(new Set(response.data.map(order => order.OrderID)))
+        .map(OrderID => response.data.find(order => order.OrderID === OrderID));
+
+      setOrders(uniqueOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -30,9 +34,11 @@ function DeliveryConfirm() {
           orderStatus: newStatus,
         }
       );
+      message.success("Order status updated successfully");
       fetchOrders();
     } catch (error) {
       console.error("Error updating order status:", error);
+      message.error("Failed to update order status");
     }
   };
 
@@ -74,11 +80,14 @@ function DeliveryConfirm() {
                   <strong>Delivery Address:</strong> {order.DeliveryAddress}
                 </p>
                 <div className="delivery__actions">
-                  <button
-                    onClick={() => updateStatus(order.OrderID, "Shipped")}
+                  <Popconfirm
+                    title="Are you sure you want to update the status to Shipping?"
+                    onConfirm={() => updateStatus(order.OrderID, "Shipping")}
+                    okText="Yes"
+                    cancelText="No"
                   >
-                    Completed
-                  </button>
+                    <button>Shipping</button>
+                  </Popconfirm>
                 </div>
               </li>
             ))}
@@ -86,7 +95,7 @@ function DeliveryConfirm() {
         </section>
       </div>
       <footer className="delivery__footer">
-        <p> 2024 Delivery Service. All rights reserved.</p>
+        <p>2024 Delivery Service. All rights reserved.</p>
       </footer>
     </div>
   );

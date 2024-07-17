@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Select, message } from "antd";
+import { Table, Button, message } from "antd";
 import axios from "axios";
-
-const { Option } = Select;
+import { Link } from "react-router-dom";
 
 function RequestWarranty() {
   const [warrantyRequests, setWarrantyRequests] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchWarrantyRequests();
@@ -26,7 +22,11 @@ function RequestWarranty() {
         }
       );
       if (response.data.status) {
-        setWarrantyRequests(response.data.warrantyRequests);
+        // Remove duplicates based on OrderID
+        const uniqueWarrantyRequests = Array.from(new Set(response.data.warrantyRequests.map(req => req.OrderID)))
+          .map(OrderID => response.data.warrantyRequests.find(req => req.OrderID === OrderID));
+
+        setWarrantyRequests(uniqueWarrantyRequests);
       } else {
         message.warning(response.data.message);
       }
@@ -34,40 +34,6 @@ function RequestWarranty() {
       console.error("Error fetching warranty requests:", error);
       message.error("Error fetching warranty requests");
     }
-  };
-
-  const handleUpdateRequest = async (values) => {
-    try {
-      const token = localStorage.getItem("accessToken"); // Retrieve the token from local storage
-      await axios.put(
-        "http://localhost:8090/auth/update-warranty-manager",
-        {
-          orderId: selectedRequest.OrderID,
-          requestWarranty: values.requestWarranty,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the headers
-          },
-        }
-      );
-      message.success("Warranty request updated successfully");
-      fetchWarrantyRequests(); // Refresh the list
-      setIsModalVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-      setSelectedRequest(null);
-    } catch (error) {
-      console.error("Error updating warranty request:", error);
-      message.error("Error updating warranty request");
-    }
-  };
-
-  const handleEditRequest = (record) => {
-    setSelectedRequest(record);
-    setIsModalVisible(true);
-    form.setFieldsValue({
-      requestWarranty: record.ResquestWarranty,
-    });
   };
 
   const columns = [
@@ -82,49 +48,15 @@ function RequestWarranty() {
       key: "LastName",
     },
     {
-      title: "Email",
-      dataIndex: "Email",
-      key: "Email",
-    },
-    {
-      title: "Phone Number",
-      dataIndex: "PhoneNumber",
-      key: "PhoneNumber",
-    },
-    {
-      title: "Order ID",
-      dataIndex: "OrderID",
-      key: "OrderID",
-    },
-    {
       title: "Order Date",
       dataIndex: "OrderDate",
       key: "OrderDate",
+      render: (text) => new Date(text).toLocaleDateString(),
     },
     {
       title: "Quantity",
       dataIndex: "Quantity",
       key: "Quantity",
-    },
-    {
-      title: "Attached Accessories",
-      dataIndex: "AttachedAccessories",
-      key: "AttachedAccessories",
-    },
-    {
-      title: "Shipping",
-      dataIndex: "Shipping",
-      key: "Shipping",
-    },
-    {
-      title: "Report No",
-      dataIndex: "ReportNo",
-      key: "ReportNo",
-    },
-    {
-      title: "Delivery Address",
-      dataIndex: "DeliveryAddress",
-      key: "DeliveryAddress",
     },
     {
       title: "Order Status",
@@ -137,17 +69,12 @@ function RequestWarranty() {
       key: "TotalPrice",
     },
     {
-      title: "Request Warranty",
-      dataIndex: "ResquestWarranty",
-      key: "ResquestWarranty",
-    },
-    {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Button type="link" onClick={() => handleEditRequest(record)}>
-          Edit
-        </Button>
+        <Link to={`/manager-view-warrantydetails/${record.OrderID}`}>
+          <Button>View Details</Button>
+        </Link>
       ),
     },
   ];
@@ -155,36 +82,6 @@ function RequestWarranty() {
   return (
     <div>
       <Table dataSource={warrantyRequests} columns={columns} rowKey="OrderID" />
-      <Modal
-        title="Edit Warranty Request"
-        visible={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-          setSelectedRequest(null);
-        }}
-        footer={null}
-      >
-        <Form form={form} layout="vertical" onFinish={handleUpdateRequest}>
-          <Form.Item
-            name="requestWarranty"
-            label="Request Warranty"
-            rules={[{ required: true, message: "Please select a status!" }]}
-          >
-            <Select placeholder="Select a status">
-              <Option value="Assign">Assign</Option>
-              <Option value="Processing">Processing</Option>
-              <Option value="Approved">Approved</Option>
-              <Option value="Refused">Refused</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Update Request
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 }

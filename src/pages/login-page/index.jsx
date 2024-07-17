@@ -6,7 +6,7 @@ import {
   EyeInvisibleOutlined,
   EyeTwoTone,
 } from "@ant-design/icons";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import logo from "../../components/assets/logo.png";
 import { AuthContext } from "../../AuthContext";
@@ -18,8 +18,6 @@ function LoginForm() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const [token, setToken] = useState(""); 
-  const [roleName, setRoleName] = useState(""); 
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -29,28 +27,6 @@ function LoginForm() {
   const googleAuth = () => {
     window.open("http://localhost:8090/auth/google/customer", "_self");
   };
-
-  window.addEventListener(
-    "message",
-    (event) => {
-      if (event.origin === "http://localhost:8090") {
-        if (event.data && event.data.token) {
-          localStorage.setItem("user", JSON.stringify(event.data));
-          // localStorage.setItem("token", event.data.token);
-          login(user);
-          navigate("/", { state: { message: event.data.message } });
-        }
-      }
-    },
-    false
-  );
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      login({ token: storedToken });
-    }
-  }, [login]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -64,13 +40,25 @@ function LoginForm() {
       console.log("Login response:", response);
 
       if (response.data.token) {
-
-        const { token, roleName, message } = response.data;
+        const { token, roleName, message, FirstName, LastName, PhoneNumber } =
+          response.data;
         setMessage(message);
 
         // Store token in localStorage
-      localStorage.setItem('accessToken', token);
-        login({ token });
+        localStorage.setItem("accessToken", token);
+
+        // Store user info in localStorage
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            FirstName,
+            LastName,
+            PhoneNumber,
+          })
+        );
+
+        // Update context with user info
+        login({ token, FirstName, LastName, PhoneNumber });
 
         switch (roleName) {
           case "Admin":
@@ -80,13 +68,13 @@ function LoginForm() {
             navigate("/manager-page");
             break;
           case "Customer":
-            navigate("/");
+            navigate("/", { state: { FirstName, LastName, PhoneNumber } });
             break;
           case "Sale":
             navigate("/sale-page");
             break;
           case "Delivery":
-            navigate("/timepiece-page");
+            navigate("/delivery-profile-page");
             break;
           default:
             navigate("/");
@@ -151,7 +139,7 @@ function LoginForm() {
           </div>
           <div className="remember-forgot">
             <label>
-            <Checkbox >Remember me</Checkbox>
+              <Checkbox>Remember me</Checkbox>
             </label>
             <Link to="/forgot-password-page" className="forgot">
               Forgot password

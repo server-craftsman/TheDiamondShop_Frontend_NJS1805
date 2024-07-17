@@ -1,0 +1,35 @@
+.detail {
+  font-size: 50px;
+    padding: 20px;
+  }
+  
+  .descriptions {
+    //background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .brand-image,
+  .rings-image {
+    width: 100px;
+    height: auto;
+  }
+  
+  .materials-container,
+  .ring-sizes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .material-item,
+  .ring-size-item {
+    //background-color: #f0f0f0;
+    padding: 5px 10px;
+    //border-radius: 4px;
+  }
+  
+  button {
+    margin-top: 20px;
+  }
+  

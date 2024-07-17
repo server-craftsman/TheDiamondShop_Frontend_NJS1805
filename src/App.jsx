@@ -37,6 +37,7 @@ import OrderConfirmDetail from "./sales-page/order-pages/view-order-confirm-page
 import ViewRequestWarranty from "./sales-page/view-requestwarranty-page";
 import ViewRequestWarrantyDetail from "./sales-page/view-requestwarranty-page/details-request-warranty";
 import ViewWarrantyByReportNo from "./sales-page/view-requestwarranty-page/details-warranty";
+import EditProfileSales from "./sales-page/updateProfile";
 
 //==========Manage Pages=========//
 import ManageDiamondPage from "./manager-pages/manageproduct/diamond/managediamond-page";
@@ -53,6 +54,7 @@ import ManageCertificate from "./manager-pages/manager-certificate";
 import ManageWarranty from "./manager-pages/manager-warranty/order-warranty";
 import RequestWaranty from "./manager-pages/manager-warranty/request-warranty";
 import ManageEvent from "./manager-pages/manage-promotions/manage-event";
+import EditProfileManager from "./manager-pages/manager-home-page/updateProfile";
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
@@ -61,20 +63,35 @@ import TimepieceDetail from "./pages/timepiece-page/details";
 //===========Admin Pages=========//
 import LayoutAdmin from "./components/admin-layout";
 import Dashboard from "./admin-pages/dashboard";
+import Account from "./admin-pages/account-page";
+import ProfileAdmin from "./admin-pages/profile";
 // import SearchAllProduct from "./pages/searchProduct-page";
 
 //==========Delivery Pages============//
-import DeliveryPage from "./delivery-page/delivery-shopping";
+import DeliveryPage from "./delivery-page/delivery-shipping";
 import DeliveryLayout from "./components/delivery-layout";
 import DeliveryCompleted from "./delivery-page/delivery-completed";
 import DeliveryConfirm from "./delivery-page/delivery-confirm";
-
+import DeliveryProfile from "./delivery-page/delivery-profile/view-profile";
+import EditDeliveryProfile from "./delivery-page/delivery-profile/edit-profile";
+//==================================//
 import EditProfile from "./pages/userProfile-page/editProfile";
 import HistoryOrderDetails from "./pages/historyOrder-page/details";
 import BridalDetail from "./pages/bridal-page/details";
 import RingDetail from "./pages/ring-page/details";
 import Instruct from "./pages/instruct-page";
 import ManageVoucher from "./manager-pages/manage-promotions/manage-voucher";
+import ManagerViewWarrantyDetails from "./manager-pages/manager-warranty/request-warranty/view-warranty-detail";
+import ManagerViewWarrantyByReportNo from "./manager-pages/manager-warranty/request-warranty/view-warrant-byreportno";
+import Feedback from "./pages/feedback-page";
+import FeedbackForm from "./pages/feedback-page/createFeedback";
+import PriceDiamond from "./pages/priceDiamond-page";
+import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cus-view-warrant-byreportno";
+import MapAdmin from "./admin-pages/map-page";
+import TakeWarranty from "./delivery-page/take-warranty";
+import ReturnWarranty from "./delivery-page/return-warranty";
+
+
 
 function App() {
   const router = createBrowserRouter([
@@ -163,6 +180,10 @@ function App() {
           element: <HistoryOrderDetails />,
         },
         {
+          path: "/customer-view-warranty/:reportNo",
+          element: <CustomerViewWarrantyByReportNo />,
+        },
+        {
           path: "/showsearch-page",
           element: <ShowSearch />,
         },
@@ -186,6 +207,10 @@ function App() {
           path: "/timepieces-detail/:id",
           element: <TimepieceDetail />,
         },
+        {
+          path: "/priceDiamond-page",
+          element: <PriceDiamond />,
+        },
       ],
     },
     //========Manager pages==============//
@@ -196,6 +221,10 @@ function App() {
         {
           path: "/manager-page",
           element: <ManagerPage />,
+        },
+        {
+          path: "/profileManager-edit",
+          element: <EditProfileManager />,
         },
         {
           path: "/manager-diamond-page",
@@ -234,6 +263,14 @@ function App() {
           element: <ManageVoucher />,
         },
         {
+          path: "/manager-view-warrantydetails/:orderId",
+          element: <ManagerViewWarrantyDetails />,
+        },
+        {
+          path: "/manager-view-warranty/:reportNo",
+          element: <ManagerViewWarrantyByReportNo />,
+        },
+        {
           path: "/bridals-detail/:id",
           element: <ViewBridalDetailPage />,
         },
@@ -249,6 +286,14 @@ function App() {
           path: "/timepieces-details/:id",
           element: <ViewTimepiecesDetailPage />,
         },
+        {
+          path: "/feedback-page",
+          element: <Feedback />,
+        },
+        {
+          path: "/feedback-create",
+          element: <FeedbackForm />,
+        },
       ],
     },
     //=========Sale page========//
@@ -259,6 +304,10 @@ function App() {
         {
           path: "/sale-page",
           element: <SalePage />,
+        },
+        {
+          path: "/profileSale-edit",
+          element: <EditProfileSales />,
         },
         {
           path: "/view-order",
@@ -323,6 +372,22 @@ function App() {
           path: "/delivery-confirm",
           element: <DeliveryConfirm />,
         },
+        {
+          path: "/delivery-profile-page",
+          element: <DeliveryProfile />,
+        },
+        {
+          path: "/deliveryProfile-edit",
+          element: <EditDeliveryProfile />,
+        },
+        {
+          path: "/take-item-warranty",
+          element: <TakeWarranty />,
+        },
+        {
+          path: "/return-item-warranty",
+          element: <ReturnWarranty />,
+        },
       ],
     },
     //=======Admin Pages==========//
@@ -333,6 +398,18 @@ function App() {
         {
           path: "/admin-page",
           element: <Dashboard />,
+        },
+        {
+          path: "account-page",
+          element: <Account />,
+        },
+        {
+          path: "profileAdmin-page",
+          element: <ProfileAdmin />,
+        },
+        {
+          path: "mapAdmin-page",
+          element: <MapAdmin />,
         },
       ],
     },

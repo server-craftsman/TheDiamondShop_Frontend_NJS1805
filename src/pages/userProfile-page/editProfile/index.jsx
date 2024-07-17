@@ -4,7 +4,9 @@ import { AuthContext } from "../../../AuthContext"; // Adjust the path as needed
 import './index.scss';
 import axios from "axios";
 import moment from "moment";
-import { Form, Input, Button, Row, Col, Card, DatePicker, notification, Select, Upload } from "antd";
+import { Form, Input, Button, Row, Col, Card, DatePicker, notification, Select } from "antd";
+
+const { Option } = Select;
 
 function EditProfile() {
   const { user } = useContext(AuthContext);
@@ -28,6 +30,7 @@ function EditProfile() {
 
   const [fetchError, setFetchError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imageError, setImageError] = useState(null);
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -72,8 +75,20 @@ function EditProfile() {
     }
   };
 
+  const isValidImageUrl = (url) => {
+    const imageUrlPattern = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))/i;
+    return imageUrlPattern.test(url);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'Image') {
+      if (!isValidImageUrl(value)) {
+        setImageError('Please enter a valid image URL.');
+      } else {
+        setImageError(null);
+      }
+    }
     setFormData({
       ...formData,
       [name]: value,
@@ -84,6 +99,13 @@ function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (imageError) {
+      notification.error({
+        message: 'Invalid Image URL',
+        description: 'Please provide a valid image URL before submitting.',
+      });
+      return;
+    }
     try {
       const token = user?.token;
 
@@ -130,8 +152,6 @@ function EditProfile() {
     fetchUserProfile();
   }, [user]);
 
-  
-
   return (
     <div className="profile" style={{ padding: "24px" }} onSubmit={handleSubmit}>
       <Row gutter={16}>
@@ -153,7 +173,7 @@ function EditProfile() {
               <p>
               "Welcome to Diamond Store <br />
               where elegance meets brilliance <br />
-              Diamonds - Rings - Timepiesces."
+              Diamonds - Rings - Timepieces."
               </p>
             </div>
           </Card>
@@ -186,20 +206,18 @@ function EditProfile() {
               </Row>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form>
-                    <Form.Item label="Gender">
+                  <Form.Item label="Gender">
                     <Select
-                          name="Gender"
-                          value={formData.Gender}
-                          onChange={(value) => handleChange({ target: { name: 'Gender', value } })}
-                          style={{ width: "50%" }}
-                        >
-                          <Option value="Male">Male</Option>
-                          <Option value="Female">Female</Option>
-                          <Option value="Orther">Orther</Option>
-                        </Select>
-                    </Form.Item>
-                  </Form>
+                      name="Gender"
+                      value={formData.Gender}
+                      onChange={(value) => handleChange({ target: { name: 'Gender', value } })}
+                      style={{ width: "100%" }}
+                    >
+                      <Option value="Male">Male</Option>
+                      <Option value="Female">Female</Option>
+                      <Option value="Other">Other</Option>
+                    </Select>
+                  </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item label="Birthday">
@@ -273,7 +291,7 @@ function EditProfile() {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row gutter={12}>
+              <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item label="Postal Code">
                     <Input
@@ -284,19 +302,17 @@ function EditProfile() {
                     />
                   </Form.Item>
                 </Col>
-
-             
-              
-                {/* <Col span={12}>
-                  <Form.Item label="Image">
-                    <Input.TextArea
-                      rows={4}
-                      defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                      placeholder="Here can be your description"
+                <Col span={12}>
+                  <Form.Item label="Image URL">
+                    <Input
+                      value={formData.Image}
+                      onChange={handleChange}
+                      name="Image"
+                      placeholder="Enter image URL"
                     />
+                    {imageError && <p style={{ color: 'red' }}>{imageError}</p>}
                   </Form.Item>
-                </Col> */}
-
+                </Col>
               </Row>
               <Form.Item>
                 <Button
