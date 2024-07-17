@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Select, Table, message } from "antd";
+import { Button, Table, message } from "antd";
 import { AuthContext } from "../../AuthContext";
 import { Link } from "react-router-dom";
+
 function ViewWarrantyRequest() {
   const { user } = useContext(AuthContext);
   const [warrantyRequests, setWarrantyRequests] = useState([]);
@@ -32,11 +33,14 @@ function ViewWarrantyRequest() {
       console.log('Fetch response:', data);
 
       if (response.ok) {
-        setWarrantyRequests(data.warrantyRequests);
+        // Remove duplicates based on OrderID
+        const uniqueWarrantyRequests = Array.from(new Set(data.warrantyRequests.map(req => req.OrderID)))
+          .map(OrderID => data.warrantyRequests.find(req => req.OrderID === OrderID));
+
+        setWarrantyRequests(uniqueWarrantyRequests);
       } else {
         if (response.status === 401) {
           console.error('Access denied. Invalid token.');
-          //logout();
           message.error('Session expired. Please log in again.');
         } else {
           console.error(data.message || 'Failed to fetch warranty requests');
@@ -80,16 +84,16 @@ function ViewWarrantyRequest() {
       key: 'TotalPrice',
     },
     {
-        title: 'Actions',
-        key: 'actions',
-        render: (text, record) => (
-          <div>
-            <Link to={`/view-warrantydetails/${record.OrderID}`}>
-          <Button>View Details</Button>
-        </Link>
-          </div>
-        ),
-      },
+      title: 'Actions',
+      key: 'actions',
+      render: (text, record) => (
+        <div>
+          <Link to={`/view-warrantydetails/${record.OrderID}`}>
+            <Button>View Details</Button>
+          </Link>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -101,4 +105,3 @@ function ViewWarrantyRequest() {
 }
 
 export default ViewWarrantyRequest;
-
