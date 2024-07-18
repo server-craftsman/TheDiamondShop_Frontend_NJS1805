@@ -287,7 +287,7 @@ const DiamondDetail = () => {
 
   return (
     <>
-     <Modal
+     {/* <Modal
         open={openModal}
         // title="Title"
         onCancel={handleCancel}
@@ -301,7 +301,7 @@ const DiamondDetail = () => {
         ]}
       >
         <p className="p">ADD TO CART SUCCESSFULLY</p>
-      </Modal>
+      </Modal> */}
       <Container
         fullWidth
         maxWidth="100%"

@@ -1,4 +1,3 @@
-// // CartContext.js
 // import React, { createContext, useState, useContext, useEffect } from "react";
 // import Warning from "./Warning"; // Adjust path if necessary
 
@@ -12,32 +11,27 @@
 //     return storedCartItems ? JSON.parse(storedCartItems) : [];
 //   });
 //   const [warningOpen, setWarningOpen] = useState(false);
+//   const [warningMessage, setWarningMessage] = useState("");
 //   const [selectedItems, setSelectedItems] = useState([]);
 
 //   useEffect(() => {
 //     localStorage.setItem("cartItems", JSON.stringify(cartItems));
 //   }, [cartItems]);
 
-//   // const addToCart = (item) => {
-//   //   setCartItems((prevItems) => {
-//   //     const existingItem = prevItems.find(
-//   //       (cartItem) => cartItem.id === item.id && cartItem.type === item.type
-//   //     );
-//   //     if (existingItem) {
-//   //       setWarningOpen(true);
-//   //       return prevItems;
-//   //     } else {
-//   //       return [...prevItems, { ...item, quantity: 1 }];
-//   //     }
-//   //   });
-//   // };
 //   const addToCart = (item) => {
 //     setCartItems((prevItems) => {
 //       const existingItem = prevItems.find(
 //         (cartItem) => cartItem.id === item.id && cartItem.type === item.type
 //       );
+//       const diamondExists = prevItems.some((cartItem) => cartItem.type === "Diamond");
+
 //       if (existingItem) {
+//         setWarningMessage("Item already exists in the cart.");
 //         setWarningOpen(true); // Show warning if item already exists
+//         return prevItems;
+//       } else if (!diamondExists && ["Bridal", "DiamondRings", "DiamondTimepieces"].includes(item.type)) {
+//         setWarningMessage("You need to add a Diamond first.");
+//         setWarningOpen(true); // Show warning if trying to add an accessory without a diamond
 //         return prevItems;
 //       } else {
 //         return [...prevItems, { ...item, quantity: 1, selected: false }];
@@ -61,18 +55,6 @@
 //     );
 //   };
 
-//   // const selectItemForPayment = (itemId, isSelected) => {
-//   //   setCartItems((prevItems) =>
-//   //     prevItems.map((item) =>
-//   //       item.id === itemId ? { ...item, selected: isSelected } : item
-//   //     )
-//   //   );
-//   //   setSelectedItems((prevSelected) =>
-//   //     isSelected
-//   //       ? [...prevSelected, itemId]
-//   //       : prevSelected.filter((id) => id !== itemId)
-//   //   );
-//   // };
 //   const selectItemForPayment = (itemId, itemType, isSelected) => {
 //     setCartItems((prevItems) =>
 //       prevItems.map((item) =>
@@ -114,7 +96,7 @@
 //       }}
 //     >
 //       {children}
-//       <Warning open={warningOpen} onClose={handleWarningClose} />
+//       <Warning open={warningOpen} onClose={handleWarningClose} message={warningMessage} />
 //     </CartContext.Provider>
 //   );
 // };
@@ -139,27 +121,36 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
-
+  
   const addToCart = (item) => {
+    console.log("Adding item to cart:", item);
     setCartItems((prevItems) => {
       const existingItem = prevItems.find(
         (cartItem) => cartItem.id === item.id && cartItem.type === item.type
       );
       const diamondExists = prevItems.some((cartItem) => cartItem.type === "Diamond");
-
+  
+      console.log("Existing item:", existingItem);
+      console.log("Diamond exists:", diamondExists);
+  
       if (existingItem) {
-        setWarningMessage("Item already exists in the cart.");
-        setWarningOpen(true); // Show warning if item already exists
+        console.log("Item already in cart");
+        setWarningMessage("Cannot add this item to the cart because it is already in the cart.");
+        setWarningOpen(true);
         return prevItems;
       } else if (!diamondExists && ["Bridal", "DiamondRings", "DiamondTimepieces"].includes(item.type)) {
-        setWarningMessage("You need to add a Diamond first.");
-        setWarningOpen(true); // Show warning if trying to add an accessory without a diamond
+        console.log("No Diamond item in cart");
+        setWarningMessage("Cannot add this item to the cart because a Diamond item must be added first.");
+        setWarningOpen(true);
         return prevItems;
       } else {
+        setWarningMessage("Item added to the cart successfully!");
+        setWarningOpen(true);
         return [...prevItems, { ...item, quantity: 1, selected: false }];
       }
     });
   };
+  
 
   const removeFromCart = (itemId, itemType) => {
     setCartItems((prevItems) =>
