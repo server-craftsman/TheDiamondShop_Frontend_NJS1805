@@ -68,7 +68,7 @@ const Nav = () => {
     {
         key: "6",
         icon: <SettingOutlined />,
-        label: "View Reuest Warranty",
+        label: "View Request Warranty",
         link: "/view-requestwarranty",
     },
     user

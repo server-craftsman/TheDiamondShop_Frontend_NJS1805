@@ -52,15 +52,14 @@ const OrderDetail = () => {
             {moment(orderDetails[0].OrderDate).format('YYYY-MM-DD')}
           </Descriptions.Item>
         )}
-        {orderDetails[0].FirstName && <Descriptions.Item label="FirstName">{orderDetails[0].FirstName}</Descriptions.Item>}
-        {orderDetails[0].LastName && <Descriptions.Item label="LastName">{orderDetails[0].LastName}</Descriptions.Item>}
-        {orderDetails[0].PhoneNumber && <Descriptions.Item label="PhoneNumber">{orderDetails[0].PhoneNumber}</Descriptions.Item>}
-        {orderDetails[0].TotalPrice && <Descriptions.Item label="TotalPrice">{orderDetails[0].TotalPrice}</Descriptions.Item>}
-        {orderDetails[0].DeliveryAddress && <Descriptions.Item label="DeliveryAddress">{orderDetails[0].DeliveryAddress}</Descriptions.Item>}
-        {orderDetails[0].OrderStatus && <Descriptions.Item label="OrderStatus">{orderDetails[0].OrderStatus}</Descriptions.Item>}
+        {orderDetails[0].FirstName && <Descriptions.Item label="Full Name">{orderDetails[0].FirstName} {orderDetails[0].LastName}</Descriptions.Item>}
+        {orderDetails[0].PhoneNumber && <Descriptions.Item label="Phone Number">{orderDetails[0].PhoneNumber}</Descriptions.Item>}
+        {orderDetails[0].TotalPrice && <Descriptions.Item label="Total Price">{orderDetails[0].TotalPrice}</Descriptions.Item>}
+        {orderDetails[0].DeliveryAddress && <Descriptions.Item label="Delivery Address">{orderDetails[0].DeliveryAddress}</Descriptions.Item>}
+        {orderDetails[0].OrderStatus && <Descriptions.Item label="Order Status">{orderDetails[0].OrderStatus}</Descriptions.Item>}
         {orderDetails[0].Shipping && <Descriptions.Item label="Shipping">{orderDetails[0].Shipping}</Descriptions.Item>}
         {orderDetails[0].Quantity && <Descriptions.Item label="Quantity">{orderDetails[0].Quantity}</Descriptions.Item>}
-        {orderDetails[0].AttachedAccessories && <Descriptions.Item label="AttachedAccessories">{orderDetails[0].AttachedAccessories}</Descriptions.Item>}
+        {orderDetails[0].AttachedAccessories && <Descriptions.Item label="Attached Accessories">{orderDetails[0].AttachedAccessories}</Descriptions.Item>}
       </Descriptions>
       
       <List
