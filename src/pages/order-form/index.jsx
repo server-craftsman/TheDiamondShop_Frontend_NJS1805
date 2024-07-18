@@ -36,7 +36,7 @@ import { Footer } from "antd/es/layout/layout";
 import { useCart } from "../../CartContext";
 import { AuthContext } from "../../AuthContext";
 import { PayPalButtons } from "@paypal/react-paypal-js";
-import QRCode from "qrcode.react";
+// import QRCode from "qrcode.react";
 import "./index.scss";
 import ErrorDialog from "../../FailOrder"; // Import the ErrorDialog component
 
