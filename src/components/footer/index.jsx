@@ -57,7 +57,7 @@ function Footer() {
               </li>
             </ul>
           </div>
-          <div className="footer-column">
+          {/* <div className="footer-column">
             <h3>Subscribe</h3>
             <p>
               Enter your email to get notified about sales and new products.
@@ -68,7 +68,7 @@ function Footer() {
                 <img src="email-icon.png" alt="Subscribe" />
               </button>
             </form>
-          </div>
+          </div> */}
           <div className="footer-column">
             <h3>Location</h3>
             <iframe

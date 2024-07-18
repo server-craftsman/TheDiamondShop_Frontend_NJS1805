@@ -77,10 +77,16 @@ function RegisterForm() {
     }
   };
 
+  // const disabledDate = (current) => {
+  //   const startYear = 1960;
+  //   const endYear = moment().year();
+  //   return current && (current.year() < startYear || current.year() > endYear);
+  // };
+
   const disabledDate = (current) => {
-    const startYear = 1960;
-    const endYear = moment().year();
-    return current && (current.year() < startYear || current.year() > endYear);
+    const startDate = moment().subtract(100, 'years');
+    const endDate = moment().endOf('day');
+    return current && (current.isBefore(startDate) || current.isAfter(endDate));
   };
 
   return (
@@ -117,7 +123,7 @@ function RegisterForm() {
                 </Row>
 
                 <Row>
-                  <Form.Item
+                  {/* <Form.Item
                     className='form-item name'
                     label="Birthday"
                     name="Birthday"
@@ -130,6 +136,20 @@ function RegisterForm() {
                       placeholder='1960-MM-DD'
                     />
 
+                  </Form.Item> */}
+
+                  <Form.Item
+                    className='form-item name'
+                    label="Birthday"
+                    name="Birthday"
+                    rules={[{ required: true, message: 'Please select your birthday!' }]}
+                  >
+                    <DatePicker
+                      style={{ width: "202px", height: "37px" }}
+                      format="YYYY-MM-DD"
+                      disabledDate={disabledDate}
+                      placeholder='YYYY-MM-DD'
+                    />
                   </Form.Item>
 
                   <Form.Item

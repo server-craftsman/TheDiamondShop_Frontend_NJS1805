@@ -400,7 +400,7 @@ const DiamondDetail = () => {
                   <br />
                   <strong style={{ fontSize: "20px", fontWeight: "normal" }}>
                     <span style={{ fontSize: "25px", fontWeight: "bold" }}>
-                      Certufication:{" "}
+                      Certification:{" "}
                     </span>
                     {diamond.GradingReport}
                   </strong>

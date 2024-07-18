@@ -205,7 +205,7 @@ function RingPage() {
             </Row>
           </Checkbox.Group>
           <hr />
-          <h3>Color</h3>
+          <h3>Brand</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ BrandName: values })}
             disabled={brandnameDisabled}
@@ -240,7 +240,7 @@ function RingPage() {
               </Checkbox>
             </Row>
           </Checkbox.Group>
-          <hr />
+          {/* <hr />
           <h3>Size</h3>
           <Checkbox.Group onChange={(values) => handleFilters({ RingSize: values })} disabled={ringsizeDisabled}>
             <Row className = "row-column">
@@ -260,7 +260,7 @@ function RingPage() {
               <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
               <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
             </Row>
-          </Checkbox.Group>
+          </Checkbox.Group> */}
           <hr />
           <button onClick={clearFilters} className="buttonfilter">
             Clear Filters
