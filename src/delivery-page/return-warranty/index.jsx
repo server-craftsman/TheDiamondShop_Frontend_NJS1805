@@ -38,7 +38,7 @@ const ViewWarrantyStatusCompleted = () => {
     <div className="delivery">
       <div className="delivery__body">
         <section className="delivery__orders">
-          <h2>wWrranty List</h2>
+          <h2>Warranty List</h2>
           <ul>
             {warrantyRequests.map((order, index) => (
               <li key={index} className="delivery__order">
