@@ -208,7 +208,7 @@ function BridalPage() {
               </Checkbox>
             </Row>
           </Checkbox.Group>
-          <hr />
+          {/* <hr />
           <h3>Color</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ Material: values })}
@@ -231,7 +231,7 @@ function BridalPage() {
                 18K Yellow Gold
               </Checkbox>
             </Row>
-          </Checkbox.Group>
+          </Checkbox.Group> */}
           <hr />
           <h3>Gender</h3>
           <Checkbox.Group
@@ -247,7 +247,7 @@ function BridalPage() {
               </Checkbox>
             </Row>
           </Checkbox.Group>
-          <hr />
+          {/* <hr />
           <h3>Ring Size Range</h3>
           <Checkbox.Group
             onChange={(values) => handleFilters({ RingSizeRang: values })}
@@ -270,7 +270,7 @@ function BridalPage() {
               <Checkbox value="8.25" className="Checkbox">8.25</Checkbox>
               <Checkbox value="8.50" className="Checkbox">8.50</Checkbox>
             </Row>
-          </Checkbox.Group>
+          </Checkbox.Group> */}
           <hr />
           <button onClick={clearFilters} className="buttonfilter">
             Clear Filters
