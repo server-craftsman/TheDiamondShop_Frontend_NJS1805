@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Button, Descriptions, Form, Input, InputNumber, Modal, notification, Spin } from "antd";
+import { Descriptions, Form, Input, InputNumber, Modal, notification, Spin, Upload } from "antd";
 import "./index.scss"
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+
 function ViewBridalDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
   const [bridalDetail, setBridalDetail] = useState(null);
@@ -12,7 +15,7 @@ function ViewBridalDetailPage() {
   const [isEditBridalVisible, setIsEditBridalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingBridal, setEditingBridal] = useState(null);
-
+  const [imageUrl, setImageUrl] = useState("");
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -62,6 +65,7 @@ function ViewBridalDetailPage() {
 
   const handleUpdateBridals = async (values) => {
     try {
+      values.imageBridal = imageUrl || values.imageBridal; 
       await axios.put(`http://localhost:8090/products/edit-bridals/`, values);
       fetchData(); // Refresh the list
       setIsEditBridalVisible(false); // Close the modal
@@ -78,6 +82,15 @@ function ViewBridalDetailPage() {
   const handleCancelEdit = () => {
     setIsEditBridalVisible(false);
     form.resetFields();
+  };
+
+  const handleUpload = (imageBridal) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrl(e.target.result);
+    };
+    reader.readAsDataURL(imageBridal);
+    return false; // Prevent default upload behavior
   };
 
   if (loading) {
@@ -228,7 +241,7 @@ function ViewBridalDetailPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="imageBridal"
             label="Image Bridal URL"
             rules={[
@@ -236,7 +249,39 @@ function ViewBridalDetailPage() {
             ]}
           >
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="imageBridal"
+            label="Upload Image Bridal"
+            rules={[
+              { required: true, message: "Please upload an image Bridal!" },
+            ]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
           </Form.Item>
+          {imageUrl && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrl}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
+
           <Form.Item name="weight" label="Weight"
           rules={[{ required: true, message: "Please input the weight!" }]}>
             <InputNumber style={{ width: "100%" }} />

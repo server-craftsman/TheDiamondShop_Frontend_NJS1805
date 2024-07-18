@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import {
-  Button,
   Descriptions,
   Input,
   InputNumber,
@@ -10,14 +9,20 @@ import {
   Spin,
   Form,
   notification,
+  Upload,
 } from "antd";
 //import "./index.scss"
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+
 function ViewTimepiecesDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
   const [timepiecesDetail, setTimepiecesDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditTimepiecesVisible, setIsEditTimepiecesVisible] = useState(false);
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrlbrand, setImageUrlBrand] = useState("");
 
   useEffect(() => {
     fetchTimepiecesDetail();
@@ -63,6 +68,8 @@ function ViewTimepiecesDetailPage() {
 
   const handleUpdateTimepieces = async (values) => {
     try {
+      values.imageTimepieces = imageUrl || values.imageTimepieces; // Use the uploaded image URL or the existing one
+      values.imageBrand = imageUrlbrand || values.imageBrand; // Use the uploaded image URL or the existing one
       await axios.put("http://localhost:8090/products/edit-timepieces", values);
       fetchTimepiecesDetail(); // Refresh the list
       setIsEditTimepiecesVisible(false); // Close the modal
@@ -79,6 +86,24 @@ function ViewTimepiecesDetailPage() {
   const handleCancelEdit = () => {
     setIsEditTimepiecesVisible(false);
     form.resetFields();
+  };
+
+  const handleUpload = (imageTimepieces) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrl(e.target.result);
+    };
+    reader.readAsDataURL(imageTimepieces);
+    return false; // Prevent default upload behavior
+  };
+
+  const handleUploadBrand = (imageBrand) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrlBrand(e.target.result);
+    };
+    reader.readAsDataURL(imageBrand);
+    return false; // Prevent default upload behavior
   };
 
   if (loading) {
@@ -297,7 +322,7 @@ function ViewTimepiecesDetailPage() {
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="imageTimepieces"
             label="Image Timepieces"
             rules={[
@@ -305,8 +330,38 @@ function ViewTimepiecesDetailPage() {
             ]}
           >
             <Input />
-          </Form.Item>
+          </Form.Item> */}
+
           <Form.Item
+            name="imageTimepieces"
+            label="Upload Image Timepieces"
+            rules={[{ required: true, message: "Please upload an image Timepieces!" }]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
+          </Form.Item>
+          {imageUrl && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrl}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
+
+          {/* <Form.Item
             name="imageBrand"
             label="Image Brand"
             rules={[
@@ -314,7 +369,36 @@ function ViewTimepiecesDetailPage() {
             ]}
           >
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="imageBrand"
+            label="Upload Image Brand"
+            rules={[{ required: true, message: "Please upload an image Brand!" }]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUploadBrand}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
           </Form.Item>
+          {imageUrlbrand && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrlbrand}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
           <Form.Item
             name="inventory"
             label="Inventory"

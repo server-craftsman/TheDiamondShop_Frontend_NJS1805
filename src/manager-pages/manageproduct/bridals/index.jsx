@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  Button,
   Table,
   Form,
   Input,
   InputNumber,
   Modal,
   notification,
+  Upload,
 } from "antd";
 import { Link } from "react-router-dom";
+import { Button, colors } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 function ManageBridalPage() {
   const [bridals, setBridals] = useState([]);
   const [isAddBridalVisible, setIsAddBridalVisible] = useState(false);
-  const [isEditBridalVisible, setIsEditBridalVisible] = useState(false);
   const [form] = Form.useForm();
-  const [editingBridal, setEditingBridal] = useState(null);
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -35,17 +34,31 @@ function ManageBridalPage() {
 
   const handleAddBridals = async (values) => {
     try {
-      await axios.post("http://localhost:8090/products/add-bridals", values);
+      const imageData = await fileToBase64(values.imageBridal[0]); // Pass the correct file object
+      const updatedValues = { ...values, imageBridal: imageData };
+      await axios.post(
+        "http://localhost:8090/products/add-bridals",
+        updatedValues
+      );
       fetchData(); // Refresh the list
       setIsAddBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       notification.success({
-        message: 'Success',
-        description: 'Bridals added successfully!',
+        message: "Success",
+        description: "Bridals added successfully!",
       });
     } catch (error) {
       console.error("Error adding bridals:", error);
     }
+  };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file.originFileObj); // Ensure you're accessing originFileObj
+    });
   };
 
   const columns = [
@@ -69,16 +82,6 @@ function ManageBridalPage() {
       dataIndex: "BrandName",
       key: "BrandName",
     },
-    // {
-    //   title: "Material",
-    //   dataIndex: "MaterialName",
-    //   key: "Material",
-    // },
-    // {
-    //   title: "Ring Size Rang",
-    //   dataIndex: "RingSizeRang",
-    //   key: "RingSizeRang",
-    // },
     {
       title: "Price",
       dataIndex: "Price",
@@ -105,14 +108,14 @@ function ManageBridalPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-          <Link to={`/bridals-detail/${record.BridalID}`}>View Details</Link>
+        <Link to={`/bridals-detail/${record.BridalID}`}>View Details</Link>
       ),
     },
   ];
 
   return (
     <>
-    <h1>Bridals</h1>
+      <h1>Bridals</h1>
       <Button type="primary" onClick={() => setIsAddBridalVisible(true)}>
         Add Bridal
       </Button>
@@ -152,14 +155,18 @@ function ManageBridalPage() {
           <Form.Item
             name="brandName"
             label="Brand Name"
-            rules={[{ required: true, message: "Please input the Brand Name!" }]}
+            rules={[
+              { required: true, message: "Please input the Brand Name!" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="settingType"
             label="Setting Type"
-            rules={[{ required: true, message: "Please input the Setting Type!" }]}
+            rules={[
+              { required: true, message: "Please input the Setting Type!" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -172,37 +179,98 @@ function ManageBridalPage() {
           </Form.Item>
           <Form.Item
             name="imageBridal"
-            label="Image Bridal URL"
-            rules={[{ required: true, message: "Please input the Image Bridal URL!" }]}
+            label="Image Bridal"
+            rules={[
+              {
+                required: true,
+                message: "Please upload the Image Bridal!",
+              },
+            ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Upload 
+            listType="picture"
+            beforeUpload={() => false} 
+            maxCount={1}>
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
+            {form.getFieldValue("imageBridal") &&
+              form.getFieldValue("imageBridal")[0] && (
+                <img
+                  src={form.getFieldValue("imageBridal")[0].preview}
+                  alt="Uploaded Bridal"
+                  style={{ width: "450px", height: "auto", marginTop: "10px" }}
+                />
+              )}
+          </Form.Item>
+          <Form.Item
+            name="weight"
+            label="Weight"
+            rules={[{ required: true, message: "Please input the weight!" }]}
+          >
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item
+            name="centerDiamond"
+            label="Center Diamond"
+            rules={[
+              { required: true, message: "Please input the center Diamond!" },
+            ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="weight" label="Weight"
-          rules={[{ required: true, message: "Please input the weight!" }]}>
+          <Form.Item
+            name="diamondCaratRange"
+            label="Diamond Carat Range"
+            rules={[
+              {
+                required: true,
+                message: "Please input the diamond Carat Range!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="totalCaratweight"
+            label="Total Carat Weight"
+            rules={[
+              {
+                required: true,
+                message: "Please input the total Carat weight!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="totalDiamond"
+            label="Total Diamond"
+            rules={[
+              { required: true, message: "Please input the total Diamond!" },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="centerDiamond" label="Center Diamond"
-          rules={[{ required: true, message: "Please input the center Diamond!" }]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: "Please input the description!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="diamondCaratRange" label="Diamond Carat Range"
-          rules={[{ required: true, message: "Please input the diamond Carat Range!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="totalCaratweight" label="Total Carat Weight"
-          rules={[{ required: true, message: "Please input the total Carat weight!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="totalDiamond" label="Total Diamond"
-          rules={[{ required: true, message: "Please input the total Diamond!" }]}>
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item name="description" label="Description"
-          rules={[{ required: true, message: "Please input the description!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="price" label="Price"
-          rules={[{ required: true, message: "Please input the price!" }]}>
+          <Form.Item
+            name="price"
+            label="Price"
+            rules={[{ required: true, message: "Please input the price!" }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item>

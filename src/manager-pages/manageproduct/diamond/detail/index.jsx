@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Button, Descriptions, Form, Input, InputNumber, Modal, notification, Spin } from "antd";
+import {
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Spin,
+  Upload,
+} from "antd";
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 function ViewDiamondDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
@@ -9,71 +20,82 @@ function ViewDiamondDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     fetchDiamondDetail();
   }, [id]);
 
   const fetchDiamondDetail = async () => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8090/products/diamonds/${id}`
-    );
-    setDiamondDetail(response.data);
-  } catch (error) {
-    console.error("Error fetching Diamond details:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const response = await axios.get(
+        `http://localhost:8090/products/diamonds/${id}`
+      );
+      setDiamondDetail(response.data);
+    } catch (error) {
+      console.error("Error fetching Diamond details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const handleEditDiamond = (record) => {
-  //setEditingDiamond(record); // Set the diamond to be edited
-  setIsEditModalVisible(true); // Show the modal
-  form.setFieldsValue({
-    diamondOrigin: record.DiamondOrigin,
-    caratWeight: record.CaratWeight,
-    color: record.Color,
-    clarity: record.Clarity,
-    cut: record.Cut,
-    price: record.Price,
-    shape: record.Shape,
-    image: record.Image,
-    polish: record.Polish,
-    symmetry: record.Symmetry,
-    tablePercentage: record.TablePercentage,
-    depth: record.Depth,
-    measurements: record.Measurements,
-    giaReportNumber: record.GIAReportNumber,
-    labReportNumber: record.LabReportNumber,
-    gemstone: record.Gemstone,
-    gradingReport: record.GradingReport,
-    descriptors: record.Descriptors,
-    fluorescence: record.Fluorescence,
-    inventory: record.Inventory,
-    stockNumber: record.StockNumber, // Populate StockNumber, but disable input
-  });
-};
-
-const handleUpdateDiamond = async (values) => {
-  try {
-    await axios.put("http://localhost:8090/products/edit-diamond", values);
-    fetchDiamondDetail(); // Refresh the list
-    setIsEditModalVisible(false); // Close the modal
-    form.resetFields(); // Reset the form fields
-    notification.success({
-      message: 'Success',
-      description: 'Diamond edited successfully!',
+  const handleEditDiamond = (record) => {
+    //setEditingDiamond(record); // Set the diamond to be edited
+    setIsEditModalVisible(true); // Show the modal
+    form.setFieldsValue({
+      diamondOrigin: record.DiamondOrigin,
+      caratWeight: record.CaratWeight,
+      color: record.Color,
+      clarity: record.Clarity,
+      cut: record.Cut,
+      price: record.Price,
+      shape: record.Shape,
+      image: record.Image,
+      polish: record.Polish,
+      symmetry: record.Symmetry,
+      tablePercentage: record.TablePercentage,
+      depth: record.Depth,
+      measurements: record.Measurements,
+      giaReportNumber: record.GIAReportNumber,
+      labReportNumber: record.LabReportNumber,
+      gemstone: record.Gemstone,
+      gradingReport: record.GradingReport,
+      descriptors: record.Descriptors,
+      fluorescence: record.Fluorescence,
+      inventory: record.Inventory,
+      stockNumber: record.StockNumber, // Populate StockNumber, but disable input
     });
-  } catch (error) {
-    console.error("Error updating diamond:", error);
-  }
-};
+  };
 
-const handleCancelEdit = () => {
-  setIsEditModalVisible(false);
-  form.resetFields();
-};
+  const handleUpdateDiamond = async (values) => {
+    try {
+      values.image = imageUrl || values.image; // Use the uploaded image URL or the existing one
+      await axios.put("http://localhost:8090/products/edit-diamond", values);
+      fetchDiamondDetail(); // Refresh the list
+      setIsEditModalVisible(false); // Close the modal
+      form.resetFields(); // Reset the form fields
+      notification.success({
+        message: "Success",
+        description: "Diamond edited successfully!",
+      });
+    } catch (error) {
+      console.error("Error updating diamond:", error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditModalVisible(false);
+    form.resetFields();
+  };
+
+  const handleUpload = (image) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrl(e.target.result);
+    };
+    reader.readAsDataURL(image);
+    return false; // Prevent default upload behavior
+  };
 
   if (loading) {
     return <Spin size="large" />;
@@ -101,9 +123,7 @@ const handleCancelEdit = () => {
             style={{ width: "100px", height: "auto" }}
           />
         </Descriptions.Item>
-        <Descriptions.Item label="Cut">
-          {diamondDetail?.Cut}
-        </Descriptions.Item>
+        <Descriptions.Item label="Cut">{diamondDetail?.Cut}</Descriptions.Item>
         <Descriptions.Item label="Shape">
           {diamondDetail?.Shape}
         </Descriptions.Item>
@@ -164,15 +184,13 @@ const handleCancelEdit = () => {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={handleUpdateDiamond}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleUpdateDiamond} layout="vertical">
           <Form.Item
             name="diamondOrigin"
             label="Diamond Origin"
-            rules={[{ required: true, message: "Please input the diamond origin!" }]}
+            rules={[
+              { required: true, message: "Please input the diamond origin!" },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -223,57 +241,136 @@ const handleCancelEdit = () => {
           </Form.Item>
           <Form.Item
             name="image"
-            label="Image URL"
-            rules={[{ required: true, message: "Please input the image URL!" }]}
+            label="Upload Image"
+            rules={[{ required: true, message: "Please upload an image!" }]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
+          </Form.Item>
+          {imageUrl && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrl}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
+          <Form.Item
+            name="polish"
+            label="Polish"
+            rules={[{ required: true, message: "Please input the polish!" }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="polish" label="Polish"
-          rules={[{ required: true, message: "Please input the polish!" }]}>
+          <Form.Item
+            name="symmetry"
+            label="Symmetry"
+            rules={[{ required: true, message: "Please input the symmetry!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="symmetry" label="Symmetry"
-          rules={[{ required: true, message: "Please input the symmetry!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="tablePercentage" label="Table Percentage"
-          rules={[{ required: true, message: "Please input the table Percentage!" }]}>
+          <Form.Item
+            name="tablePercentage"
+            label="Table Percentage"
+            rules={[
+              { required: true, message: "Please input the table Percentage!" },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="depth" label="Depth"
-          rules={[{ required: true, message: "Please input the depth!" }]}>
+          <Form.Item
+            name="depth"
+            label="Depth"
+            rules={[{ required: true, message: "Please input the depth!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="measurements" label="Measurements"
-          rules={[{ required: true, message: "Please input the measurements!" }]}>
+          <Form.Item
+            name="measurements"
+            label="Measurements"
+            rules={[
+              { required: true, message: "Please input the measurements!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="giaReportNumber" label="GIA Report Number"
-          rules={[{ required: true, message: "Please input the gia Report Number!" }]}>
+          <Form.Item
+            name="giaReportNumber"
+            label="GIA Report Number"
+            rules={[
+              {
+                required: true,
+                message: "Please input the gia Report Number!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="stockNumber" label="Stock Number"
-          rules={[{ required: true, message: "Please input the stock Number!" }]}>
+          <Form.Item
+            name="stockNumber"
+            label="Stock Number"
+            rules={[
+              { required: true, message: "Please input the stock Number!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="labReportNumber" label="Lab Report Number"
-          rules={[{ required: true, message: "Please input the lab Report Number!" }]}>
+          <Form.Item
+            name="labReportNumber"
+            label="Lab Report Number"
+            rules={[
+              {
+                required: true,
+                message: "Please input the lab Report Number!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gemstone" label="Gemstone"
-          rules={[{ required: true, message: "Please input the gemstone!" }]}>
+          <Form.Item
+            name="gemstone"
+            label="Gemstone"
+            rules={[{ required: true, message: "Please input the gemstone!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="gradingReport" label="Grading Report"
-          rules={[{ required: true, message: "Please input the grading Report!" }]}>
+          <Form.Item
+            name="gradingReport"
+            label="Grading Report"
+            rules={[
+              { required: true, message: "Please input the grading Report!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="descriptors" label="Descriptors"
-          rules={[{ required: true, message: "Please input the descriptors!" }]}>
+          <Form.Item
+            name="descriptors"
+            label="Descriptors"
+            rules={[
+              { required: true, message: "Please input the descriptors!" },
+            ]}
+          >
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="fluorescence" label="Fluorescence"
-          rules={[{ required: true, message: "Please input the fluorescence!" }]}>
+          <Form.Item
+            name="fluorescence"
+            label="Fluorescence"
+            rules={[
+              { required: true, message: "Please input the fluorescence!" },
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
@@ -296,11 +393,10 @@ const handleCancelEdit = () => {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }}/>
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Form>
       </Modal>
-
     </div>
   );
 }

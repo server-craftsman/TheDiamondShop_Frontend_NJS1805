@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  Button,
   Layout,
   Menu,
   theme,
@@ -12,8 +11,11 @@ import {
   InputNumber,
   Modal,
   notification,
+  Upload,
 } from "antd";
 import { Link } from "react-router-dom";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { Button, colors } from "@mui/material";
 
 function ManageRingPage() {
   const [rings, setRings] = useState([]);
@@ -38,9 +40,12 @@ function ManageRingPage() {
   };
   const handleAddRings = async (values) => {
     try {
+      const imageData = await fileToBase64(values.imageRings[0]); // Pass the correct file object
+      const imagebrand = await fileToBase64(values.imageBrand[0]);
+      const updatedValues = { ...values, imageRings: imageData, imageBrand: imagebrand };
       await axios.post(
         "http://localhost:8090/products/add-diamond-rings",
-        values
+        updatedValues
       );
       fetchData(); // Refresh the list
       setIsAddRingVisible(false); // Close the modal
@@ -53,6 +58,16 @@ function ManageRingPage() {
       console.error("Error adding diamond:", error);
     }
   };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file.originFileObj); // Ensure you're accessing originFileObj
+    });
+  };
+
   const columns = [
     {
       title: "Ring Style",
@@ -74,11 +89,6 @@ function ManageRingPage() {
       dataIndex: "BrandName",
       key: "BrandName",
     },
-    // {
-    //   title: "Material",
-    //   dataIndex: "Material",
-    //   key: "Material",
-    // },
     {
       title: "Price",
       dataIndex: "Price",
@@ -228,13 +238,69 @@ function ManageRingPage() {
            rules={[{ required: true, message: "Please input the description!" }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="imageRings" label="ImageRings"
+          {/* <Form.Item name="imageRings" label="ImageRings"
            rules={[{ required: true, message: "Please input the image Rings!" }]}>
             <Input />
+          </Form.Item> */}
+          <Form.Item
+            name="imageRings"
+            label="Image Rings"
+            rules={[
+              {
+                required: true,
+                message: "Please upload the Image Rings!",
+              },
+            ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Upload beforeUpload={() => false} maxCount={1}>
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
+            {form.getFieldValue("imageRings") &&
+              form.getFieldValue("imageRings")[0] && (
+                <img
+                  src={form.getFieldValue("imageRings")[0].preview}
+                  alt="Uploaded Rings"
+                  style={{ width: "450px", height: "auto", marginTop: "10px" }}
+                />
+              )}
           </Form.Item>
-          <Form.Item name="imageBrand" label="ImageBrand"
+          {/* <Form.Item name="imageBrand" label="ImageBrand"
            rules={[{ required: true, message: "Please input the image Brand!" }]}>
             <Input />
+          </Form.Item> */}
+          <Form.Item
+            name="imageBrand"
+            label="Image Brand"
+            rules={[
+              {
+                required: true,
+                message: "Please upload the Image Brand!",
+              },
+            ]}
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Upload beforeUpload={() => false} maxCount={1}>
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
+            {form.getFieldValue("imageBrand") &&
+              form.getFieldValue("imageBrand")[0] && (
+                <img
+                  src={form.getFieldValue("imageBrand")[0].preview}
+                  alt="Uploaded Brand"
+                  style={{ width: "450px", height: "auto", marginTop: "10px" }}
+                />
+              )}
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

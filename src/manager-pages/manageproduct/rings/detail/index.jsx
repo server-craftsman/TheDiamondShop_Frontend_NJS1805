@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Button, Descriptions, Form, Input, InputNumber, Modal, notification, Spin } from "antd";
+import {
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Spin,
+  Upload,
+} from "antd";
 import "./index.scss"; // Import the CSS file
-
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 function ViewRingDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
   const [ringDetail, setRingDetail] = useState(null);
@@ -12,6 +22,8 @@ function ViewRingDetailPage() {
   const [ringSizes, setRingSizes] = useState([]);
   const [isEditRingVisible, setIsEditRingVisible] = useState(false);
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrlbrand, setImageUrlBrand] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -19,13 +31,19 @@ function ViewRingDetailPage() {
 
   const fetchData = async () => {
     try {
-      const ringDetailResponse = await axios.get(`http://localhost:8090/products/rings/${id}`);
+      const ringDetailResponse = await axios.get(
+        `http://localhost:8090/products/rings/${id}`
+      );
       setRingDetail(ringDetailResponse.data);
 
-      const materialsResponse = await axios.get('http://localhost:8090/products/material-details');
+      const materialsResponse = await axios.get(
+        "http://localhost:8090/products/material-details"
+      );
       setMaterials(materialsResponse.data);
 
-      const ringSizesResponse = await axios.get('http://localhost:8090/products/ring-size-details');
+      const ringSizesResponse = await axios.get(
+        "http://localhost:8090/products/ring-size-details"
+      );
       setRingSizes(ringSizesResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -65,6 +83,8 @@ function ViewRingDetailPage() {
 
   const handleUpdateRings = async (values) => {
     try {
+      values.imageRings = imageUrl || values.imageRings; // Use the uploaded image URL or the existing one
+      values.imageBrand = imageUrlbrand || values.imageBrand; // Use the uploaded image URL or the existing one
       await axios.put(
         "http://localhost:8090/products/edit-diamond-rings",
         values
@@ -73,8 +93,8 @@ function ViewRingDetailPage() {
       setIsEditRingVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       notification.success({
-        message: 'Success',
-        description: 'Diamond Ring edited successfully!',
+        message: "Success",
+        description: "Diamond Ring edited successfully!",
       });
     } catch (error) {
       console.error("Error updating diamond:", error);
@@ -84,6 +104,24 @@ function ViewRingDetailPage() {
   const handleCancelEdit = () => {
     setIsEditRingVisible(false);
     form.resetFields();
+  };
+
+  const handleUpload = (imageRings) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrl(e.target.result);
+    };
+    reader.readAsDataURL(imageRings);
+    return false; // Prevent default upload behavior
+  };
+
+  const handleUploadBrand = (imageBrand) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImageUrlBrand(e.target.result);
+    };
+    reader.readAsDataURL(imageBrand);
+    return false; // Prevent default upload behavior
   };
 
   if (loading) {
@@ -124,9 +162,7 @@ function ViewRingDetailPage() {
         <Descriptions.Item label="Center Gemstone">
           {ringDetail?.CenterGemstone}
         </Descriptions.Item>
-        <Descriptions.Item label="Price">
-          {ringDetail?.Price}
-        </Descriptions.Item>
+        <Descriptions.Item label="Price">{ringDetail?.Price}</Descriptions.Item>
         <Descriptions.Item label="Inventory">
           {ringDetail?.Inventory}
         </Descriptions.Item>
@@ -140,9 +176,7 @@ function ViewRingDetailPage() {
         <Descriptions.Item label="Center Gemstone Shape">
           {ringDetail?.CenterGemstoneShape}
         </Descriptions.Item>
-        <Descriptions.Item label="Width">
-          {ringDetail?.Width}
-        </Descriptions.Item>
+        <Descriptions.Item label="Width">{ringDetail?.Width}</Descriptions.Item>
         <Descriptions.Item label="Center Diamond Dimension">
           {ringDetail?.CenterDiamondDimension}
         </Descriptions.Item>
@@ -185,7 +219,7 @@ function ViewRingDetailPage() {
       </Descriptions>
       <Button onClick={() => handleEditRings(ringDetail)}>Edit</Button>
       <Button onClick={() => window.history.back()}>Back</Button>
-    
+
       <Modal
         title="Edit Rings"
         open={isEditRingVisible}
@@ -199,11 +233,7 @@ function ViewRingDetailPage() {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={handleUpdateRings}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleUpdateRings} layout="vertical">
           <Form.Item
             name="ringStyle"
             label="Ring Style"
@@ -269,57 +299,170 @@ function ViewRingDetailPage() {
           <Form.Item
             name="centerDiamondDimension"
             label="Center Diamond Dimension"
-            rules={[{ required: true, message: "Please input the center Diamond Dimension!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Dimension!",
+              },
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="weight" label="Weight"
-            rules={[{ required: true, message: "Please input the weight!" }]}>
+          <Form.Item
+            name="weight"
+            label="Weight"
+            rules={[{ required: true, message: "Please input the weight!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="gemstoneWeight" label="Gem stone Weight"
-           rules={[{ required: true, message: "Please input the gemstone Weight!" }]}>
+          <Form.Item
+            name="gemstoneWeight"
+            label="Gem stone Weight"
+            rules={[
+              { required: true, message: "Please input the gemstone Weight!" },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
-          <Form.Item name="centerDiamondColor" label="Center Diamond Color"
-           rules={[{ required: true, message: "Please input the center Diamond Color!" }]}>
+          <Form.Item
+            name="centerDiamondColor"
+            label="Center Diamond Color"
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Color!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="centerDiamondClarity" label="Center Diamond Clarity"
-           rules={[{ required: true, message: "Please input the center Diamond Clarity!" }]}>
+          <Form.Item
+            name="centerDiamondClarity"
+            label="Center Diamond Clarity"
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Clarity!",
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
             name="centerDiamondCaratWeight"
             label="Center Diamond CaratWeight"
-            rules={[{ required: true, message: "Please input the center Diamond Carat Weight!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Carat Weight!",
+              },
+            ]}
           >
             <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
-          <Form.Item name="price" label="Price"
-           rules={[{ required: true, message: "Please input the price!" }]}>
+          <Form.Item
+            name="price"
+            label="Price"
+            rules={[{ required: true, message: "Please input the price!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="gender" label="Gender"
-           rules={[{ required: true, message: "Please input the gender!" }]}>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: "Please input the gender!" }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="fluorescence" label="Fluorescence"
-           rules={[{ required: true, message: "Please input the fluorescence!" }]}>
+          <Form.Item
+            name="fluorescence"
+            label="Fluorescence"
+            rules={[
+              { required: true, message: "Please input the fluorescence!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description"
-           rules={[{ required: true, message: "Please input the description!" }]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: "Please input the description!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="imageRings" label="ImageRings"
+          {/* <Form.Item name="imageRings" label="ImageRings"
            rules={[{ required: true, message: "Please input the image Rings!" }]}>
             <Input />
+          </Form.Item> */}
+          <Form.Item
+            name="imageRings"
+            label="Upload Image Rings"
+            rules={[
+              { required: true, message: "Please upload an image Rings!" },
+            ]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUpload}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
           </Form.Item>
-          <Form.Item name="imageBrand" label="ImageBrand"
+          {imageUrl && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrl}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
+
+          {/* <Form.Item name="imageBrand" label="ImageBrand"
            rules={[{ required: true, message: "Please input the image Brand!" }]}>
             <Input />
+          </Form.Item> */}
+
+          <Form.Item
+            name="imageBrand"
+            label="Upload Image Brand"
+            rules={[
+              { required: true, message: "Please upload an image Brand!" },
+            ]}
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={handleUploadBrand}
+              showUploadList={false}
+              maxCount={1}
+              accept="image/*"
+            >
+              <Button variant="contained" style={{ background: "#fff" }}>
+                <AddPhotoAlternateIcon
+                  style={{ fontSize: "100px", color: "#000" }}
+                />
+              </Button>
+            </Upload>
           </Form.Item>
+          {imageUrlbrand && (
+            <div style={{ marginTop: 20 }}>
+              <img
+                src={imageUrlbrand}
+                alt="Uploaded"
+                style={{ width: "100%", maxWidth: 400 }}
+              />
+            </div>
+          )}
+
           <Form.Item
             name="inventory"
             label="Inventory"
@@ -340,7 +483,7 @@ function ViewRingDetailPage() {
               },
             ]}
           >
-            <InputNumber style={{ width: "100%" }}/>
+            <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Form>
       </Modal>
