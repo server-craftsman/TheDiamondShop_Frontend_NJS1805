@@ -200,11 +200,11 @@ function HistoryOrder() {
       key: "OrderDate",
       render: (text) => moment(text).format("YYYY-MM-DD"), // Format the date here
     },
-    {
-      title: "Quantity",
-      dataIndex: "Quantity",
-      key: "Quantity",
-    },
+    // {
+    //   title: "Quantity",
+    //   dataIndex: "Quantity",
+    //   key: "Quantity",
+    // },
     {
       title: "Order Status",
       dataIndex: "OrderStatus",

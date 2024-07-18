@@ -477,12 +477,14 @@ const OrderForm = () => {
             component="h2"
             style={{
               textAlign: "center",
-              background: "linear-gradient(to right, #007BFF 0%, #00BFFF 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontWeight: "900",
-              textTransform: "uppercase",
-              fontSize: "3em",
+              // background: "linear-gradient(to right, #007BFF 0%, #00BFFF 100%)",
+              // WebkitBackgroundClip: "text",
+              // WebkitTextFillColor: "transparent",
+              // fontWeight: "900",
+              // textTransform: "uppercase",
+              fontSize: "2.5em",
+              fontStyle: "normal",
+              color: "#000000"
             }}
           >
             Delivery Information
@@ -503,25 +505,25 @@ const OrderForm = () => {
                     variant="outlined"
                     InputProps={{
                       sx: {
-                        color: "#2391FF",
-                        background: "#f9f9f9",
+                        color: "#414141",
+                        background: "#F0F0F0",
                         borderRadius: 8,
                         '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                       },
                     }}
                     InputLabelProps={{
                       sx: {
-                        color: "#FF1471",
+                        color: "#333",
                         '&.Mui-focused': {
-                          color: "#FF1471",
+                          color: "#D3D3D3",
                         },
                       },
                     }}
@@ -541,25 +543,25 @@ const OrderForm = () => {
                     variant="outlined"
                     InputProps={{
                       sx: {
-                        color: "#2391FF",
-                        background: "#f9f9f9",
+                        color: "#414141",
+                        background: "#F0F0F0",
                         borderRadius: 8,
                         '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                       },
                     }}
                     InputLabelProps={{
                       sx: {
-                        color: "#FF1471",
+                        color: "#333",
                         '&.Mui-focused': {
-                          color: "#FF1471",
+                          color: "#D3D3D3",
                         },
                       },
                     }}
@@ -581,25 +583,25 @@ const OrderForm = () => {
                     variant="outlined"
                     InputProps={{
                       sx: {
-                        color: "#2391FF",
-                        background: "#f9f9f9",
+                        color: "#414141",
+                        background: "#F0F0F0",
                         borderRadius: 8,
                         '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                         '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#FF1471",
+                          borderColor: "#D3D3D3",
                         },
                       },
                     }}
                     InputLabelProps={{
                       sx: {
-                        color: "#FF1471",
+                        color: "#333",
                         '&.Mui-focused': {
-                          color: "#FF1471",
+                          color: "#D3D3D3",
                         },
                       },
                     }}
@@ -615,29 +617,29 @@ const OrderForm = () => {
                   value={orderData.deliveryAddress}
                   onChange={handleInputChange}
                   InputProps={{
-                    sx: {
-                      color: "#2391FF",
-                      background: "#f9f9f9",
-                      borderRadius: 8,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
+                      sx: {
+                        color: "#414141",
+                        background: "#F0F0F0",
+                        borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
                       },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#333",
+                        '&.Mui-focused': {
+                          color: "#D3D3D3",
+                        },
                       },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
-                      },
-                    },
-                  }}
-                  InputLabelProps={{
-                    sx: {
-                      color: "#FF1471",
-                      '&.Mui-focused': {
-                        color: "#FF1471",
-                      },
-                    },
-                  }}
+                    }}
                 />
               </Grid>
 
@@ -646,12 +648,12 @@ const OrderForm = () => {
                 style={{ marginLeft: "25px", marginTop: "20px" }}
               >
                 <CardContent>
-                  <Typography variant="h6" component="div" fontWeight="bold" color={"#FF3E14"}>
+                  <Typography variant="h6" component="div" fontWeight="bold" color={"#000"}>
                     <FaMapMarkerAlt /> {orderData.firstName}{" "}
                     {orderData.lastName} - {orderData.phoneNumber}
                   </Typography>
 
-                  <Typography variant="body1" marginTop="5px" color={"#FF8A23"}>
+                  <Typography variant="body1" marginTop="5px" color={"#000"}>
                     {orderData.deliveryAddress}
                   </Typography>
                 </CardContent>
@@ -663,7 +665,7 @@ const OrderForm = () => {
                     variant="subtitle1"
                     style={{
                       marginBottom: "1em",
-                      color: "#077BFF",
+                      color: "#000",
                       fontStyle: "italic",
                       fontWeight: "bold",
                     }}
@@ -688,7 +690,7 @@ const OrderForm = () => {
                             alt="Standard"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#FF8A23" fontWeight={"bolder"}>
+                          <Typography color="#000" fontWeight={"bolder"}>
                             Standard Shipping($5)
                           </Typography>
                         </>
@@ -704,7 +706,7 @@ const OrderForm = () => {
                             alt="Express"
                             style={{ width: 130, height: 100 }}
                           />
-                          <Typography color="#FF8A23" fontWeight={"bolder"}>
+                          <Typography color="#000" fontWeight={"bolder"}>
                             Express Shipping($10)
                           </Typography>
                         </>
@@ -752,7 +754,7 @@ const OrderForm = () => {
                 <FormControl component="fieldset">
                   <Typography component="legend" style={{
                     marginBottom: "1em",
-                    color: "#077BFF",
+                    color: "#000",
                     fontStyle: "italic",
                     fontWeight: "bold",
                   }}>Payment Method</Typography>
@@ -766,13 +768,13 @@ const OrderForm = () => {
                       value="Cash on Delivery"
                       control={<Radio />}
                       label="Cash on Delivery"
-                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
+                      style={{ color: "#000", fontWeight: "bolder" }}
                     />
                     <FormControlLabel
                       value="PayPal"
                       control={<Radio />}
                       label="PayPal"
-                      style={{ color: "#FF8A23", fontWeight: "bolder" }}
+                      style={{ color: "#000", fontWeight: "bolder" }}
                     />
                   </RadioGroup>
                 </FormControl>
@@ -818,7 +820,7 @@ const OrderForm = () => {
                   padding: "10px 20px",
                   boxShadow: "0px 0px 15px 5px rgba(0,0,0,0.2)",
                   margin: "0px 50px 30px 0px",
-                  backgroundColor: "#FF1471"
+                  backgroundColor: "#000"
                 }}
               >
                 {loading ? "Placing Order..." : "Place Order"}
@@ -930,12 +932,14 @@ const OrderForm = () => {
             component="h2"
             style={{
               textAlign: "center",
-              background: "linear-gradient(to right, #007BFF 0%, #00BFFF 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontWeight: "900",
-              textTransform: "uppercase",
-              fontSize: "3em",
+              // background: "linear-gradient(to right, #007BFF 0%, #00BFFF 100%)",
+              // WebkitBackgroundClip: "text",
+              // WebkitTextFillColor: "transparent",
+              // fontWeight: "900",
+              // textTransform: "uppercase",
+              fontSize: "2.5em",
+              color: "#000",
+              fontStyle: "normal"
             }}
           >
             Order Details
@@ -949,12 +953,12 @@ const OrderForm = () => {
                       fontWeight: "bolder",
                       fontSize: "20px",
                       paddingLeft: "180px",
-                      color: "#FF1471"
+                      color: "#000"
                     }}
                   >
                     Product
                   </TableCell>
-                  <TableCell
+                  {/* <TableCell
                     align="right"
                     style={{
                       fontWeight: "bolder",
@@ -964,14 +968,14 @@ const OrderForm = () => {
                     }}
                   >
                     Quantity
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell
                     align="right"
                     style={{
                       fontWeight: "bolder",
                       fontSize: "20px",
                       marginRight: "200px",
-                      color: "#FF1471"
+                      color: "#000"
                     }}
                   >
                     Origin Price
@@ -1080,16 +1084,16 @@ const OrderForm = () => {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell
+                      {/* <TableCell
                         style={{ fontWeight: "bold", paddingLeft: "50px" }}
                       >
                         {item.quantity}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell
                         align="right"
                         style={{
                           fontWeight: "bold",
-                          color: "red",
+                          color: "#000",
                           fontSize: "20px",
                           paddingRight: "20px",
                         }}
@@ -1114,7 +1118,7 @@ const OrderForm = () => {
               <Typography
                 variant="h4"
                 component="h2"
-                color="#3393FF"
+                color="#000"
                 fontWeight="bold"
               >
                 Eligible Vouchers
@@ -1127,31 +1131,56 @@ const OrderForm = () => {
                   fullWidth
                   margin="normal"
                 /> */}
+
+                {/* InputProps={{
+                      sx: {
+                        color: "#414141",
+                        background: "#F0F0F0",
+                        borderRadius: 8,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: "#D3D3D3",
+                        },
+                      },
+                    }}
+                    InputLabelProps={{
+                      sx: {
+                        color: "#333",
+                        '&.Mui-focused': {
+                          color: "#D3D3D3",
+                        },
+                      },
+                    }} */}
                 <FormControl
                   fullWidth
                   margin="normal"
                   sx={{
                     '& .MuiOutlinedInput-root': {
-                      color: "#2391FF",
-                      background: "#f9f9f9",
+                      color: "#414141",
+                      background: "#F0F0F0",
                       borderRadius: 8,
                       '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
+                        borderColor: "#D3D3D3",
                       },
                       '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
+                        borderColor: "#D3D3D3",
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: "#FF1471",
+                        borderColor: "#D3D3D3",
                       },
                     },
                   }}
                 >
                   <InputLabel
                     sx={{
-                      color: "#FF1471",
+                      color: "#333",
                       '&.Mui-focused': {
-                        color: "#FF1471",
+                        color: "#D3D3D3",
                       },
                     }}
                   >
@@ -1169,10 +1198,10 @@ const OrderForm = () => {
                     label="Select Voucher"
                     sx={{
                       '& .MuiSelect-outlined': {
-                        borderColor: "#FF1471",
+                        borderColor: "#000",
                       },
                       '&.Mui-focused .MuiSelect-outlined': {
-                        borderColor: "#FF1471",
+                        borderColor: "#000",
                       },
                     }}
                   >
@@ -1184,7 +1213,7 @@ const OrderForm = () => {
                         <Typography style={{
                           fontWeight: "bold",
                           fontSize: "1.2em",
-                          color: "#3393FF",
+                          color: "#000",
                         }}>
                           {`${voucher.VoucherName} - ${voucher.Discount}% Off`}
                         </Typography>
@@ -1196,7 +1225,7 @@ const OrderForm = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  style={{ backgroundColor: "#FF1471", color: "#FFFFFF" }}
+                  style={{ backgroundColor: "#fff", color: "#000" }}
                   onClick={handleApplyVoucher}
                   disabled={!selectedVoucher}
                 >
@@ -1212,7 +1241,7 @@ const OrderForm = () => {
                 style={{
                   fontWeight: "bold",
                   fontSize: "2em",
-                  color: "#3393FF",
+                  color: "#000",
                 }}
               >
                 Total Price
@@ -1222,14 +1251,14 @@ const OrderForm = () => {
               <Typography variant="body1" mb={1} style={{
                 fontWeight: "bold",
                 fontSize: "1.2em",
-                color: "#3393FF",
+                color: "#333",
               }}>
                 Initial Price: ${initialTotalPrice.toFixed(2)}
               </Typography>
               <Typography variant="body1" mb={1} style={{
                 fontWeight: "bold",
                 fontSize: "1.2em",
-                color: "#3393FF",
+                color: "#333",
               }}>
                 Shipping Fee: ${shippingCost}
               </Typography>
@@ -1240,7 +1269,7 @@ const OrderForm = () => {
                   style={{
                     fontWeight: "bold",
                     fontSize: "1.2em",
-                    color: "#3393FF",
+                    color: "#333",
                   }}
                 >
                   Discount: -${discountedPrice}
@@ -1253,7 +1282,7 @@ const OrderForm = () => {
                 style={{
                   fontSize: "2em",
                   fontWeight: "bold",
-                  color: "#FF0042",
+                  color: "#333",
                 }}
               >
                 Total: ${totalPrice}

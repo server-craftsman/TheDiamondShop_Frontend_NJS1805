@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../CartContext";
 import { Table, Button, Checkbox, Popconfirm, Modal, InputNumber } from "antd";
-import Warning from "../../Warning";
 import { RestOutlined } from "@ant-design/icons";
 import "./index.scss";
 
@@ -71,6 +70,18 @@ const CartPage = () => {
           selectedItem.id === item.id && selectedItem.type === item.type
       )
     );
+
+    const hasDiamond = selectedItemsData.some(
+      (item) => item.type === "Diamond"
+    );
+
+    if (!hasDiamond) {
+      Modal.warning({
+        title: "Warning",
+        content: "You must select at least one Diamond item to proceed to order.",
+      });
+      return;
+    }
 
     if (selectedItemsData.length > 0) {
       sessionStorage.setItem("selectedItems", JSON.stringify(selectedItems));
@@ -200,12 +211,18 @@ const CartPage = () => {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
+      className: "hidden-column",
       render: (text, record) => (
         <InputNumber
           min={1}
           value={record.quantity}
           onChange={(value) => handleQuantityChange(value, record)}
-          disabled={record.type === "Diamond" || "Bridal" || "DiamondRings" || "DiamondTimepieces"}
+          disabled={
+            record.type === "Diamond" ||
+            record.type === "Bridal" ||
+            record.type === "DiamondRings" ||
+            record.type === "DiamondTimepieces"
+          }
         />
       ),
     },
@@ -262,10 +279,8 @@ const CartPage = () => {
           Proceed to Order Form
         </Button>
       </div>
-      <Warning open={warningOpen} onClose={handleWarningClose} />
     </div>
   );
 };
 
 export default CartPage;
-
