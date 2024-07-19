@@ -65,6 +65,7 @@ import LayoutAdmin from "./components/admin-layout";
 import Dashboard from "./admin-pages/dashboard";
 import Account from "./admin-pages/account-page";
 import ProfileAdmin from "./admin-pages/profile";
+import EditProfileAdmin from "./admin-pages/profile/editProfile";
 // import SearchAllProduct from "./pages/searchProduct-page";
 
 //==========Delivery Pages============//
@@ -90,6 +91,7 @@ import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cu
 import MapAdmin from "./admin-pages/map-page";
 import TakeWarranty from "./delivery-page/take-warranty";
 import ReturnWarranty from "./delivery-page/return-warranty";
+
 
 
 
@@ -406,6 +408,10 @@ function App() {
         {
           path: "profileAdmin-page",
           element: <ProfileAdmin />,
+        },
+        {
+          path: "edit-profileAdmin-page",
+          element: <EditProfileAdmin />,
         },
         {
           path: "mapAdmin-page",

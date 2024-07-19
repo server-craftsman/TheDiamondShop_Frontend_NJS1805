@@ -50,7 +50,7 @@ export default function CarouselTimepiece({
     <Card
       title={
         <span style={{ color: "#333", fontSize: "30px" }}>
-          Highest Priced Timepieces
+          Timeless Horological Treasure
         </span>
       }
       style={{

@@ -47,8 +47,17 @@ function HeaderAdmin() {
         </div>
       </div>
       <div className="sidebar-body">
+
         <div className="sidebar-menu">
           <ul className="menu-list">
+          <li className="menu-item">
+              <Link to="profileAdmin-page" className="menu-link">
+                <span className="menu-link-icon">
+                  <FaUserCircle style={{fontSize: "20px"}} />
+                </span>
+                <span className="menu-link-text">Profile</span>
+              </Link>
+            </li>
             <li className="menu-item">
               <Link to="/admin-page" className="menu-link active">
                 <span className="menu-link-icon">
@@ -65,22 +74,14 @@ function HeaderAdmin() {
                 <span className="menu-link-text">Account</span>
               </Link>
             </li>
-            <li className="menu-item">
-              <Link to="profileAdmin-page" className="menu-link">
-                <span className="menu-link-icon">
-                  <FaUserCircle style={{fontSize: "20px"}} />
-                </span>
-                <span className="menu-link-text">Profile</span>
-              </Link>
-            </li>
-            <li className="menu-item">
+            {/* <li className="menu-item">
               <Link to="mapAdmin-page" className="menu-link">
                 <span className="menu-link-icon">
                   <FaMap style={{fontSize: "20px"}} />
                 </span>
                 <span className="menu-link-text">Map</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
 

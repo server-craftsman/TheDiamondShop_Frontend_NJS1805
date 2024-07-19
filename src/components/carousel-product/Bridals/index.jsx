@@ -32,7 +32,8 @@ export default function CarouselBridal({
 
         // Sort products by price in descending order and take the top 10
         products = products.sort((a, b) => b.Price - a.Price).slice(0, 10);
-
+        // sort products by price in ascending
+        // products = products.sort((a, b) => a.Price - b.Price).slice(0, 10);
         setHighestPricedProducts(products);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -52,7 +53,7 @@ export default function CarouselBridal({
     <Card
       title={
         <span style={{ color: "#333", fontSize: "30px" }}>
-          Highest Priced Bridals
+          Exquisite Bridal Collection
         </span>
       }
       style={{

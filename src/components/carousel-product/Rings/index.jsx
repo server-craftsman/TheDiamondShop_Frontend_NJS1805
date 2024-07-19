@@ -50,7 +50,7 @@ export default function CarouselRing({
     <Card
       title={
         <span style={{ color: "#333", fontSize: "30px" }}>
-          Highest Priced Diamond Rings
+          Opulent Diamond Rings
         </span>
       }
       style={{

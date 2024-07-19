@@ -50,7 +50,7 @@ export default function CarouselDiamond({
     <Card
       title={
         <span style={{ color: "#333", fontSize: "30px" }}>
-          Highest Priced Diamonds
+          Explore Our Timeless Diamond Treasures
         </span>
       }
       style={{

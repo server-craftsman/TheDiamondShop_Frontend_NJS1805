@@ -170,11 +170,11 @@ function EditProfile() {
               description={`${formData.RoleName}`}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
-              <p>
+              {/* <p>
               "Welcome to Diamond Store <br />
               where elegance meets brilliance <br />
               Diamonds - Rings - Timepieces."
-              </p>
+              </p> */}
             </div>
           </Card>
         </Col>
