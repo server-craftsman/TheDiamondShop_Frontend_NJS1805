@@ -78,22 +78,36 @@ function DeliveryProfile() {
   }
 
   return (
-    <div className="profile" style={{ padding: "24px", backgroundColor: "aqua" }}>
+    <div className="profile" style={{ padding: "24px" }}>
       {fetchError && <p style={{ color: 'red' }}>Error: {fetchError}</p>}
       <Row gutter={16} style={{ display: 'flex', alignItems: 'stretch' }}>
         <Col span={8} style={{ display: 'flex' }}>
           <Card className="form-edit" style={{ flex: 1 }}
             cover={
-              <img style={{ borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px" }}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center',    // Center vertically
+                height: '150px',         // Ensure the container has a height
+                marginTop: '16px',
+                paddingTop: "150px"
+              }}>
+              <img style={{
+                    borderRadius: '50%',
+                    width: '300px',
+                    height: '300px',
+                    objectFit: 'cover',
+                  }}
                 alt="User"
                 src={userProfile.Image ? userProfile.Image : "https://img.freepik.com/premium-vector/avatar-male-manager-office-worker_805465-3.jpg"}
               />
+</div>
             }
           >
             <Card.Meta
               title={`${userProfile.FirstName} ${userProfile.LastName}`}
               description={`${userProfile.RoleName}`}
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", paddingTop: "150px" }}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               {/* <p>
@@ -102,7 +116,7 @@ function DeliveryProfile() {
                 I'm in that two seat Lambo"
               </p> */}
               <Link to="/deliveryProfile-edit">
-                <Button type="primary" style={{ marginTop: "16px" }}>
+                <Button type="primary" style={{ marginTop: "16px", color: "#fff", background: "#000" }}>
                   Update Profile
                 </Button>
               </Link>

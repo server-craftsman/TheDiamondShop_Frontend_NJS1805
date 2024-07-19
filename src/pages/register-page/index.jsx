@@ -1,29 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
 import logo from "../../assets/logo.png";
 
-import { WarningOutlined, SmileOutlined, EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
+import {
+  WarningOutlined,
+  SmileOutlined,
+  EyeInvisibleOutlined,
+  EyeTwoTone,
+} from "@ant-design/icons";
 
 import axios from "axios";
-import { Button, DatePicker, Form, Input, Radio, Row, notification } from "antd";
-import moment from 'moment';
-
+import {
+  DatePicker,
+  Form,
+  Input,
+  Radio,
+  Row,
+  Upload,
+  notification,
+} from "antd";
+import moment from "moment";
+import { Button, colors } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 const Context = React.createContext({
-  name: 'Default',
+  name: "Default",
 });
 
 function RegisterForm() {
   const [api, contextHolder] = notification.useNotification();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [base64Image, setBase64Image] = useState("");
 
   const openNotification = () => {
     api.open({
-      message: 'Registration Successful',
-      description: 'You have registered successfully. Please log in to continue.',
-      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+      message: "Registration Successful",
+      description:
+        "You have registered successfully. Please log in to continue.",
+      icon: <SmileOutlined style={{ color: "#108ee9" }} />,
     });
   };
 
@@ -40,6 +57,9 @@ function RegisterForm() {
       data.Birthday = moment(Birthday).format("YYYY-MM-DD");
     }
 
+    // Attach the base64-encoded image to the form data
+    data.Image = base64Image;
+
     try {
       console.log("Submitting form data:", data);
       const response = await axios.post(
@@ -53,40 +73,52 @@ function RegisterForm() {
           window.location.href = "/login";
         }, 2000);
       }
-     } catch (error) {
+    } catch (error) {
       //console.error("Error response:", error.response); // Log the error response for debugging
       if (error.response && error.response.data) {
         // Handle duplicate email error
-        if (error.response.status === 400 && error.response.data.error === 'Email already exists.') {
+        if (
+          error.response.status === 400 &&
+          error.response.data.error === "Email already exists."
+        ) {
           notification.error({
-            message: 'Duplicate Email',
-            description: 'This email is already registered. Please use a different email.',
+            message: "Duplicate Email",
+            description:
+              "This email is already registered. Please use a different email.",
           });
         } else {
           notification.error({
-            message: 'Registration Failed',
-            description: error.response.data.error || 'Registration failed. Please try again.',
+            message: "Registration Failed",
+            description:
+              error.response.data.error ||
+              "Registration failed. Please try again.",
           });
         }
       } else {
         notification.error({
-          message: 'Registration Failed',
-          description: 'Registration failed. Please try again.',
+          message: "Registration Failed",
+          description: "Registration failed. Please try again.",
         });
       }
     }
   };
 
-  // const disabledDate = (current) => {
-  //   const startYear = 1960;
-  //   const endYear = moment().year();
-  //   return current && (current.year() < startYear || current.year() > endYear);
-  // };
-
   const disabledDate = (current) => {
-    const startDate = moment().subtract(100, 'years');
-    const endDate = moment().endOf('day');
+    const startDate = moment().subtract(100, "years");
+    const endDate = moment().endOf("day");
     return current && (current.isBefore(startDate) || current.isAfter(endDate));
+  };
+
+  const handlePreviewImage = async (file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setPreviewImage(reader.result);
+        setBase64Image(reader.result);
+      };
+    }
+    return false; // Prevent Upload component from uploading the file immediately
   };
 
   return (
@@ -104,51 +136,51 @@ function RegisterForm() {
                 <h1 className="title">Registration Form</h1>
                 <Row>
                   <Form.Item
-                    className='form-item name'
+                    className="form-item name"
                     label="First Name"
                     name="FirstName"
-                    rules={[{ required: true, message: 'Please input your first name!' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your first name!",
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
 
                   <Form.Item
-                    className='name'
+                    className="name"
                     label="Last Name"
                     name="LastName"
-                    rules={[{ required: true, message: 'Please input your last name!' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your last name!",
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
                 </Row>
 
                 <Row>
-                  {/* <Form.Item
-                    className='form-item name'
-                    label="Birthday"
-                    name="Birthday"
-                    rules={[{ required: true, message: 'Please select your birthday!' }]}
-                  >
-                    <DatePicker
-                      style={{ width: "202px", height: "37px" }}
-                      format="YYYY-MM-DD"
-                      disabledDate={disabledDate}
-                      placeholder='1960-MM-DD'
-                    />
-
-                  </Form.Item> */}
-
                   <Form.Item
-                    className='form-item name'
+                    className="form-item name"
                     label="Birthday"
                     name="Birthday"
-                    rules={[{ required: true, message: 'Please select your birthday!' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select your birthday!",
+                      },
+                    ]}
                   >
                     <DatePicker
                       style={{ width: "202px", height: "37px" }}
                       format="YYYY-MM-DD"
                       disabledDate={disabledDate}
-                      placeholder='YYYY-MM-DD'
+                      placeholder="YYYY-MM-DD"
                     />
                   </Form.Item>
 
@@ -167,7 +199,13 @@ function RegisterForm() {
                 <Form.Item
                   label="Email"
                   name="Email"
-                  rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your email!",
+                      type: "email",
+                    },
+                  ]}
                 >
                   <Input />
                 </Form.Item>
@@ -175,7 +213,12 @@ function RegisterForm() {
                 <Form.Item
                   label="Phone Number"
                   name="PhoneNumber"
-                  rules={[{ required: true, message: 'Please input your phone number!' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your phone number!",
+                    },
+                  ]}
                 >
                   <Input />
                 </Form.Item>
@@ -183,25 +226,31 @@ function RegisterForm() {
                 <Form.Item
                   label="Address"
                   name="Address"
-                  rules={[{ required: true, message: 'Please input your address!' }]}
+                  rules={[
+                    { required: true, message: "Please input your address!" },
+                  ]}
                 >
                   <Input />
                 </Form.Item>
                 <Row>
                   <Form.Item
-                    className='form-item name'
+                    className="form-item name"
                     label="Country"
                     name="Country"
-                    rules={[{ required: true, message: 'Please input your country!' }]}
+                    rules={[
+                      { required: true, message: "Please input your country!" },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
 
                   <Form.Item
-                    className='name'
+                    className="name"
                     label="City"
                     name="City"
-                    rules={[{ required: true, message: 'Please input your city!' }]}
+                    rules={[
+                      { required: true, message: "Please input your city!" },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
@@ -209,19 +258,29 @@ function RegisterForm() {
 
                 <Row>
                   <Form.Item
-                    className='form-item name'
+                    className="form-item name"
                     label="Province"
                     name="Province"
-                    rules={[{ required: true, message: 'Please input your province!' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your province!",
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
 
                   <Form.Item
-                    className='name'
+                    className="name"
                     label="Postal Code"
                     name="PostalCode"
-                    rules={[{ required: true, message: 'Please input your postal code!' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your postal code!",
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
@@ -229,19 +288,42 @@ function RegisterForm() {
 
                 <Form.Item
                   name="Image"
-                  label="Image URL"
+                  label="Image Upload"
                   rules={[
-                    {
-                      required: true,
-                      message: "Please input your Image!",
-                    },
+                    { required: true, message: "Please upload an image!" },
                   ]}
+                  style={{ marginBottom: "-70px" }}
                 >
-                  <Input />
+                  <Upload
+                    listType="picture"
+                    maxCount={1}
+                    beforeUpload={(Image) => handlePreviewImage(Image)}
+                    showUploadList={false} // Hide the default upload list
+                  >
+                    {previewImage && (
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        style={{
+                          marginTop: "10px",
+                          maxWidth: "200px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    )}
+                    <Button
+                      variant="contained"
+                      style={{ background: "#fff", marginBottom: "105px" }}
+                    >
+                      <AddPhotoAlternateIcon
+                        style={{ fontSize: "100px", color: "#000" }}
+                      />
+                    </Button>
+                  </Upload>
                 </Form.Item>
 
                 <Row gutter={16}>
-                   <Form.Item
+                  <Form.Item
                     className="form-item"
                     name="Password"
                     label="Password"
@@ -294,15 +376,18 @@ function RegisterForm() {
                   </Form.Item>
                 </Row>
 
-
                 {message && (
                   <p className="message">
                     <WarningOutlined /> {message}
                   </p>
                 )}
 
-                <Form.Item className='p-t-15'>
-                  <Button className='btn btn--radius-2 btn--blue' type="primary" htmlType="submit">
+                <Form.Item className="p-t-15">
+                  <Button
+                    className="btn btn--radius-2 btn--blue"
+                    type="primary"
+                    htmlType="submit"
+                  >
                     Register
                   </Button>
                 </Form.Item>

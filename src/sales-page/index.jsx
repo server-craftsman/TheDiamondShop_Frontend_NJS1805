@@ -88,26 +88,35 @@ const SalePage = () => {
             className="form-edit"
             style={{ flex: 1 }}
             cover={
-              <img
-                style={{
-                  borderRadius: "50%",
-                  width: "200px",
-                  margin: "auto",
-                  marginTop: "16px",
-                }}
-                alt="User"
-                src={
-                  userProfile.Image
-                    ? userProfile.Image
-                    : "https://img.freepik.com/premium-vector/avatar-male-manager-office-worker_805465-3.jpg"
-                }
-              />
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center',    // Center vertically
+                height: '150px',         // Ensure the container has a height
+                marginTop: '16px',
+                paddingTop: "150px"
+              }}>
+                <img
+                  style={{
+                    borderRadius: '50%',
+                    width: '300px',
+                    height: '300px',
+                    objectFit: 'cover',
+                  }}
+                  alt="user"
+                  src={
+                    userProfile.Image
+                      ? userProfile.Image
+                      : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
+                  }
+                />
+              </div>
             }
           >
             <Card.Meta
               title={`${userProfile.FirstName} ${userProfile.LastName}`}
               description={`${userProfile.RoleName}`}
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", paddingTop: "150px" }}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
               {/* <p>
@@ -116,7 +125,7 @@ const SalePage = () => {
                 I`m in that two seat Lambo
               </p> */}
               <Link to="/profileSale-edit">
-                <Button type="primary" style={{ marginTop: "16px" }}>
+                <Button type="primary" style={{ marginTop: "16px", color: "#fff", background: "#000" }}>
                   Update Profile
                 </Button>
               </Link>

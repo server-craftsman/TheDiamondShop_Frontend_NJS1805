@@ -7,14 +7,17 @@ import moment from "moment";
 import {
   Form,
   Input,
-  Button,
   Row,
   Col,
   Card,
   DatePicker,
   notification,
   Select,
+  Upload,
 } from "antd";
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { Option } from "antd/es/mentions";
 
 function EditDeliveryProfile() {
   const { user } = useContext(AuthContext);
@@ -39,6 +42,7 @@ function EditDeliveryProfile() {
   const [fetchError, setFetchError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState(null);
+  const [previewImage, setPreviewImage] = useState("");
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -109,6 +113,19 @@ function EditDeliveryProfile() {
   const handleDateChange = (date) =>
     setFormData({ ...formData, Birthday: date });
 
+  const handleFileChange = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result;
+      setFormData({
+        ...formData,
+        Image: base64,
+      });
+      setPreviewImage(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (imageError) {
@@ -168,31 +185,40 @@ function EditDeliveryProfile() {
   return (
     <div
       className="profile"
-      style={{ padding: "24px", backgroundColor: "aqua" }}
+      style={{ padding: "24px" }}
       onSubmit={handleSubmit}
     >
       <Row gutter={16}>
         <Col span={8}>
-          <Card
+        <Card
             cover={
-              <img
-                style={{
-                  borderRadius: "50%",
-                  width: "200px",
-                  margin: "auto",
-                  marginTop: "16px",
-                }}
-                alt="example"
-                src={
-                  formData.Image
-                    ? formData.Image
-                    : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
-                }
-              />
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center',    // Center vertically
+                height: '150px',         // Ensure the container has a height
+                marginTop: '16px',
+                paddingTop: "150px"
+              }}>
+                <img
+                  style={{
+                    borderRadius: '50%',
+                    width: '300px',
+                    height: '300px',
+                    objectFit: 'cover',
+                  }}
+                  alt="example"
+                  src={
+                    formData.Image
+                      ? formData.Image
+                      : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
+                  }
+                />
+              </div>
             }
           >
             <Card.Meta
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", paddingTop: "150px" }}
               title={`${formData.FirstName} ${formData.LastName}`}
               description={`${formData.RoleName}`}
             />
@@ -331,7 +357,7 @@ function EditDeliveryProfile() {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  {/* <Col span={12}>
                     <Form.Item label="Image URL">
                       <Input
                         value={formData.Image}
@@ -343,19 +369,39 @@ function EditDeliveryProfile() {
                         <p style={{ color: "red" }}>{imageError}</p>
                       )}
                     </Form.Item>
+                  </Col> */}
+                  <Col span={24}>
+                    <Form.Item label="Upload Image">
+                      <Upload
+                        beforeUpload={(file) => {
+                          handleFileChange(file);
+                          return false;
+                        }}
+                        showUploadList={false}
+                      >
+                        <Button
+                          variant="contained"
+                          style={{ background: "#fff" }}
+                        >
+                          <AddPhotoAlternateIcon
+                            style={{ fontSize: "100px", color: "#000" }}
+                          />
+                        </Button>
+                      </Upload>
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Form.Item>
                   <Button
                     type="submit"
                     onClick={handleSubmit}
-                    style={{ float: "right" }}
+                    style={{ float: "right", color: "#fff", background: "#000" }}
                   >
                     Update Profile
                   </Button>
                   <Button
                     type="button"
-                    style={{ float: "right", marginRight: "8px" }}
+                    style={{ float: "right", marginRight: "8px", color: "#fff", background: "#000" }}
                     onClick={handleBack}
                   >
                     Back to Profile

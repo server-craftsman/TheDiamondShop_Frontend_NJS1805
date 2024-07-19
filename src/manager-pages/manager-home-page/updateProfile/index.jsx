@@ -7,7 +7,6 @@ import moment from "moment";
 import {
   Form,
   Input,
-  Button,
   Row,
   Col,
   Card,
@@ -16,11 +15,14 @@ import {
   Select,
   Upload,
 } from "antd";
-
+import { Option } from "antd/es/mentions";
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 function EditProfileManager() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null); // Initial state is null
+  const [previewImage, setPreviewImage] = useState("");
 
   const [formData, setFormData] = useState({
     FirstName: "",
@@ -109,6 +111,19 @@ function EditProfileManager() {
   const handleDateChange = (date) =>
     setFormData({ ...formData, Birthday: date });
 
+  const handleFileChange = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result;
+      setFormData({
+        ...formData,
+        Image: base64,
+      });
+      setPreviewImage(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (imageError) {
@@ -175,24 +190,33 @@ function EditProfileManager() {
         <Col span={8}>
           <Card
             cover={
-              <img
-                style={{
-                  borderRadius: "50%",
-                  width: "200px",
-                  margin: "auto",
-                  marginTop: "16px",
-                }}
-                alt="example"
-                src={
-                  formData.Image
-                    ? formData.Image
-                    : "https://img.freepik.com/premium-vector/avatar-male-manager-office-worker_805465-3.jpg"
-                }
-              />
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center',    // Center vertically
+                height: '150px',         // Ensure the container has a height
+                marginTop: '16px',
+                paddingTop: "150px"
+              }}>
+                <img
+                  style={{
+                    borderRadius: '50%',
+                    width: '300px',
+                    height: '300px',
+                    objectFit: 'cover',
+                  }}
+                  alt="example"
+                  src={
+                    formData.Image
+                      ? formData.Image
+                      : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
+                  }
+                />
+              </div>
             }
           >
             <Card.Meta
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", paddingTop: "150px" }}
               title={`${formData.FirstName} ${formData.LastName}`}
               description={`${formData.RoleName}`}
             />
@@ -334,7 +358,7 @@ function EditProfileManager() {
                     </Form.Item>
                   </Col>
 
-                  <Col span={12}>
+                  {/* <Col span={12}>
                     <Form.Item label="Image URL">
                       <Input
                         value={formData.Image}
@@ -346,19 +370,39 @@ function EditProfileManager() {
                         <p style={{ color: "red" }}>{imageError}</p>
                       )}
                     </Form.Item>
+                  </Col> */}
+                  <Col span={24}>
+                    <Form.Item label="Upload Image">
+                      <Upload
+                        beforeUpload={(file) => {
+                          handleFileChange(file);
+                          return false;
+                        }}
+                        showUploadList={false}
+                      >
+                        <Button
+                          variant="contained"
+                          style={{ background: "#fff" }}
+                        >
+                          <AddPhotoAlternateIcon
+                            style={{ fontSize: "100px", color: "#000" }}
+                          />
+                        </Button>
+                      </Upload>
+                    </Form.Item>
                   </Col>
                 </Row>
                 <Form.Item>
                   <Button
                     type="submit"
                     onClick={handleSubmit}
-                    style={{ float: "right" }}
+                    style={{ float: "right", color: "#fff", background: "#000" }}
                   >
                     Update Profile
                   </Button>
                   <Button
                     type="button"
-                    style={{ float: "right", marginRight: "8px" }}
+                    style={{ float: "right", marginRight: "8px", color: "#fff", background: "#000" }}
                     onClick={handleBack}
                   >
                     Back to Profile

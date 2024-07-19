@@ -1,11 +1,22 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext"; // Adjust the path as needed
-import './index.scss';
+import "./index.scss";
 import axios from "axios";
 import moment from "moment";
-import { Form, Input, Button, Row, Col, Card, DatePicker, notification, Select } from "antd";
-
+import {
+  Form,
+  Input,
+  Row,
+  Col,
+  Card,
+  DatePicker,
+  notification,
+  Select,
+  Upload,
+} from "antd";
+import { Button } from "@mui/material";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 const { Option } = Select;
 
 function EditProfile() {
@@ -14,47 +25,51 @@ function EditProfile() {
   const [userProfile, setUserProfile] = useState(null); // Initial state is null
 
   const [formData, setFormData] = useState({
-    FirstName: '',
-    LastName: '',
-    Gender: '',
-    Birthday: '',
-    PhoneNumber: '',
-    Address: '',
-    Country: '',
-    City: '',
-    Province: '',
-    PostalCode: '',
-    Image: '',
-    RoleName: ''
+    FirstName: "",
+    LastName: "",
+    Gender: "",
+    Birthday: "",
+    PhoneNumber: "",
+    Address: "",
+    Country: "",
+    City: "",
+    Province: "",
+    PostalCode: "",
+    Image: "",
+    RoleName: "",
   });
 
   const [fetchError, setFetchError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState(null);
-
+  const [previewImage, setPreviewImage] = useState("");
+  
   const fetchUserProfile = async () => {
     setLoading(true);
     try {
       const token = user?.token;
 
       if (!token) {
-        console.error('Token not found in AuthContext');
-        setFetchError('Token not found in AuthContext');
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
         setLoading(false);
         return;
       }
 
-      console.log('Fetching user profile with token:', token);
+      console.log("Fetching user profile with token:", token);
 
-      const response = await axios.get('http://localhost:8090/features/view-profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true, // Ensure credentials are sent
-      });
+      const response = await axios.get(
+        "http://localhost:8090/features/view-profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Ensure credentials are sent
+        }
+      );
 
-      console.log('Fetch response status:', response.status);
+      console.log("Fetch response status:", response.status);
 
       if (response.status === 200) {
         const userData = response.data.user;
@@ -68,8 +83,8 @@ function EditProfile() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Fetch error:', error.message);
-      setFetchError('Error fetching user profile. Please try again.');
+      console.error("Fetch error:", error.message);
+      setFetchError("Error fetching user profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -82,9 +97,9 @@ function EditProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'Image') {
+    if (name === "Image") {
       if (!isValidImageUrl(value)) {
-        setImageError('Please enter a valid image URL.');
+        setImageError("Please enter a valid image URL.");
       } else {
         setImageError(null);
       }
@@ -95,14 +110,28 @@ function EditProfile() {
     });
   };
 
-  const handleDateChange = (date) => setFormData({ ...formData, Birthday: date });
+  const handleDateChange = (date) =>
+    setFormData({ ...formData, Birthday: date });
+
+  const handleFileChange = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result;
+      setFormData({
+        ...formData,
+        Image: base64,
+      });
+      setPreviewImage(base64);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (imageError) {
       notification.error({
-        message: 'Invalid Image URL',
-        description: 'Please provide a valid image URL before submitting.',
+        message: "Invalid Image URL",
+        description: "Please provide a valid image URL before submitting.",
       });
       return;
     }
@@ -110,8 +139,8 @@ function EditProfile() {
       const token = user?.token;
 
       if (!token) {
-        console.error('Token not found in AuthContext');
-        setFetchError('Token not found in AuthContext');
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
         return;
       }
 
@@ -120,8 +149,8 @@ function EditProfile() {
         { ...formData, AccountID: userProfile.AccountID }, // Add AccountID to the formData
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
           withCredentials: true,
         }
@@ -129,23 +158,24 @@ function EditProfile() {
 
       if (response.status === 200) {
         notification.success({
-          message: 'Profile Updated',
-          description: 'Your profile has been successfully updated.',
+          message: "Profile Updated",
+          description: "Your profile has been successfully updated.",
         });
       } else {
-        throw new Error('Failed to update profile');
+        throw new Error("Failed to update profile");
       }
     } catch (error) {
       console.error(error);
       notification.error({
-        message: 'Update Failed',
-        description: 'There was an error updating your profile. Please try again.',
+        message: "Update Failed",
+        description:
+          "There was an error updating your profile. Please try again.",
       });
     }
   };
 
   const handleBack = () => {
-    navigate('/userProfile-page');
+    navigate("/userProfile-page");
   };
 
   useEffect(() => {
@@ -153,19 +183,43 @@ function EditProfile() {
   }, [user]);
 
   return (
-    <div className="profile" style={{ padding: "24px" }} onSubmit={handleSubmit}>
+    <div
+      className="profile"
+      style={{ padding: "24px" }}
+      onSubmit={handleSubmit}
+    >
       <Row gutter={16}>
         <Col span={8}>
           <Card
             cover={
-              <img
-              style={{ borderRadius: "50%", width: "200px", margin: "auto", marginTop: "16px" }}
-              alt="example"
-              src={formData.Image ? formData.Image : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"}
-              />
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center', // Center horizontally
+                alignItems: 'center',    // Center vertically
+                height: '150px',         // Ensure the container has a height
+                marginTop: '16px',
+                paddingTop: "150px"
+              }}>
+                <img
+                  style={{
+                    borderRadius: '50%',
+                    width: '300px',
+                    height: '300px',
+                    objectFit: 'cover',
+                  }}
+                  alt="example"
+                  src={
+                    formData.Image
+                      ? formData.Image
+                      : "https://static.vecteezy.com/system/resources/thumbnails/004/607/791/small_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg"
+                  }
+                />
+              </div>
             }
+            
           >
-            <Card.Meta style={{ textAlign: "center" }}
+            <Card.Meta
+              style={{ textAlign: "center", paddingTop: "150px" }}
               title={`${formData.FirstName} ${formData.LastName}`}
               description={`${formData.RoleName}`}
             />
@@ -183,126 +237,128 @@ function EditProfile() {
         <Col span={16}>
           <Card title="Edit Profile">
             {userProfile ? (
-            <Form layout="vertical" onSubmit={handleSubmit}>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="First Name">
-                    <Input
-                      value={formData.FirstName}
-                      onChange={handleChange}
-                      name="FirstName"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Last Name">
-                    <Input
-                      value={formData.LastName}
-                      onChange={handleChange}
-                      name="LastName"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Gender">
-                    <Select
-                      name="Gender"
-                      value={formData.Gender}
-                      onChange={(value) => handleChange({ target: { name: 'Gender', value } })}
-                      style={{ width: "100%" }}
-                    >
-                      <Option value="Male">Male</Option>
-                      <Option value="Female">Female</Option>
-                      <Option value="Other">Other</Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Birthday">
-                    <DatePicker
-                      value={formData.Birthday}
-                      onChange={handleDateChange}
-                      format="YYYY-MM-DD"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Email">
-                    <Input
-                      type="email"
-                      value={formData.Email}
-                      onChange={handleChange}
-                      name="Email"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item label="Phone Number">
-                    <Input
-                      type="phone"
-                      value={formData.PhoneNumber}
-                      onChange={handleChange}
-                      name="PhoneNumber"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item label="Address">
-                    <Input
-                      value={formData.Address}
-                      onChange={handleChange}
-                      name="Address"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={8}>
-                  <Form.Item label="Country">
-                    <Input
-                      value={formData.Country}
-                      onChange={handleChange}
-                      name="Country"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="City">
-                    <Input
-                      value={formData.City}
-                      onChange={handleChange}
-                      name="City"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Province">
-                    <Input
-                      value={formData.Province}
-                      onChange={handleChange}
-                      name="Province"
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item label="Postal Code">
-                    <Input
-                      type="number"
-                      value={formData.PostalCode}
-                      onChange={handleChange}
-                      name="PostalCode"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
+              <Form layout="vertical" onSubmit={handleSubmit}>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="First Name">
+                      <Input
+                        value={formData.FirstName}
+                        onChange={handleChange}
+                        name="FirstName"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Last Name">
+                      <Input
+                        value={formData.LastName}
+                        onChange={handleChange}
+                        name="LastName"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Gender">
+                      <Select
+                        name="Gender"
+                        value={formData.Gender}
+                        onChange={(value) =>
+                          handleChange({ target: { name: "Gender", value } })
+                        }
+                        style={{ width: "100%" }}
+                      >
+                        <Option value="Male">Male</Option>
+                        <Option value="Female">Female</Option>
+                        <Option value="Other">Other</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Birthday">
+                      <DatePicker
+                        value={formData.Birthday}
+                        onChange={handleDateChange}
+                        format="YYYY-MM-DD"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Email">
+                      <Input
+                        type="email"
+                        value={formData.Email}
+                        onChange={handleChange}
+                        name="Email"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Phone Number">
+                      <Input
+                        type="phone"
+                        value={formData.PhoneNumber}
+                        onChange={handleChange}
+                        name="PhoneNumber"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <Form.Item label="Address">
+                      <Input
+                        value={formData.Address}
+                        onChange={handleChange}
+                        name="Address"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item label="Country">
+                      <Input
+                        value={formData.Country}
+                        onChange={handleChange}
+                        name="Country"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="City">
+                      <Input
+                        value={formData.City}
+                        onChange={handleChange}
+                        name="City"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Province">
+                      <Input
+                        value={formData.Province}
+                        onChange={handleChange}
+                        name="Province"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Postal Code">
+                      <Input
+                        type="number"
+                        value={formData.PostalCode}
+                        onChange={handleChange}
+                        name="PostalCode"
+                      />
+                    </Form.Item>
+                  </Col>
+                  {/* <Col span={12}>
                   <Form.Item label="Image URL">
                     <Input
                       value={formData.Image}
@@ -312,25 +368,45 @@ function EditProfile() {
                     />
                     {imageError && <p style={{ color: 'red' }}>{imageError}</p>}
                   </Form.Item>
-                </Col>
-              </Row>
-              <Form.Item>
-                <Button
-                  type="submit"
-                  onClick={handleSubmit}
-                  style={{ float: "right" }}
-                >
-                  Update Profile
-                </Button>
-                <Button
-                    type="button" 
-                    style={{ float: "right", marginRight: "8px" }}
-                    onClick={handleBack} 
+                </Col> */}
+                  <Col span={24}>
+                    <Form.Item label="Upload Image">
+                      <Upload
+                        beforeUpload={(file) => {
+                          handleFileChange(file);
+                          return false;
+                        }}
+                        showUploadList={false}
+                      >
+                        <Button
+                          variant="contained"
+                          style={{ background: "#fff" }}
+                        >
+                          <AddPhotoAlternateIcon
+                            style={{ fontSize: "100px", color: "#000" }}
+                          />
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Form.Item>
+                  <Button
+                    type="submit"
+                    onClick={handleSubmit}
+                    style={{ float: "right", background: "#000", color: "#fff" }}
+                  >
+                    Update Profile
+                  </Button>
+                  <Button
+                    type="button"
+                    style={{ float: "right", marginRight: "8px", background: "#000", color: "#fff" }}
+                    onClick={handleBack}
                   >
                     Back to Profile
                   </Button>
-              </Form.Item>
-            </Form>
+                </Form.Item>
+              </Form>
             ) : (
               <p>Loading...</p>
             )}
