@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Layout, Menu } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
@@ -16,6 +16,9 @@ import "./index.scss";
 const { Sider } = Layout;
 
 function DeliveryHeader() {
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -24,12 +27,50 @@ function DeliveryHeader() {
     logout();
     navigate("/login");
   };
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetching user profile with token:", token);
+
+      const response = await fetch(
+        "http://localhost:8090/features/view-profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Assuming you store the token in localStorage
+          },
+          withCredentials: true, // Ensure credentials are sent
+        }
+      );
+      const data = await response.json();
+      setUserProfile(data.user);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  };
+
 
   const menuItems = [
     {
       key: "1",
       icon: <UserOutlined />,
-      label: <Link to="/delivery-profile-page">User</Link>,
+      label: <Link to="/delivery-profile-page">Welcome,{userProfile?.LastName }</Link>,
     },
     {
       key: "sub1",

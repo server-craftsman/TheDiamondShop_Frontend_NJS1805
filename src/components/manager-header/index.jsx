@@ -16,11 +16,50 @@ import "./index.scss";
 function ManagerHeader() {
   const [collapsed, setCollapsed] = useState(false);
   const { user, logout } = useContext(AuthContext);
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetching user profile with token:", token);
+
+      const response = await fetch(
+        "http://localhost:8090/features/view-profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Assuming you store the token in localStorage
+          },
+          withCredentials: true, // Ensure credentials are sent
+        }
+      );
+      const data = await response.json();
+      setUserProfile(data.user);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  };
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
   const menuItems = [
     {
       key: "1",
       icon: <UserOutlined />,
-      label: <Link to="/manager-page">User</Link>,
+      label: <Link to="/manager-page">Welcome,{userProfile?.LastName}</Link>,
     },
     {
       key: "sub1",

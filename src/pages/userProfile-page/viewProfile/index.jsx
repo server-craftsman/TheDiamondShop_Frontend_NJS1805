@@ -112,11 +112,11 @@ function UserProfile() {
               style={{ textAlign: "center" }}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
-              <p>
+              {/* <p>
                 "Welcome to Diamond Store <br />
                 where elegance meets brilliance <br />
                 Diamonds - Rings - Timepieces."
-              </p>
+              </p> */}
               <Link to="/userProfile-edit">
                 <Button type="primary" style={{ marginTop: "16px" }}>
                   Update Profile

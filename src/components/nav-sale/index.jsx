@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Layout, Menu } from "antd";
 import {
   UserOutlined,
@@ -19,12 +19,53 @@ const Nav = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const { user, logout } = useContext(AuthContext);
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+      const token = user?.token;
+
+      if (!token) {
+        console.error("Token not found in AuthContext");
+        setFetchError("Token not found in AuthContext");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetching user profile with token:", token);
+
+      const response = await fetch(
+        "http://localhost:8090/features/view-profile",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Assuming you store the token in localStorage
+          },
+          withCredentials: true, // Ensure credentials are sent
+        }
+      );
+      const data = await response.json();
+      setUserProfile(data.user);
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
+    }
+  };
 
   const menuItems = [
     {
       key: "1",
       icon: <UserOutlined />,
-      label: "User",
+      label: <span>Welcome,{userProfile?.LastName}</span>,
       link: "/sale-page",
     },
     {
@@ -66,10 +107,10 @@ const Nav = () => {
       ],
     },
     {
-        key: "6",
-        icon: <SettingOutlined />,
-        label: "View Request Warranty",
-        link: "/view-requestwarranty",
+      key: "6",
+      icon: <SettingOutlined />,
+      label: "View Request Warranty",
+      link: "/view-requestwarranty",
     },
     user
       ? {
@@ -85,7 +126,7 @@ const Nav = () => {
   ];
 
   // Filter out null values from menuItems
-  const filteredMenuItems = menuItems.filter(item => item !== null);
+  const filteredMenuItems = menuItems.filter((item) => item !== null);
 
   return (
     <div className="sidebar-sale">

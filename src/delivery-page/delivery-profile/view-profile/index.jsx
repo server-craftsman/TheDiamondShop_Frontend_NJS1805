@@ -96,11 +96,11 @@ function DeliveryProfile() {
               style={{ textAlign: "center" }}
             />
             <div style={{ marginTop: "16px", textAlign: "center" }}>
-              <p>
+              {/* <p>
                 "Lamborghini Mercy <br />
                 Your chick she so thirsty <br />
                 I'm in that two seat Lambo"
-              </p>
+              </p> */}
               <Link to="/deliveryProfile-edit">
                 <Button type="primary" style={{ marginTop: "16px" }}>
                   Update Profile
