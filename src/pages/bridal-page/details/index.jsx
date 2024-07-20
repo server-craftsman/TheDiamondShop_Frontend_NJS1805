@@ -90,13 +90,11 @@ function BridalDetail() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-
   // useEffect để fetch dữ liệu Bridal và Feedback
   useEffect(() => {
     axios
       .get(`http://localhost:8090/products/bridals/${id}`)
       .then((response) => {
-
         setBridal({
           ...response.data,
         });
@@ -128,7 +126,6 @@ function BridalDetail() {
     if (user) {
       fetchFeedback();
     }
-
   }, [id, user]);
 
   // Fetch material details
@@ -139,8 +136,13 @@ function BridalDetail() {
           "http://localhost:8090/products/material-details"
         );
         setMaterialOptions(response.data);
-        if (!material || !response.data.some(option => option.MaterialName === material)) {
-          setMaterial(response.data.length > 0 ? response.data[0].MaterialName : '');
+        if (
+          !material ||
+          !response.data.some((option) => option.MaterialName === material)
+        ) {
+          setMaterial(
+            response.data.length > 0 ? response.data[0].MaterialName : ""
+          );
         }
       } catch (error) {
         console.error("Error fetching material details:", error);
@@ -157,8 +159,13 @@ function BridalDetail() {
           "http://localhost:8090/products/ring-size-details"
         );
         setRingSizeOptions(response.data);
-        if (!ringSize || !response.data.some(option => option.RingSize === ringSize)) {
-          setSelectedSize(response.data.length > 0 ? response.data[0].RingSize : '');
+        if (
+          !ringSize ||
+          !response.data.some((option) => option.RingSize === ringSize)
+        ) {
+          setSelectedSize(
+            response.data.length > 0 ? response.data[0].RingSize : ""
+          );
         }
       } catch (error) {
         console.error("Error fetching ring size details:", error);
@@ -166,7 +173,6 @@ function BridalDetail() {
     };
     fetchRingSizeDetails();
   }, []);
-
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -200,7 +206,6 @@ function BridalDetail() {
       console.error("Error submitting feedback:", error);
     }
   };
-
 
   if (!bridal) return <div>Loading...</div>;
 
@@ -260,11 +265,9 @@ function BridalDetail() {
   //   setQuantity(event.target.value);
   // };
 
-
   // const handleMaterialChange = (event) => {
   //   setMaterial(event.target.value);
   // };
-
 
   const handleAddToCart = () => {
     const alreadyInCart = cartItems.find(
@@ -333,13 +336,13 @@ function BridalDetail() {
   };
   const handleCancel = () => {
     setOpenModal(false);
-  }
+  };
 
   const feedbackCount = feedbackBridal.length;
 
   return (
     <>
-       {/* <Modal
+      {/* <Modal
         open={openModal}
         // title="Title"
         onCancel={handleCancel}
@@ -413,7 +416,11 @@ function BridalDetail() {
                   </Typography>
 
                   <div>
-                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                    <FormControl
+                      fullWidth
+                      sx={{ m: 1, minWidth: 120 }}
+                      margin="normal"
+                    >
                       <InputLabel id="material-label">Material</InputLabel>
                       <Select
                         labelId="material-label"
@@ -431,7 +438,11 @@ function BridalDetail() {
                       </Select>
                     </FormControl>
 
-                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                    <FormControl
+                      fullWidth
+                      sx={{ m: 1, minWidth: 120 }}
+                      margin="normal"
+                    >
                       <InputLabel id="ring-size-label">Ring Size</InputLabel>
                       <Select
                         labelId="ring-size-label"
@@ -448,9 +459,6 @@ function BridalDetail() {
                         ))}
                       </Select>
                     </FormControl>
-
-
-
                   </div>
 
                   <div style={{ display: "flex" }}>
@@ -905,33 +913,50 @@ function BridalDetail() {
                                     color: "inherit",
                                   }}
                                 >
-                                  <Card>
+                                  <Card
+                                    style={{
+                                      width: "100%",
+                                      height: "520px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
                                     <CardMedia
                                       component="img"
-                                      height="100%"
                                       image={similarBridals.ImageBridal}
                                       alt={similarBridals.ImageBridal}
                                       style={{
-                                        maxWidth: "100%",
-                                        height: "auto",
+                                        width: "100%",
+                                        height: "50%",
+                                        objectFit: "contain",
                                         cursor: "zoom-in",
                                         transition:
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1.2)")
+                                        (e.currentTarget.style.transform =
+                                          "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1)")
+                                        (e.currentTarget.style.transform =
+                                          "scale(1)")
                                       }
                                     />
-                                    <CardContent>
+                                    <CardContent
+                                      style={{
+                                        padding: "16px",
+                                        flexGrow: 1,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "space-evenly",
+                                      }}
+                                    >
                                       <Typography
                                         variant="subtitle1"
                                         component="h2"
                                         fontWeight={"bolder"}
+                                        fontSize={"1.2rem"}
                                       >
                                         {similarBridals.NameBridal}
                                       </Typography>
@@ -952,8 +977,8 @@ function BridalDetail() {
                                         variant="body2"
                                         color="textSecondary"
                                         component="p"
-                                        fontSize={"1.5rem"}
                                         fontWeight={"bolder"}
+                                        fontSize={"1.5rem"}
                                       >
                                         ${similarBridals.Price.toFixed(2)}
                                       </Typography>
@@ -1234,9 +1259,8 @@ function BridalDetail() {
         </Box>
       </Container>
       <Footer />
-   
-      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
 
+      <Warning open={warningOpen} onClose={() => setWarningOpen(false)} />
     </>
   );
 }

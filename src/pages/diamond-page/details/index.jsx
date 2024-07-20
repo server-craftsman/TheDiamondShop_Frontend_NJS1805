@@ -155,36 +155,36 @@ const DiamondDetail = () => {
   //     (item) => item.id === diamond.DiamondID
   //   );
 
-    const handleAddToCart = () => {
-      const alreadyInCart = cartItems.find(
-        (item) => item.id === diamond.DiamondID && item.type === "Diamond"
-      );
-  
-      if (!alreadyInCart) {
-        const itemToAdd = {
-          id: diamond.DiamondID,
-          name: diamond.DiamondOrigin,
-          image: diamond.Image,
-          price: diamond.Price,
-          type: "Diamond",
-          quantity: 1, 
-          stockNumber: diamond.StockNumber,
-          combinedWithJewelry: true,
-          combinedWithJewelryId: 1,
-          caratWeight: diamond.CaratWeight,
-          color: diamond.Color,
-          clarity: diamond.Clarity,
-          cut: diamond.Cut,
-          shape: diamond.Shape,
-          certification: diamond.Certification,
-        };
-  
-        addToCart(itemToAdd);
-        setOpenModal(true);
-      } else {
-        setWarningOpen(true);
-      }
-    };
+  const handleAddToCart = () => {
+    const alreadyInCart = cartItems.find(
+      (item) => item.id === diamond.DiamondID && item.type === "Diamond"
+    );
+
+    if (!alreadyInCart) {
+      const itemToAdd = {
+        id: diamond.DiamondID,
+        name: diamond.DiamondOrigin,
+        image: diamond.Image,
+        price: diamond.Price,
+        type: "Diamond",
+        quantity: 1,
+        stockNumber: diamond.StockNumber,
+        combinedWithJewelry: true,
+        combinedWithJewelryId: 1,
+        caratWeight: diamond.CaratWeight,
+        color: diamond.Color,
+        clarity: diamond.Clarity,
+        cut: diamond.Cut,
+        shape: diamond.Shape,
+        certification: diamond.Certification,
+      };
+
+      addToCart(itemToAdd);
+      setOpenModal(true);
+    } else {
+      setWarningOpen(true);
+    }
+  };
 
   const handlePrev = () => {
     if (startIdx > 0) {
@@ -282,12 +282,12 @@ const DiamondDetail = () => {
   };
   const handleCancel = () => {
     setOpenModal(false);
-  }
+  };
   const feedbackCount = feedbackDiamond.length;
 
   return (
     <>
-     {/* <Modal
+      {/* <Modal
         open={openModal}
         // title="Title"
         onCancel={handleCancel}
@@ -352,7 +352,7 @@ const DiamondDetail = () => {
 
           <Grid item xs={12} md={7}>
             <Card>
-              <CardContent style={{ marginBottom: "-10px", height:"600px"}}>
+              <CardContent style={{ marginBottom: "-10px", height: "600px" }}>
                 <Box mt={2}>
                   <Typography
                     variant="h5"
@@ -368,7 +368,15 @@ const DiamondDetail = () => {
                       "Color: " +
                       diamond.Color}
                   </Typography>
-                  <Typography variant="body1" component="p" style={{color: "red", fontWeight: "bold", fontSize: "30px" }}>
+                  <Typography
+                    variant="body1"
+                    component="p"
+                    style={{
+                      color: "red",
+                      fontWeight: "bold",
+                      fontSize: "30px",
+                    }}
+                  >
                     $
                     {Number(diamond.Price)
                       .toFixed(2)
@@ -775,15 +783,23 @@ const DiamondDetail = () => {
                                     color: "inherit",
                                   }}
                                 >
-                                  <Card>
+                                  <Card
+                                    style={{
+                                      width: "100%",
+                                      height: "520px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
                                     <CardMedia
                                       component="img"
-                                      height="100%"
                                       image={similarDiamond.Image}
                                       alt={similarDiamond.StockNumber}
                                       style={{
-                                        maxWidth: "100%",
-                                        height: "auto",
+                                        width: "100%",
+                                        height: "50%",
+                                        objectFit: "contain",
                                         cursor: "zoom-in",
                                         transition:
                                           "transform 0.3s ease-in-out",
@@ -797,11 +813,19 @@ const DiamondDetail = () => {
                                           "scale(1)")
                                       }
                                     />
-                                    <CardContent>
-                                      <h3>
+                                    <CardContent
+                                      style={{
+                                        padding: "16px",
+                                        flexGrow: 1,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "space-evenly",
+                                      }}
+                                    >
+                                      <Typography variant="h6" component="h3">
                                         DIAMOND{" "}
                                         {similarDiamond.DiamondOrigin.toUpperCase()}
-                                      </h3>
+                                      </Typography>
                                       <Typography
                                         variant="subtitle1"
                                         component="h2"

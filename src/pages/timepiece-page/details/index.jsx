@@ -687,15 +687,23 @@ function TimepieceDetail() {
                                     color: "inherit",
                                   }}
                                 >
-                                  <Card>
+                                  <Card
+                                    style={{
+                                      width: "100%",
+                                      height: "600px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
                                     <CardMedia
                                       component="img"
-                                      height="100%"
                                       image={similarTimepieces.ImageTimepieces}
                                       alt={similarTimepieces.ImageTimepieces}
                                       style={{
-                                        maxWidth: "100%",
-                                        height: "auto",
+                                        width: "100%",
+                                        height: "50%",
+                                        objectFit: "contain",
                                         cursor: "zoom-in",
                                         transition:
                                           "transform 0.3s ease-in-out",
@@ -709,7 +717,15 @@ function TimepieceDetail() {
                                           "scale(1)")
                                       }
                                     />
-                                    <CardContent>
+                                    <CardContent
+                                      style={{
+                                        padding: "16px",
+                                        flexGrow: 1,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "space-evenly",
+                                      }}
+                                    >
                                       <Typography
                                         variant="subtitle1"
                                         component="h2"

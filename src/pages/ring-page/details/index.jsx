@@ -121,7 +121,6 @@ const RingDetail = () => {
     }
   }, [id, user]);
 
-
   // Fetch material details
   useEffect(() => {
     const fetchMaterialDetails = async () => {
@@ -130,8 +129,13 @@ const RingDetail = () => {
           "http://localhost:8090/products/material-details"
         );
         setMaterialOptions(response.data);
-        if (!material || !response.data.some(option => option.MaterialName === material)) {
-          setMaterial(response.data.length > 0 ? response.data[0].MaterialName : '');
+        if (
+          !material ||
+          !response.data.some((option) => option.MaterialName === material)
+        ) {
+          setMaterial(
+            response.data.length > 0 ? response.data[0].MaterialName : ""
+          );
         }
       } catch (error) {
         console.error("Error fetching material details:", error);
@@ -148,8 +152,13 @@ const RingDetail = () => {
           "http://localhost:8090/products/ring-size-details"
         );
         setRingSizeOptions(response.data);
-        if (!ringSize || !response.data.some(option => option.RingSize === ringSize)) {
-          setSelectedSize(response.data.length > 0 ? response.data[0].RingSize : '');
+        if (
+          !ringSize ||
+          !response.data.some((option) => option.RingSize === ringSize)
+        ) {
+          setSelectedSize(
+            response.data.length > 0 ? response.data[0].RingSize : ""
+          );
         }
       } catch (error) {
         console.error("Error fetching ring size details:", error);
@@ -290,7 +299,6 @@ const RingDetail = () => {
     }
   };
 
-
   const handleBuyNow = () => {
     handleAddToCart();
     navigate("/cart-page"); // Ensure the correct path
@@ -327,13 +335,9 @@ const RingDetail = () => {
       });
   };
 
-
-
   const handleNavigateButtonClick = () => {
     handleDetailNavigation(); // Kích hoạt hàm handleDetailNavigation khi nút được nhấn
   };
-
- 
 
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -350,7 +354,7 @@ const RingDetail = () => {
 
   const handleCancel = () => {
     setOpenModal(false);
-  }
+  };
   const feedbackCount = feedbackRings.length;
 
   return (
@@ -428,9 +432,12 @@ const RingDetail = () => {
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
-
                   <div>
-                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                    <FormControl
+                      fullWidth
+                      sx={{ m: 1, minWidth: 120 }}
+                      margin="normal"
+                    >
                       <InputLabel id="material-label">Material</InputLabel>
                       <Select
                         labelId="material-label"
@@ -448,7 +455,11 @@ const RingDetail = () => {
                       </Select>
                     </FormControl>
 
-                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
+                    <FormControl
+                      fullWidth
+                      sx={{ m: 1, minWidth: 120 }}
+                      margin="normal"
+                    >
                       <InputLabel id="ring-size-label">Ring Size</InputLabel>
                       <Select
                         labelId="ring-size-label"
@@ -465,9 +476,6 @@ const RingDetail = () => {
                         ))}
                       </Select>
                     </FormControl>
-
-
-
                   </div>
 
                   <div style={{ display: "flex" }}>
@@ -533,7 +541,6 @@ const RingDetail = () => {
                         </Typography>
                       )}
                     </Box> */}
-
 
                     <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
                       <span style={{ fontSize: "25px", fontWeight: "bold" }}>
@@ -919,29 +926,45 @@ const RingDetail = () => {
                                     color: "inherit",
                                   }}
                                 >
-                                  <Card>
+                                  <Card
+                                    style={{
+                                      width: "100%",
+                                      height: "520px",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
                                     <CardMedia
                                       component="img"
-                                      height="100%"
                                       image={similarRings.ImageRings}
                                       alt={similarRings.ImageRings}
                                       style={{
-                                        maxWidth: "100%",
-                                        height: "auto",
+                                        width: "100%",
+                                        height: "50%",
+                                        objectFit: "contain",
                                         cursor: "zoom-in",
                                         transition:
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1.2)")
+                                        (e.currentTarget.style.transform =
+                                          "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                      (e.currentTarget.style.transform =
-                                        "scale(1)")
+                                        (e.currentTarget.style.transform =
+                                          "scale(1)")
                                       }
                                     />
-                                    <CardContent>
+                                    <CardContent
+                                      style={{
+                                        padding: "16px",
+                                        flexGrow: 1,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "space-evenly",
+                                      }}
+                                    >
                                       <Typography
                                         variant="subtitle1"
                                         component="h2"
