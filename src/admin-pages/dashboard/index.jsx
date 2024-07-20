@@ -1,255 +1,262 @@
 import React, { useEffect, useState } from 'react';
 import "../dashboard/index.scss";
-import { Table } from 'antd';
+import { Table, message } from 'antd';
 import { Card, Col, Row } from 'antd';
 import AreaCard from './areaCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie } from 'recharts';
+import axios from 'axios';
+import { Try } from '@mui/icons-material';
 
 
 function Dashboard() {
-  const [totalDiamond, setTotalDiamond] = useState(0);
-  const [dataSource, setDataSource] = useState([]);
+
+  const [dataBestSeller, setDataBestSeller] = useState([]);
   const [page, setPage] = useState([1]);
   const [pageSize, setPageSize] = useState([5]);
+  const [dataSource, setDataSource] = useState([]);
 
+  const [inventoryData, setInventoryData] = useState([]);
+  const [outStockData, setOutStockData] = useState([]);
+
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [revenue, setRevenue] = useState({
+    DailyRevenue: 0,
+    WeeklyRevenue: 0,
+    MonthlyRevenue: 0
+  })
+
+  const [dataRevenueChart, setDataRevenueChart] = useState({
+    Date: 0,
+    Revenue: 0
+  })
+
+  const [totalOrder, setTotalOrder] = useState({
+    DailyOrders: 0,
+    WeeklyOrders: 0,
+    MonthlyOrders: 0
+  })
+
+  const [dataNewUser, setDataNewUser] = useState({
+    NewCustomersToday: 0,
+    NewCustomersThisWeek: 0,
+    NewCustomersThisMonth: 0
+  });
+
+  //DASHBOARD TOTAL PRODUCT=====================================
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8090/products/diamonds');
+        const response = await fetch("http://localhost:8090/admin/dashboard");
         const data = await response.json();
         setDataSource(data);
-        setTotalDiamond(data.length); // Calculate total based on data length
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
   }, []);
 
-  const columns = [
-    {
-      title: "Diamond ID",
-      dataIndex: "DiamondID",
-      key: "DiamondID",
-    },
-    {
-      title: "Diamond Origin",
-      dataIndex: "DiamondOrigin",
-      key: "DiamondOrigin",
-    },
-    {
-      title: "Carat Weight",
-      dataIndex: "CaratWeight",
-      key: "CaratWeight",
-    },
-    {
-      title: "Color",
-      dataIndex: "Color",
-      key: "Color",
-    },
-    {
-      title: "Clarity",
-      dataIndex: "Clarity",
-      key: "Clarity",
-    },
-    {
-      title: "Cut",
-      dataIndex: "Cut",
-      key: "Cut",
-    },
-    {
-      title: "Price",
-      dataIndex: "Price",
-      key: "Price",
-    },
-    {
-      title: "Shape",
-      dataIndex: "Shape",
-      key: "Shape",
-    },
-    {
-      title: "Image",
-      dataIndex: "Image",
-      key: "Image",
-      render: (Image) => {
-        <Image src={Image} width={140} height={120} />
+  //TOTAL REVENUE==================================================
+  useEffect(() => {
+    const fetchDataRevenue = async () => {
+      try {
+        const [revenueResponse, revenueChartResponse] = await Promise.all([
+          axios.get("http://localhost:8090/admin/revenue"),
+          axios.get("http://localhost:8090/admin/revenue-chart")
+        ]);
+        setRevenue(revenueResponse.data);
+        setDataRevenueChart(revenueChartResponse.data);
+      } catch (err) {
+        setError('Failed to fetch data');
+        console.log("Error data: ", err);
       }
-    },
-    {
-      title: "Polish",
-      dataIndex: "Polish",
-      key: "Polish",
-    },
-    {
-      title: "Symmetry",
-      dataIndex: "Symmetry",
-      key: "Symmetry",
-    },
-    {
-      title: "Table Percentage",
-      dataIndex: "TablePercentage",
-      key: "TablePercentage",
-    },
-    {
-      title: "Depth",
-      dataIndex: "Depth",
-      key: "Depth",
-    },
-    {
-      title: "Measurements",
-      dataIndex: "Measurements",
-      key: "Measurements",
-    },
-    {
-      title: "GIA Report Number",
-      dataIndex: "GIAReportNumber",
-      key: "GIAReportNumber",
-    },
-    {
-      title: "Stock Number",
-      dataIndex: "StockNumber",
-      key: "StockNumber",
-    },
-    {
-      title: "Lab Report Number",
-      dataIndex: "LabReportNumber",
-      key: "LabReportNumber",
-    },
-    {
-      title: "Gemstone",
-      dataIndex: "Gemstone",
-      key: "Gemstone",
-    },
-    {
-      title: "Grading Report",
-      dataIndex: "GradingReport",
-      key: "GradingReport",
-    },
-    {
-      title: "Descriptors",
-      dataIndex: "Descriptors",
-      key: "Descriptors",
-    },
-    {
-      title: "Fluorescence",
-      dataIndex: "Fluorescence",
-      key: "Fluorescence",
-    },
+    };
+    fetchDataRevenue();
+  }, []);
 
-  ];
 
-  const chartData = dataSource.map((item, index) => ({
-    name: `Diamond ${index + 1}`,
-    Price: item.Price,
-    CaratWeight: item.CaratWeight,
-    TablePercentage: item.TablePercentage,
-    Depth: item.Depth,
-  }));
-
-  const data = [
+  const revenueChart = [
     {
-      "name": "Day",
-      "diamond": 4000,
-      "ring": 2400,
-      "timepieces": 6000,
-    },
-    {
-      "name": "Week",
-      "diamond": 2000,
-      "ring": 1209,
-      "timepieces": 7421,
-    },
-    {
-      "name": "Month",
-      "diamond": 4573,
-      "ring": 1234,
-      "timepieces": 7468,
-    },
-
-  ]
-
-  const dataPieOrder = [
-    {
-      "name": "Order Day",
-      "value": 40,
+      "name": "Daily Revenue",
+      "value": revenue.DailyRevenue,
       fill: '#8884d8'
     },
     {
-      "name": "Order Week",
-      "value": 80,
+      "name": "Weekly Revenue",
+      "value": revenue.WeeklyRevenue,
       fill: '#83a6ed'
     },
     {
-      "name": "Order Month",
-      "value": 100,
+      "name": "Monthly Revenue",
+      "value": revenue.MonthlyRevenue,
       fill: '#8dd1e1'
     },
   ];
 
-  //PRODUCT HOT SALE ======================================================
-  const ProductHotSale = [
-    {
-      title: "Diamond ID",
-      dataIndex: "DiamondID",
-      key: "DiamondID",
-    },
-    {
-      title: "Name Product",
-      dataIndex: "DiamondOrigin",
-      key: "DiamondOrigin",
-    },
-    {
-      title: "Carat Weight",
-      dataIndex: "CaratWeight",
-      key: "CaratWeight",
-    },
-    {
-      title: "Color",
-      dataIndex: "Color",
-      key: "Color",
-    },
-    {
-      title: "Clarity",
-      dataIndex: "Clarity",
-      key: "Clarity",
-    },
-    {
-      title: "Cut",
-      dataIndex: "Cut",
-      key: "Cut",
-    },
-    {
-      title: "Image",
-      dataIndex: "Image",
-      key: "Image",
-      render: (Image) => {
-        <Image src={Image} width={140} height={120} />
+
+  //TOTAL ORDER====================================================
+  useEffect(() => {
+    const fetchDataOrder = async () => {
+      try {
+        const responseOrder = await axios.get("http://localhost:8090/admin/total-order");
+        setTotalOrder(responseOrder.data);
+      } catch (error) {
+        setError('Failed to fetch data');
       }
+    };
+    fetchDataOrder();
+  }, []);
+
+  const dataTotalOrder = [
+    {
+      "name": "Total Orders",
+      "Daily Orders": totalOrder.DailyOrders,
+      "Weekly Orders": totalOrder.WeeklyOrders,
+      "Monthly Orders": totalOrder.MonthlyOrders,
     },
+  ]
 
 
+  //BEST SELLER====================================================
+  // useEffect(() => {
+  //   const fetchBestSellers = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:8090/admin/best-seller');
+  //       setDataBestSeller([
+  //         { key: '1', category: "Diamond", ID: response.data.DiamondID, Name: response.data.DiamondOrigin , soldOut: response.data.SoldOutDiamonds },
+  //         { key: '2', category: "Bridal", ID: response.data.BridalID, Name: response.data.NameBridal , soldOut: response.data.SoldOutBridals },
+  //         { key: '3', category: "Diamond Rings", ID: response.data.DiamondRingsID, Name: response.data.NameRings , soldOut: response.data.SoldOutDiamondRings },
+  //         { key: '4', category: "Diamond Timpieces", ID: response.data.DiamondTimepiecesID, Name: response.data.NameTimepieces , soldOut: response.data.SoldOutDiamondTimepieces },
+  //       ]);
+  //     } catch (error) {
+  //       message.error('Failed to fetch best-selling products');
+  //     }
+  //   };
+
+  //   fetchBestSellers();
+  // }, []);
+
+  // const columns = [
+  //   {
+  //     title: 'Category',
+  //     dataIndex: 'category',
+  //     key: 'category',
+  //   },
+  //   {
+  //     title: 'ID',
+  //     dataIndex: 'ID',
+  //     key: 'ID',
+  //   },
+  //   {
+  //     title: 'Name',
+  //     dataIndex: 'Name',
+  //     key: 'Name',
+  //   },
+  //   {
+  //     title: 'Sold Out',
+  //     dataIndex: 'soldOut',
+  //     key: 'soldOut',
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchBestSellers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8090/admin/best-seller");
+        console.log('Fetched data:', response.data); // Log the fetched data
+
+        // Check if response.data is an array
+        if (Array.isArray(response.data)) {
+          const bestSellers = response.data.map((item, index) => ({
+            key: index,
+            category: item.Category,
+            ID: item.ID,
+            Name: item.Name,
+            soldOut: item.SoldOut
+          }));
+          setData(bestSellers);
+        } else if (typeof response.data === 'object') {
+          // Convert single object to array if needed
+          const bestSellers = [response.data];
+          setData(bestSellers);
+        } else {
+          message.error('Unexpected data format');
+          console.error('Unexpected data format:', response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching best-selling products:", error); // Log detailed error
+        message.error('Failed to fetch best-selling products'); // Use message from antd
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBestSellers();
+  }, []);
+
+  const columns = [
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+    },
+    {
+      title: 'ID',
+      dataIndex: 'ID',
+      key: 'ID',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'Name',
+      key: 'Name',
+    },
+    {
+      title: 'Sold Out',
+      dataIndex: 'soldOut',
+      key: 'soldOut',
+    },
   ];
 
-  //PRODUCT SOLD================================================
-  const dataProductSold = [
-    {
-      "name": "Diamond",
-      "Inventory Quantity": 4000,
-      "Out Of Stock": 2400
-    },
-    {
-      "name": "Diamond Rings",
-      "Inventory Quantity": 3000,
-      "Out Of Stock": 1398
-    },
-    {
-      "name": "Diamond Timpieces",
-      "Inventory Quantity": 2000,
-      "Out Of Stock": 9800
-    },
+  useEffect(() => {
+    const fetchDataInventory = async () => {
+      try {
+        const response = await axios.get("http://localhost:8090/admin/inventory-list");
+        setInventoryData(response.data);
+      } catch (error) {
+        console.error("error fetachdata", error);
+      }
+    };
+    fetchDataInventory();
+  }, [])
 
-  ]
+  const InventoryList = [
+    { title: 'Product Type', dataIndex: 'ProductType', key: 'ProductType' },
+    { title: 'Product ID', dataIndex: 'ProductID', key: 'ProductID' },
+    { title: 'Inventory', dataIndex: 'Inventory', key: 'Inventory' },
+  ];
+
+  //OUT STOCK DATA====================================================
+
+  useEffect(() => {
+    const fetchDataOutStock = async () => {
+      try {
+        const response = await axios.get("http://localhost:8090/admin/out-stock-list");
+        setOutStockData(response.data);
+      } catch (error) {
+        console.error("error fetachdata", error);
+      }
+    };
+    fetchDataOutStock();
+  }, [])
+
+  const outStockList = [
+    { title: 'Product Type', dataIndex: 'ProductType', key: 'ProductType' },
+    { title: 'Product ID', dataIndex: 'ProductID', key: 'ProductID' },
+    { title: 'Inventory', dataIndex: 'Inventory', key: 'Inventory' },
+  ];
 
   //FINANCE REPORT===================================================
   const dataFinance = [
@@ -281,8 +288,48 @@ function Dashboard() {
     { "name": "2024-06-24", "price": 2783 },
   ];
 
+
+  //NEW USER==========================================================
+  useEffect(() => {
+    const fetchDataNewUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:8090/admin/new-customer");
+        setDataNewUser(response.data)
+      } catch (error) {
+        console.error("Error", error);
+      }
+    };
+    fetchDataNewUser();
+  }, [])
+
+
+  const dataUser = [
+    {
+      "name": "Data New User",
+      "day": dataNewUser.NewCustomersToday,
+      "week": dataNewUser.NewCustomersThisWeek,
+      "month": dataNewUser.NewCustomersThisMonth
+    },
+    // {
+    //   "name": "Page B",
+    //   "uv": 3000,
+    //   "pv": 1398,
+    //   "amt": 2210
+    // },
+    // {
+    //   "name": "Page C",
+    //   "uv": 2000,
+    //   "pv": 9800,
+    //   "amt": 2290
+    // },
+    
+  ]
+
+
+
   return (
     <div className='dashboard'>
+
       <section className="content-area-top">
         <div className="area-top-l">
 
@@ -290,6 +337,44 @@ function Dashboard() {
 
         </div>
       </section>
+
+      {/* STATIC */}
+      <div style={{ padding: "24px" }}>
+        <h2 style={{ color: "red" }}>Total statistics</h2>
+        <Row gutter={16}>
+          <Col span={4}>
+            <Card title="Total Diamonds" bordered={false}>
+              {dataSource.TotalDiamonds}
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card title="Total Bridal" bordered={false}>
+              {dataSource.TotalBridal}
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card title="Total Diamond Rings" bordered={false}>
+              {dataSource.TotalDiamondRings}
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card title="Total Timepieces" bordered={false}>
+              {dataSource.TotalDiamondTimepieces}
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card title="Total Completed Orders" bordered={false}>
+              {dataSource.TotalCompletedOrders}
+            </Card>
+          </Col>
+          <Col span={4}>
+            <Card title="Total Revenue" bordered={false}>
+              {dataSource.TotalRevenue}$
+            </Card>
+          </Col>
+        </Row>
+      </div>
+
       <br />
       <div className='revenue-by-day'>
         <h2 >Total shop revenue</h2>
@@ -297,58 +382,60 @@ function Dashboard() {
         <section className='content-area-cards'>
           <AreaCard
             colors={["#e4e8ef", "#475be8"]}
-            percentFillValue={totalDiamond}
+            percentFillValue={revenue.DailyRevenue}
             cardInfo={{
               title: "Revenue by day",
               value: (
                 <span>
-                  ${totalDiamond}
+                  ${revenue.DailyRevenue}
                 </span>
               ),
-              text: "Available to payout",
+
 
             }}
           />
           <AreaCard
             colors={["#e4e8ef", "#4ce13f"]}
-            percentFillValue={90}
+            percentFillValue={revenue.WeeklyRevenue}
             cardInfo={{
               title: "Revenue by week",
               value: (
                 <span>
-                  $5999
+                  ${revenue.WeeklyRevenue}
                 </span>
               ),
-              text: "Available to payout",
+
             }}
           />
+
           <AreaCard
             colors={["#e4e8ef", "#f29a2e"]}
-            percentFillValue={40}
+            percentFillValue={revenue.MonthlyRevenue}
             cardInfo={{
               title: "Revenue by month",
-              value: "$18.2K",
-              text: "Available to payout",
+              value: (
+                <span>
+                  ${revenue.MonthlyRevenue}
+                </span>
+              ),
+
             }}
           />
         </section>
         <br />
-        <section className='content-area-chart'>
 
-          <br />
-          <ResponsiveContainer width="100%" height={400} >
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+
+        <br />
+        <section className='content-area-chart'>
+          <ResponsiveContainer width="100%" height={500} >
+            <PieChart >
+              <Pie data={revenueChart} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={150} fill="#8884d8" label />
               <Tooltip />
               <Legend />
-              <Bar dataKey="diamond" fill="#8884d8" />
-              <Bar dataKey="ring" fill="#82ca9d" />
-              <Bar dataKey="timepieces" fill="#FF6600" />
-            </BarChart>
+            </PieChart>
           </ResponsiveContainer>
         </section>
+
       </div>
 
       <br />
@@ -358,56 +445,63 @@ function Dashboard() {
         <section className='content-area-cards'>
           <AreaCard
             colors={["#e4e8ef", "#475be8"]}
-            percentFillValue={40}
+            percentFillValue={totalOrder.DailyOrders}
             cardInfo={{
               title: "Total order by day",
               value: (
                 <span>
-                  40
+                  {totalOrder.DailyOrders}
                 </span>
               ),
-              text: "Available to payout",
-
             }}
           />
+
           <AreaCard
             colors={["#e4e8ef", "#4ce13f"]}
-            percentFillValue={80}
+            percentFillValue={totalOrder.WeeklyOrders}
             cardInfo={{
               title: "Total order by week",
               value: (
                 <span>
-                  80
+                  {totalOrder.WeeklyOrders}
                 </span>
               ),
-              text: "Available to payout",
             }}
           />
+
           <AreaCard
             colors={["#e4e8ef", "#f29a2e"]}
-            percentFillValue={200}
+            percentFillValue={totalOrder.MonthlyOrders}
             cardInfo={{
               title: "Total order by month",
-              value: "200",
-              text: "Available to payout",
+              value: (
+                <span>
+                  {totalOrder.MonthlyOrders}
+                </span>
+              ),
             }}
           />
         </section>
 
         <section className='content-area-chart'>
-          <ResponsiveContainer width="100%" height={500} >
-            <PieChart >
-              <Pie data={dataPieOrder} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={150} fill="#8884d8" label />
+          <ResponsiveContainer width="100%" height={400} >
+            <BarChart width={1450} height={400} data={dataTotalOrder}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
               <Tooltip />
               <Legend />
-            </PieChart>
+              <Bar dataKey="Daily Orders" fill="#8884d8" />
+              <Bar dataKey="Weekly Orders" fill="#EE0000" />
+              <Bar dataKey="Monthly Orders" fill="#ff80be" />
+            </BarChart>
           </ResponsiveContainer>
         </section>
 
       </div>
       <br />
 
-      {/* ======================Product Hot Sale======================== */}
+      {/* ======================Product BEST SELLER======================== */}
       <div className='product-hotSale'>
         <h2>Product Hot Sale</h2>
         <section className='content-area-cards'>
@@ -427,110 +521,93 @@ function Dashboard() {
           />
           <div style={{ marginLeft: '40px' }}>
 
-            <Table
-              columns={ProductHotSale}
-              dataSource={dataSource}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                total: 20,
-                onChange: (page, pageSize) => {
-                  setPage(page);
-                  setPageSize(pageSize);
-                }
-
-              }} />
+            <Table columns={columns} dataSource={data} />;
           </div>
 
         </section>
       </div>
 
       <br />
-      {/* ============PRODUCT SOLD================= */}
+      {/* ============PRODUCT INVENTORY LIST================= */}
       <div className='inventory-management'>
-        <h2>Total Product sold</h2>
+        <h2>Total List Inventory</h2>
 
-        <section className='content-area-chart'>
-          <ResponsiveContainer width="100%" height={400} >
-            <BarChart width={1450} height={400} data={dataProductSold}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Inventory Quantity" fill="#8884d8" />
-              <Bar dataKey="Out Of Stock" fill="#EE0000" />
-            </BarChart>
-          </ResponsiveContainer>
-        </section>
+        <Table columns={InventoryList} dataSource={inventoryData} />
+
       </div>
 
       <br />
       <br />
-      {/* ===================FINANCE REPORT============================ */}
-      <div className='financial-report'>
-        <h2>Financial report</h2>
-        <ResponsiveContainer width="100%" height={400} >
-          <LineChart data={dataFinance}
+
+      {/* ============PRODUCT OUT STOCK LIST================= */}
+      <div className='inventory-management'>
+        <h2>Total OUT STOCK LIST </h2>
+
+        <Table columns={outStockList} dataSource={outStockData} />
+
+      </div>
+      <br />
+      <br />
+
+      {/* ============Số Lượng Khách Hàng Mới================= */}
+      <div className='inventory-management'>
+        <h2>Total New Customer</h2>
+
+        <section className='content-area-cards'>
+          <AreaCard
+            colors={["#e4e8ef", "#475be8"]}
+            percentFillValue={dataNewUser.NewCustomersToday || "0"}
+            cardInfo={{
+              title: "New Customers Today",
+              value: (
+                <span>
+                  {dataNewUser.NewCustomersToday}
+                </span>
+              ),
+            }}
+          />
+
+          <AreaCard
+            colors={["#e4e8ef", "#4ce13f"]}
+            percentFillValue={dataNewUser.NewCustomersThisWeek}
+            cardInfo={{
+              title: "New Customers This Week",
+              value: (
+                <span>
+                  {dataNewUser.NewCustomersThisWeek || "0"}
+                </span>
+              ),
+            }}
+          />
+
+          <AreaCard
+            colors={["#e4e8ef", "#f29a2e"]}
+            percentFillValue={dataNewUser.NewCustomersThisMonth}
+            cardInfo={{
+              title: "New Customers This Month",
+              value: (
+                <span>
+                  {dataNewUser.NewCustomersThisMonth || "0"}
+                </span>
+              ),
+            }}
+          />
+        </section>
+
+        <section className='content-area-chart'>
+          <LineChart width={730} height={250} data={dataNewUser}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="price" stroke="#8884d8" />
+            <Line type="monotone" dataKey="day" stroke="#8884d8" />
+            <Line type="monotone" dataKey="week" stroke="#82ca9d" />
+            <Line type="monotone" dataKey="month" stroke="#82ca9d" />
           </LineChart>
-        </ResponsiveContainer>
+        </section>
       </div>
-
-
-
-      {/* STATICS */}
-      <br />
-      {/* data price and name */}
-      <section className='content-area-chart'>
-        <h2>Diamond statistics</h2>
-        <br />
-
-        <ResponsiveContainer width="100%" height={400} >
-          <LineChart
-            data={chartData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="Price" stroke="#8884d8" />
-            <Line type="monotone" dataKey="CaratWeight" stroke="#82ca9d" />
-            <Line type="monotone" dataKey="TablePercentage" stroke="#FF5733" />
-            <Line type="monotone" dataKey="Depth" stroke="#ffcf40" />
-          </LineChart>
-        </ResponsiveContainer>
-      </section>
-
-      <br />
-      {/* List DIAMOND */}
-      {/* <section className="content-area-table">
-        <div className="data-table-info">
-          <h2 className="data-table-title">List Diamond</h2>
-
-        </div>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination={{
-            current: page,
-            pageSize: pageSize,
-            total: 500,
-            onChange: (page, pageSize) => {
-              setPage(page);
-              setPageSize(pageSize);
-            }
-
-          }} />
-      </section> */}
 
 
     </div>
