@@ -67,6 +67,7 @@ import Account from "./admin-pages/account-page";
 import ProfileAdmin from "./admin-pages/profile";
 import EditProfileAdmin from "./admin-pages/profile/editProfile";
 // import SearchAllProduct from "./pages/searchProduct-page";
+import AccountDetailsPage from "./admin-pages/account-page/detail/index"
 
 //==========Delivery Pages============//
 import DeliveryPage from "./delivery-page/delivery-shipping";
@@ -416,6 +417,10 @@ function App() {
         {
           path: "mapAdmin-page",
           element: <MapAdmin />,
+        },
+        {
+          path: "account-detail/:id",
+          element: <AccountDetailsPage />,
         },
       ],
     },
