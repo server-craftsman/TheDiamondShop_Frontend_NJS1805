@@ -10,13 +10,18 @@ import {
   Button,
   IconButton,
   Snackbar,
+  TextField,
+  Rating,
+  Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import { Descriptions } from "antd";
-
+import { Descriptions, Modal } from "antd";
+import axios from "axios";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import RequestPageIcon from '@mui/icons-material/RequestPage';
 function HistoryOrderDetails() {
   const { user } = useContext(AuthContext);
   const { orderId } = useParams();
@@ -25,7 +30,10 @@ function HistoryOrderDetails() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(0);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     if (user && orderId) {
       fetchOrderDetails();
@@ -74,6 +82,9 @@ function HistoryOrderDetails() {
     setSnackbarOpen(true);
   };
 
+
+  const handleClickSnackbar = () => setSnackbarOpen(true);
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -115,6 +126,119 @@ function HistoryOrderDetails() {
       console.error("Update error:", error);
     }
   };
+
+
+
+  // const handleFeedbackSubmit = async () => {
+  //   setFeedbackSubmitting(true);
+  //   try {
+  //     const token = user?.token;
+  //     if (!token) {
+  //       throw new Error("Token not found in AuthContext");
+  //     }
+
+  //     // Ensure OrderDetailID is available and correctly formatted
+  //     const orderDetail = order.OrderDetails[0]; // Adjust index if necessary
+  //     if (!orderDetail || !orderDetail.OrderDetailID) {
+  //       throw new Error("OrderDetailID is missing from order details");
+  //     }
+
+  //     const orderDetailID = Array.isArray(orderDetail.OrderDetailID)
+  //       ? orderDetail.OrderDetailID[0] // Extract single ID if it's an array
+  //       : orderDetail.OrderDetailID;
+
+  //     // Prepare the feedback data
+  //     const feedbackData = {
+  //       orderDetailID: orderDetailID, // Ensure this is a single value
+  //       feedbackContent: feedback,
+  //       rating: parseInt(rating, 10), // Ensure rating is an integer
+  //       diamondId: order.DiamondID || null,
+  //       bridalId: order.BridalID || null,
+  //       diamondRingsId: order.DiamondRingsID || null,
+  //       diamondTimepiecesId: order.DiamondTimepiecesID || null,
+  //     };
+
+  //     // Send the feedback data to the backend
+  //     const response = await axios.post(
+  //       `http://localhost:8090/features/feedback`,
+  //       feedbackData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (response.status !== 201) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     // Handle successful feedback submission
+  //     setSnackbarMessage("Feedback submitted successfully.");
+  //     setFeedback("");
+  //     setRating(0);
+
+  //     setFeedbackSubmitting(false);
+  //     setOpenModal(false);
+  //   } catch (error) {
+  //     console.error("Feedback error:", error);
+  //     setSnackbarMessage("Failed to submit feedback.");
+  //   } finally {
+  //     setFeedbackSubmitting(false);
+  //     setSnackbarOpen(true);
+  //   }
+  // };
+  
+  
+  const handleFeedbackSubmit = async () => {
+    setFeedbackSubmitting(true);
+    try {
+      const token = user?.token;
+      if (!token) throw new Error("Token not found in AuthContext");
+
+      const orderDetail = order?.OrderDetails[0]; // Adjust index if necessary
+      if (!orderDetail?.OrderDetailID) throw new Error("OrderDetailID is missing");
+
+      const feedbackData = {
+        orderDetailID: orderDetail.OrderDetailID,
+        feedbackContent: feedback,
+        rating: parseInt(rating, 10),
+        diamondId: order?.DiamondID || null,
+        bridalId: order?.BridalID || null,
+        diamondRingsId: order?.DiamondRingsID || null,
+        diamondTimepiecesId: order?.DiamondTimepiecesID || null,
+      };
+
+      const response = await axios.post(
+        `http://localhost:8090/features/feedback`,
+        feedbackData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status !== 201) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      setSnackbarMessage("Feedback submitted successfully.");
+      setFeedback("");
+      setRating(0);
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Feedback error:", error);
+      setSnackbarMessage("Failed to submit feedback.");
+    } finally {
+      setFeedbackSubmitting(false);
+      handleClickSnackbar();
+    }
+  };
+
+  
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
 
   if (loading) {
     return <CircularProgress />;
@@ -241,24 +365,109 @@ function HistoryOrderDetails() {
               <Typography variant="body1">
                 {order.OrderDetails[0].AttachedAccessories}
               </Typography>
-            </Grid>
 
-            <Grid item xs={12} sm={6}>
-              {order.OrderStatus === "Completed" && (
-                <Link to={`/customer-view-warranty/${order.ReportNo}`}>
-                  <Button variant="contained" color="primary">
-                    View Warranty
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  backgroundColor: '#000',
+                  color: '#fff',
+                  '&:hover': {
+                    backgroundColor: '#595959',
+                    opacity: 0.8,
+                  },
+                  margin: "8px 0px 0px 0px",
+                  padding: "13px",
+                  fontWeight: "bolder",
+                  fontSize: "1rem"
+                }}
+                onClick={handleOpenModal}
+              >
+                Order Feedback
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
+        <Paper
+          elevation={3}
+          style={{
+            padding: "24px",
+            borderRadius: "8px",
+            width: "100%",
+            maxWidth: "800px",
+            display: "flex",
+            flexDirection: "column",
+            // alignItems: "center",
+            backgroundColor: "#fdfbfb",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)",
+            marginTop: "15px"
+          }}
+        >
+          <Typography
+            style={{
+              margin: "0px 0px 10px 0px",
+              fontSize: "1.5rem",
+              fontWeight: 'bolder',
+              color: "#000",
+            }}
+          >
+            Warranty Information
+          </Typography>
+          <Grid container spacing={3} style={{ width: "100%" }}>
+            {order.OrderStatus === "Completed" && (
+              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
+                <Link to={`/customer-view-warranty/${order.ReportNo}`} style={{ textDecoration: "none" }}>
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      padding: "10px 20px",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+
+                    }}
+                  >
+                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
                   </Button>
                 </Link>
+              </Grid>
+            )}
+            {order.RequestWarranty !== "Request" &&
+              order.OrderStatus === "Completed" &&
+              order.RequestWarranty !== "Assign" &&
+              order.RequestWarranty !== "Approved" &&
+              order.RequestWarranty !== "Processing" &&
+              order.RequestWarranty !== "Refused" && (
+                <Grid item xs={12} sm={6} style={{ textAlign: "left" }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={updateRequestWarranty}
+                    style={{
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      padding: "10px 20px",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    <RequestPageIcon style={{ marginRight: "5px" }} /> Request Warranty
+                  </Button>
+                </Grid>
               )}
-            </Grid>
+
             {order.RequestWarranty !== null && (
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6} style={{ textAlign: "center" }}>
                 <Typography
                   variant="subtitle1"
                   style={{
-                    color: "#616161",
+                    color: "#000",
                     fontWeight: "bold",
+                    marginBottom: "10px",
+                    marginRight: "210px"
                   }}
                 >
                   Request Warranty: {order.RequestWarranty}
@@ -266,41 +475,115 @@ function HistoryOrderDetails() {
                 <Typography
                   variant="body1"
                   style={{
-                    color: "#616161",
+                    color: "#7f8c8d",
                     fontSize: "1.125rem",
+                    marginBottom: "8px",
                   }}
                 >
                   {order.RequestWarranty}
                 </Typography>
               </Grid>
             )}
-            <Grid item xs={12} sm={6}>
-              {order.RequestWarranty !== "Request" &&
-                order.OrderStatus === "Completed" &&
-                order.RequestWarranty !== "Assign" &&
-                order.RequestWarranty !== "Approved" &&
-                order.RequestWarranty !== "Processing" &&
-                order.RequestWarranty !== "Refused" && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={updateRequestWarranty}
-                  >
-                    Request Warranty
-                  </Button>
-                )}
-            </Grid>
           </Grid>
         </Paper>
+
+        <Modal open={openModal} onClose={handleCloseModal}>
+          <Box
+            sx={{
+              backgroundColor: '#F1F1F1',
+              color: '#000',
+              p: 3,
+              borderRadius: 1,
+              maxWidth: 600,
+              mx: 'auto',
+              mt: 5,
+              outline: 0,
+            }}
+          >
+            <Typography
+              variant="h5"
+              gutterBottom
+              align="center"
+              style={{ fontSize: '1.5rem', fontWeight: 'bolder' }}
+            >
+              Create Feedback
+            </Typography>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12} align="center">
+                <Typography component="article">Your Feedback *</Typography>
+                <Rating
+                  value={rating}
+                  onChange={(event, newValue) => setRating(newValue)}
+                  size="large"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Your comment *"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                  fullWidth
+                  sx={{
+                    mb: 2,
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: '#fff',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#fff',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#fff',
+                      },
+                      '& .MuiInputBase-input': {
+                        color: '#fff',
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: '#fff',
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} align="center">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleFeedbackSubmit}
+                  disabled={feedbackSubmitting}
+                  sx={{
+                    backgroundColor: '#000',
+                    color: '#fff',
+                    '&:hover': {
+                      backgroundColor: '#595959',
+                      opacity: 0.8,
+                    },
+                  }}
+                >
+                  {feedbackSubmitting ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    'Submit Feedback'
+                  )}
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Modal>
+
         <Button
           variant="contained"
           color="primary"
           aria-label="back"
           onClick={handleBack}
           style={{
-            margin: "16px 0px 16px 0px",
+            margin: "16px 630px 20px 0px",
             fontSize: "1.5rem",
-            display: "block",
+            color: "#fff",
+            backgroundColor: "#000"
           }}
         >
           <ArrowBackIcon />
@@ -308,10 +591,9 @@ function HistoryOrderDetails() {
         </Button>
       </div>
 
-
       {/* Order List Section */}
-       <div style={{ maxWidth: "1000px", width: "100%", margin: "0px 0px 0px 0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-         <Typography variant="h3"
+      <div style={{ maxWidth: "1000px", width: "100%", margin: "0px 0px 0px 0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <Typography variant="h3"
           gutterBottom
           style={{ color: "#37474f", fontWeight: "bold", textAlign: "center" }}>
           Order Details List
@@ -435,9 +717,9 @@ function HistoryOrderDetails() {
           </IconButton>
         }
       />
+
     </div>
   );
 }
 
 export default HistoryOrderDetails;
-
