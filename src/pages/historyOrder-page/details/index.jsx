@@ -1,4 +1,3 @@
-
 import React, { useContext, useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../../AuthContext";
@@ -20,8 +19,9 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { Descriptions, Modal } from "antd";
 import axios from "axios";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import RequestPageIcon from '@mui/icons-material/RequestPage';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import RequestPageIcon from "@mui/icons-material/RequestPage";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 function HistoryOrderDetails() {
   const { user } = useContext(AuthContext);
   const { orderId } = useParams();
@@ -34,6 +34,7 @@ function HistoryOrderDetails() {
   const [rating, setRating] = useState(0);
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState(null);
   useEffect(() => {
     if (user && orderId) {
       fetchOrderDetails();
@@ -82,7 +83,6 @@ function HistoryOrderDetails() {
     setSnackbarOpen(true);
   };
 
-
   const handleClickSnackbar = () => setSnackbarOpen(true);
 
   const handleCloseSnackbar = (event, reason) => {
@@ -126,24 +126,74 @@ function HistoryOrderDetails() {
       console.error("Update error:", error);
     }
   };
-  
+
+  // const handleFeedbackSubmit = async () => {
+  //   setFeedbackSubmitting(true);
+  //   try {
+  //     const token = user?.token;
+  //     if (!token) throw new Error("Token not found in AuthContext");
+
+  //     const orderDetail = order?.OrderDetails[0]; // Adjust index if necessary
+  //     if (!orderDetail?.OrderDetailID) throw new Error("OrderDetailID is missing");
+
+  //     const feedbackData = {
+  //       orderDetailID: orderDetail.OrderDetailID,
+  //       feedbackContent: feedback,
+  //       rating: parseInt(rating, 10),
+  //       diamondId: order?.DiamondID || null,
+  //       bridalId: order?.BridalID || null,
+  //       diamondRingsId: order?.DiamondRingsID || null,
+  //       diamondTimepiecesId: order?.DiamondTimepiecesID || null,
+  //     };
+
+  //     const response = await axios.post(
+  //       `http://localhost:8090/features/feedback`,
+  //       feedbackData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (response.status !== 201) throw new Error(`HTTP error! Status: ${response.status}`);
+
+  //     setSnackbarMessage("Feedback submitted successfully.");
+  //     setFeedback("");
+  //     setRating(0);
+  //     setOpenModal(false);
+  //   } catch (error) {
+  //     console.error("Feedback error:", error);
+  //     setSnackbarMessage("Failed to submit feedback.");
+  //   } finally {
+  //     setFeedbackSubmitting(false);
+  //     handleClickSnackbar();
+  //   }
+  // };
+
   const handleFeedbackSubmit = async () => {
     setFeedbackSubmitting(true);
     try {
       const token = user?.token;
       if (!token) throw new Error("Token not found in AuthContext");
 
-      const orderDetail = order?.OrderDetails[0]; // Adjust index if necessary
-      if (!orderDetail?.OrderDetailID) throw new Error("OrderDetailID is missing");
+      const orderDetail = order?.OrderDetails[0];
+      if (!orderDetail?.OrderDetailID)
+        throw new Error("OrderDetailID is missing");
 
       const feedbackData = {
-        orderDetailID: orderDetail.OrderDetailID,
+        orderDetailID: parseInt(orderDetail.OrderDetailID, 10),
         feedbackContent: feedback,
         rating: parseInt(rating, 10),
-        diamondId: order?.DiamondID || null,
-        bridalId: order?.BridalID || null,
-        diamondRingsId: order?.DiamondRingsID || null,
-        diamondTimepiecesId: order?.DiamondTimepiecesID || null,
+        // diamondId: order?.DiamondID || null,
+        // bridalId: order?.BridalID || null,
+        // diamondRingsId: order?.DiamondRingsID || null,
+        // diamondTimepiecesId: order?.DiamondTimepiecesID || null,
+        diamondId: selectedDetail.Product?.Diamond?.DiamondID || null,
+        bridalId: selectedDetail.Product?.Bridal?.BridalID || null,
+        diamondRingsId: selectedDetail.Product?.DiamondRings?.DiamondRingsID || null,
+        diamondTimepiecesId: selectedDetail.Product?.DiamondTimepieces?.DiamondTimepiecesID || null,
       };
 
       const response = await axios.post(
@@ -157,7 +207,8 @@ function HistoryOrderDetails() {
         }
       );
 
-      if (response.status !== 201) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (response.status !== 201)
+        throw new Error(`HTTP error! Status: ${response.status}`);
 
       setSnackbarMessage("Feedback submitted successfully.");
       setFeedback("");
@@ -168,13 +219,19 @@ function HistoryOrderDetails() {
       setSnackbarMessage("Failed to submit feedback.");
     } finally {
       setFeedbackSubmitting(false);
-      handleClickSnackbar();
+      setSnackbarOpen(true);
     }
   };
 
-  
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  const handleOpenModal = (detail) => {
+    setSelectedDetail(detail); // Store the selected detail in state
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setFeedback('');
+    setRating(0);
+  };
 
   if (loading) {
     return <CircularProgress />;
@@ -295,32 +352,31 @@ function HistoryOrderDetails() {
               <Typography variant="body1">{order.Quantity}</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">
-                Attached Accessories:
-              </Typography>
+              <Typography variant="subtitle1">Attached Accessories:</Typography>
               <Typography variant="body1">
                 {order.OrderDetails[0].AttachedAccessories}
               </Typography>
-
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{
-                  backgroundColor: '#000',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: '#595959',
-                    opacity: 0.8,
-                  },
-                  margin: "8px 0px 0px 0px",
-                  padding: "13px",
-                  fontWeight: "bolder",
-                  fontSize: "1rem"
-                }}
-                onClick={handleOpenModal}
-              >
-                Order Feedback
-              </Button>
+              {/* {order.orderStatus === "Completed" || (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    "&:hover": {
+                      backgroundColor: "#595959",
+                      opacity: 0.8,
+                    },
+                    margin: "8px 0px 0px 0px",
+                    padding: "13px",
+                    fontWeight: "bolder",
+                    fontSize: "1rem",
+                  }}
+                  onClick={handleOpenModal}
+                >
+                  Order Feedback
+                </Button>
+              )} */}
             </Grid>
           </Grid>
         </Paper>
@@ -336,40 +392,20 @@ function HistoryOrderDetails() {
             // alignItems: "center",
             backgroundColor: "#fdfbfb",
             boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)",
-            marginTop: "15px"
+            marginTop: "15px",
           }}
         >
           <Typography
             style={{
               margin: "0px 0px 10px 0px",
               fontSize: "1.5rem",
-              fontWeight: 'bolder',
+              fontWeight: "bolder",
               color: "#000",
             }}
           >
             Warranty Information
           </Typography>
           <Grid container spacing={3} style={{ width: "100%" }}>
-            {/* {order.OrderStatus === "Completed" && (
-              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
-                <Link to={`/customer-view-warranty/${order.OrderDetails[0].ReportNo}`} style={{ textDecoration: "none" }}>
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      padding: "10px 20px",
-                      fontSize: "1rem",
-                      fontWeight: "bold",
-                      borderRadius: "5px",
-
-                    }}
-                  >
-                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
-                  </Button>
-                </Link>
-              </Grid>
-            )} */}
             {order.OrderDetails[0].RequestWarranty !== "Request" &&
               order.OrderDetails[0].OrderStatus === "Completed" &&
               order.OrderDetails[0].RequestWarranty !== "Assign" &&
@@ -390,7 +426,8 @@ function HistoryOrderDetails() {
                       borderRadius: "5px",
                     }}
                   >
-                    <RequestPageIcon style={{ marginRight: "5px" }} /> Request Warranty
+                    <RequestPageIcon style={{ marginRight: "5px" }} /> Request
+                    Warranty
                   </Button>
                 </Grid>
               )}
@@ -403,35 +440,24 @@ function HistoryOrderDetails() {
                     color: "#000",
                     fontWeight: "bold",
                     marginBottom: "10px",
-                    marginRight: "210px"
+                    marginRight: "210px",
                   }}
                 >
                   Request Warranty: {order.OrderDetails[0].RequestWarranty}
                 </Typography>
-                {/* <Typography
-                  variant="body1"
-                  style={{
-                    color: "#7f8c8d",
-                    fontSize: "1.125rem",
-                    marginBottom: "8px",
-                  }}
-                >
-                  {order.OrderDetails[0].RequestWarranty}
-                </Typography> */}
               </Grid>
             )}
           </Grid>
         </Paper>
-
         <Modal open={openModal} onClose={handleCloseModal}>
           <Box
             sx={{
-              backgroundColor: '#F1F1F1',
-              color: '#000',
+              backgroundColor: "#F1F1F1",
+              color: "#000",
               p: 3,
               borderRadius: 1,
               maxWidth: 600,
-              mx: 'auto',
+              mx: "auto",
               mt: 5,
               outline: 0,
             }}
@@ -440,7 +466,7 @@ function HistoryOrderDetails() {
               variant="h5"
               gutterBottom
               align="center"
-              style={{ fontSize: '1.5rem', fontWeight: 'bolder' }}
+              sx={{ fontSize: "1.5rem", fontWeight: "bolder" }}
             >
               Create Feedback
             </Typography>
@@ -461,24 +487,25 @@ function HistoryOrderDetails() {
                   multiline
                   rows={4}
                   variant="outlined"
+                  style={{color: "#fff"}}
                   fullWidth
                   sx={{
                     mb: 2,
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: '#fff',
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#fff",
                       },
-                      '&:hover fieldset': {
-                        borderColor: '#fff',
+                      "&:hover fieldset": {
+                        borderColor: "#fff",
                       },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#fff',
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#fff",
                       },
-                      '& .MuiInputBase-input': {
-                        color: '#fff',
+                      "& .MuiInputBase-input": {
+                        color: "#000",
                       },
-                      '& .MuiInputLabel-root': {
-                        color: '#fff',
+                      "& .MuiInputLabel-root": {
+                        color: "#fff",
                       },
                     },
                   }}
@@ -491,10 +518,10 @@ function HistoryOrderDetails() {
                   onClick={handleFeedbackSubmit}
                   disabled={feedbackSubmitting}
                   sx={{
-                    backgroundColor: '#000',
-                    color: '#fff',
-                    '&:hover': {
-                      backgroundColor: '#595959',
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    "&:hover": {
+                      backgroundColor: "#595959",
                       opacity: 0.8,
                     },
                   }}
@@ -502,7 +529,7 @@ function HistoryOrderDetails() {
                   {feedbackSubmitting ? (
                     <CircularProgress size={24} />
                   ) : (
-                    'Submit Feedback'
+                    "Submit Feedback"
                   )}
                 </Button>
               </Grid>
@@ -519,7 +546,7 @@ function HistoryOrderDetails() {
             margin: "16px 630px 20px 0px",
             fontSize: "1.5rem",
             color: "#fff",
-            backgroundColor: "#000"
+            backgroundColor: "#000",
           }}
         >
           <ArrowBackIcon />
@@ -528,110 +555,269 @@ function HistoryOrderDetails() {
       </div>
 
       {/* Order List Section */}
-      <div style={{ maxWidth: "1000px", width: "100%", margin: "0px 0px 0px 0px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Typography variant="h3"
+      <div
+        style={{
+          maxWidth: "1000px",
+          width: "100%",
+          margin: "0px 0px 0px 0px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Typography
+          variant="h3"
           gutterBottom
-          style={{ color: "#37474f", fontWeight: "bold", textAlign: "center" }}>
+          style={{ color: "#37474f", fontWeight: "bold", textAlign: "center" }}
+        >
           Order Details List
         </Typography>
         {order.OrderDetails.map((detail, index) => (
-          console.log('Detail:', detail),
-          console.log('Warranty:', detail.Warranty),
-          console.log('ReportNo:', detail.Warranty ? detail.Warranty.ReportNo : 'Not Available'),
-          <Paper key={index} elevation={3} style={{ padding: "16px", borderRadius: "8px", marginBottom: "16px", width: "100%", maxWidth: "800px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
+          <Paper
+            key={index}
+            elevation={3}
+            style={{
+              padding: "16px",
+              borderRadius: "8px",
+              marginBottom: "16px",
+              width: "100%",
+              maxWidth: "800px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="h6"
+              gutterBottom
+              style={{ fontWeight: "bold" }}
+            >
               Order Detail {index + 1}
             </Typography>
             <Descriptions bordered column={1}>
               {detail.Product.Diamond && (
                 <>
-                  <Descriptions.Item label="Stock Number">{detail.Product.Diamond.StockNumber}</Descriptions.Item>
-                  <Descriptions.Item label="Carat Weight">{detail.Product.Diamond.CaratWeight}</Descriptions.Item>
-                  <Descriptions.Item label="Diamond Origin">{detail.Product.Diamond.DiamondOrigin}</Descriptions.Item>
-                  <Descriptions.Item label="Color">{detail.Product.Diamond.Color}</Descriptions.Item>
-                  <Descriptions.Item label="Clarity">{detail.Product.Diamond.Clarity}</Descriptions.Item>
-                  <Descriptions.Item label="Cut">{detail.Product.Diamond.Cut}</Descriptions.Item>
-                  <Descriptions.Item label="Price">{detail.Product.Diamond.Price}</Descriptions.Item>
-                  <Descriptions.Item label="Shape">{detail.Product.Diamond.Shape}</Descriptions.Item>
-                  <Descriptions.Item label="Image"><img src={detail.Product.Diamond.Image} alt="Diamond" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Report Number">{detail.Product.Diamond.ReportNo || "-"}</Descriptions.Item>
+                  <Descriptions.Item label="Stock Number">
+                    {detail.Product.Diamond.StockNumber}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Carat Weight">
+                    {detail.Product.Diamond.CaratWeight}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Diamond Origin">
+                    {detail.Product.Diamond.DiamondOrigin}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Color">
+                    {detail.Product.Diamond.Color}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Clarity">
+                    {detail.Product.Diamond.Clarity}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Cut">
+                    {detail.Product.Diamond.Cut}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Price">
+                    {detail.Product.Diamond.Price}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Shape">
+                    {detail.Product.Diamond.Shape}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image">
+                    <img
+                      src={detail.Product.Diamond.Image}
+                      alt="Diamond"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Report Number">
+                    {detail.Product.Diamond.ReportNo || "-"}
+                  </Descriptions.Item>
                 </>
               )}
               {detail.Product.Bridal && (
                 <>
-                  <Descriptions.Item label="Bridal Style">{detail.Product.Bridal.BridalStyle}</Descriptions.Item>
-                  <Descriptions.Item label="Name Bridal">{detail.Product.Bridal.NameBridal}</Descriptions.Item>
-                  <Descriptions.Item label="Category">{detail.Product.Bridal.Category}</Descriptions.Item>
-                  <Descriptions.Item label="Brand Name">{detail.Product.Bridal.BrandName}</Descriptions.Item>
-                  <Descriptions.Item label="Material Name">{detail.Product.Bridal.MaterialName || "-"}</Descriptions.Item>
-                  <Descriptions.Item label="Ring Size Range">{detail.Product.Bridal.RingSize || "-"}</Descriptions.Item>
-                  <Descriptions.Item label="Setting Type">{detail.Product.Bridal.SettingType}</Descriptions.Item>
-                  <Descriptions.Item label="Gender">{detail.Product.Bridal.Gender}</Descriptions.Item>
-                  <Descriptions.Item label="Weight">{detail.Product.Bridal.Weight}</Descriptions.Item>
-                  <Descriptions.Item label="Center Diamond">{detail.Product.Bridal.CenterDiamond}</Descriptions.Item>
-                  <Descriptions.Item label="Diamond Carat Range">{detail.Product.Bridal.DiamondCaratRange}</Descriptions.Item>
-                  <Descriptions.Item label="Total Carat Weight">{detail.Product.Bridal.TotalCaratWeight}</Descriptions.Item>
-                  <Descriptions.Item label="Total Diamond">{detail.Product.Bridal.TotalDiamond}</Descriptions.Item>
-                  <Descriptions.Item label="Description">{detail.Product.Bridal.Description}</Descriptions.Item>
-                  <Descriptions.Item label="Price">{detail.Product.Bridal.Price}</Descriptions.Item>
-                  <Descriptions.Item label="Image Bridal"><img src={detail.Product.Bridal.ImageBridal} alt="Bridal" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Image Brand"><img src={detail.Product.Bridal.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Report Number">{detail.Product.Bridal.ReportNo || "-"}</Descriptions.Item>
+                  <Descriptions.Item label="Bridal Style">
+                    {detail.Product.Bridal.BridalStyle}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Name Bridal">
+                    {detail.Product.Bridal.NameBridal}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Category">
+                    {detail.Product.Bridal.Category}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Brand Name">
+                    {detail.Product.Bridal.BrandName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Material Name">
+                    {detail.Product.Bridal.MaterialName || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ring Size Range">
+                    {detail.Product.Bridal.RingSize || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Setting Type">
+                    {detail.Product.Bridal.SettingType}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Gender">
+                    {detail.Product.Bridal.Gender}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Weight">
+                    {detail.Product.Bridal.Weight}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Center Diamond">
+                    {detail.Product.Bridal.CenterDiamond}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Diamond Carat Range">
+                    {detail.Product.Bridal.DiamondCaratRange}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Carat Weight">
+                    {detail.Product.Bridal.TotalCaratWeight}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Diamond">
+                    {detail.Product.Bridal.TotalDiamond}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Description">
+                    {detail.Product.Bridal.Description}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Price">
+                    {detail.Product.Bridal.Price}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Bridal">
+                    <img
+                      src={detail.Product.Bridal.ImageBridal}
+                      alt="Bridal"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Brand">
+                    <img
+                      src={detail.Product.Bridal.ImageBrand}
+                      alt="Brand"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Report Number">
+                    {detail.Product.Bridal.ReportNo || "-"}
+                  </Descriptions.Item>
                 </>
               )}
               {detail.Product.DiamondTimepieces && (
                 <>
-                  <Descriptions.Item label="Timepieces Style">{detail.Product.DiamondTimepieces.TimepiecesStyle}</Descriptions.Item>
-                  <Descriptions.Item label="Name Timepieces">{detail.Product.DiamondTimepieces.NameTimepieces}</Descriptions.Item>
-                  <Descriptions.Item label="Collection">{detail.Product.DiamondTimepieces.Collection}</Descriptions.Item>
-                  <Descriptions.Item label="Water Resistance">{detail.Product.DiamondTimepieces.WaterResistance}</Descriptions.Item>
-                  <Descriptions.Item label="Crystal Type">{detail.Product.DiamondTimepieces.CrystalType}</Descriptions.Item>
-                  <Descriptions.Item label="Bracelet Material">{detail.Product.DiamondTimepieces.BraceletMaterial}</Descriptions.Item>
-                  <Descriptions.Item label="Case Size">{detail.Product.DiamondTimepieces.CaseSize}</Descriptions.Item>
-                  <Descriptions.Item label="Dial Color">{detail.Product.DiamondTimepieces.DialColor}</Descriptions.Item>
-                  <Descriptions.Item label="Movement">{detail.Product.DiamondTimepieces.Movement}</Descriptions.Item>
-                  <Descriptions.Item label="Gender">{detail.Product.DiamondTimepieces.Gender}</Descriptions.Item>
-                  <Descriptions.Item label="Category">{detail.Product.DiamondTimepieces.Category}</Descriptions.Item>
-                  <Descriptions.Item label="Brand Name">{detail.Product.DiamondTimepieces.BrandName}</Descriptions.Item>
+                  <Descriptions.Item label="Timepieces Style">
+                    {detail.Product.DiamondTimepieces.TimepiecesStyle}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Name Timepieces">
+                    {detail.Product.DiamondTimepieces.NameTimepieces}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Collection">
+                    {detail.Product.DiamondTimepieces.Collection}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Water Resistance">
+                    {detail.Product.DiamondTimepieces.WaterResistance}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Crystal Type">
+                    {detail.Product.DiamondTimepieces.CrystalType}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bracelet Material">
+                    {detail.Product.DiamondTimepieces.BraceletMaterial}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Case Size">
+                    {detail.Product.DiamondTimepieces.CaseSize}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Dial Color">
+                    {detail.Product.DiamondTimepieces.DialColor}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Movement">
+                    {detail.Product.DiamondTimepieces.Movement}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Gender">
+                    {detail.Product.DiamondTimepieces.Gender}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Category">
+                    {detail.Product.DiamondTimepieces.Category}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Brand Name">
+                    {detail.Product.DiamondTimepieces.BrandName}
+                  </Descriptions.Item>
                   {/* <Descriptions.Item label="Dial Type">{detail.Product.DiamondTimepieces.DialType}</Descriptions.Item> */}
-                  <Descriptions.Item label="Description">{detail.Product.DiamondTimepieces.Description}</Descriptions.Item>
-                  <Descriptions.Item label="Price">{detail.Product.DiamondTimepieces.Price}</Descriptions.Item>
-                  <Descriptions.Item label="Image Timepieces"><img src={detail.Product.DiamondTimepieces.ImageTimepieces} alt="Timepieces" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Image Brand"><img src={detail.Product.DiamondTimepieces.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Report Number">{detail.Product.DiamondTimepieces.ReportNo || "-"}</Descriptions.Item>
+                  <Descriptions.Item label="Description">
+                    {detail.Product.DiamondTimepieces.Description}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Price">
+                    {detail.Product.DiamondTimepieces.Price}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Timepieces">
+                    <img
+                      src={detail.Product.DiamondTimepieces.ImageTimepieces}
+                      alt="Timepieces"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Brand">
+                    <img
+                      src={detail.Product.DiamondTimepieces.ImageBrand}
+                      alt="Brand"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Report Number">
+                    {detail.Product.DiamondTimepieces.ReportNo || "-"}
+                  </Descriptions.Item>
                 </>
               )}
               {detail.Product.DiamondRings && (
                 <>
-                  <Descriptions.Item label="Ring Style">{detail.Product.DiamondRings.RingStyle}</Descriptions.Item>
-                  <Descriptions.Item label="Name Rings">{detail.Product.DiamondRings.NameRings}</Descriptions.Item>
-                  <Descriptions.Item label="Category">{detail.Product.DiamondRings.Category}</Descriptions.Item>
-                  <Descriptions.Item label="Brand Name">{detail.Product.DiamondRings.BrandName}</Descriptions.Item>
-                  <Descriptions.Item label="Material Name">{detail.Product.DiamondRings.MaterialName || "-"}</Descriptions.Item>
-                  {/* <Descriptions.Item label="Center Gemstone">{detail.Product.DiamondRings.CenterGemstone}</Descriptions.Item>
-                <Descriptions.Item label="Center Gemstone Shape">{detail.Product.DiamondRings.CenterGemstoneShape}</Descriptions.Item> */}
-                  {/* <Descriptions.Item label="Width">{detail.Product.DiamondRings.Width}</Descriptions.Item>
-                <Descriptions.Item label="Center Diamond Dimension">{detail.Product.DiamondRings.CenterDiamondDimension}</Descriptions.Item>
-                <Descriptions.Item label="Weight">{detail.Product.DiamondRings.Weight}</Descriptions.Item>
-                <Descriptions.Item label="Gemstone Weight">{detail.Product.DiamondRings.GemstoneWeight}</Descriptions.Item> */}
-                  {/* <Descriptions.Item label="Center Diamond Color">{detail.Product.DiamondRings.CenterDiamondColor}</Descriptions.Item>
-                <Descriptions.Item label="Center Diamond Clarity">{detail.Product.DiamondRings.CenterDiamondClarity}</Descriptions.Item>
-                <Descriptions.Item label="Center Diamond Carat Weight">{detail.Product.DiamondRings.CenterDiamondCaratWeight}</Descriptions.Item> */}
-                  <Descriptions.Item label="Ring Size">{detail.Product.DiamondRings.RingSize}</Descriptions.Item>
-                  <Descriptions.Item label="Price">{detail.Product.DiamondRings.Price}</Descriptions.Item>
-                  <Descriptions.Item label="Gender">{detail.Product.DiamondRings.Gender}</Descriptions.Item>
-                  {/* <Descriptions.Item label="Fluorescence">{detail.Product.DiamondRings.Fluorescence}</Descriptions.Item> */}
-                  <Descriptions.Item label="Description">{detail.Product.DiamondRings.Description}</Descriptions.Item>
-                  <Descriptions.Item label="Image Rings"><img src={detail.Product.DiamondRings.ImageRings} alt="Rings" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Image Brand"><img src={detail.Product.DiamondRings.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
-                  <Descriptions.Item label="Report Number">{detail.Product.DiamondRings.ReportNo || "-"}</Descriptions.Item>
+                  <Descriptions.Item label="Ring Style">
+                    {detail.Product.DiamondRings.RingStyle}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Name Rings">
+                    {detail.Product.DiamondRings.NameRings}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Category">
+                    {detail.Product.DiamondRings.Category}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Brand Name">
+                    {detail.Product.DiamondRings.BrandName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Material Name">
+                    {detail.Product.DiamondRings.MaterialName || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ring Size">
+                    {detail.Product.DiamondRings.RingSize}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Price">
+                    {detail.Product.DiamondRings.Price}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Gender">
+                    {detail.Product.DiamondRings.Gender}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Description">
+                    {detail.Product.DiamondRings.Description}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Rings">
+                    <img
+                      src={detail.Product.DiamondRings.ImageRings}
+                      alt="Rings"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Brand">
+                    <img
+                      src={detail.Product.DiamondRings.ImageBrand}
+                      alt="Brand"
+                      width="100"
+                    />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Report Number">
+                    {detail.Product.DiamondRings.ReportNo || "-"}
+                  </Descriptions.Item>
                 </>
               )}
             </Descriptions>
             {order.OrderStatus === "Completed" && (
               <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
-                
-                <Link to={`/customer-view-warranty/${detail.Warranty.ReportNo}`} style={{ textDecoration: "none" }}>
+                <Link
+                  to={`/customer-view-warranty/${detail.Warranty.ReportNo}`}
+                  style={{ textDecoration: "none" }}
+                >
                   <Button
                     variant="contained"
                     style={{
@@ -641,12 +827,31 @@ function HistoryOrderDetails() {
                       fontSize: "1rem",
                       fontWeight: "bold",
                       borderRadius: "5px",
-
                     }}
                   >
-                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
+                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty
+                    Order
                   </Button>
                 </Link>
+              </Grid>
+            )}
+            {order.OrderStatus === "Completed" && (
+              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                  }}
+                  // onClick={handleOpenModal}
+                  onClick={() => handleOpenModal(detail)} // Pass detail here
+                >
+                  <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
+                </Button>
               </Grid>
             )}
           </Paper>
@@ -681,7 +886,6 @@ function HistoryOrderDetails() {
           </IconButton>
         }
       />
-
     </div>
   );
 }
