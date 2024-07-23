@@ -183,7 +183,8 @@ function HistoryOrderDetails() {
         throw new Error("OrderDetailID is missing");
 
       const feedbackData = {
-        orderDetailID: parseInt(orderDetail.OrderDetailID, 10),
+        // orderDetailID: parseInt(orderDetail.OrderDetailID, 10),
+        orderDetailID: parseInt(selectedDetail.OrderDetailID, 10),
         feedbackContent: feedback,
         rating: parseInt(rating, 10),
         // diamondId: order?.DiamondID || null,
@@ -223,8 +224,8 @@ function HistoryOrderDetails() {
     }
   };
 
-  const handleOpenModal = (detail) => {
-    setSelectedDetail(detail); // Store the selected detail in state
+  const handleOpenModal = (orderDetail) => {
+    setSelectedDetail(orderDetail); // Store the selected detail in state
     setOpenModal(true);
   };
   const handleCloseModal = () => {
@@ -407,7 +408,7 @@ function HistoryOrderDetails() {
           </Typography>
           <Grid container spacing={3} style={{ width: "100%" }}>
             {order.OrderDetails[0].RequestWarranty !== "Request" &&
-              order.OrderDetails[0].OrderStatus === "Completed" &&
+              order.OrderStatus === "Completed" &&
               order.OrderDetails[0].RequestWarranty !== "Assign" &&
               order.OrderDetails[0].RequestWarranty !== "Approved" &&
               order.OrderDetails[0].RequestWarranty !== "Processing" &&
