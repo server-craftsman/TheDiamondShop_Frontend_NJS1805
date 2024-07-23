@@ -126,70 +126,6 @@ function HistoryOrderDetails() {
       console.error("Update error:", error);
     }
   };
-
-
-
-  // const handleFeedbackSubmit = async () => {
-  //   setFeedbackSubmitting(true);
-  //   try {
-  //     const token = user?.token;
-  //     if (!token) {
-  //       throw new Error("Token not found in AuthContext");
-  //     }
-
-  //     // Ensure OrderDetailID is available and correctly formatted
-  //     const orderDetail = order.OrderDetails[0]; // Adjust index if necessary
-  //     if (!orderDetail || !orderDetail.OrderDetailID) {
-  //       throw new Error("OrderDetailID is missing from order details");
-  //     }
-
-  //     const orderDetailID = Array.isArray(orderDetail.OrderDetailID)
-  //       ? orderDetail.OrderDetailID[0] // Extract single ID if it's an array
-  //       : orderDetail.OrderDetailID;
-
-  //     // Prepare the feedback data
-  //     const feedbackData = {
-  //       orderDetailID: orderDetailID, // Ensure this is a single value
-  //       feedbackContent: feedback,
-  //       rating: parseInt(rating, 10), // Ensure rating is an integer
-  //       diamondId: order.DiamondID || null,
-  //       bridalId: order.BridalID || null,
-  //       diamondRingsId: order.DiamondRingsID || null,
-  //       diamondTimepiecesId: order.DiamondTimepiecesID || null,
-  //     };
-
-  //     // Send the feedback data to the backend
-  //     const response = await axios.post(
-  //       `http://localhost:8090/features/feedback`,
-  //       feedbackData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (response.status !== 201) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     // Handle successful feedback submission
-  //     setSnackbarMessage("Feedback submitted successfully.");
-  //     setFeedback("");
-  //     setRating(0);
-
-  //     setFeedbackSubmitting(false);
-  //     setOpenModal(false);
-  //   } catch (error) {
-  //     console.error("Feedback error:", error);
-  //     setSnackbarMessage("Failed to submit feedback.");
-  //   } finally {
-  //     setFeedbackSubmitting(false);
-  //     setSnackbarOpen(true);
-  //   }
-  // };
-  
   
   const handleFeedbackSubmit = async () => {
     setFeedbackSubmitting(true);
@@ -414,9 +350,9 @@ function HistoryOrderDetails() {
             Warranty Information
           </Typography>
           <Grid container spacing={3} style={{ width: "100%" }}>
-            {order.OrderStatus === "Completed" && (
+            {/* {order.OrderStatus === "Completed" && (
               <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
-                <Link to={`/customer-view-warranty/${order.ReportNo}`} style={{ textDecoration: "none" }}>
+                <Link to={`/customer-view-warranty/${order.OrderDetails[0].ReportNo}`} style={{ textDecoration: "none" }}>
                   <Button
                     variant="contained"
                     style={{
@@ -433,13 +369,13 @@ function HistoryOrderDetails() {
                   </Button>
                 </Link>
               </Grid>
-            )}
-            {order.RequestWarranty !== "Request" &&
-              order.OrderStatus === "Completed" &&
-              order.RequestWarranty !== "Assign" &&
-              order.RequestWarranty !== "Approved" &&
-              order.RequestWarranty !== "Processing" &&
-              order.RequestWarranty !== "Refused" && (
+            )} */}
+            {order.OrderDetails[0].RequestWarranty !== "Request" &&
+              order.OrderDetails[0].OrderStatus === "Completed" &&
+              order.OrderDetails[0].RequestWarranty !== "Assign" &&
+              order.OrderDetails[0].RequestWarranty !== "Approved" &&
+              order.OrderDetails[0].RequestWarranty !== "Processing" &&
+              order.OrderDetails[0].RequestWarranty !== "Refused" && (
                 <Grid item xs={12} sm={6} style={{ textAlign: "left" }}>
                   <Button
                     variant="contained"
@@ -459,8 +395,8 @@ function HistoryOrderDetails() {
                 </Grid>
               )}
 
-            {order.RequestWarranty !== null && (
-              <Grid item xs={12} sm={6} style={{ textAlign: "center" }}>
+            {order.OrderDetails[0].RequestWarranty !== null && (
+              <Grid item xs={12} sm={8} style={{ textAlign: "center" }}>
                 <Typography
                   variant="subtitle1"
                   style={{
@@ -470,9 +406,9 @@ function HistoryOrderDetails() {
                     marginRight: "210px"
                   }}
                 >
-                  Request Warranty: {order.RequestWarranty}
+                  Request Warranty: {order.OrderDetails[0].RequestWarranty}
                 </Typography>
-                <Typography
+                {/* <Typography
                   variant="body1"
                   style={{
                     color: "#7f8c8d",
@@ -480,8 +416,8 @@ function HistoryOrderDetails() {
                     marginBottom: "8px",
                   }}
                 >
-                  {order.RequestWarranty}
-                </Typography>
+                  {order.OrderDetails[0].RequestWarranty}
+                </Typography> */}
               </Grid>
             )}
           </Grid>
@@ -599,6 +535,9 @@ function HistoryOrderDetails() {
           Order Details List
         </Typography>
         {order.OrderDetails.map((detail, index) => (
+          console.log('Detail:', detail),
+          console.log('Warranty:', detail.Warranty),
+          console.log('ReportNo:', detail.Warranty ? detail.Warranty.ReportNo : 'Not Available'),
           <Paper key={index} elevation={3} style={{ padding: "16px", borderRadius: "8px", marginBottom: "16px", width: "100%", maxWidth: "800px", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <Typography variant="h6" gutterBottom style={{ fontWeight: "bold" }}>
               Order Detail {index + 1}
@@ -615,6 +554,7 @@ function HistoryOrderDetails() {
                   <Descriptions.Item label="Price">{detail.Product.Diamond.Price}</Descriptions.Item>
                   <Descriptions.Item label="Shape">{detail.Product.Diamond.Shape}</Descriptions.Item>
                   <Descriptions.Item label="Image"><img src={detail.Product.Diamond.Image} alt="Diamond" width="100" /></Descriptions.Item>
+                  <Descriptions.Item label="Report Number">{detail.Product.Diamond.ReportNo || "-"}</Descriptions.Item>
                 </>
               )}
               {detail.Product.Bridal && (
@@ -636,6 +576,7 @@ function HistoryOrderDetails() {
                   <Descriptions.Item label="Price">{detail.Product.Bridal.Price}</Descriptions.Item>
                   <Descriptions.Item label="Image Bridal"><img src={detail.Product.Bridal.ImageBridal} alt="Bridal" width="100" /></Descriptions.Item>
                   <Descriptions.Item label="Image Brand"><img src={detail.Product.Bridal.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
+                  <Descriptions.Item label="Report Number">{detail.Product.Bridal.ReportNo || "-"}</Descriptions.Item>
                 </>
               )}
               {detail.Product.DiamondTimepieces && (
@@ -657,6 +598,7 @@ function HistoryOrderDetails() {
                   <Descriptions.Item label="Price">{detail.Product.DiamondTimepieces.Price}</Descriptions.Item>
                   <Descriptions.Item label="Image Timepieces"><img src={detail.Product.DiamondTimepieces.ImageTimepieces} alt="Timepieces" width="100" /></Descriptions.Item>
                   <Descriptions.Item label="Image Brand"><img src={detail.Product.DiamondTimepieces.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
+                  <Descriptions.Item label="Report Number">{detail.Product.DiamondTimepieces.ReportNo || "-"}</Descriptions.Item>
                 </>
               )}
               {detail.Product.DiamondRings && (
@@ -682,9 +624,31 @@ function HistoryOrderDetails() {
                   <Descriptions.Item label="Description">{detail.Product.DiamondRings.Description}</Descriptions.Item>
                   <Descriptions.Item label="Image Rings"><img src={detail.Product.DiamondRings.ImageRings} alt="Rings" width="100" /></Descriptions.Item>
                   <Descriptions.Item label="Image Brand"><img src={detail.Product.DiamondRings.ImageBrand} alt="Brand" width="100" /></Descriptions.Item>
+                  <Descriptions.Item label="Report Number">{detail.Product.DiamondRings.ReportNo || "-"}</Descriptions.Item>
                 </>
               )}
             </Descriptions>
+            {order.OrderStatus === "Completed" && (
+              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
+                
+                <Link to={`/customer-view-warranty/${detail.Warranty.ReportNo}`} style={{ textDecoration: "none" }}>
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      padding: "10px 20px",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+
+                    }}
+                  >
+                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
+                  </Button>
+                </Link>
+              </Grid>
+            )}
           </Paper>
         ))}
       </div>
