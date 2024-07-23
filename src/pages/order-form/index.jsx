@@ -64,7 +64,7 @@ const OrderForm = () => {
     deliveryAddress: '',
 
     shippingMethod: "Express",
-    paymentMethod: '',
+    paymentMethod: "Cash on Delivery",
     // DiamondRingsMaterials: [],
     // DiamondRingSizes: [],
     // BridalsSizes: [],
@@ -86,10 +86,10 @@ const OrderForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [shippingCost, setShippingCost] = useState(10);
-  const [showPayPalForm, setShowPayPalForm] = useState(false);
+  // const [showPayPalForm, setShowPayPalForm] = useState(false);
 
-  const [qrCodeData, setQrCodeData] = useState(null);
-  const [paypalOrderId, setPaypalOrderId] = useState(null);
+  // const [qrCodeData, setQrCodeData] = useState(null);
+  // const [paypalOrderId, setPaypalOrderId] = useState(null);
   // PayPal
   const [sdkReady, setSdkReady] = useState(false);
 
@@ -185,7 +185,7 @@ const OrderForm = () => {
           phoneNumber: userData.PhoneNumber,
           deliveryAddress: userData.Address,
           shippingMethod: "Express",
-          paymentMethod: "",
+          paymentMethod: "Cash on Delivery",
           // deliveryAddress: '',
           // AttachedAccessories: '',
           // shippingMethod: "Express",
@@ -208,10 +208,6 @@ const OrderForm = () => {
     }
   };
 
-  // Function to handle changes in the voucher name input
-  const handleVoucherNameChange = (e) => {
-    setEnteredVoucherName(e.target.value);
-  };
 
   // Function to filter and set eligible vouchers based on entered name
   const handleFilterVouchers = () => {
@@ -404,14 +400,22 @@ const OrderForm = () => {
     }
   };
 
-  const handlePaymentMethodChange = (event) => {
-    const selectedPaymentMethod = event.target.value;
-    setOrderData((prevData) => ({
-      ...prevData,
-      paymentMethod: selectedPaymentMethod,
-    }));
+  // const handlePaymentMethodChange = (event) => {
+  //   const selectedPaymentMethod = event.target.value;
+  //   setOrderData((prevData) => ({
+  //     ...prevData,
+  //     paymentMethod: selectedPaymentMethod,
+  //   }));
+  // };
+  const handlePaymentMethodChange = (e) => {
+    const { name, value } = e.target;
+  
+    setOrderData({
+      ...orderData,
+      [name]: value,
+    });
   };
-
+  
   const handleModalClose = () => {
     setIsModalOpen(false);
     setOrderSubmitted(false); // options
@@ -429,17 +433,49 @@ const OrderForm = () => {
     window.location.href = "/diamond-page";
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  // const handleInputChange = (e) => {
+  //   const target = e.target;
 
-    if (name === "Shipping") {
+  // if (!target) {
+  //   console.error("Event target is undefined");
+  //   return;
+  // }
+
+  // const { name, value } = target;
+  //   // const { name, value } = e.target;
+
+  //   // if (name === "shippingMethod") {
+  //   //   const cost = value === "Standard" ? 5 : 10;
+  //   //   setShippingCost(cost);
+
+  //     let newTotalPrice =
+  //       initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
+  //     setTotalPrice(newTotalPrice.toFixed(2));
+  //   }
+
+  //======================================
+  const handleInputChange = (e) => {
+    console.log("Event:", e);
+    const target = e.target;
+    console.log("Target:", target);
+  
+    if (!target) {
+      console.error("Event target is undefined");
+      return;
+    }
+  
+    const { name, value } = target;
+    console.log("Name:", name, "Value:", value);
+  
+    if (name === "shippingMethod") {
       const cost = value === "Standard" ? 5 : 10;
       setShippingCost(cost);
-
+  
       let newTotalPrice =
         initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
       setTotalPrice(newTotalPrice.toFixed(2));
     }
+  //=======================================
 
     // Update orderData state
     setOrderData({
@@ -676,9 +712,10 @@ const OrderForm = () => {
                     row
                     name="shippingMethod"
                     value={orderData.shippingMethod}
-                    onChange={(e) =>
-                      handleInputChange("shippingMethod", e.target.value)
-                    }
+                    // onChange={(e) =>
+                    //   handleInputChange("shippingMethod", e.target.value)
+                    // }
+                    onChange={handleInputChange}
                   >
                     <FormControlLabel
                       value="Standard"
