@@ -233,8 +233,9 @@ function Dashboard() {
   }, [])
 
   const InventoryList = [
+    { title: 'Product Image', dataIndex: 'Image', key: 'Image' },
     { title: 'Product Type', dataIndex: 'ProductType', key: 'ProductType' },
-    { title: 'Product ID', dataIndex: 'ProductID', key: 'ProductID' },
+    // { title: 'Product ID', dataIndex: 'ProductID', key: 'ProductID' },
     { title: 'Inventory', dataIndex: 'Inventory', key: 'Inventory' },
   ];
 

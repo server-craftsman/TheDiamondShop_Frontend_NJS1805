@@ -77,7 +77,7 @@ function BridalDetail() {
 
   // const [ringSize, setSelectedSize] = useState("Custom");
   const [startIdx, setStartIdx] = useState(0);
-  const itemsPerPage = 12;
+  const itemsPerPage = 6;
   const [value, setValue] = useState(0);
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -956,11 +956,11 @@ function BridalDetail() {
                                         variant="subtitle1"
                                         component="h2"
                                         fontWeight={"bolder"}
-                                        fontSize={"1.2rem"}
+                                        fontSize={"1rem"}
                                       >
                                         {similarBridals.NameBridal}
                                       </Typography>
-                                      <Typography
+                                      {/* <Typography
                                         variant="subtitle1"
                                         component="h2"
                                       >
@@ -972,13 +972,21 @@ function BridalDetail() {
                                         fontWeight={"bolder"}
                                       >
                                         Size: {similarBridals.RingSizeRang}
-                                      </Typography>
+                                      </Typography> */}
                                       <Typography
                                         variant="body2"
-                                        color="textSecondary"
+                                        // color="textSecondary"
                                         component="p"
                                         fontWeight={"bolder"}
                                         fontSize={"1.5rem"}
+                                        style={{
+                                          color: "#FFFFFF",
+                                          backgroundColor: "#000000",
+                                          padding: "8px 16px",
+                                          marginTop: "8px",
+                                          borderRadius: "4px",
+                                          textAlign: "center",
+                                        }}
                                       >
                                         ${similarBridals.Price.toFixed(2)}
                                       </Typography>

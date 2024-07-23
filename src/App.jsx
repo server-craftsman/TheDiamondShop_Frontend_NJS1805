@@ -67,7 +67,7 @@ import Account from "./admin-pages/account-page";
 import ProfileAdmin from "./admin-pages/profile";
 import EditProfileAdmin from "./admin-pages/profile/editProfile";
 // import SearchAllProduct from "./pages/searchProduct-page";
-import AccountDetailsPage from "./admin-pages/account-page/detail/index"
+import AccountDetailsPage from "./admin-pages/account-page/detail/index";
 
 //==========Delivery Pages============//
 import DeliveryPage from "./delivery-page/delivery-shipping";
@@ -92,9 +92,8 @@ import CustomerViewWarrantyByReportNo from "./pages/historyOrder-page/details/cu
 import MapAdmin from "./admin-pages/map-page";
 import TakeWarranty from "./delivery-page/take-warranty";
 import ReturnWarranty from "./delivery-page/return-warranty";
-
-
-
+// ScrollToTop
+import ScrollToTop from "./ScrollToTop";
 
 function App() {
   const router = createBrowserRouter([
@@ -427,9 +426,19 @@ function App() {
   ]);
 
   return (
+    // <AuthProvider>
+    //   <CartProvider>
+    //     <RouterProvider router={router} />
+    //   </CartProvider>
+    // </AuthProvider>
+
+    //=======================
+
     <AuthProvider>
       <CartProvider>
-        <RouterProvider router={router} />
+        <RouterProvider router={router}>
+          <ScrollToTop />
+        </RouterProvider>
       </CartProvider>
     </AuthProvider>
   );

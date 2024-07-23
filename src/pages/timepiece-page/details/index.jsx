@@ -59,7 +59,7 @@ function TimepieceDetail() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [startIdx, setStartIdx] = useState(0);
-  const itemsPerPage = 12;
+  const itemsPerPage = 6;
   const [isZoomed, setIsZoomed] = useState(false);
   const [value, setValue] = useState(0);
   const [similarProducts, setSimilarProducts] = useState([]);

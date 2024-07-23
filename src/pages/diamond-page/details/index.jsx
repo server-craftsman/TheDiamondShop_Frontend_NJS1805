@@ -65,7 +65,7 @@ const DiamondDetail = () => {
   const [zoom, setZoom] = useState(false);
   const [collection, setCollection] = useState("DiamondRings");
   const [startIdx, setStartIdx] = useState(0);
-  const itemsPerPage = 12;
+  const itemsPerPage = 6;
   const [isZoomed, setIsZoomed] = useState(false);
   const [value, setValue] = useState(0);
   const [similarProducts, setSimilarProducts] = useState([]);
