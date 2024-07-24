@@ -22,6 +22,7 @@ import axios from "axios";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RequestPageIcon from "@mui/icons-material/RequestPage";
 import FeedbackIcon from "@mui/icons-material/Feedback";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 function HistoryOrderDetails() {
   const { user } = useContext(AuthContext);
   const { orderId } = useParams();
@@ -35,11 +36,20 @@ function HistoryOrderDetails() {
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState(null);
+  const [feedbackStatus, setFeedbackStatus] = useState({});
+
   useEffect(() => {
     if (user && orderId) {
       fetchOrderDetails();
     }
   }, [user, orderId]);
+
+  useEffect(() => {
+    const savedFeedbackStatus = localStorage.getItem("feedbackStatus");
+    if (savedFeedbackStatus) {
+      setFeedbackStatus(JSON.parse(savedFeedbackStatus));
+    }
+  }, []);
 
   const fetchOrderDetails = async () => {
     try {
@@ -215,6 +225,16 @@ function HistoryOrderDetails() {
       setFeedback("");
       setRating(0);
       setOpenModal(false);
+
+      // Update feedback status displat green tick
+      const newFeedbackStatus = {
+        ...feedbackStatus,
+        [selectedDetail.OrderDetailID]: true,
+      };
+      setFeedbackStatus(newFeedbackStatus);
+      localStorage.setItem("feedbackStatus", JSON.stringify(newFeedbackStatus));
+
+
     } catch (error) {
       console.error("Feedback error:", error);
       setSnackbarMessage("Failed to submit feedback.");
@@ -813,7 +833,10 @@ function HistoryOrderDetails() {
                 </>
               )}
             </Descriptions>
-            {order.OrderStatus === "Completed" && (
+
+
+            {/* code not display green tick */}
+            {/* {order.OrderStatus === "Completed" && (
               <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
                 <Link
                   to={`/customer-view-warranty/${detail.Warranty.ReportNo}`}
@@ -854,7 +877,60 @@ function HistoryOrderDetails() {
                   <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
                 </Button>
               </Grid>
+            )} */}
+
+{/* code display Green tick */}
+<Grid container spacing={2}>
+      {order.OrderDetails.map((detail) => (
+        <Grid item xs={12} key={detail.OrderDetailID} style={{ display: "flex", alignItems: "center" }}>
+          <span>
+            {detail.ProductName}
+            {feedbackStatus[detail.OrderDetailID] && (
+              <CheckCircleIcon style={{ color: "green", marginLeft: "8px" }} />
             )}
+          </span>
+
+          {order.OrderStatus === "Completed" && (
+            <Grid container spacing={2} alignItems="center" style={{ marginTop: "20px" }}>
+              <Grid item xs={6} style={{ textAlign: "left" }}>
+                <Link to={`/customer-view-warranty/${detail.Warranty.ReportNo}`} style={{ textDecoration: "none" }}>
+                  <Button
+                    variant="contained"
+                    style={{
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      padding: "10px 20px",
+                      fontSize: "1rem",
+                      fontWeight: "bold",
+                      borderRadius: "5px",
+                    }}
+                  >
+                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
+                  </Button>
+                </Link>
+              </Grid>
+              <Grid item xs={6} style={{ textAlign: "left" }}>
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    borderRadius: "5px",
+                  }}
+                  onClick={() => handleOpenModal(detail)}
+                >
+                  <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
+                </Button>
+              </Grid>
+            </Grid>
+          )}
+        </Grid>
+      ))}
+    </Grid>
+
           </Paper>
         ))}
       </div>

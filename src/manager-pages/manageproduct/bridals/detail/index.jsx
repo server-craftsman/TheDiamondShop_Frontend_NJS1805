@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Descriptions, Form, Input, InputNumber, Modal, notification, Spin, Upload } from "antd";
 import "./index.scss"
-import { Button } from "@mui/material";
+import { Avatar, Button, Divider, Grid, Typography } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { getAllFeedbacks } from "../../../../pages/feedback-service/getAllFeedbacks";
+import { AuthContext } from "../../../../AuthContext";
+import StarIcon from "@mui/icons-material/Star";
+import Rating from "@mui/material/Rating";
 
 function ViewBridalDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
@@ -16,6 +20,9 @@ function ViewBridalDetailPage() {
   const [form] = Form.useForm();
   const [editingBridal, setEditingBridal] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
+  const [feedbackBridal, setFeedbackBridal] = useState([]);
+  const { user } = useContext(AuthContext);
+
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -37,6 +44,26 @@ function ViewBridalDetailPage() {
     }
   };
 
+  const fetchFeedback = async () => {
+    try {
+      if (!user || !user.token) {
+        console.error("User or token not available");
+        return;
+      }
+
+      const productType = "Bridal"; // Adjust based on your logic
+      const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
+      setFeedbackBridal(feedbacks);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchFeedback();
+    }
+  }, [id, user]);
 
   const handleEditBridals = (record) => {
     setEditingBridal(record);
@@ -175,6 +202,93 @@ function ViewBridalDetailPage() {
       </Descriptions>
       <Button onClick={() => handleEditBridals(bridalDetail)}>Edit</Button>
       <Button onClick={() => window.history.back()}>Back</Button>
+      <hr />
+      <Grid item xs={12} md={6}>
+        <Box mt={4}>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Existing Feedbacks
+          </Typography>
+          <Grid container spacing={3}>
+            {feedbackBridal.length > 0 ? (
+              feedbackBridal.map((feedback, index) => (
+                <React.Fragment key={feedback.id}>
+                  <Grid
+                    item
+                    xs={12}
+                    container
+                    alignItems="center"
+                    sx={{ mb: 2 }}
+                  >
+                    {/* Customer Avatar */}
+                    <Grid item xs={2} style={{ marginRight: "-12%" }}>
+                      <Avatar alt={feedback.LastName} src={feedback.Image} />
+                    </Grid>
+                    {/* Feedback Details */}
+                    <Grid item xs={10} sx={{ paddingLeft: "25px" }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "20px",
+                          mb: 1,
+                        }}
+                      >
+                        {feedback.FirstName} {feedback.LastName}
+                      </Typography>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          fontStyle: "italic",
+                          color: "text.secondary",
+                          mb: 1,
+                        }}
+                      >
+                        Evaluation Date:{" "}
+                        {new Date(feedback.EvaluationDate).toLocaleDateString()}
+                      </Typography>
+                      <Rating
+                        name={`rating-${feedback.id}`}
+                        value={feedback.Rating}
+                        readOnly
+                        precision={0.5}
+                        emptyIcon={
+                          <StarIcon
+                            style={{ opacity: 0.55 }}
+                            fontSize="inherit"
+                          />
+                        }
+                      />
+                      <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
+                    </Grid>
+                  </Grid>
+                  {index < feedbackBridal.length - 1 && (
+                    <Divider
+                      variant="middle"
+                      sx={{
+                        my: 2,
+                        borderColor: "rgba(0, 0, 0, 0.12)",
+                      }}
+                    />
+                  )}
+                  {index < feedbackBridal.length - 1 && (
+                    <hr
+                      style={{
+                        width: "100%",
+                        borderTop: "1px dashed black",
+                        marginBottom: "16px",
+                      }}
+                    />
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
+                No feedback available
+              </Typography>
+            )}
+          </Grid>
+        </Box>
+      </Grid>
       <Modal
         title="Edit Bridal"
         open={isEditBridalVisible}
