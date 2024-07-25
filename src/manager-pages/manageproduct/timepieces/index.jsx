@@ -98,6 +98,12 @@ function ManageTimepiecesPage() {
     }
   };
 
+  const validatePrice = (rule, value) => {
+    if (value < 1) {
+      return Promise.reject('Price must be greater than 1');
+    }
+    return Promise.resolve();
+  }
   const columns = [
     {
       title: "Timepieces Style",
@@ -304,7 +310,9 @@ function ManageTimepiecesPage() {
           <Form.Item
             name="price"
             label="Price"
-            rules={[{ required: true, message: "Please input the Price!" }]}
+            rules={[{ required: true, message: "Please input the Price!" },
+              {validator: validatePrice}
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>

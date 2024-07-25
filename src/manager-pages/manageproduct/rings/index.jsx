@@ -68,6 +68,13 @@ function ManageRingPage() {
     });
   };
 
+  const validatePrice = (rule, value) => {
+    if (value < 1) {
+      return Promise.reject('Price must be greater than 1');
+      }
+      return Promise.resolve();
+  }
+
   const columns = [
     {
       title: "Ring Style",
@@ -223,7 +230,9 @@ function ManageRingPage() {
             <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
           <Form.Item name="price" label="Price"
-           rules={[{ required: true, message: "Please input the price!" }]}>
+           rules={[{ required: true, message: "Please input the price!" },
+            {validator: validatePrice},
+           ]}>
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="gender" label="Gender"

@@ -380,7 +380,7 @@ const DiamondDetail = () => {
                     $
                     {Number(diamond.Price)
                       .toFixed(2)
-                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
 
                   {/* <FormControl fullWidth variant="outlined" margin="normal">

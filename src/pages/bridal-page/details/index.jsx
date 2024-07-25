@@ -412,7 +412,7 @@ function BridalDetail() {
                     $
                     {Number(bridal.Price)
                       .toFixed(2)
-                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
 
                   <div>

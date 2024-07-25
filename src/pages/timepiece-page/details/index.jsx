@@ -356,7 +356,7 @@ function TimepieceDetail() {
                     $
                     {Number(timepieces.Price)
                       .toFixed(2)
-                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
                   <br />
 
