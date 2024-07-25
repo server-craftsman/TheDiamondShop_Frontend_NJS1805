@@ -340,6 +340,13 @@ function BridalDetail() {
 
   const feedbackCount = feedbackBridal.length;
 
+  const handleScroll = () =>{
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
+    });
+  }
+  
   return (
     <>
       {/* <Modal
@@ -914,6 +921,7 @@ function BridalDetail() {
                                   }}
                                 >
                                   <Card
+                                  onClick = {handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "520px",

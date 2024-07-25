@@ -268,6 +268,14 @@ function TimepieceDetail() {
   };
 
   const feedbackCount = feedbackTimepieces.length;
+
+  const handleScroll = () =>{
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
+    });
+  }
+
   return (
     <>
       {/* <Modal
@@ -688,6 +696,7 @@ function TimepieceDetail() {
                                   }}
                                 >
                                   <Card
+                                  onClick = {handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "600px",

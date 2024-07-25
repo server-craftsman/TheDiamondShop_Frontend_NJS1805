@@ -134,9 +134,9 @@ const styles = {
           <li>
             <Link to="/timepiece-page">TIMEPIECES</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/designer-page">DESIGNERS</Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/ourstore-page">OURSTORE</Link>
           </li>
