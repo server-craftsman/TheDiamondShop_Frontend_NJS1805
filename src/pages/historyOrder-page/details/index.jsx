@@ -137,50 +137,6 @@ function HistoryOrderDetails() {
     }
   };
 
-  // const handleFeedbackSubmit = async () => {
-  //   setFeedbackSubmitting(true);
-  //   try {
-  //     const token = user?.token;
-  //     if (!token) throw new Error("Token not found in AuthContext");
-
-  //     const orderDetail = order?.OrderDetails[0]; // Adjust index if necessary
-  //     if (!orderDetail?.OrderDetailID) throw new Error("OrderDetailID is missing");
-
-  //     const feedbackData = {
-  //       orderDetailID: orderDetail.OrderDetailID,
-  //       feedbackContent: feedback,
-  //       rating: parseInt(rating, 10),
-  //       diamondId: order?.DiamondID || null,
-  //       bridalId: order?.BridalID || null,
-  //       diamondRingsId: order?.DiamondRingsID || null,
-  //       diamondTimepiecesId: order?.DiamondTimepiecesID || null,
-  //     };
-
-  //     const response = await axios.post(
-  //       `http://localhost:8090/features/feedback`,
-  //       feedbackData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (response.status !== 201) throw new Error(`HTTP error! Status: ${response.status}`);
-
-  //     setSnackbarMessage("Feedback submitted successfully.");
-  //     setFeedback("");
-  //     setRating(0);
-  //     setOpenModal(false);
-  //   } catch (error) {
-  //     console.error("Feedback error:", error);
-  //     setSnackbarMessage("Failed to submit feedback.");
-  //   } finally {
-  //     setFeedbackSubmitting(false);
-  //     handleClickSnackbar();
-  //   }
-  // };
 
   const handleFeedbackSubmit = async () => {
     setFeedbackSubmitting(true);
@@ -470,10 +426,11 @@ function HistoryOrderDetails() {
             )}
           </Grid>
         </Paper>
-        <Modal open={openModal} onClose={handleCloseModal}>
+        <Modal open={openModal} onCancel={handleCloseModal} onOk={handleCloseModal}>
           <Box
             sx={{
-              backgroundColor: "#F1F1F1",
+              border: "1px solid",
+              backgroundColor: "#fff",
               color: "#000",
               p: 3,
               borderRadius: 1,
@@ -500,7 +457,7 @@ function HistoryOrderDetails() {
                   size="large"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{backgroundColor: "#F2F2F2"}}>
                 <TextField
                   label="Your comment *"
                   value={feedback}
@@ -514,19 +471,19 @@ function HistoryOrderDetails() {
                     mb: 2,
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": {
-                        borderColor: "#fff",
+                        borderColor: "#F2F2F2",
                       },
                       "&:hover fieldset": {
-                        borderColor: "#fff",
+                        borderColor: "#F2F2F2",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#fff",
+                        borderColor: "#F2F2F2",
                       },
                       "& .MuiInputBase-input": {
                         color: "#000",
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#fff",
+                        color: "#F2F2F2",
                       },
                     },
                   }}
