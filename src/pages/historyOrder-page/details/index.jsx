@@ -834,51 +834,6 @@ function HistoryOrderDetails() {
               )}
             </Descriptions>
 
-
-            {/* code not display green tick */}
-            {/* {order.OrderStatus === "Completed" && (
-              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
-                <Link
-                  to={`/customer-view-warranty/${detail.Warranty.ReportNo}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: "#000",
-                      color: "#fff",
-                      padding: "10px 20px",
-                      fontSize: "1rem",
-                      fontWeight: "bold",
-                      borderRadius: "5px",
-                    }}
-                  >
-                    <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty
-                    Order
-                  </Button>
-                </Link>
-              </Grid>
-            )}
-            {order.OrderStatus === "Completed" && (
-              <Grid item xs={12} sm={4} style={{ textAlign: "left" }}>
-                <Button
-                  variant="contained"
-                  style={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "10px 20px",
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    borderRadius: "5px",
-                  }}
-                  // onClick={handleOpenModal}
-                  onClick={() => handleOpenModal(detail)} // Pass detail here
-                >
-                  <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
-                </Button>
-              </Grid>
-            )} */}
-
 {/* code display Green tick */}
 <Grid container spacing={2}>
       {order.OrderDetails.map((detail) => (

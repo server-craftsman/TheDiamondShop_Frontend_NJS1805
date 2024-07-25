@@ -807,12 +807,12 @@ const OrderForm = () => {
                       label="Cash on Delivery"
                       style={{ color: "#000", fontWeight: "bolder" }}
                     />
-                    <FormControlLabel
+                    {/* <FormControlLabel
                       value="PayPal"
                       control={<Radio />}
                       label="PayPal"
                       style={{ color: "#000", fontWeight: "bolder" }}
-                    />
+                    /> */}
                   </RadioGroup>
                 </FormControl>
               </Grid>
