@@ -323,7 +323,6 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
         id: ring.DiamondRingsID,
         name: ring.NameRings,
         image: ring.ImageRings,
-        price: ring.Price,
         quantity: 1,
         type: "DiamondRings",
         material: material,
@@ -332,6 +331,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
         ringSizeID: ringSizeID, // Ensure unique name
         category: ring.Category,
         // totalPrice: ring.Price * parseInt(quantity),
+        price: price
       };
 
       // updatedCartItems.push(itemToAdd);
