@@ -90,6 +90,14 @@ function BridalDetail() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
+  //acessory
+  const [accessoryData, setAccessoryData] = useState([]);
+  // const [materialOptions, setMaterialOptions] = useState([]);
+  // const [ringSizeOptions, setRingSizeOptions] = useState([]);
+  const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedRingSize, setSelectedRingSize] = useState('');
+  const [price, setPrice] = useState('');  //end accessory
+
   // useEffect để fetch dữ liệu Bridal và Feedback
   useEffect(() => {
     axios
@@ -173,6 +181,52 @@ function BridalDetail() {
     };
     fetchRingSizeDetails();
   }, []);
+
+
+
+  useEffect(() => {
+    const fetchBridalAccessory = async () => {
+      try {
+        const response = await axios.get('http://localhost:8090/products/bridal-accessory');
+        const data = response.data;
+
+        if (Array.isArray(data)) {
+          setAccessoryData(data);
+
+          // Extract unique materials and ring sizes
+          const uniqueMaterials = Array.from(new Set(data.map(item => item.MaterialName))).map(materialName => ({
+            MaterialName: materialName
+          }));
+          const uniqueRingSizes = Array.from(new Set(data.map(item => item.RingSize))).map(ringSize => ({
+            RingSize: ringSize
+          }));
+
+          setMaterialOptions(uniqueMaterials);
+          setRingSizeOptions(uniqueRingSizes);
+        } else {
+          console.error('Unexpected data format:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching bridal accessory details:', error);
+      }
+    };
+
+    fetchBridalAccessory();
+  }, []);
+
+  useEffect(() => {
+    const findPrice = () => {
+      if (Array.isArray(accessoryData)) {
+        const matchingItem = accessoryData.find(item =>
+          item.MaterialName === selectedMaterial && item.RingSize === selectedRingSize
+        );
+        setPrice(matchingItem ? matchingItem.Price : '');
+      }
+    };
+
+    findPrice();
+  }, [selectedMaterial, selectedRingSize, accessoryData]);
+
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -410,26 +464,23 @@ function BridalDetail() {
                     }}
                   >
                     $
-                    {Number(bridal.Price)
+                    {Number(price)
                       .toFixed(2)
                       .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
                   </Typography>
 
                   <div>
-                    <FormControl
-                      fullWidth
-                      sx={{ m: 1, minWidth: 120 }}
-                      margin="normal"
-                    >
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
                       <InputLabel id="material-label">Material</InputLabel>
                       <Select
                         labelId="material-label"
-                        value={material}
-                        onChange={(e) => setMaterial(e.target.value)}
+                        value={selectedMaterial}
+                        onChange={(e) => setSelectedMaterial(e.target.value)}
                       >
+                        {/* <MenuItem value="">Select Material</MenuItem> */}
                         {materialOptions.map((materialOption) => (
                           <MenuItem
-                            key={materialOption.MaterialID}
+                            key={materialOption.MaterialName}
                             value={materialOption.MaterialName}
                           >
                             {materialOption.MaterialName}
@@ -438,20 +489,17 @@ function BridalDetail() {
                       </Select>
                     </FormControl>
 
-                    <FormControl
-                      fullWidth
-                      sx={{ m: 1, minWidth: 120 }}
-                      margin="normal"
-                    >
+                    <FormControl fullWidth sx={{ m: 1, minWidth: 120 }} margin="normal">
                       <InputLabel id="ring-size-label">Ring Size</InputLabel>
                       <Select
                         labelId="ring-size-label"
-                        value={ringSize}
-                        onChange={(e) => setSelectedSize(e.target.value)}
+                        value={selectedRingSize}
+                        onChange={(e) => setSelectedRingSize(e.target.value)}
                       >
+                        {/* <MenuItem value="">Select Ring Size</MenuItem> */}
                         {ringSizeOptions.map((ringSizeOption) => (
                           <MenuItem
-                            key={ringSizeOption.RingSizeID}
+                            key={ringSizeOption.RingSize}
                             value={ringSizeOption.RingSize}
                           >
                             {ringSizeOption.RingSize}
@@ -459,10 +507,10 @@ function BridalDetail() {
                         ))}
                       </Select>
                     </FormControl>
-                  </div>
 
-                  <div style={{ display: "flex" }}>
-                    {/* <Box mt={3}>
+
+                    <div style={{ display: "flex" }}>
+                      {/* <Box mt={3}>
                       <Button
                         variant="outlined"
                         onClick={handleMenuClick}
@@ -525,30 +573,30 @@ function BridalDetail() {
                       )}
                     </Box> */}
 
-                    <Typography variant="h6" marginTop={0.3}>
-                      <Link
-                        to="/instruct-page"
-                        // target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          color: "#3AA8FF",
-                          fontWeight: "bolder",
-                        }}
-                      >
-                        <IconButton
-                          size="small"
-                          style={{ marginLeft: "5px", color: "#3AA8FF" }}
+                      <Typography variant="h6" marginTop={0.3}>
+                        <Link
+                          to="/instruct-page"
+                          // target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: "#3AA8FF",
+                            fontWeight: "bolder",
+                          }}
                         >
-                          <LaunchIcon fontSize="small" />
-                        </IconButton>
-                        Instructions for choosing Ni(size)
-                      </Link>
-                    </Typography>
-                  </div>
+                          <IconButton
+                            size="small"
+                            style={{ marginLeft: "5px", color: "#3AA8FF" }}
+                          >
+                            <LaunchIcon fontSize="small" />
+                          </IconButton>
+                          Instructions for choosing Ni(size)
+                        </Link>
+                      </Typography>
+                    </div>
 
-                  {/* <TextField
+                    {/* <TextField
                     fullWidth
                     variant="outlined"
                     margin="normal"
@@ -559,7 +607,7 @@ function BridalDetail() {
                     required
                   /> */}
 
-                  {/* <Button
+                    {/* <Button
                     variant="contained"
                     color="primary"
                     onClick={handleDetailNavigation}
@@ -568,63 +616,13 @@ function BridalDetail() {
                     Apply Change and View Details
                   </Button> */}
 
-                  <Grid container justifyContent="flex-start">
-                    <Grid item xs={12} sm={6} md={20}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleCombinedWithJewelry}
-                        style={{
-                          backgroundColor: "#000000",
-                          color: "#ffffff",
-                          fontWeight: "bold",
-                          boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                          fontSize: "1.3rem",
-                          padding: "10px 40px 10px 30px",
-                          margin: "10px 50px 10px 0",
-                          borderRadius: "0.5rem",
-                        }}
-                        startIcon={<AddShoppingCartIcon />}
-                      >
-                        COMBINED WITH DIAMOND
-                      </Button>
-                    </Grid>
-                  </Grid>
-
-                  <Grid container justifyContent="space-around">
-                    <Grid
-                      fullWidth
-                      width={"100%"}
-                      item
-                      xs={12}
-                      sm={20}
-                      display="flex"
-                    >
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        onClick={handleAddToCart}
-                        style={{
-                          backgroundColor: "#000000",
-                          color: "#ffffff",
-                          fontWeight: "bold",
-                          boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
-                          fontSize: "1.3rem",
-                          padding: "10px 40px 10px 30px",
-                          margin: "10px 50px 10px 0px",
-                          borderRadius: "0.5rem",
-                        }}
-                        startIcon={<AddShoppingCartIcon />}
-                      >
-                        Add to Cart
-                      </Button>
-
-                      <Link to="/cart-page" style={{ width: "100%" }}>
+                    <Grid container justifyContent="flex-start">
+                      <Grid item xs={12} sm={6} md={20}>
                         <Button
-                          fullWidth
                           variant="contained"
-                          onClick={handleBuyNow}
+                          color="primary"
+                          fullWidth
+                          onClick={handleCombinedWithJewelry}
                           style={{
                             backgroundColor: "#000000",
                             color: "#ffffff",
@@ -635,49 +633,102 @@ function BridalDetail() {
                             margin: "10px 50px 10px 0",
                             borderRadius: "0.5rem",
                           }}
-                          startIcon={<PaymentIcon />}
+                          startIcon={<AddShoppingCartIcon />}
                         >
-                          Buy Now
+                          COMBINED WITH DIAMOND
                         </Button>
-                      </Link>
+                      </Grid>
                     </Grid>
-                  </Grid>
 
-                  <Container style={{ marginTop: "10px", marginLeft: "-25px" }}>
-                    <Link
-                      to="/priceDiamond-page"
-                      // target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        textDecoration: "none",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <IconButton
-                        component="span"
-                        style={{ marginRight: "10px" }}
+                    <Grid container justifyContent="space-around">
+                      <Grid
+                        fullWidth
+                        width={"100%"}
+                        item
+                        xs={12}
+                        sm={20}
+                        display="flex"
                       >
-                        <img
-                          src="https://www.habibjewels.com/image/habibjewels/image/cache/data/all_product_images/product-9430/HOF-01-420x420.jpg"
-                          alt="Diamond Icon"
-                          style={{ width: 50, height: 50, borderRadius: "50%" }} // Adjust dimensions and styling as needed
-                        />
-                      </IconButton>
-                      <Typography
-                        variant="h6"
-                        color={"#3AA8FF"}
-                        fontWeight={"bolder"}
-                        gutterBottom
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          onClick={handleAddToCart}
+                          style={{
+                            backgroundColor: "#000000",
+                            color: "#ffffff",
+                            fontWeight: "bold",
+                            boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                            fontSize: "1.3rem",
+                            padding: "10px 40px 10px 30px",
+                            margin: "10px 50px 10px 0px",
+                            borderRadius: "0.5rem",
+                          }}
+                          startIcon={<AddShoppingCartIcon />}
+                        >
+                          Add to Cart
+                        </Button>
+
+                        <Link to="/cart-page" style={{ width: "100%" }}>
+                          <Button
+                            fullWidth
+                            variant="contained"
+                            onClick={handleBuyNow}
+                            style={{
+                              backgroundColor: "#000000",
+                              color: "#ffffff",
+                              fontWeight: "bold",
+                              boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.16)",
+                              fontSize: "1.3rem",
+                              padding: "10px 40px 10px 30px",
+                              margin: "10px 50px 10px 0",
+                              borderRadius: "0.5rem",
+                            }}
+                            startIcon={<PaymentIcon />}
+                          >
+                            Buy Now
+                          </Button>
+                        </Link>
+                      </Grid>
+                    </Grid>
+
+                    <Container style={{ marginTop: "10px", marginLeft: "-25px" }}>
+                      <Link
+                        to="/priceDiamond-page"
+                        // target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          textDecoration: "none",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
                       >
-                        View the cheapest natural diamond price list in 2024
-                      </Typography>
-                      <OpenInNewIcon
-                        fontSize="1px"
-                        style={{ marginLeft: "5px", color: "#3AA8FF" }}
-                      />{" "}
-                    </Link>
-                  </Container>
+                        <IconButton
+                          component="span"
+                          style={{ marginRight: "10px" }}
+                        >
+                          <img
+                            src="https://www.habibjewels.com/image/habibjewels/image/cache/data/all_product_images/product-9430/HOF-01-420x420.jpg"
+                            alt="Diamond Icon"
+                            style={{ width: 50, height: 50, borderRadius: "50%" }} // Adjust dimensions and styling as needed
+                          />
+                        </IconButton>
+                        <Typography
+                          variant="h6"
+                          color={"#3AA8FF"}
+                          fontWeight={"bolder"}
+                          gutterBottom
+                        >
+                          View the cheapest natural diamond price list in 2024
+                        </Typography>
+                        <OpenInNewIcon
+                          fontSize="1px"
+                          style={{ marginLeft: "5px", color: "#3AA8FF" }}
+                        />{" "}
+                      </Link>
+                    </Container>
+
+                  </div>
+
                 </Box>
               </CardContent>
             </Card>
@@ -935,12 +986,12 @@ function BridalDetail() {
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1.2)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                       }
                                     />
                                     <CardContent

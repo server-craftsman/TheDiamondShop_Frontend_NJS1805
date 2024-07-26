@@ -8,7 +8,7 @@ import Footer from "../../components/footer";
 function TimepiecePage() {
   const [dataSource, setDataSource] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [filteredData, setFilteredData] = useState([]);
   const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState("");

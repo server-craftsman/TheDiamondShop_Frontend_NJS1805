@@ -33,7 +33,7 @@ function BridalPage() {
         console.error("Error fetching data:", error);
       }
     };
-
+    
     fetchData();
   }, []);
 
