@@ -693,12 +693,12 @@ function HistoryOrderDetails() {
                   <Descriptions.Item label="Brand Name">
                     {detail.Product.Bridal.BrandName || "-"}
                   </Descriptions.Item>
-                  {/* <Descriptions.Item label="Material Name">
-                    {detail.Product.Material.MaterialName || "-"}
+                  <Descriptions.Item label="Material Name">
+                    {detail.Product.Bridal.MaterialName || "-"}
                   </Descriptions.Item>
                   <Descriptions.Item label="Ring Size Range">
-                    {detail.Product.RingSize.RingSize || "-"}
-                  </Descriptions.Item> */}
+                    {detail.Product.Bridal.RingSize || "-"}
+                  </Descriptions.Item>
                   <Descriptions.Item label="Setting Type">
                     {detail.Product.Bridal.SettingType || "-"}
                   </Descriptions.Item>
