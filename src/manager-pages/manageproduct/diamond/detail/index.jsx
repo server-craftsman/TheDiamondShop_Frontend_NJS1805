@@ -412,6 +412,7 @@ import {
   InputNumber,
   Modal,
   notification,
+  Select,
   Spin,
   Upload,
 } from "antd";
@@ -431,6 +432,10 @@ function ViewDiamondDetailPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [feedbackDiamond, setFeedbackDiamond] = useState([]);
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
+  const [diamonds, setDiamonds] = useState([]);
+
+  //=====================================================
+
   useEffect(() => {
     fetchDiamondDetail();
   }, [id]);
@@ -445,6 +450,21 @@ function ViewDiamondDetailPage() {
       console.error("Error fetching Diamond details:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8090/products/diamonds"
+      );
+      setDiamonds(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -471,10 +491,10 @@ function ViewDiamondDetailPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
-  }
+      return Promise.reject("Price must be greater than 1");
+    }
+    return Promise.resolve();
+  };
 
   const handleEditDiamond = (record) => {
     //setEditingDiamond(record); // Set the diamond to be edited
@@ -538,6 +558,104 @@ function ViewDiamondDetailPage() {
     return <Spin size="large" />;
   }
 
+  const validateCaratWeight = (rule, value) => {
+    // Convert the value to a number
+    const numValue = parseFloat(value);
+
+    // Check if the value is a number and between 0.1 and 3.0
+    if (isNaN(numValue) || numValue < 0.1 || numValue > 3.0) {
+      return Promise.reject(
+        "The carat weight must be a value between 0.1 and 3.0."
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateTablePercentageAndDepth = (rule, value) => {
+    // Check if the value is a number and between 1 and 100
+    if (value < 1 || value > 100) {
+      return Promise.reject("The percentage must be between 1 and 100.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateDiamondMeasurements = (rule, value) => {
+    // Define a regular expression to match a pattern like "length x width x depth"
+    const regex = /^\d+(\.\d+)?\s*x\s*\d+(\.\d+)?\s*x\s*\d+(\.\d+)?$/;
+
+    // Check if the value matches the pattern
+    if (!regex.test(value)) {
+      return Promise.reject(
+        'Measurements must be in the format "length x width x depth" with positive numbers. EX: 6.75x4.25x2.86'
+      );
+    }
+
+    // Split the measurements and convert them to numbers
+    const [length, width, depth] = value
+      .split("x")
+      .map((num) => parseFloat(num.trim()));
+
+    // Check if the measurements are positive numbers and within a reasonable range
+    if (length <= 0 || width <= 0 || depth <= 0) {
+      return Promise.reject("All measurements must be positive numbers.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateDiamondExist = (rule, value) => {
+    // Check if any of the specified fields exist in the fetched data
+    const exists = diamonds
+      .filter(
+        (item) =>
+          !diamondDetail ||
+          (item.GIAReportNumber !== diamondDetail.GIAReportNumber &&
+            item.StockNumber !== diamondDetail.StockNumber &&
+            item.LabReportNumber !== diamondDetail.LabReportNumber)
+      )
+      .some(
+        (item) =>
+          item.GIAReportNumber === value ||
+          item.StockNumber === value ||
+          item.LabReportNumber === value
+      );
+
+    if (exists) {
+      return Promise.reject("The value already exists.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateReportNumAndLabNum = (rule, value) => {
+    const regex = /^\d{10}$/; // Regular expression to check if value is exactly 10 digits
+
+    if (!regex.test(value)) {
+      return Promise.reject(
+        "The input value must be a 10-digit natural number. EX: 1234567890"
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateStockNumber = (rule, value) => {
+    // Define a regular expression to match the format "D60057-01"
+    const regex = /^[A-Z]\d{5}-\d{2}$/;
+
+    // Check if the value matches the pattern
+    if (!regex.test(value)) {
+      return Promise.reject(
+        'Stock Number must be in the format is: A capital letter followed by 5 digits separated by a hyphen "-" and 2 digits. EX: "D12345-67".'
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  //======================================================================
   return (
     <div>
       <Descriptions title="Diamond Details">
@@ -715,14 +833,18 @@ function ViewDiamondDetailPage() {
               { required: true, message: "Please input the diamond origin!" },
             ]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="natural">natural</Select.Option>
+              <Select.Option value="artificial">artificial</Select.Option>
+            </Select>
           </Form.Item>
           {/* Other Form.Item fields */}
           <Form.Item
             name="caratWeight"
-            label="Carat Weight"
+            label="Carat Weight (0.1 - 3)"
             rules={[
               { required: true, message: "Please input the carat weight!" },
+              { validator: validateCaratWeight },
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
@@ -732,27 +854,47 @@ function ViewDiamondDetailPage() {
             label="Color"
             rules={[{ required: true, message: "Please input the color!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="F">F</Select.Option>
+              <Select.Option value="G">G</Select.Option>
+              <Select.Option value="I">I</Select.Option>
+              <Select.Option value="K">K</Select.Option>
+              <Select.Option value="J">J</Select.Option>
+              <Select.Option value="E">E</Select.Option>
+              <Select.Option value="H">H</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="clarity"
             label="Clarity"
             rules={[{ required: true, message: "Please input the clarity!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Very Slightly Included">
+                Very Slightly Included
+              </Select.Option>
+              <Select.Option value="Slightly Included">
+                Slightly Included
+              </Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="cut"
             label="Cut"
             rules={[{ required: true, message: "Please input the cut!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="N/A">N/A</Select.Option>
+              <Select.Option value="Very Good">Very Good</Select.Option>
+              <Select.Option value="Excellent">Excellent</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="price"
             label="Price"
-            rules={[{ required: true, message: "Please input the price!" },
-              {validator: validatePrice}
+            rules={[
+              { required: true, message: "Please input the price!" },
+              { validator: validatePrice },
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
@@ -762,7 +904,12 @@ function ViewDiamondDetailPage() {
             label="Shape"
             rules={[{ required: true, message: "Please input the shape!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Emerald">Emerald</Select.Option>
+              <Select.Option value="Round">Round</Select.Option>
+              <Select.Option value="Cushion">Cushion</Select.Option>
+              <Select.Option value="Princess">Princess</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="image"
@@ -797,28 +944,40 @@ function ViewDiamondDetailPage() {
             label="Polish"
             rules={[{ required: true, message: "Please input the polish!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Good">Good</Select.Option>
+              <Select.Option value="Very Good">Very Good</Select.Option>
+              <Select.Option value="Excellent">Excellent</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="symmetry"
             label="Symmetry"
             rules={[{ required: true, message: "Please input the symmetry!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Good">Good</Select.Option>
+              <Select.Option value="Very Good">Very Good</Select.Option>
+              <Select.Option value="Excellent">Excellent</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="tablePercentage"
-            label="Table Percentage"
+            label="Table Percentage (1% - 100%)"
             rules={[
               { required: true, message: "Please input the table Percentage!" },
+              { validator: validateTablePercentageAndDepth },
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             name="depth"
-            label="Depth"
-            rules={[{ required: true, message: "Please input the depth!" }]}
+            label="Depth (1% - 100%)"
+            rules={[
+              { required: true, message: "Please input the depth!" },
+              { validator: validateTablePercentageAndDepth },
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
@@ -827,39 +986,46 @@ function ViewDiamondDetailPage() {
             label="Measurements"
             rules={[
               { required: true, message: "Please input the measurements!" },
+              { validator: validateDiamondMeasurements },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="giaReportNumber"
-            label="GIA Report Number"
+            label="GIA Report Number (10 digit numbers)"
             rules={[
               {
                 required: true,
                 message: "Please input the gia Report Number!",
               },
+              { validator: validateDiamondExist },
+              { validator: validateReportNumAndLabNum },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="stockNumber"
-            label="Stock Number"
+            label="Stock Number (EX: D12345-67)"
             rules={[
               { required: true, message: "Please input the stock Number!" },
+              { validator: validateDiamondExist },
+              { validator: validateStockNumber },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="labReportNumber"
-            label="Lab Report Number"
+            label="Lab Report Number (10 digit numbers)"
             rules={[
               {
                 required: true,
                 message: "Please input the lab Report Number!",
               },
+              { validator: validateDiamondExist },
+              { validator: validateReportNumAndLabNum },
             ]}
           >
             <Input />
@@ -869,16 +1035,29 @@ function ViewDiamondDetailPage() {
             label="Gemstone"
             rules={[{ required: true, message: "Please input the gemstone!" }]}
           >
-            <Input />
+             <Select>
+              <Select.Option value="Natural, untreated diamond">
+                Natural, untreated diamond
+              </Select.Option>
+              <Select.Option value="Natural, treated diamond">
+                Natural, treated diamond
+              </Select.Option>
+              <Select.Option value="Artificial, untreated diamond">
+                Artificial, untreated diamond
+              </Select.Option>
+              <Select.Option value="Artificial, treated diamond">
+                Artificial, treated diamond
+              </Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="gradingReport"
             label="Grading Report"
-            rules={[
-              { required: true, message: "Please input the grading Report!" },
-            ]}
+            // rules={[
+            //   { required: true, message: "Please input the grading Report!" },
+            // ]}
           >
-            <Input />
+            <Input disabled/>
           </Form.Item>
           <Form.Item
             name="descriptors"
@@ -896,7 +1075,12 @@ function ViewDiamondDetailPage() {
               { required: true, message: "Please input the fluorescence!" },
             ]}
           >
-            <Input />
+             <Select>
+              <Select.Option value="NON">NON</Select.Option>
+              <Select.Option value="MB">MB</Select.Option>
+              <Select.Option value="STG BL">STG BL</Select.Option>
+              <Select.Option value="FNL BL">FNL BL</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="inventory"

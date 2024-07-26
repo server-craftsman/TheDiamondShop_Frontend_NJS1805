@@ -554,7 +554,7 @@ function ManageDiamondPage() {
     // Check if the value matches the pattern
     if (!regex.test(value)) {
       return Promise.reject(
-        'Stock Number must be in the format is: A capital letter followed by 5 digits separated by a hyphen "-" and 2 digits.EX: "D12345-67".'
+        'Stock Number must be in the format is: A capital letter followed by 5 digits separated by a hyphen "-" and 2 digits. EX: "D12345-67".'
       );
     }
 
@@ -590,7 +590,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="caratWeight"
-            label="Carat Weight"
+            label="Carat Weight (0.1 - 3)"
             rules={[
               { required: true, message: "Please input the carat weight!" },
               { validator: validateCaratWeight },
@@ -745,7 +745,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="tablePercentage"
-            label="Table Percentage (%)"
+            label="Table Percentage (1% - 100%)"
             rules={[
               { required: true, message: "Please input the table Percentage!" },
               { validator: validateTablePercentageAndDepth },
@@ -755,7 +755,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="depth"
-            label="Depth (%)"
+            label="Depth (1% - 100%)"
             rules={[
               { required: true, message: "Please input the depth!" },
               { validator: validateTablePercentageAndDepth },
@@ -775,7 +775,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="giaReportNumber"
-            label="GIA Report Number"
+            label="GIA Report Number (10 digit numbers)"
             rules={[
               {
                 required: true,
@@ -789,7 +789,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="stockNumber"
-            label="Stock Number"
+            label="Stock Number (EX: D12345-67)"
             rules={[
               { required: true, message: "Please input the stock Number!" },
               { validator: validateDiamondExist },
@@ -800,7 +800,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="labReportNumber"
-            label="Lab Report Number"
+            label="Lab Report Number (10 digit numbers)"
             rules={[
               {
                 required: true,
