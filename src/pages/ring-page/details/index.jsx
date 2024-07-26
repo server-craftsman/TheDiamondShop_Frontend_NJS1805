@@ -179,14 +179,20 @@ const fetchRingAccessoryDetails = async () => {
     const accessoryDetails = response.data;
     
     // Extract unique materials and sizes
-    const materials = [...new Set(accessoryDetails.map(item => item.MaterialName))];
-    const sizes = [...new Set(accessoryDetails.map(item => item.RingSize))];
+    // const materials = [...new Set(accessoryDetails.map(item => item.MaterialName))];
+    // const sizes = [...new Set(accessoryDetails.map(item => item.RingSize))];
+
+    const materials = Array.from(new Map(accessoryDetails.map(item => [item.MaterialID, { MaterialID: item.MaterialID, MaterialName: item.MaterialName }])).values());
+    const sizes = Array.from(new Map(accessoryDetails.map(item => [item.RingSizeID, { RingSizeID: item.RingSizeID, RingSize: item.RingSize }])).values());
 
     setMaterialOptions(materials);
     setRingSizeOptions(sizes);
 
     // Check if default values exist in fetched data
-      updatePrice("Platinum", "5");
+    if (materials.length > 0 && sizes.length > 0) {
+      updatePrice(materials[0].MaterialName, sizes[0].RingSize);
+    }
+
   } catch (error) {
     console.error("Error fetching ring accessory details:", error);
   }
@@ -289,17 +295,17 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
     setOpenCertificate(false);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
-  const handleMaterialChange = (event) => {
-    setMaterial(event.target.value);
-  };
+  // const handleMaterialChange = (event) => {
+  //   setMaterial(event.target.value);
+  // };
 
-  const handleQuantityChange = (event) => {
-    setQuantity(event.target.value);
-  };
+  // const handleQuantityChange = (event) => {
+  //   setQuantity(event.target.value);
+  // };
 
   const handleAddToCart = () => {
     const alreadyInCart = cartItems.find(
@@ -308,16 +314,16 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
 
     if (!alreadyInCart) {
       // Find selected material and its ID
-      const selectedMaterial = materialOptions.find(
+      const selectedMaterialOption = materialOptions.find(
         (option) => option.MaterialName === material
       );
-      const materialID = selectedMaterial ? selectedMaterial.MaterialID : null;
+      const materialID = selectedMaterialOption ? selectedMaterialOption.MaterialID : null;
 
       // Find selected ring size and its ID
-      const selectedRingSize = ringSizeOptions.find(
+      const selectedRingSizeOption = ringSizeOptions.find(
         (option) => option.RingSize === ringSize
       );
-      const ringSizeID = selectedRingSize ? selectedRingSize.RingSizeID : null;
+      const ringSizeID = selectedRingSizeOption ? selectedRingSizeOption.RingSizeID : null;
 
       const itemToAdd = {
         id: ring.DiamondRingsID,
@@ -325,12 +331,11 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
         image: ring.ImageRings,
         quantity: 1,
         type: "DiamondRings",
+        materialID: materialID,
+        ringSizeID: ringSizeID,
         material: material,
         ringSize: ringSize,
-        materialID: materialID, // Ensure unique name
-        ringSizeID: ringSizeID, // Ensure unique name
         category: ring.Category,
-        // totalPrice: ring.Price * parseInt(quantity),
         price: price
       };
 
@@ -356,36 +361,36 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
   };
 
   // Function to handle navigation based on material and ringSize
-  const handleDetailNavigation = () => {
-    if (!material || !ringSize) {
-      setOpen(true); // Show error if material or ringSize is missing
-      return;
-    }
+  // const handleDetailNavigation = () => {
+  //   if (!material || !ringSize) {
+  //     setOpen(true); // Show error if material or ringSize is missing
+  //     return;
+  //   }
 
-    // Fetch the DiamondRingsID based on material and ringSize
-    axios
-      .get(`http://localhost:8090/products/ring-detail`, {
-        params: { material: material, ringSize: ringSize },
-      })
-      .then((response) => {
-        const { DiamondRingsID } = response.data;
-        navigate(`/ring-detail/${DiamondRingsID}`); // Navigate to the detail page
-      })
-      .catch((error) => {
-        console.error("Error fetching ring details", error);
-        if (error.response && error.response.status === 404) {
-          navigate("/not-found"); // Navigate to not-found page if ring detail not found
-        }
-      });
-  };
+  //   // Fetch the DiamondRingsID based on material and ringSize
+  //   axios
+  //     .get(`http://localhost:8090/products/ring-detail`, {
+  //       params: { material: material, ringSize: ringSize },
+  //     })
+  //     .then((response) => {
+  //       const { DiamondRingsID } = response.data;
+  //       navigate(`/ring-detail/${DiamondRingsID}`); // Navigate to the detail page
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching ring details", error);
+  //       if (error.response && error.response.status === 404) {
+  //         navigate("/not-found"); // Navigate to not-found page if ring detail not found
+  //       }
+  //     });
+  // };
 
-  const handleNavigateButtonClick = () => {
-    handleDetailNavigation(); // Kích hoạt hàm handleDetailNavigation khi nút được nhấn
-  };
+  // const handleNavigateButtonClick = () => {
+  //   handleDetailNavigation(); // Kích hoạt hàm handleDetailNavigation khi nút được nhấn
+  // };
 
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenuClick = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -483,7 +488,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                       .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
 
-                  <div>
+
                     <FormControl
                       fullWidth
                       sx={{ m: 1, minWidth: 120 }}
@@ -495,12 +500,12 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                         value={material}
                         onChange={(e) => setMaterial(e.target.value)}
                       >
-                        {materialOptions.map((materialOption, index) => (
+                        {materialOptions.map((materialOption) => (
                           <MenuItem
-                          key={index}
-                          value={materialOption}
+                          key={materialOption.MaterialID}
+                          value={materialOption.MaterialName}
                           >
-                            {materialOption}
+                            {materialOption.MaterialName}
                           </MenuItem>
                         ))}
                       </Select>
@@ -517,25 +522,25 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                         value={ringSize}
                         onChange={(e) => setSelectedSize(e.target.value)}
                       >
-                        {ringSizeOptions.map((ringSizeOption, index) => (
+                        {ringSizeOptions.map((ringSizeOption) => (
                           <MenuItem
-                            key={index}
-                            value={ringSizeOption}
+                          key={ringSizeOption.RingSizeID}
+                          value={ringSizeOption.RingSize}
                           >
-                            {ringSizeOption}
+                            {ringSizeOption.RingSize}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
-                  </div>
+
 
                   <div style={{ display: "flex" }}>
-                    <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
+                    {/* <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
                       <span style={{ fontSize: "25px", fontWeight: "bold" }}>
                         Ring size:{" "}
                       </span>
                       {ring.RingSize}
-                    </strong>
+                    </strong> */}
                     <Typography variant="h6" marginTop={0.3}>
                       <Link
                         to="/instruct-page"
