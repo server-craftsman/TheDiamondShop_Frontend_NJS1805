@@ -49,12 +49,12 @@ function Footer() {
               <li>
                 <a href="/timepiece-page">Timepieces</a>
               </li>
-              <li>
+              {/* <li>
                 <a href="/designer-page">Designers</a>
               </li>
               <li>
                 <a href="#">Contact</a>
-              </li>
+              </li> */}
             </ul>
           </div>
           {/* <div className="footer-column">

@@ -46,12 +46,12 @@ function DesignerPage() {
                   <div className="overlay">
                     <span className="brand-name">{item.BrandName}</span>
                     <div className="button-group">
-                      <Button href="#" className="button">
+                      {/* <Button href="#" className="button">
                         Shop
                       </Button>
                       <Button href="#" className="button">
                         Learn
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </div>

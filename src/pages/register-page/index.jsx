@@ -400,12 +400,13 @@ function RegisterForm() {
                   </p>
                 )}
 
-                <Form.Item>
+                {/* <Form.Item>
                   <input
                     type="checkbox"
                     checked={checkboxChecked}
                     onChange={handleCheckboxChange}
                     style={{ width: "20px", height: "20px" }}
+                    
                   />
                   <span style={{ marginLeft: "10px", fontSize: "20px", paddingBottom: "50px" }}>
                     I agree to the{" "}
@@ -413,7 +414,48 @@ function RegisterForm() {
                       terms and conditions
                     </a>
                   </span>
+                </Form.Item> */}
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please tick the checkbox to register!",
+                    },
+                  ]}
+                >
+                  <div
+                    style={{
+                      color: "red",
+                      fontSize: "20px",
+                      marginRight: "5px",
+                    }}
+                  >
+                    *
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={checkboxChecked}
+                    onChange={handleCheckboxChange}
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      marginBottom: "10px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      marginLeft: "10px",
+                      fontSize: "20px",
+                      paddingBottom: "50px",
+                    }}
+                  >
+                    I agree to the{" "}
+                    <a onClick={showModal} style={{ color: "#1890ff" }}>
+                      terms and conditions
+                    </a>
+                  </span>
                 </Form.Item>
+
                 <Form.Item className="p-t-15">
                   <Button
                     className="btn btn--radius-2 btn--blue"
@@ -438,14 +480,28 @@ function RegisterForm() {
       >
         <div>
           <h3>1. Applicable Subjects</h3>
-          <p>This warranty policy applies to all products purchased at Diamond Shop.</p>
+          <p>
+            This warranty policy applies to all products purchased at Diamond
+            Shop.
+          </p>
           <h3>2. Warranty Conditions</h3>
           <ul>
-            <li>All products must have a purchase receipt from Diamond Shop.</li>
+            <li>
+              All products must have a purchase receipt from Diamond Shop.
+            </li>
             <li>The product must be within the specified warranty period.</li>
-            <li>The product must have intact warranty seals and serial numbers, not torn or altered.</li>
-            <li>The product must not be damaged due to user error such as drops, impacts, or exposure to chemicals.</li>
-            <li>The store will warranty the entire product when the customer requests warranty service for the product.</li>
+            <li>
+              The product must have intact warranty seals and serial numbers,
+              not torn or altered.
+            </li>
+            <li>
+              The product must not be damaged due to user error such as drops,
+              impacts, or exposure to chemicals.
+            </li>
+            <li>
+              The store will warranty the entire product when the customer
+              requests warranty service for the product.
+            </li>
           </ul>
           <h3>3. Warranty Period</h3>
           <ul>
@@ -457,26 +513,49 @@ function RegisterForm() {
           <h3>4. Warranty Benefits</h3>
           <ul>
             <li>Free repair of technical defects of the product.</li>
-            <li>For products that cannot be repaired, Diamond Shop will replace them with an equivalent product or refund the money.</li>
+            <li>
+              For products that cannot be repaired, Diamond Shop will replace
+              them with an equivalent product or refund the money.
+            </li>
           </ul>
           <h3>5. Warranty Procedure</h3>
           <ol>
-            <li>Customers bring the product to the Diamond Shop along with the purchase receipt.</li>
-            <li>Diamond Shop staff will check and determine the warranty conditions.</li>
-            <li>If the product meets the warranty conditions, the staff will proceed with the warranty steps as per the regulations.</li>
+            <li>
+              Customers bring the product to the Diamond Shop along with the
+              purchase receipt.
+            </li>
+            <li>
+              Diamond Shop staff will check and determine the warranty
+              conditions.
+            </li>
+            <li>
+              If the product meets the warranty conditions, the staff will
+              proceed with the warranty steps as per the regulations.
+            </li>
           </ol>
           <h3>6. Warranty for Orders with Multiple Products</h3>
           <ul>
-            <li>For orders that include multiple products, all products in the order must be fully warranted according to this policy.</li>
-            <li>If one product in the order does not meet the warranty conditions, Diamond Shop will notify the customer and provide an appropriate solution.</li>
+            <li>
+              For orders that include multiple products, all products in the
+              order must be fully warranted according to this policy.
+            </li>
+            <li>
+              If one product in the order does not meet the warranty conditions,
+              Diamond Shop will notify the customer and provide an appropriate
+              solution.
+            </li>
           </ul>
           <h3>7. Contact</h3>
           <p>For any questions and warranty requests, please contact:</p>
           <address>
-            <strong>Diamond Shop</strong><br />
-            Address: Nha Van Hoa Sinh Vien<br />
-            Phone: (208) 746-2649<br />
-            Email: thediamondshop@gmail.com<br />
+            <strong>Diamond Shop</strong>
+            <br />
+            Address: Nha Van Hoa Sinh Vien
+            <br />
+            Phone: (208) 746-2649
+            <br />
+            Email: thediamondshop@gmail.com
+            <br />
           </address>
         </div>
       </Modal>

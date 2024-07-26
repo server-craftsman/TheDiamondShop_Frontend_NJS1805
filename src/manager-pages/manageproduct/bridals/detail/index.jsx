@@ -124,6 +124,13 @@ function ViewBridalDetailPage() {
     return <Spin size="large" />;
   }
 
+  const validatePrice = (rule, value) => {
+    if (value < 1) {
+      return Promise.reject('Price must be greater than 1');
+      }
+      return Promise.resolve();
+  }
+  
   return (
     <div className="Detail">
       <Descriptions title="Bridal Details">
@@ -421,8 +428,10 @@ function ViewBridalDetailPage() {
             <Input />
           </Form.Item>
           <Form.Item name="price" label="Price"
-          rules={[{ required: true, message: "Please input the price!" }]}>
-            <Input />
+          rules={[{ required: true, message: "Please input the price!" },
+            {validator: validatePrice},
+          ]}>
+            <InputNumber style={{width: "100%"}}/>
           </Form.Item>
           <Form.Item
             name="inventory"

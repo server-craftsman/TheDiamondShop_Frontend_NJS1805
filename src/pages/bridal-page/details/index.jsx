@@ -394,6 +394,13 @@ function BridalDetail() {
 
   const feedbackCount = feedbackBridal.length;
 
+  const handleScroll = () =>{
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
+    });
+  }
+  
   return (
     <>
       {/* <Modal
@@ -466,7 +473,7 @@ function BridalDetail() {
                     $
                     {Number(price)
                       .toFixed(2)
-                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
 
                   <div>
@@ -965,6 +972,7 @@ function BridalDetail() {
                                   }}
                                 >
                                   <Card
+                                  onClick = {handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "520px",

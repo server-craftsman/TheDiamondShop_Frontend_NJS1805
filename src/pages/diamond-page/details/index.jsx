@@ -285,6 +285,13 @@ const DiamondDetail = () => {
   };
   const feedbackCount = feedbackDiamond.length;
 
+  const handleScroll = () =>{
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
+    });
+  }
+
   return (
     <>
       {/* <Modal
@@ -380,7 +387,7 @@ const DiamondDetail = () => {
                     $
                     {Number(diamond.Price)
                       .toFixed(2)
-                      .replace(/\d(?=(\d{3})+\.)/g, "$&,")}
+                      .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
 
                   {/* <FormControl fullWidth variant="outlined" margin="normal">
@@ -784,6 +791,7 @@ const DiamondDetail = () => {
                                   }}
                                 >
                                   <Card
+                                  onClick = {handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "520px",

@@ -347,6 +347,13 @@ function ManageDiamondPage() {
     return false; // Prevent Upload component from uploading the file immediately
   };
   
+  const validatePrice = (rule, value) => {
+    if (value < 1) {
+      return Promise.reject('Price must be greater than 1');
+    }
+    return Promise.resolve();
+  };
+  
   const columns = [
     {
       title: "Diamond ID",
@@ -463,13 +470,23 @@ function ManageDiamondPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="price"
             label="Price"
             rules={[{ required: true, message: "Please input the price!" }]}
           >
             <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
+          </Form.Item> */}
+        <Form.Item
+          name="price"
+          label="Price"
+          rules={[
+          { required: true, message: 'Please input the price!' },
+          { validator: validatePrice },
+          ]}
+          >
+        <InputNumber style={{ width: '100%' }} />
+      </Form.Item>
           <Form.Item
             name="shape"
             label="Shape"
