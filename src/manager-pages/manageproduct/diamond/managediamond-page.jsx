@@ -547,6 +547,20 @@ function ManageDiamondPage() {
     return Promise.resolve();
   };
 
+  const validateStockNumber = (rule, value) => {
+    // Define a regular expression to match the format "D60057-01"
+    const regex = /^D\d{5}-\d{2}$/;
+
+    // Check if the value matches the pattern
+    if (!regex.test(value)) {
+      return Promise.reject(
+        'Stock Number must be in the format "D12345-67".'
+      );
+    }
+
+    return Promise.resolve();
+  };
+
   return (
     <>
       <h1>Diamond</h1>
@@ -779,6 +793,7 @@ function ManageDiamondPage() {
             rules={[
               { required: true, message: "Please input the stock Number!" },
               { validator: validateDiamondExist },
+              { validator: validateStockNumber },
             ]}
           >
             <Input />
