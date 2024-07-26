@@ -457,7 +457,7 @@ function HistoryOrderDetails() {
                   size="large"
                 />
               </Grid>
-              <Grid item xs={12} style={{backgroundColor: "#F2F2F2"}}>
+              <Grid item xs={12} style={{ backgroundColor: "#F2F2F2" }}>
                 <TextField
                   label="Your comment *"
                   value={feedback}
@@ -613,7 +613,7 @@ function HistoryOrderDetails() {
                   </Descriptions.Item>
                 </>
               )}
-              {detail.Product.Bridal && (
+              {/* {detail.Product.Bridal && detail.Product.Material && (
                 <>
                   <Descriptions.Item label="Bridal Style">
                     {detail.Product.Bridal.BridalStyle}
@@ -628,10 +628,10 @@ function HistoryOrderDetails() {
                     {detail.Product.Bridal.BrandName}
                   </Descriptions.Item>
                   <Descriptions.Item label="Material Name">
-                    {detail.Product.Bridal.MaterialName || "-"}
+                    {detail.Product.Material.MaterialName || "-"}
                   </Descriptions.Item>
                   <Descriptions.Item label="Ring Size Range">
-                    {detail.Product.Bridal.RingSize || "-"}
+                    {detail.Product.Material.RingSize || "-"}
                   </Descriptions.Item>
                   <Descriptions.Item label="Setting Type">
                     {detail.Product.Bridal.SettingType}
@@ -678,7 +678,74 @@ function HistoryOrderDetails() {
                     {detail.Product.Bridal.ReportNo || "-"}
                   </Descriptions.Item>
                 </>
+              )} */}
+              {detail.Product.Bridal && (
+                <>
+                  <Descriptions.Item label="Bridal Style">
+                    {detail.Product.Bridal.BridalStyle || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Name Bridal">
+                    {detail.Product.Bridal.NameBridal || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Category">
+                    {detail.Product.Bridal.Category || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Brand Name">
+                    {detail.Product.Bridal.BrandName || "-"}
+                  </Descriptions.Item>
+                  {/* <Descriptions.Item label="Material Name">
+                    {detail.Product.Material.MaterialName || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ring Size Range">
+                    {detail.Product.RingSize.RingSize || "-"}
+                  </Descriptions.Item> */}
+                  <Descriptions.Item label="Setting Type">
+                    {detail.Product.Bridal.SettingType || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Gender">
+                    {detail.Product.Bridal.Gender || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Weight">
+                    {detail.Product.Bridal.Weight || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Center Diamond">
+                    {detail.Product.Bridal.CenterDiamond || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Diamond Carat Range">
+                    {detail.Product.Bridal.DiamondCaratRange || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Carat Weight">
+                    {detail.Product.Bridal.TotalCaratWeight || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Diamond">
+                    {detail.Product.Bridal.TotalDiamond || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Description">
+                    {detail.Product.Bridal.Description || "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Price">
+                    {detail.Product.Bridal.Price !== null && detail.Product.Bridal.Price !== undefined ? detail.Product.Bridal.Price : "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Bridal">
+                    {detail.Product.Bridal.ImageBridal ? (
+                      <img src={detail.Product.Bridal.ImageBridal} alt="Bridal" width="100" />
+                    ) : (
+                      "-"
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Image Brand">
+                    {detail.Product.Bridal.ImageBrand ? (
+                      <img src={detail.Product.Bridal.ImageBrand} alt="Brand" width="100" />
+                    ) : (
+                      "-"
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Report Number">
+                    {detail.Product.Bridal.ReportNo || "-"}
+                  </Descriptions.Item>
+                </>
               )}
+
               {detail.Product.DiamondTimepieces && (
                 <>
                   <Descriptions.Item label="Timepieces Style">
@@ -793,94 +860,94 @@ function HistoryOrderDetails() {
             </Descriptions>
 
             {/* code display Green tick */}
-<Grid container spacing={2}>
-  {order.OrderDetails.map((detail, detailIndex) => (
-    <Grid item xs={12} key={detail.OrderDetailID} style={{ display: "flex", alignItems: "center" }}>
-      <span>
-        {detail.ProductName}
-        {feedbackStatus[detail.OrderDetailID] && (
-          <CheckCircleIcon style={{ color: "green", marginLeft: "8px" }} />
-        )}
-      </span>
+            <Grid container spacing={2}>
+              {order.OrderDetails.map((detail, detailIndex) => (
+                <Grid item xs={12} key={detail.OrderDetailID} style={{ display: "flex", alignItems: "center" }}>
+                  <span>
+                    {detail.ProductName}
+                    {feedbackStatus[detail.OrderDetailID] && (
+                      <CheckCircleIcon style={{ color: "green", marginLeft: "8px" }} />
+                    )}
+                  </span>
 
-      {order.OrderStatus === "Completed" && detailIndex === 0 && (
-        <Grid container spacing={2} alignItems="center" style={{ marginTop: "20px" }}>
-          <Grid item xs={6} style={{ textAlign: "left" }}>
-            <Link to={`/customer-view-warranty/${detail.Warranty.ReportNo}`} style={{ textDecoration: "none" }}>
-              <Button
-                variant="contained"
-                style={{
-                  backgroundColor: "#000",
-                  color: "#fff",
-                  padding: "10px 20px",
-                  borderRadius: "5px",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                  transition: "background-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = "#333")}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = "#000")}
-              >
-                <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
-              </Button>
-            </Link>
-          </Grid>
-        
-          <Grid item xs={6} style={{ textAlign: "left" }}>
-                <Button
-                  variant="contained"
-                  style={{
-                    backgroundColor: "#000",
-                    color: "#fff",
-                    padding: "10px 20px",
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    borderRadius: "5px",
-                  }}
-                  onClick={() => handleOpenModal(detail)}
-                >
-                  <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
-                </Button>
-              </Grid>
+                  {order.OrderStatus === "Completed" && detailIndex === 0 && (
+                    <Grid container spacing={2} alignItems="center" style={{ marginTop: "20px" }}>
+                      <Grid item xs={6} style={{ textAlign: "left" }}>
+                        <Link to={`/customer-view-warranty/${detail.Warranty.ReportNo}`} style={{ textDecoration: "none" }}>
+                          <Button
+                            variant="contained"
+                            style={{
+                              backgroundColor: "#000",
+                              color: "#fff",
+                              padding: "10px 20px",
+                              borderRadius: "5px",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                              transition: "background-color 0.3s ease",
+                            }}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = "#333")}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = "#000")}
+                          >
+                            <VisibilityIcon style={{ marginRight: "8px" }} /> Warranty Order
+                          </Button>
+                        </Link>
+                      </Grid>
 
-        </Grid>
-      )}
-    </Grid>
-  ))}
-</Grid>
+                      <Grid item xs={6} style={{ textAlign: "left" }}>
+                        <Button
+                          variant="contained"
+                          style={{
+                            backgroundColor: "#000",
+                            color: "#fff",
+                            padding: "10px 20px",
+                            fontSize: "1rem",
+                            fontWeight: "bold",
+                            borderRadius: "5px",
+                          }}
+                          onClick={() => handleOpenModal(detail)}
+                        >
+                          <FeedbackIcon style={{ marginRight: "8px" }} /> Order Feedback
+                        </Button>
+                      </Grid>
 
-  </Paper>
-))}
+                    </Grid>
+                  )}
+                </Grid>
+              ))}
+            </Grid>
 
-    </div>
+          </Paper>
+        ))}
 
-      {/* Snackbar for feedback submission message */ }
-  <Snackbar
-    open={snackbarOpen}
-    autoHideDuration={6000}
-    onClose={handleCloseSnackbar}
-    message={snackbarMessage}
-    ContentProps={{
-      style: {
-        fontSize: "1.5rem", // Adjust the font size as needed
-        backgroundColor: "#000", // Optional: Change background color
-        color: "#fff", // Optional: Change text color
-        textAlign: "center", // Align text to center
-        minWidth: "50%", // Set minimum width to avoid overflowing content
-        margin: "auto", // Center the snackbar horizontally
-      },
-    }}
-    action={
-      <IconButton
-        size="medium"
-        aria-label="close"
-        color="inherit"
-        onClick={handleCloseSnackbar}
-        style={{ position: "absolute", right: 10, top: 10 }}
-      >
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    }
-  />
+      </div>
+
+      {/* Snackbar for feedback submission message */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={snackbarMessage}
+        ContentProps={{
+          style: {
+            fontSize: "1.5rem", // Adjust the font size as needed
+            backgroundColor: "#000", // Optional: Change background color
+            color: "#fff", // Optional: Change text color
+            textAlign: "center", // Align text to center
+            minWidth: "50%", // Set minimum width to avoid overflowing content
+            margin: "auto", // Center the snackbar horizontally
+          },
+        }}
+        action={
+          <IconButton
+            size="medium"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseSnackbar}
+            style={{ position: "absolute", right: 10, top: 10 }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </div >
   );
 }

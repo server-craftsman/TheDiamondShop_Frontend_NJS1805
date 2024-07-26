@@ -129,23 +129,23 @@ function BridalDetail() {
     }
   }, [id, user]);
 
-  
+
   useEffect(() => {
     fetchBridalAccessoryDetails();
   }, []);
-  
+
   const fetchBridalAccessoryDetails = async () => {
     try {
       const response = await axios.get("http://localhost:8090/products/bridal-accessory");
       const accessoryDetails = response.data;
-  
+
       // Extract unique materials and sizes with IDs
       const materials = Array.from(new Map(accessoryDetails.map(item => [item.MaterialID, { MaterialID: item.MaterialID, MaterialName: item.MaterialName }])).values());
       const sizes = Array.from(new Map(accessoryDetails.map(item => [item.RingSizeID, { RingSizeID: item.RingSizeID, RingSize: item.RingSize }])).values());
-  
+
       setMaterialOptions(materials);
       setRingSizeOptions(sizes);
-  
+
       // Check if default values exist in fetched data
       if (materials.length > 0 && sizes.length > 0) {
         updatePrice(materials[0].MaterialName, sizes[0].RingSize);
@@ -154,13 +154,14 @@ function BridalDetail() {
       console.error("Error fetching ring accessory details:", error);
     }
   };
-  
+
+
   useEffect(() => {
     if (material && ringSize) {
       updatePrice(material, ringSize);
     }
   }, [material, ringSize]);
-  
+
   const updatePrice = async (selectedMaterial, selectedSize) => {
     try {
       const response = await axios.get("http://localhost:8090/products/bridal-accessory");
@@ -173,7 +174,8 @@ function BridalDetail() {
       console.error("Error fetching price:", error);
     }
   };
-  
+
+
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
 
@@ -274,20 +276,20 @@ function BridalDetail() {
     const alreadyInCart = cartItems.find(
       (item) => item.id === bridal.BridalID && item.type === "Bridal"
     );
-  
+
     if (!alreadyInCart) {
       // Find selected material and its ID
       const selectedMaterialOption = materialOptions.find(
         (option) => option.MaterialName === material
       );
       const materialID = selectedMaterialOption ? selectedMaterialOption.MaterialID : null;
-  
+
       // Find selected ring size and its ID
       const selectedRingSizeOption = ringSizeOptions.find(
         (option) => option.RingSize === ringSize
       );
       const ringSizeID = selectedRingSizeOption ? selectedRingSizeOption.RingSizeID : null;
-  
+
       // Create item to add to cart
       const itemToAdd = {
         id: bridal.BridalID,
@@ -302,7 +304,7 @@ function BridalDetail() {
         ringSize: ringSize,
         category: bridal.Category
       };
-  
+
       // Add item to cart
       addToCart(itemToAdd);
       setOpenModal(true);
@@ -310,10 +312,11 @@ function BridalDetail() {
       setWarningOpen(true);
     }
   };
-  
 
-  
-  
+
+
+
+
 
   const handleBuyNow = () => {
     handleAddToCart();
@@ -465,6 +468,7 @@ function BridalDetail() {
                         ))}
                       </Select>
                     </FormControl>
+
 
 
 
