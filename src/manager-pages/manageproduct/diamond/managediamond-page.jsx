@@ -549,12 +549,12 @@ function ManageDiamondPage() {
 
   const validateStockNumber = (rule, value) => {
     // Define a regular expression to match the format "D60057-01"
-    const regex = /^D\d{5}-\d{2}$/;
+    const regex = /^[A-Z]\d{5}-\d{2}$/;
 
     // Check if the value matches the pattern
     if (!regex.test(value)) {
       return Promise.reject(
-        'Stock Number must be in the format "D12345-67".'
+        'Stock Number must be in the format is: A capital letter followed by 5 digits separated by a hyphen "-" and 2 digits.EX: "D12345-67".'
       );
     }
 
