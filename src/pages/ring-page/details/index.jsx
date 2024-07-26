@@ -71,10 +71,11 @@ const RingDetail = () => {
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
 
-  const [material, setMaterial] = useState("");
-  const [ringSize, setSelectedSize] = useState("");
+  const [material, setMaterial] = useState("Platinum");
+  const [ringSize, setSelectedSize] = useState("5");
   const [materialOptions, setMaterialOptions] = useState([]);
   const [ringSizeOptions, setRingSizeOptions] = useState([]);
+  const [price, setPrice] = useState(5500);
 
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [feedbackRings, setFeedbackRings] = useState([]);
@@ -121,51 +122,94 @@ const RingDetail = () => {
     }
   }, [id, user]);
 
-  // Fetch material details
-  useEffect(() => {
-    const fetchMaterialDetails = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8090/products/material-details"
-        );
-        setMaterialOptions(response.data);
-        if (
-          !material ||
-          !response.data.some((option) => option.MaterialName === material)
-        ) {
-          setMaterial(
-            response.data.length > 0 ? response.data[0].MaterialName : ""
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching material details:", error);
-      }
-    };
-    fetchMaterialDetails();
-  }, []);
+  // // Fetch material details
+  // useEffect(() => {
+  //   const fetchMaterialDetails = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:8090/products/material-details"
+  //       );
+  //       setMaterialOptions(response.data);
+  //       if (
+  //         !material ||
+  //         !response.data.some((option) => option.MaterialName === material)
+  //       ) {
+  //         setMaterial(
+  //           response.data.length > 0 ? response.data[0].MaterialName : ""
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching material details:", error);
+  //     }
+  //   };
+  //   fetchMaterialDetails();
+  // }, []);
 
-  // Fetch ring size details
-  useEffect(() => {
-    const fetchRingSizeDetails = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8090/products/ring-size-details"
-        );
-        setRingSizeOptions(response.data);
-        if (
-          !ringSize ||
-          !response.data.some((option) => option.RingSize === ringSize)
-        ) {
-          setSelectedSize(
-            response.data.length > 0 ? response.data[0].RingSize : ""
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching ring size details:", error);
-      }
-    };
-    fetchRingSizeDetails();
-  }, []);
+  // // Fetch ring size details
+  // useEffect(() => {
+  //   const fetchRingSizeDetails = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:8090/products/ring-size-details"
+  //       );
+  //       setRingSizeOptions(response.data);
+  //       if (
+  //         !ringSize ||
+  //         !response.data.some((option) => option.RingSize === ringSize)
+  //       ) {
+  //         setSelectedSize(
+  //           response.data.length > 0 ? response.data[0].RingSize : ""
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching ring size details:", error);
+  //     }
+  //   };
+  //   fetchRingSizeDetails();
+  // }, []);
+
+  
+useEffect(() => {
+  fetchRingAccessoryDetails();
+}, []);
+
+const fetchRingAccessoryDetails = async () => {
+  try {
+    const response = await axios.get("http://localhost:8090/products/ring-accessory-details");
+    const accessoryDetails = response.data;
+    
+    // Extract unique materials and sizes
+    const materials = [...new Set(accessoryDetails.map(item => item.MaterialName))];
+    const sizes = [...new Set(accessoryDetails.map(item => item.RingSize))];
+
+    setMaterialOptions(materials);
+    setRingSizeOptions(sizes);
+
+    // Check if default values exist in fetched data
+      updatePrice("Platinum", "5");
+  } catch (error) {
+    console.error("Error fetching ring accessory details:", error);
+  }
+};
+
+useEffect(() => {
+  if (material && ringSize) {
+    updatePrice(material, ringSize);
+  }
+}, [material, ringSize]);
+
+const updatePrice = async (selectedMaterial, selectedSize) => {
+  try {
+    const response = await axios.get("http://localhost:8090/products/ring-accessory-details");
+    const accessoryDetails = response.data;
+    const selectedAccessory = accessoryDetails.find(
+      item => item.MaterialName === selectedMaterial && item.RingSize === selectedSize
+    );
+    setPrice(selectedAccessory ? selectedAccessory.Price : 5500);
+  } catch (error) {
+    console.error("Error fetching price:", error);
+  }
+};
 
   if (!ring) return <div>Loading...</div>;
 
@@ -434,7 +478,7 @@ const RingDetail = () => {
                     }}
                   >
                     $
-                    {Number(ring.Price)
+                    {Number(price)
                       .toFixed(2)
                       .replace(/\d(?=(\d{3})+\.)/g, "$&.")}
                   </Typography>
@@ -451,12 +495,12 @@ const RingDetail = () => {
                         value={material}
                         onChange={(e) => setMaterial(e.target.value)}
                       >
-                        {materialOptions.map((materialOption) => (
+                        {materialOptions.map((materialOption, index) => (
                           <MenuItem
-                            key={materialOption.MaterialID}
-                            value={materialOption.MaterialName}
+                          key={index}
+                          value={materialOption}
                           >
-                            {materialOption.MaterialName}
+                            {materialOption}
                           </MenuItem>
                         ))}
                       </Select>
@@ -473,12 +517,12 @@ const RingDetail = () => {
                         value={ringSize}
                         onChange={(e) => setSelectedSize(e.target.value)}
                       >
-                        {ringSizeOptions.map((ringSizeOption) => (
+                        {ringSizeOptions.map((ringSizeOption, index) => (
                           <MenuItem
-                            key={ringSizeOption.RingSizeID}
-                            value={ringSizeOption.RingSize}
+                            key={index}
+                            value={ringSizeOption}
                           >
-                            {ringSizeOption.RingSize}
+                            {ringSizeOption}
                           </MenuItem>
                         ))}
                       </Select>
@@ -486,69 +530,6 @@ const RingDetail = () => {
                   </div>
 
                   <div style={{ display: "flex" }}>
-                    {/* <Box mt={3}>
-                      <Button
-                        variant="outlined"
-                        onClick={handleMenuClick}
-                        fullWidth
-                        style={{
-                          color: "#FFFFFF",
-                          fontWeight: "bolder",
-                          backgroundColor: "#000000",
-                          fontSize: "1.3rem",
-                        }}
-                      >
-                        Select Ring Size
-                      </Button>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                        style={{ marginRight: "410px" }}
-                      >
-                        <Grid
-                          container
-                          spacing={0}
-                          marginTop={0.2}
-                          style={{ padding: "5px", marginRight: "50px" }}
-                        >
-                          {ringSizes.map((size) => (
-                            <Grid item key={size} xs={3} sm={3}>
-                              <Button
-                                variant={
-                                  ringSize === size ? "contained" : "outlined"
-                                }
-                                onClick={() => handleSizeSelect(size)}
-                                fullWidth
-                                style={{
-                                  color: ringSize === size ? "#fff" : "#000", // White text for contained, black text for outlined
-                                  backgroundColor:
-                                    ringSize === size ? "#000" : "#fff", // Black background for contained, white background for outlined
-                                  border:
-                                    ringSize === size
-                                      ? "none"
-                                      : "1px solid #000", // Black border for outlined
-                                  borderRadius: "0px", // Adjust border radius as needed
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {size}
-                              </Button>
-                            </Grid>
-                          ))}
-                        </Grid>
-                      </Menu>
-                      {ringSize && (
-                        <Typography
-                          variant="body1"
-                          mt={1}
-                          fontWeight={"bolder"}
-                        >
-                          Selected Size: {ringSize}
-                        </Typography>
-                      )}
-                    </Box> */}
-
                     <strong style={{ fontSize: "25px", fontWeight: "bold" }}>
                       <span style={{ fontSize: "25px", fontWeight: "bold" }}>
                         Ring size:{" "}
