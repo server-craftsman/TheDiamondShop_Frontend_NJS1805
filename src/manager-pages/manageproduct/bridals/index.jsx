@@ -8,6 +8,7 @@ import {
   Modal,
   notification,
   Upload,
+  Select,
 } from "antd";
 import { Link } from "react-router-dom";
 import { Button, colors } from "@mui/material";
@@ -61,12 +62,12 @@ function ManageBridalPage() {
     });
   };
 
-  const validatePrice = (rule, value) => {
-    if (value < 1) {
-      return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
-  }
+  // const validatePrice = (rule, value) => {
+  //   if (value < 1) {
+  //     return Promise.reject('Price must be greater than 1');
+  //     }
+  //     return Promise.resolve();
+  // }
   const columns = [
     {
       title: "Bridal Style",
@@ -155,8 +156,9 @@ function ManageBridalPage() {
             name="category"
             label="Category"
             rules={[{ required: true, message: "Please input the Category!" }]}
+            initialValue="Engagement Rings"
           >
-            <Input />
+            <Input disabled placeholder="Engagement Rings" />
           </Form.Item>
           <Form.Item
             name="brandName"
@@ -164,8 +166,9 @@ function ManageBridalPage() {
             rules={[
               { required: true, message: "Please input the Brand Name!" },
             ]}
+            initialValue="Overnight"
           >
-            <Input />
+            <Input disabled placeholder="Overnight" />
           </Form.Item>
           <Form.Item
             name="settingType"
@@ -174,14 +177,22 @@ function ManageBridalPage() {
               { required: true, message: "Please input the Setting Type!" },
             ]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Halo">Halo</Select.Option>
+              <Select.Option value="Three Stone">Three Stone</Select.Option>
+              <Select.Option value="Single Row">Single Row</Select.Option>
+              <Select.Option value="Multi Row">Multi Row</Select.Option>
+              <Select.Option value="Antique">Antique</Select.Option>
+              <Select.Option value="Bypass">Bypass</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="gender"
             label="Gender"
             rules={[{ required: true, message: "Please input the Gender!" }]}
+            initialValue="Womens"
           >
-            <Input />
+            <Input disabled placeholder="Womens" />
           </Form.Item>
           <Form.Item
             name="imageBridal"
@@ -195,10 +206,7 @@ function ManageBridalPage() {
             valuePropName="fileList"
             getValueFromEvent={(e) => e.fileList}
           >
-            <Upload 
-            listType="picture"
-            beforeUpload={() => false} 
-            maxCount={1}>
+            <Upload listType="picture" beforeUpload={() => false} maxCount={1}>
               <Button variant="contained" style={{ background: "#fff" }}>
                 <AddPhotoAlternateIcon
                   style={{ fontSize: "100px", color: "#000" }}
@@ -224,15 +232,16 @@ function ManageBridalPage() {
           <Form.Item
             name="centerDiamond"
             label="Center Diamond"
-            rules={[
-              { required: true, message: "Please input the center Diamond!" },
-            ]}
+            // rules={[
+            //   { required: true, message: "Please input the center Diamond!" },
+            // ]}
+            initialValue="Not Included"
           >
-            <Input />
+            <Input disabled placeholder="Not Included" />
           </Form.Item>
           <Form.Item
             name="diamondCaratRange"
-            label="Diamond Carat Range"
+            label="Diamond Carat Range (0,2 - 0,4)"
             rules={[
               {
                 required: true,
@@ -272,7 +281,7 @@ function ManageBridalPage() {
           >
             <Input />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             name="price"
             label="Price"
             rules={[{ required: true, message: "Please input the price!" },
@@ -280,7 +289,7 @@ function ManageBridalPage() {
             ]}
           >
             <InputNumber style={{width: "100%"}}/>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Add Bridals

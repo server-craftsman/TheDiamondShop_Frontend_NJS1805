@@ -12,6 +12,7 @@ import {
   Modal,
   notification,
   Upload,
+  Select,
 } from "antd";
 import { Link } from "react-router-dom";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -42,7 +43,11 @@ function ManageRingPage() {
     try {
       const imageData = await fileToBase64(values.imageRings[0]); // Pass the correct file object
       const imagebrand = await fileToBase64(values.imageBrand[0]);
-      const updatedValues = { ...values, imageRings: imageData, imageBrand: imagebrand };
+      const updatedValues = {
+        ...values,
+        imageRings: imageData,
+        imageBrand: imagebrand,
+      };
       await axios.post(
         "http://localhost:8090/products/add-diamond-rings",
         updatedValues
@@ -51,8 +56,8 @@ function ManageRingPage() {
       setIsAddRingVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       notification.success({
-        message: 'Success',
-        description: 'Diamond Ring added successfully!',
+        message: "Success",
+        description: "Diamond Ring added successfully!",
       });
     } catch (error) {
       console.error("Error adding diamond:", error);
@@ -70,10 +75,10 @@ function ManageRingPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
-  }
+      return Promise.reject("Price must be greater than 1");
+    }
+    return Promise.resolve();
+  };
 
   const columns = [
     {
@@ -117,14 +122,14 @@ function ManageRingPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-          <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>
+        <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>
       ),
     },
   ];
 
   return (
     <>
-    <h1>Diamond Ring</h1>
+      <h1>Diamond Ring</h1>
       <Button type="primary" onClick={() => setIsAddRingVisible(true)}>
         Add Ring
       </Button>
@@ -143,9 +148,7 @@ function ManageRingPage() {
             rules={[
               { required: true, message: "Please input the Ring Style!" },
             ]}
-          >
-            <Input />
-          </Form.Item>
+          ></Form.Item>
           <Form.Item
             name="nameRings"
             label="Name Rings"
@@ -160,7 +163,18 @@ function ManageRingPage() {
             label="Category"
             rules={[{ required: true, message: "Please input the category!" }]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Diamond Fashion Rings">
+                Diamond Fashion Rings
+              </Select.Option>
+              <Select.Option value="Women`s Wedding Bands">
+                Women`s Wedding Bands
+              </Select.Option>
+              <Select.Option value="Gemstone Fashion Rings">
+                Gemstone Fashion Rings
+              </Select.Option>
+              <Select.Option value="Rings">Rings</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="brandName"
@@ -169,7 +183,12 @@ function ManageRingPage() {
               { required: true, message: "Please input the brand Name!" },
             ]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Simon G">Simon G</Select.Option>
+              <Select.Option value="Allison Kaufman">
+                Allison Kaufman
+              </Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="centerGemstone"
@@ -178,7 +197,18 @@ function ManageRingPage() {
               { required: true, message: "Please input the center gemstone!" },
             ]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="NULL">NULL</Select.Option>
+              <Select.Option value="Yellow Diamond">
+                Yellow Diamond
+              </Select.Option>
+              <Select.Option value="Amethyst">Amethyst</Select.Option>
+              <Select.Option value="Ruby">Ruby</Select.Option>
+              <Select.Option value="Diamond">Diamond</Select.Option>
+              <Select.Option value="Blue Topaz">Blue Topaz</Select.Option>
+              <Select.Option value="Garnet">Garnet</Select.Option>
+              <Select.Option value="Tanzanite">Tanzanite</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="centerGemstoneShape"
@@ -189,8 +219,9 @@ function ManageRingPage() {
                 message: "Please input the center gemstone shape!",
               },
             ]}
+            initialValue="NULL"
           >
-            <Input />
+            <Input disabled placeholder="NULL" />
           </Form.Item>
           <Form.Item
             name="width"
@@ -202,49 +233,115 @@ function ManageRingPage() {
           <Form.Item
             name="centerDiamondDimension"
             label="Center Diamond Dimension"
-            rules={[{ required: true, message: "Please input the center Diamond Dimension!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Dimension!",
+              },
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="weight" label="Weight"
-            rules={[{ required: true, message: "Please input the weight!" }]}>
+          <Form.Item
+            name="weight"
+            label="Weight"
+            rules={[{ required: true, message: "Please input the weight!" }]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="gemstoneWeight" label="Gem stone Weight"
-           rules={[{ required: true, message: "Please input the gemstone Weight!" }]}>
+          <Form.Item
+            name="gemstoneWeight"
+            label="Gem stone Weight"
+            rules={[
+              { required: true, message: "Please input the gemstone Weight!" },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} precision={2} />
           </Form.Item>
-          <Form.Item name="centerDiamondColor" label="Center Diamond Color"
-           rules={[{ required: true, message: "Please input the center Diamond Color!" }]}>
-            <Input />
+          <Form.Item
+            name="centerDiamondColor"
+            label="Center Diamond Color"
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Color!",
+              },
+            ]}
+          >
+            <Select>
+              <Select.Option value="NULL">NULL</Select.Option>
+              <Select.Option value="G">G</Select.Option>
+            </Select>
           </Form.Item>
-          <Form.Item name="centerDiamondClarity" label="Center Diamond Clarity"
-           rules={[{ required: true, message: "Please input the center Diamond Clarity!" }]}>
-            <Input />
+          <Form.Item
+            name="centerDiamondClarity"
+            label="Center Diamond Clarity"
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Clarity!",
+              },
+            ]}
+          >
+            <Select>
+              <Select.Option value="NULL">NULL</Select.Option>
+              <Select.Option value="SI1">G</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="centerDiamondCaratWeight"
             label="Center Diamond CaratWeight"
-            rules={[{ required: true, message: "Please input the center Diamond Carat Weight!" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the center Diamond Carat Weight!",
+              },
+            ]}
+            initialValue="NULL"
           >
-            <InputNumber style={{ width: "100%" }} precision={2} />
+            <InputNumber
+              style={{ width: "100%" }}
+              precision={2}
+              disabled
+              placeholder="NULL"
+            />
           </Form.Item>
-          <Form.Item name="price" label="Price"
-           rules={[{ required: true, message: "Please input the price!" },
-            {validator: validatePrice},
-           ]}>
+          <Form.Item
+            name="price"
+            label="Price"
+            rules={[
+              { required: true, message: "Please input the price!" },
+              { validator: validatePrice },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="gender" label="Gender"
-           rules={[{ required: true, message: "Please input the gender!" }]}>
+          <Form.Item
+            name="gender"
+            label="Gender"
+            rules={[{ required: true, message: "Please input the gender!" }]}
+          >
+            <Select>
+              <Select.Option value="Womens">Womens</Select.Option>
+              <Select.Option value="Man">Man</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="fluorescence"
+            label="Fluorescence"
+            rules={[
+              { required: true, message: "Please input the fluorescence!" },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="fluorescence" label="Fluorescence"
-           rules={[{ required: true, message: "Please input the fluorescence!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description"
-           rules={[{ required: true, message: "Please input the description!" }]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: "Please input the description!" },
+            ]}
+          >
             <Input />
           </Form.Item>
           {/* <Form.Item name="imageRings" label="ImageRings"
