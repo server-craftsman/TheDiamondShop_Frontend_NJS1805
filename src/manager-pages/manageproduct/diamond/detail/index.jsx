@@ -500,6 +500,7 @@ function ViewDiamondDetailPage() {
     //setEditingDiamond(record); // Set the diamond to be edited
     setIsEditModalVisible(true); // Show the modal
     form.setFieldsValue({
+      diamondID: record.DiamondID,
       diamondOrigin: record.DiamondOrigin,
       caratWeight: record.CaratWeight,
       color: record.Color,
@@ -826,6 +827,16 @@ function ViewDiamondDetailPage() {
         ]}
       >
         <Form form={form} onFinish={handleUpdateDiamond} layout="vertical">
+        <Form.Item
+            name="diamondID"
+            label="Diamond ID"
+            rules={[
+              { required: true, message: "Please input the price!" },
+            ]}
+          >
+            <Input disabled />
+          </Form.Item>
+          
           <Form.Item
             name="diamondOrigin"
             label="Diamond Origin"
