@@ -68,11 +68,11 @@ function BridalDetail() {
   // const [materialDetails, setMaterialDetails] = useState([]);
   // const [ringSizeDetails, setRingSizeDetails] = useState([]);
 
-  const [material, setMaterial] = useState("Platinum");
-  const [ringSize, setSelectedSize] = useState("5");
+  const [material, setMaterial] = useState("");
+  const [ringSize, setSelectedSize] = useState("");
   const [materialOptions, setMaterialOptions] = useState([]);
   const [ringSizeOptions, setRingSizeOptions] = useState([]);
-  const [price, setPrice] = useState(5500);
+  const [price, setPrice] = useState('');
 
   // const [loadingRingSizes, setLoadingRingSizes] = useState(true);
 
@@ -129,14 +129,14 @@ function BridalDetail() {
     }
   }, [id, user]);
 
-
   useEffect(() => {
     fetchBridalAccessoryDetails();
   }, []);
 
   const fetchBridalAccessoryDetails = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/products/bridal-accessory");
+      // Update the URL with the dynamic ID
+      const response = await axios.get(`http://localhost:8090/products/bridal-accessory/${id}`);
       const accessoryDetails = response.data;
 
       // Extract unique materials and sizes with IDs
@@ -148,13 +148,14 @@ function BridalDetail() {
 
       // Check if default values exist in fetched data
       if (materials.length > 0 && sizes.length > 0) {
+        setMaterial(materials[0].MaterialName);
+        setSelectedSize(sizes[0].RingSize);
         updatePrice(materials[0].MaterialName, sizes[0].RingSize);
       }
     } catch (error) {
-      console.error("Error fetching ring accessory details:", error);
+      console.error("Error fetching bridal accessory details:", error);
     }
   };
-
 
   useEffect(() => {
     if (material && ringSize) {
@@ -164,12 +165,12 @@ function BridalDetail() {
 
   const updatePrice = async (selectedMaterial, selectedSize) => {
     try {
-      const response = await axios.get("http://localhost:8090/products/bridal-accessory");
+      const response = await axios.get(`http://localhost:8090/products/bridal-accessory/${id}`);
       const accessoryDetails = response.data;
       const selectedAccessory = accessoryDetails.find(
         item => item.MaterialName === selectedMaterial && item.RingSize === selectedSize
       );
-      setPrice(selectedAccessory ? selectedAccessory.Price : 5500);
+      setPrice(selectedAccessory ? selectedAccessory.Price : '');
     } catch (error) {
       console.error("Error fetching price:", error);
     }

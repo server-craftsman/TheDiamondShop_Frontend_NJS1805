@@ -71,11 +71,11 @@ const RingDetail = () => {
   const [openCertificate, setOpenCertificate] = useState(false);
   const [similarProducts, setSimilarProducts] = useState([]);
 
-  const [material, setMaterial] = useState("Platinum");
-  const [ringSize, setSelectedSize] = useState("5");
+  const [material, setMaterial] = useState("");
+  const [ringSize, setSelectedSize] = useState("");
   const [materialOptions, setMaterialOptions] = useState([]);
   const [ringSizeOptions, setRingSizeOptions] = useState([]);
-  const [price, setPrice] = useState(5500);
+  const [price, setPrice] = useState('');
 
   const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
   const [feedbackRings, setFeedbackRings] = useState([]);
@@ -122,66 +122,17 @@ const RingDetail = () => {
     }
   }, [id, user]);
 
-  // // Fetch material details
-  // useEffect(() => {
-  //   const fetchMaterialDetails = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://localhost:8090/products/material-details"
-  //       );
-  //       setMaterialOptions(response.data);
-  //       if (
-  //         !material ||
-  //         !response.data.some((option) => option.MaterialName === material)
-  //       ) {
-  //         setMaterial(
-  //           response.data.length > 0 ? response.data[0].MaterialName : ""
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching material details:", error);
-  //     }
-  //   };
-  //   fetchMaterialDetails();
-  // }, []);
-
-  // // Fetch ring size details
-  // useEffect(() => {
-  //   const fetchRingSizeDetails = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://localhost:8090/products/ring-size-details"
-  //       );
-  //       setRingSizeOptions(response.data);
-  //       if (
-  //         !ringSize ||
-  //         !response.data.some((option) => option.RingSize === ringSize)
-  //       ) {
-  //         setSelectedSize(
-  //           response.data.length > 0 ? response.data[0].RingSize : ""
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching ring size details:", error);
-  //     }
-  //   };
-  //   fetchRingSizeDetails();
-  // }, []);
-
-  
 useEffect(() => {
-  fetchRingAccessoryDetails();
+  fetchRingsAccessoryDetails();
 }, []);
 
-const fetchRingAccessoryDetails = async () => {
+const fetchRingsAccessoryDetails = async () => {
   try {
-    const response = await axios.get("http://localhost:8090/products/ring-accessory-details");
+    // Update the URL with the dynamic ID
+    const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
     const accessoryDetails = response.data;
-    
-    // Extract unique materials and sizes
-    // const materials = [...new Set(accessoryDetails.map(item => item.MaterialName))];
-    // const sizes = [...new Set(accessoryDetails.map(item => item.RingSize))];
 
+    // Extract unique materials and sizes with IDs
     const materials = Array.from(new Map(accessoryDetails.map(item => [item.MaterialID, { MaterialID: item.MaterialID, MaterialName: item.MaterialName }])).values());
     const sizes = Array.from(new Map(accessoryDetails.map(item => [item.RingSizeID, { RingSizeID: item.RingSizeID, RingSize: item.RingSize }])).values());
 
@@ -190,11 +141,12 @@ const fetchRingAccessoryDetails = async () => {
 
     // Check if default values exist in fetched data
     if (materials.length > 0 && sizes.length > 0) {
+      setMaterial(materials[0].MaterialName);
+      setSelectedSize(sizes[0].RingSize);
       updatePrice(materials[0].MaterialName, sizes[0].RingSize);
     }
-
   } catch (error) {
-    console.error("Error fetching ring accessory details:", error);
+    console.error("Error fetching bridal accessory details:", error);
   }
 };
 
@@ -206,12 +158,12 @@ useEffect(() => {
 
 const updatePrice = async (selectedMaterial, selectedSize) => {
   try {
-    const response = await axios.get("http://localhost:8090/products/ring-accessory-details");
+    const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
     const accessoryDetails = response.data;
     const selectedAccessory = accessoryDetails.find(
       item => item.MaterialName === selectedMaterial && item.RingSize === selectedSize
     );
-    setPrice(selectedAccessory ? selectedAccessory.Price : 5500);
+    setPrice(selectedAccessory ? selectedAccessory.Price : '');
   } catch (error) {
     console.error("Error fetching price:", error);
   }
