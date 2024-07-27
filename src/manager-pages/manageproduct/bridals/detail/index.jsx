@@ -69,6 +69,7 @@ function ViewBridalDetailPage() {
     setEditingBridal(record);
     setIsEditBridalVisible(true); // Show the modal
     form.setFieldsValue({
+      bridalID: record.BridalID,
       bridalStyle: record.BridalStyle,
       nameBridal: record.NameBridal,
       category: record.Category,
@@ -83,7 +84,6 @@ function ViewBridalDetailPage() {
       totalCaratweight: record.TotalCaratWeight,
       totalDiamond: record.TotalDiamond,
       description: record.Description,
-      price: record.Price,
       imageBridal: record.ImageBridal,
       imageBrand: record.ImageBrand,
       inventory: record.Inventory,
@@ -315,13 +315,23 @@ function ViewBridalDetailPage() {
           layout="vertical"
         >
           <Form.Item
+            name="bridalID"
+            label="Bridal ID"
+            rules={[
+              { required: true, message: "Please input the Bridal ID!" },
+            ]}
+          >
+            <Input disabled/>
+          </Form.Item>
+
+          <Form.Item
             name="bridalStyle"
             label="Bridal Style"
             rules={[
               { required: true, message: "Please input the Bridal Style!" },
             ]}
           >
-            <Input disabled />
+            <Input />
           </Form.Item>
           <Form.Item
             name="nameBridal"
@@ -427,12 +437,12 @@ function ViewBridalDetailPage() {
           rules={[{ required: true, message: "Please input the description!" }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Price"
+          {/* <Form.Item name="price" label="Price"
           rules={[{ required: true, message: "Please input the price!" },
             {validator: validatePrice},
           ]}>
             <InputNumber style={{width: "100%"}}/>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             name="inventory"
             label="Inventory"
