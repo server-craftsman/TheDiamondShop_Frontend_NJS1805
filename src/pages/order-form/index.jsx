@@ -409,13 +409,13 @@ const OrderForm = () => {
   // };
   const handlePaymentMethodChange = (e) => {
     const { name, value } = e.target;
-  
+
     setOrderData({
       ...orderData,
       [name]: value,
     });
   };
-  
+
   const handleModalClose = () => {
     setIsModalOpen(false);
     setOrderSubmitted(false); // options
@@ -454,36 +454,67 @@ const OrderForm = () => {
   //   }
 
   //======================================
+  // const handleInputChange = (e) => {
+  //   console.log("Event:", e);
+  //   const target = e.target;
+  //   console.log("Target:", target);
+
+  //   if (!target) {
+  //     console.error("Event target is undefined");
+  //     return;
+  //   }
+
+  //   const { name, value } = target;
+  //   console.log("Name:", name, "Value:", value);
+
+  //   if (name === "shippingMethod") {
+  //     const cost = value === "Standard" ? 5 : 10;
+  //     setShippingCost(cost);
+
+  //     let newTotalPrice =
+  //       initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
+  //     setTotalPrice(newTotalPrice.toFixed(2));
+  //   }
+  //   //=======================================
+
+  //   // Update orderData state
+  //   setOrderData({
+  //     ...orderData,
+  //     [name]: value,
+
+  //   });
+  // };
+
   const handleInputChange = (e) => {
     console.log("Event:", e);
     const target = e.target;
     console.log("Target:", target);
-  
+
     if (!target) {
       console.error("Event target is undefined");
       return;
     }
-  
+
     const { name, value } = target;
     console.log("Name:", name, "Value:", value);
-  
+
+    // Handle specific input changes (e.g., shipping method)
     if (name === "shippingMethod") {
       const cost = value === "Standard" ? 5 : 10;
       setShippingCost(cost);
-  
+
       let newTotalPrice =
         initialTotalPrice - (discountedPrice ? discountedPrice : 0) + cost;
       setTotalPrice(newTotalPrice.toFixed(2));
     }
-  //=======================================
 
     // Update orderData state
-    setOrderData({
-      ...orderData,
+    setOrderData((prevData) => ({
+      ...prevData,
       [name]: value,
-
-    });
+    }));
   };
+
 
   // const handleDeliveryAddressChange = (value) => {
   //   setOrderData({
@@ -533,11 +564,9 @@ const OrderForm = () => {
                   <TextField
                     label="First Name"
                     id="FirstName"
-                    name={orderData.FirstName}
+                    name="firstName"
                     value={orderData.firstName}
-                    onChange={(e) =>
-                      handleInputChange("firstName", e.target.value)
-                    }
+                    onChange={handleInputChange}
                     variant="outlined"
                     InputProps={{
                       sx: {
@@ -571,11 +600,9 @@ const OrderForm = () => {
                   <TextField
                     label="Last Name"
                     id="LastName"
-                    name={orderData.LastName}
+                    name="lastName"
                     value={orderData.lastName}
-                    onChange={(e) =>
-                      handleInputChange("lastName", e.target.value)
-                    }
+                    onChange={handleInputChange}
                     variant="outlined"
                     InputProps={{
                       sx: {
@@ -609,13 +636,11 @@ const OrderForm = () => {
                   <TextField
                     label="Phone Number"
                     id="PhoneNumber"
-                    name={orderData.PhoneNumber}
+                    name="phoneNumber"
                     type="tel"
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                     value={orderData.phoneNumber}
-                    onChange={(e) =>
-                      handleInputChange("phoneNumber", e.target.value)
-                    }
+                    onChange={handleInputChange}
                     variant="outlined"
                     InputProps={{
                       sx: {
@@ -647,35 +672,36 @@ const OrderForm = () => {
 
               <Grid item xs={12}>
                 <TextField
-                  name="Address"
+                  id="address"
+                  name="deliveryAddress"
                   label="Delivery Address"
                   fullWidth
-                  value={orderData.deliveryAddress}
+                  value={orderData.deliveryAddress || ''}
                   onChange={handleInputChange}
                   InputProps={{
-                      sx: {
-                        color: "#414141",
-                        background: "#F0F0F0",
-                        borderRadius: 8,
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#D3D3D3",
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#D3D3D3",
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: "#D3D3D3",
-                        },
+                    sx: {
+                      color: "#414141",
+                      background: "#F0F0F0",
+                      borderRadius: 8,
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#D3D3D3",
                       },
-                    }}
-                    InputLabelProps={{
-                      sx: {
-                        color: "#333",
-                        '&.Mui-focused': {
-                          color: "#D3D3D3",
-                        },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#D3D3D3",
                       },
-                    }}
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: "#D3D3D3",
+                      },
+                    },
+                  }}
+                  InputLabelProps={{
+                    sx: {
+                      color: "#333",
+                      '&.Mui-focused': {
+                        color: "#D3D3D3",
+                      },
+                    },
+                  }}
                 />
               </Grid>
 
