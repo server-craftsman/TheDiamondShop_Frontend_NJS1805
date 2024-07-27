@@ -314,10 +314,6 @@ function BridalDetail() {
   };
 
 
-
-
-
-
   const handleBuyNow = () => {
     handleAddToCart();
     navigate("/cart-page"); // Ensure the correct path

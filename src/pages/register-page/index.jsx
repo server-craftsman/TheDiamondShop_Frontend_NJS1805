@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./index.scss";
 import "../login-page/index";
 import logo from "../../assets/logo.png";
-
+import VerifyMessage from "./message/index";
 import {
   WarningOutlined,
   SmileOutlined,
@@ -73,7 +73,7 @@ function RegisterForm() {
       if (response.status === 200) {
         openNotification();
         setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = "/verify-message";
         }, 2000);
       }
     } catch (error) {

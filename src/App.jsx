@@ -94,6 +94,7 @@ import TakeWarranty from "./delivery-page/take-warranty";
 import ReturnWarranty from "./delivery-page/return-warranty";
 // ScrollToTop
 import ScrollToTop from "./ScrollToTop";
+import VerifyMessage from "./pages/register-page/message/index";
 
 function App() {
   const router = createBrowserRouter([
@@ -213,6 +214,10 @@ function App() {
           path: "/priceDiamond-page",
           element: <PriceDiamond />,
         },
+        {
+          path: "/verify-message",
+          element: <VerifyMessage />,
+        },
       ],
     },
     //========Manager pages==============//
@@ -296,6 +301,7 @@ function App() {
           path: "/feedback-create",
           element: <FeedbackForm />,
         },
+       
       ],
     },
     //=========Sale page========//
@@ -355,6 +361,7 @@ function App() {
           path: "/view-warranty/:reportNo",
           element: <ViewWarrantyByReportNo />,
         },
+        
       ],
     },
     //==============Delivery pages===============//
