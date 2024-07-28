@@ -122,52 +122,52 @@ const RingDetail = () => {
     }
   }, [id, user]);
 
-useEffect(() => {
-  fetchRingsAccessoryDetails();
-}, []);
+  useEffect(() => {
+    fetchRingsAccessoryDetails();
+  }, []);
 
-const fetchRingsAccessoryDetails = async () => {
-  try {
-    // Update the URL with the dynamic ID
-    const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
-    const accessoryDetails = response.data;
+  const fetchRingsAccessoryDetails = async () => {
+    try {
+      // Update the URL with the dynamic ID
+      const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
+      const accessoryDetails = response.data;
 
-    // Extract unique materials and sizes with IDs
-    const materials = Array.from(new Map(accessoryDetails.map(item => [item.MaterialID, { MaterialID: item.MaterialID, MaterialName: item.MaterialName }])).values());
-    const sizes = Array.from(new Map(accessoryDetails.map(item => [item.RingSizeID, { RingSizeID: item.RingSizeID, RingSize: item.RingSize }])).values());
+      // Extract unique materials and sizes with IDs
+      const materials = Array.from(new Map(accessoryDetails.map(item => [item.MaterialID, { MaterialID: item.MaterialID, MaterialName: item.MaterialName }])).values());
+      const sizes = Array.from(new Map(accessoryDetails.map(item => [item.RingSizeID, { RingSizeID: item.RingSizeID, RingSize: item.RingSize }])).values());
 
-    setMaterialOptions(materials);
-    setRingSizeOptions(sizes);
+      setMaterialOptions(materials);
+      setRingSizeOptions(sizes);
 
-    // Check if default values exist in fetched data
-    if (materials.length > 0 && sizes.length > 0) {
-      setMaterial(materials[0].MaterialName);
-      setSelectedSize(sizes[0].RingSize);
-      updatePrice(materials[0].MaterialName, sizes[0].RingSize);
+      // Check if default values exist in fetched data
+      if (materials.length > 0 && sizes.length > 0) {
+        setMaterial(materials[0].MaterialName);
+        setSelectedSize(sizes[0].RingSize);
+        updatePrice(materials[0].MaterialName, sizes[0].RingSize);
+      }
+    } catch (error) {
+      console.error("Error fetching bridal accessory details:", error);
     }
-  } catch (error) {
-    console.error("Error fetching bridal accessory details:", error);
-  }
-};
+  };
 
-useEffect(() => {
-  if (material && ringSize) {
-    updatePrice(material, ringSize);
-  }
-}, [material, ringSize]);
+  useEffect(() => {
+    if (material && ringSize) {
+      updatePrice(material, ringSize);
+    }
+  }, [material, ringSize]);
 
-const updatePrice = async (selectedMaterial, selectedSize) => {
-  try {
-    const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
-    const accessoryDetails = response.data;
-    const selectedAccessory = accessoryDetails.find(
-      item => item.MaterialName === selectedMaterial && item.RingSize === selectedSize
-    );
-    setPrice(selectedAccessory ? selectedAccessory.Price : '');
-  } catch (error) {
-    console.error("Error fetching price:", error);
-  }
-};
+  const updatePrice = async (selectedMaterial, selectedSize) => {
+    try {
+      const response = await axios.get(`http://localhost:8090/products/ring-accessory-details/${id}`);
+      const accessoryDetails = response.data;
+      const selectedAccessory = accessoryDetails.find(
+        item => item.MaterialName === selectedMaterial && item.RingSize === selectedSize
+      );
+      setPrice(selectedAccessory ? selectedAccessory.Price : '');
+    } catch (error) {
+      console.error("Error fetching price:", error);
+    }
+  };
 
   if (!ring) return <div>Loading...</div>;
 
@@ -358,7 +358,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
   };
   const feedbackCount = feedbackRings.length;
 
-  const handleScroll = () =>{
+  const handleScroll = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
@@ -441,49 +441,49 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                   </Typography>
 
 
-                    <FormControl
-                      fullWidth
-                      sx={{ m: 1, minWidth: 120 }}
-                      margin="normal"
+                  <FormControl
+                    fullWidth
+                    sx={{ m: 1, minWidth: 120 }}
+                    margin="normal"
+                  >
+                    <InputLabel id="material-label">Material</InputLabel>
+                    <Select
+                      labelId="material-label"
+                      value={material}
+                      onChange={(e) => setMaterial(e.target.value)}
                     >
-                      <InputLabel id="material-label">Material</InputLabel>
-                      <Select
-                        labelId="material-label"
-                        value={material}
-                        onChange={(e) => setMaterial(e.target.value)}
-                      >
-                        {materialOptions.map((materialOption) => (
-                          <MenuItem
+                      {materialOptions.map((materialOption) => (
+                        <MenuItem
                           key={materialOption.MaterialID}
                           value={materialOption.MaterialName}
-                          >
-                            {materialOption.MaterialName}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                        >
+                          {materialOption.MaterialName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
 
-                    <FormControl
-                      fullWidth
-                      sx={{ m: 1, minWidth: 120 }}
-                      margin="normal"
+                  <FormControl
+                    fullWidth
+                    sx={{ m: 1, minWidth: 120 }}
+                    margin="normal"
+                  >
+                    <InputLabel id="ring-size-label">Ring Size</InputLabel>
+                    <Select
+                      labelId="ring-size-label"
+                      value={ringSize}
+                      onChange={(e) => setSelectedSize(e.target.value)}
                     >
-                      <InputLabel id="ring-size-label">Ring Size</InputLabel>
-                      <Select
-                        labelId="ring-size-label"
-                        value={ringSize}
-                        onChange={(e) => setSelectedSize(e.target.value)}
-                      >
-                        {ringSizeOptions.map((ringSizeOption) => (
-                          <MenuItem
+                      {ringSizeOptions.map((ringSizeOption) => (
+                        <MenuItem
                           key={ringSizeOption.RingSizeID}
                           value={ringSizeOption.RingSize}
-                          >
-                            {ringSizeOption.RingSize}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                        >
+                          {ringSizeOption.RingSize}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
 
 
                   <div style={{ display: "flex" }}>
@@ -872,7 +872,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                                   }}
                                 >
                                   <Card
-                                  onClick = {handleScroll}
+                                    onClick={handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "520px",
@@ -894,12 +894,12 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1.2)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                       }
                                     />
                                     <CardContent
@@ -1102,7 +1102,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                       </Box>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    {/* <Grid item xs={12} md={6}>
                       <Box
                         sx={{
                           p: 4,
@@ -1218,7 +1218,7 @@ const updatePrice = async (selectedMaterial, selectedSize) => {
                           </Button>
                         </form>
                       </Box>
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                 </div>
               </TabPanel>

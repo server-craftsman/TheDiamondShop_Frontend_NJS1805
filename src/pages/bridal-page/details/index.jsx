@@ -1156,7 +1156,7 @@ function BridalDetail() {
                       </Box>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    {/* <Grid item xs={12} md={6}>
                       <Box
                         sx={{
                           p: 4,
@@ -1272,7 +1272,7 @@ function BridalDetail() {
                           </Button>
                         </form>
                       </Box>
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                 </div>
               </TabPanel>

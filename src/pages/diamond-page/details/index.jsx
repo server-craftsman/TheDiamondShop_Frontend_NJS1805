@@ -285,7 +285,7 @@ const DiamondDetail = () => {
   };
   const feedbackCount = feedbackDiamond.length;
 
-  const handleScroll = () =>{
+  const handleScroll = () => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
@@ -791,7 +791,7 @@ const DiamondDetail = () => {
                                   }}
                                 >
                                   <Card
-                                  onClick = {handleScroll}
+                                    onClick={handleScroll}
                                     style={{
                                       width: "100%",
                                       height: "520px",
@@ -813,12 +813,12 @@ const DiamondDetail = () => {
                                           "transform 0.3s ease-in-out",
                                       }}
                                       onMouseEnter={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1.2)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1.2)")
                                       }
                                       onMouseLeave={(e) =>
-                                        (e.currentTarget.style.transform =
-                                          "scale(1)")
+                                      (e.currentTarget.style.transform =
+                                        "scale(1)")
                                       }
                                     />
                                     <CardContent
@@ -1011,7 +1011,7 @@ const DiamondDetail = () => {
                       </Box>
                     </Grid>
 
-                    <Grid item xs={12} md={6}>
+                    {/* <Grid item xs={12} md={6}>
                       <Box
                         sx={{
                           p: 4,
@@ -1127,7 +1127,7 @@ const DiamondDetail = () => {
                           </Button>
                         </form>
                       </Box>
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                 </div>
               </TabPanel>
