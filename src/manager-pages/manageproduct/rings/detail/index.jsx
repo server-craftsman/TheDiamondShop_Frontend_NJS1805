@@ -578,8 +578,8 @@ function ViewRingDetailPage() {
   const validatePrice = (rule, value) => {
     if (value < 1) {
       return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
+    }
+    return Promise.resolve();
   }
 
   const handleEditRings = (record) => {
@@ -980,7 +980,7 @@ function ViewRingDetailPage() {
             name="price"
             label="Price"
             rules={[{ required: true, message: "Please input the price!" },
-              {validator: validatePrice}
+            { validator: validatePrice }
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
