@@ -1,0 +1,70 @@
+CREATE TABLE DiamondRings (
+    DiamondRingsID INT IDENTITY(1,1) PRIMARY KEY,
+    RingStyle VARCHAR(50),
+    NameRings VARCHAR(50) NOT NULL,
+    Category VARCHAR(50),
+    BrandName VARCHAR(50),
+    Material VARCHAR(50),
+    CenterGemstone VARCHAR(50),
+    CenterGemstoneShape VARCHAR(50),
+    Width DECIMAL(10, 2),
+    CenterDiamondDimension INT,
+    Weight DECIMAL(10, 2),
+    GemstoneWeight DECIMAL(5, 2),
+    CenterDiamondColor VARCHAR(50),
+    CenterDiamondClarity VARCHAR(50),
+    CenterDiamondCaratWeight DECIMAL(5, 2),
+    RingSize DECIMAL(10, 2),
+    Gender VARCHAR(50),
+    Fluorescence VARCHAR(50),
+    Description VARCHAR(MAX),
+    ImageRings VARCHAR(MAX),
+    ImageBrand VARCHAR(MAX),
+    Inventory INT
+);
+
+-- Tạo bảng Material
+CREATE TABLE Material (
+    MaterialID INT IDENTITY(1,1) PRIMARY KEY,
+    MaterialName VARCHAR(50)
+);
+
+-- Tạo bảng RingSize
+CREATE TABLE RingSize (
+    RingSizeID INT IDENTITY(1,1) PRIMARY KEY,
+    RingSize DECIMAL(10, 2)
+);
+
+-- Tạo bảng RingsPrice
+CREATE TABLE RingsPrice (
+    PriceID INT IDENTITY(1,1) PRIMARY KEY,
+    Price DECIMAL(18, 2)
+);
+
+-- Tạo bảng BridalAccessory
+CREATE TABLE RingsAccessory (
+    DiamondRingsID INT,
+    MaterialID INT,
+    RingSizeID INT,
+    PriceID INT,
+    FOREIGN KEY (DiamondRingsID) REFERENCES DiamondRings(DiamondRingsID),
+    FOREIGN KEY (MaterialID) REFERENCES Material(MaterialID),
+    FOREIGN KEY (RingSizeID) REFERENCES RingSize(RingSizeID),
+    FOREIGN KEY (PriceID) REFERENCES RingsPrice(PriceID)
+);
+
+
+-- Chèn dữ liệu vào bảng Material
+INSERT INTO Material (MaterialName)
+VALUES 
+('Platinum'), 
+('14K White Gold'), 
+('18K White Gold'), 
+('14K Yellow Gold'), 
+('18K Yellow Gold');
+
+-- Chèn dữ liệu vào bảng RingSize
+INSERT INTO RingSize (RingSize)
+VALUES 
+(5.00), (5.25), (5.50), (5.75), (6.00), (6.25), 
+(6.50), (6.75), (7.00), (7.25), (7.50), (7.75), (8.00);

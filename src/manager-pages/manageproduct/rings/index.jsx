@@ -1,66 +1,107 @@
-//import React from 'react'
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Layout,
-  Menu,
-  theme,
-  Table,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  notification,
-  Upload,
-  Select,
-} from "antd";
+import { Layout, Table, Form, Input, InputNumber, Modal, notification, Upload, Select } from "antd";
 import { Link } from "react-router-dom";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Button, colors } from "@mui/material";
 
+const { Option } = Select;
+
 function ManageRingPage() {
   const [rings, setRings] = useState([]);
-  //const [isModalVisible, setIsModalVisible] = useState(false);
+  const [materials, setMaterials] = useState([]);
+  const [ringSizes, setRingSizes] = useState([]);
   const [isAddRingVisible, setIsAddRingVisible] = useState(false);
   const [form] = Form.useForm();
-  // const [editingDiamond, setEditingDiamond] = useState(null); // To store the diamond being edited
 
   useEffect(() => {
     fetchData();
+    fetchMaterialDetails();
+    fetchRingSizeDetails();
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8090/products/diamond-rings"
-      );
+      const response = await axios.get("http://localhost:8090/products/diamond-rings");
       setRings(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+  const fetchMaterialDetails = async () => {
+    try {
+      const response = await axios.get("http://localhost:8090/products/material-details");
+      setMaterials(response.data);
+    } catch (error) {
+      console.error("Error fetching material details:", error);
+    }
+  };
+
+  const fetchRingSizeDetails = async () => {
+    try {
+      const response = await axios.get("http://localhost:8090/products/ring-size-details");
+      setRingSizes(response.data);
+    } catch (error) {
+      console.error("Error fetching ring size details:", error);
+    }
+  };
+
   const handleAddRings = async (values) => {
     try {
-      const imageData = await fileToBase64(values.imageRings[0]); // Pass the correct file object
-      const imagebrand = await fileToBase64(values.imageBrand[0]);
+      console.log("Form Values:", values);
+
+      // Validate imageRings
+      if (!values.imageRings || !values.imageRings.fileList || values.imageRings.fileList.length === 0) {
+        notification.error({
+          message: "Error",
+          description: "Rings image file is required.",
+        });
+        return;
+      }
+
+      // Validate imageBrand
+      if (!values.imageBrand || !values.imageBrand.fileList || values.imageBrand.fileList.length === 0) {
+        notification.error({
+          message: "Error",
+          description: "Brand image file is required.",
+        });
+        return;
+      }
+
+      // Convert image files to base64
+      const imageData = await fileToBase64(values.imageRings.fileList[0].originFileObj);
+      const imageBrand = await fileToBase64(values.imageBrand.fileList[0].originFileObj);
+
       const updatedValues = {
         ...values,
-        imageRings: imageData,
-        imageBrand: imagebrand,
+        MaterialID: values.Material,
+        RingSizeID: values.RingSize,
+        ImageRings: imageData,
+        ImageBrand: imageBrand,
       };
-      await axios.post(
-        "http://localhost:8090/products/add-diamond-rings",
-        updatedValues
-      );
-      fetchData(); // Refresh the list
-      setIsAddRingVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-      notification.success({
-        message: "Success",
-        description: "Diamond Ring added successfully!",
-      });
+
+      console.log("Updated Values:", updatedValues);
+
+      const response = await axios.post("http://localhost:8090/products/add-diamond-ring", updatedValues);
+
+      if (response.status === 200) {
+        fetchData();
+        setIsAddRingVisible(false);
+        form.resetFields();
+        notification.success({
+          message: "Success",
+          description: "Diamond Ring added successfully!",
+        });
+      } else {
+        throw new Error(`Failed with status code ${response.status}`);
+      }
     } catch (error) {
-      console.error("Error adding diamond:", error);
+      console.error("Error adding diamond ring:", error);
+      notification.error({
+        message: "Error",
+        description: error.message || "Failed to add diamond ring.",
+      });
     }
   };
 
@@ -69,13 +110,20 @@ function ManageRingPage() {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
-      reader.readAsDataURL(file.originFileObj); // Ensure you're accessing originFileObj
+      reader.readAsDataURL(file);
     });
   };
 
-  const validatePrice = (rule, value) => {
-    if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+  const validateNumber = (message) => (rule, value) => {
+    if (value <= 0) {
+      return Promise.reject(message);
+    }
+    return Promise.resolve();
+  };
+
+  const validateStringLength = (maxLength) => (rule, value) => {
+    if (value && value.length > maxLength) {
+      return Promise.reject(`Must be ${maxLength} characters or less`);
     }
     return Promise.resolve();
   };
@@ -87,7 +135,7 @@ function ManageRingPage() {
       key: "RingStyle",
     },
     {
-      title: "NameRings",
+      title: "Name Rings",
       dataIndex: "NameRings",
       key: "NameRings",
     },
@@ -97,7 +145,7 @@ function ManageRingPage() {
       key: "Category",
     },
     {
-      title: "BrandName",
+      title: "Brand Name",
       dataIndex: "BrandName",
       key: "BrandName",
     },
@@ -111,19 +159,13 @@ function ManageRingPage() {
       dataIndex: "ImageRings",
       key: "ImageRings",
       render: (text, record) => (
-        <img
-          src={record.ImageRings}
-          alt="Rings"
-          style={{ width: "100px", height: "auto" }}
-        />
+        <img src={record.ImageRings} alt="Rings" style={{ width: "100px", height: "auto" }} />
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (text, record) => (
-        <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>
-      ),
+      render: (text, record) => <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>,
     },
   ];
 
@@ -143,270 +185,151 @@ function ManageRingPage() {
       >
         <Form form={form} layout="vertical" onFinish={handleAddRings}>
           <Form.Item
-            name="ringStyle"
+            name="RingStyle"
             label="Ring Style"
             rules={[
               { required: true, message: "Please input the Ring Style!" },
+              { validator: validateStringLength(50) },
             ]}
-          ></Form.Item>
+          >
+            <Input />
+          </Form.Item>
           <Form.Item
-            name="nameRings"
+            name="NameRings"
             label="Name Rings"
             rules={[
               { required: true, message: "Please input the name Rings!" },
+              { validator: validateStringLength(50) },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="category"
+            name="Category"
             label="Category"
-            rules={[{ required: true, message: "Please input the category!" }]}
+            rules={[
+              { required: true, message: "Please input the category!" },
+              { validator: validateStringLength(50) },
+            ]}
           >
             <Select>
-              <Select.Option value="Diamond Fashion Rings">
-                Diamond Fashion Rings
-              </Select.Option>
-              <Select.Option value="Women`s Wedding Bands">
-                Women`s Wedding Bands
-              </Select.Option>
-              <Select.Option value="Gemstone Fashion Rings">
-                Gemstone Fashion Rings
-              </Select.Option>
-              <Select.Option value="Rings">Rings</Select.Option>
+              <Option value="Diamond Fashion Rings">Diamond Fashion Rings</Option>
+              <Option value="Women`s Wedding Bands">Women`s Wedding Bands</Option>
+              <Option value="Gemstone Fashion Rings">Gemstone Fashion Rings</Option>
+              <Option value="Rings">Rings</Option>
             </Select>
           </Form.Item>
           <Form.Item
-            name="brandName"
-            label="BrandName"
+            name="BrandName"
+            label="Brand Name"
             rules={[
               { required: true, message: "Please input the brand Name!" },
+              { validator: validateStringLength(50) },
             ]}
           >
             <Select>
-              <Select.Option value="Simon G">Simon G</Select.Option>
-              <Select.Option value="Allison Kaufman">
-                Allison Kaufman
-              </Select.Option>
+              <Option value="Simon G">Simon G</Option>
+              <Option value="Allison Kaufman">Allison Kaufman</Option>
             </Select>
           </Form.Item>
           <Form.Item
-            name="centerGemstone"
-            label="CenterGemstone"
+            name="Material"
+            label="Material"
+            rules={[
+              { required: true, message: "Please input the material!" },
+              { validator: validateStringLength(50) },
+            ]}
+          >
+            <Select>
+              {materials.map((material) => (
+                <Option key={material.MaterialID} value={material.MaterialID}>
+                  {material.MaterialName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="CenterGemstone"
+            label="Center Gemstone"
             rules={[
               { required: true, message: "Please input the center gemstone!" },
+              { validator: validateStringLength(50) },
             ]}
           >
             <Select>
-              <Select.Option value="NULL">NULL</Select.Option>
-              <Select.Option value="Yellow Diamond">
-                Yellow Diamond
-              </Select.Option>
-              <Select.Option value="Amethyst">Amethyst</Select.Option>
-              <Select.Option value="Ruby">Ruby</Select.Option>
-              <Select.Option value="Diamond">Diamond</Select.Option>
-              <Select.Option value="Blue Topaz">Blue Topaz</Select.Option>
-              <Select.Option value="Garnet">Garnet</Select.Option>
-              <Select.Option value="Tanzanite">Tanzanite</Select.Option>
+              <Option value="NULL">NULL</Option>
+              <Option value="Yellow Diamond">Yellow Diamond</Option>
+              <Option value="Amethyst">Amethyst</Option>
+              <Option value="Ruby">Ruby</Option>
+              <Option value="Diamond">Diamond</Option>
+              <Option value="Blue Topaz">Blue Topaz</Option>
+              <Option value="Garnet">Garnet</Option>
+              <Option value="Tanzanite">Tanzanite</Option>
             </Select>
           </Form.Item>
           <Form.Item
-            name="centerGemstoneShape"
-            label="CenterGemstoneShape"
+            name="CenterGemstoneShape"
+            label="Center Gemstone Shape"
             rules={[
-              {
-                required: true,
-                message: "Please input the center gemstone shape!",
-              },
-            ]}
-            initialValue="NULL"
-          >
-            <Input disabled placeholder="NULL" />
-          </Form.Item>
-          <Form.Item
-            name="width"
-            label="Width"
-            rules={[{ required: true, message: "Please input the width!" }]}
-          >
-            <InputNumber style={{ width: "100%" }} precision={2} />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondDimension"
-            label="Center Diamond Dimension"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Dimension!",
-              },
+              { required: true, message: "Please input the center gemstone shape!" },
+              { validator: validateStringLength(50) },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <Input />
           </Form.Item>
           <Form.Item
-            name="weight"
-            label="Weight"
-            rules={[{ required: true, message: "Please input the weight!" }]}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="gemstoneWeight"
-            label="Gem stone Weight"
-            rules={[
-              { required: true, message: "Please input the gemstone Weight!" },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} precision={2} />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondColor"
-            label="Center Diamond Color"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Color!",
-              },
-            ]}
+            name="RingSize"
+            label="Ring Size"
+            rules={[{ required: true, message: "Please select the ring size!" }]}
           >
             <Select>
-              <Select.Option value="NULL">NULL</Select.Option>
-              <Select.Option value="G">G</Select.Option>
+              {ringSizes.map((ringSize) => (
+                <Option key={ringSize.RingSizeID} value={ringSize.RingSizeID}>
+                  {ringSize.RingSize}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item
-            name="centerDiamondClarity"
-            label="Center Diamond Clarity"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Clarity!",
-              },
-            ]}
-          >
-            <Select>
-              <Select.Option value="NULL">NULL</Select.Option>
-              <Select.Option value="SI1">G</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondCaratWeight"
-            label="Center Diamond CaratWeight"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Carat Weight!",
-              },
-            ]}
-            initialValue="NULL"
-          >
-            <InputNumber
-              style={{ width: "100%" }}
-              precision={2}
-              disabled
-              placeholder="NULL"
-            />
-          </Form.Item>
-          <Form.Item
-            name="price"
+            name="Price"
             label="Price"
             rules={[
               { required: true, message: "Please input the price!" },
-              { validator: validatePrice },
+              { type: "number", min: 1, message: "Price must be greater than zero" },
+              { validator: validateNumber("Price must be greater than zero") },
             ]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber min={1} />
           </Form.Item>
-          <Form.Item
-            name="gender"
-            label="Gender"
-            rules={[{ required: true, message: "Please input the gender!" }]}
-          >
-            <Select>
-              <Select.Option value="Womens">Womens</Select.Option>
-              <Select.Option value="Man">Man</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="fluorescence"
-            label="Fluorescence"
-            rules={[
-              { required: true, message: "Please input the fluorescence!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              { required: true, message: "Please input the description!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          {/* <Form.Item name="imageRings" label="ImageRings"
-           rules={[{ required: true, message: "Please input the image Rings!" }]}>
-            <Input />
-          </Form.Item> */}
           <Form.Item
             name="imageRings"
             label="Image Rings"
-            rules={[
-              {
-                required: true,
-                message: "Please upload the Image Rings!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please upload the image of the rings!" }]}
             valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
           >
-            <Upload beforeUpload={() => false} maxCount={1}>
-              <Button variant="contained" style={{ background: "#fff" }}>
-                <AddPhotoAlternateIcon
-                  style={{ fontSize: "100px", color: "#000" }}
-                />
-              </Button>
+            <Upload
+              listType="picture"
+              beforeUpload={() => false} // Prevent automatic upload
+              accept="image/*"
+            >
+              <Button icon={<AddPhotoAlternateIcon />}>Upload</Button>
             </Upload>
-            {form.getFieldValue("imageRings") &&
-              form.getFieldValue("imageRings")[0] && (
-                <img
-                  src={form.getFieldValue("imageRings")[0].preview}
-                  alt="Uploaded Rings"
-                  style={{ width: "450px", height: "auto", marginTop: "10px" }}
-                />
-              )}
           </Form.Item>
-          {/* <Form.Item name="imageBrand" label="ImageBrand"
-           rules={[{ required: true, message: "Please input the image Brand!" }]}>
-            <Input />
-          </Form.Item> */}
           <Form.Item
             name="imageBrand"
             label="Image Brand"
-            rules={[
-              {
-                required: true,
-                message: "Please upload the Image Brand!",
-              },
-            ]}
+            rules={[{ required: true, message: "Please upload the image of the brand!" }]}
             valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
           >
-            <Upload beforeUpload={() => false} maxCount={1}>
-              <Button variant="contained" style={{ background: "#fff" }}>
-                <AddPhotoAlternateIcon
-                  style={{ fontSize: "100px", color: "#000" }}
-                />
-              </Button>
+            <Upload
+              listType="picture"
+              beforeUpload={() => false} // Prevent automatic upload
+              accept="image/*"
+            >
+              <Button icon={<AddPhotoAlternateIcon />}>Upload</Button>
             </Upload>
-            {form.getFieldValue("imageBrand") &&
-              form.getFieldValue("imageBrand")[0] && (
-                <img
-                  src={form.getFieldValue("imageBrand")[0].preview}
-                  alt="Uploaded Brand"
-                  style={{ width: "450px", height: "auto", marginTop: "10px" }}
-                />
-              )}
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">

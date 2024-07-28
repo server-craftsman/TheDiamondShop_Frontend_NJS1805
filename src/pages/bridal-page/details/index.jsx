@@ -91,6 +91,7 @@ function BridalDetail() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
+
   // useEffect để fetch dữ liệu Bridal và Feedback
   useEffect(() => {
     axios
@@ -175,7 +176,6 @@ function BridalDetail() {
       console.error("Error fetching price:", error);
     }
   };
-
 
   const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
@@ -351,6 +351,8 @@ function BridalDetail() {
       behavior: 'smooth' // Tùy chọn 'smooth' sẽ cuộn một cách mượt mà
     });
   }
+
+
 
   return (
     <>
