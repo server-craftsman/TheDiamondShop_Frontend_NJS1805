@@ -139,6 +139,25 @@ function RegisterForm() {
     setIsModalVisible(false);
   };
 
+  //==============================Validate============================//
+  const validateEmail = (rule, value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return Promise.reject("Please enter a valid email address");
+    }
+    return Promise.resolve();
+  };
+
+  const validatePhoneNumber = (rule, value) => {
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(value)) {
+      return Promise.reject("Please enter a valid phone number (10 digits)");
+    }
+    return Promise.resolve();
+  };
+
+  //==============================Validate============================//
+
   return (
     <div className="register-form">
       {contextHolder}
@@ -164,7 +183,7 @@ function RegisterForm() {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="First Name" />
                   </Form.Item>
 
                   <Form.Item
@@ -178,7 +197,7 @@ function RegisterForm() {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Last Name" />
                   </Form.Item>
                 </Row>
 
@@ -223,9 +242,10 @@ function RegisterForm() {
                       message: "Please input your email!",
                       type: "email",
                     },
+                    { validator: validateEmail },
                   ]}
                 >
-                  <Input />
+                  <Input placeholder="abc@gmail.com" />
                 </Form.Item>
 
                 <Form.Item
@@ -236,9 +256,11 @@ function RegisterForm() {
                       required: true,
                       message: "Please input your phone number!",
                     },
+
+                    { validator: validatePhoneNumber },
                   ]}
                 >
-                  <Input />
+                  <Input placeholder="0946xxx636" />
                 </Form.Item>
 
                 <Form.Item
@@ -248,7 +270,7 @@ function RegisterForm() {
                     { required: true, message: "Please input your address!" },
                   ]}
                 >
-                  <Input />
+                  <Input placeholder="Street abc, city Y" />
                 </Form.Item>
                 <Row>
                   <Form.Item
@@ -259,7 +281,7 @@ function RegisterForm() {
                       { required: true, message: "Please input your country!" },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Your country" />
                   </Form.Item>
 
                   <Form.Item
@@ -270,7 +292,7 @@ function RegisterForm() {
                       { required: true, message: "Please input your city!" },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Your city" />
                   </Form.Item>
                 </Row>
 
@@ -286,7 +308,7 @@ function RegisterForm() {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Your province" />
                   </Form.Item>
 
                   <Form.Item
@@ -300,7 +322,7 @@ function RegisterForm() {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input placeholder="Your postal code" />
                   </Form.Item>
                 </Row>
 
@@ -354,6 +376,7 @@ function RegisterForm() {
                     ]}
                   >
                     <Input.Password
+                      placeholder="Password"
                       type={showPassword ? "text" : "password"}
                       iconRender={(visible) =>
                         visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
@@ -386,6 +409,7 @@ function RegisterForm() {
                     ]}
                   >
                     <Input.Password
+                      placeholder="Confirm Password"
                       type={showConfirmPassword ? "text" : "Password"}
                       iconRender={(visible) =>
                         visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />

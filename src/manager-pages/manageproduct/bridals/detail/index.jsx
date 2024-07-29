@@ -16,6 +16,7 @@ function ViewBridalDetailPage() {
   const [loading, setLoading] = useState(true);
   const [materials, setMaterials] = useState([]);
   const [ringSizes, setRingSizes] = useState([]);
+  const [ringPrice, setRingPrice] = useState([]);
   const [isEditBridalVisible, setIsEditBridalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingBridal, setEditingBridal] = useState(null);
@@ -32,11 +33,17 @@ function ViewBridalDetailPage() {
       const brialDetailResponse = await axios.get(`http://localhost:8090/products/bridals/${id}`);
       setBridalDetail(brialDetailResponse.data);
 
-      const materialsResponse = await axios.get('http://localhost:8090/products/material-details');
+      const materialsResponse = await axios.get(`http://localhost:8090/products/bridal-material/${id}`);
       setMaterials(materialsResponse.data);
 
-      const ringSizesResponse = await axios.get('http://localhost:8090/products/ring-size-details');
+      const ringSizesResponse = await axios.get(`http://localhost:8090/products/bridal-size/${id}`);
       setRingSizes(ringSizesResponse.data);
+
+      const ringPriceResponse = await axios.get(
+        `http://localhost:8090/products/bridal-prices/${id}`
+      );
+      setRingPrice(ringPriceResponse.data);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -172,7 +179,14 @@ function ViewBridalDetailPage() {
           </div>
         </Descriptions.Item>
         <Descriptions.Item label="Price">
-          {bridalDetail?.Price}
+          {/* {bridalDetail?.Price} */}
+          <div className="ring-price-container">
+            {ringPrice.map((price) => (
+              <div key={price.PriceID} className="ring-price-item">
+                {price.Price}
+              </div>
+            ))}
+          </div>
         </Descriptions.Item>
         <Descriptions.Item label="Inventory">
           {bridalDetail?.Inventory}

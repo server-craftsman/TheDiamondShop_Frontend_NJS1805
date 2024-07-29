@@ -146,6 +146,20 @@ function ManageRingPage() {
     });
   };
 
+  // From here is time to validate
+  const validateRingExist = (rule, value) => {
+    // Check if any of the specified fields exist in the fetched data
+    const exists = rings.some(
+      (item) => item.RingStyle === value || item.NameRings === value // || another attribute if have
+    );
+
+    if (exists) {
+      return Promise.reject("The value already exists.");
+    }
+
+    return Promise.resolve();
+  };
+
   const validateNumber = (message) => (rule, value) => {
     if (value <= 0) {
       return Promise.reject(message);
@@ -310,6 +324,7 @@ function ManageRingPage() {
             rules={[
               { required: true, message: "Please input the Ring Style!" },
               { validator: validateStringLength(50) },
+              { validator: validateRingExist },
             ]}
           >
             <Input />
@@ -320,6 +335,7 @@ function ManageRingPage() {
             rules={[
               { required: true, message: "Please input the name Rings!" },
               { validator: validateStringLength(50) },
+              { validator: validateRingExist },
             ]}
           >
             <Input />
