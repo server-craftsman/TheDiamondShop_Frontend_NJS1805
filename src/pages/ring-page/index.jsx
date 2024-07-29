@@ -132,7 +132,7 @@ function RingPage() {
   const clearFilters = () => {
     setFilteredData(dataSource);
     setCurrentPage(1); // Reset to first page when filters clear
-  
+
     setPriceFilters([]);
     setBrandNameFilters([]);
     setCategoryFilters([]);
@@ -148,7 +148,7 @@ function RingPage() {
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-  
+
     const filtered = dataSource.filter((item) => {
       return Object.values(item).some((value) => {
         if (typeof value === "string") {
@@ -160,7 +160,7 @@ function RingPage() {
         return false;
       });
     });
-  
+
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when search term changes
   };
@@ -169,14 +169,16 @@ function RingPage() {
     <div>
       <div className="app">
         <div className="filter-section">
-        <h3>Search</h3>
-        <Input
+          <h3>Search</h3>
+          <Input
             placeholder="Search"
             onChange={handleSearch}
-            style={{ marginBottom: 16, 
-              width: "100%", 
-              height: "50px", 
-              fontSize: "20px"}}
+            style={{
+              marginBottom: 16,
+              width: "100%",
+              height: "50px",
+              fontSize: "20px"
+            }}
           />
           <h3>Price</h3>
           <Checkbox.Group
@@ -315,7 +317,7 @@ function RingPage() {
                             WebkitBoxOrient: "vertical", // Correct the property name
                           }}
                         >
-                          {item.Material.toUpperCase()} -{" "}
+                          {/* {item.Material.toUpperCase()} -{" "} */}
                           {item.Category.toUpperCase()}
                         </div>
                         {/* <div

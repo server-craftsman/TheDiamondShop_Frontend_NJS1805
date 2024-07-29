@@ -8,19 +8,21 @@ import {
   InputNumber,
   Modal,
   notification,
+  Select,
   Spin,
   Upload,
 } from "antd";
-import "./index.scss"; // Import the CSS file
 import { Avatar, Box, Button, Divider, Grid, Typography } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import { getAllFeedbacks } from "../../../../pages/feedback-service/getAllFeedbacks";
-import { AuthContext } from "../../../../AuthContext";
 import StarIcon from "@mui/icons-material/Star";
 import Rating from "@mui/material/Rating";
+import { PlusOutlined } from "@ant-design/icons";
+import { getAllFeedbacks } from "../../../../pages/feedback-service/getAllFeedbacks";
+import { AuthContext } from "../../../../AuthContext";
+import "./index.scss";
 
-function ViewRingDetailPage() {
-  const { id } = useParams(); // Assuming you're using React Router for routing
+const ViewRingDetailPage = () => {
+  const { id } = useParams();
   const [ringDetail, setRingDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [materials, setMaterials] = useState([]);
@@ -29,35 +31,35 @@ function ViewRingDetailPage() {
   const [isEditRingVisible, setIsEditRingVisible] = useState(false);
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState("");
-  const [imageUrlbrand, setImageUrlBrand] = useState("");
+  const [imageUrlBrand, setImageUrlBrand] = useState("");
   const [feedbackRings, setFeedbackRings] = useState([]);
-  const { user } = useContext(AuthContext); // Assuming user and token are available in AuthContext
+  const { user } = useContext(AuthContext);
+
+  //fetch id
+  const [selectedMaterialID, setSelectedMaterialID] = useState(null);
+  const [selectedRingSizeID, setSelectedRingSizeID] = useState(null);
+  const [selectedPriceID, setSelectedPriceID] = useState(null);
+
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+    if (user) {
+      fetchFeedback();
+    }
+  }, [id, user]);
 
   const fetchData = async () => {
     try {
-      const ringDetailResponse = await axios.get(
-        `http://localhost:8090/products/rings/${id}`
-      );
+      const [ringDetailResponse, materialsResponse, ringSizesResponse, ringPriceResponse] = await Promise.all([
+        axios.get(`http://localhost:8090/products/rings/${id}`),
+        axios.get(`http://localhost:8090/products/diamond-rings-material/${id}`),
+        axios.get(`http://localhost:8090/products/diamond-rings-size/${id}`),
+        axios.get(`http://localhost:8090/products/diamond-rings-price/${id}`)
+      ]);
       setRingDetail(ringDetailResponse.data);
-
-      const materialsResponse = await axios.get(
-        `http://localhost:8090/products/diamond-rings-material/${id}`
-      );
       setMaterials(materialsResponse.data);
-
-      const ringSizesResponse = await axios.get(
-        `http://localhost:8090/products/diamond-rings-size/${id}`
-      );
       setRingSizes(ringSizesResponse.data);
-      const ringPriceResponse = await axios.get(
-        `http://localhost:8090/products/diamond-rings-price/${id}`
-      );
       setRingPrice(ringPriceResponse.data);
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -71,99 +73,98 @@ function ViewRingDetailPage() {
         console.error("User or token not available");
         return;
       }
-
-      const productType = "DiamondRings"; // Adjust based on your logic
-      const feedbacks = await getAllFeedbacks(productType, id, user.token); // Pass token here
+      const feedbacks = await getAllFeedbacks("DiamondRings", id, user.token);
       setFeedbackRings(feedbacks);
     } catch (error) {
       console.error("Error fetching feedback:", error);
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchFeedback();
-    }
-  }, [id, user]);
-
   const validatePrice = (rule, value) => {
     if (value < 1) {
       return Promise.reject('Price must be greater than 1');
     }
     return Promise.resolve();
-  }
+  };
 
   const handleEditRings = (record) => {
-    //setEditingDiamond(record); // Set the diamond to be edited
-    setIsEditRingVisible(true); // Show the modal
+    setIsEditRingVisible(true);
     form.setFieldsValue({
-      ringStyle: record.RingStyle,
-      nameRings: record.NameRings,
-      category: record.Category,
-      brandName: record.BrandName,
-      material: record.Material,
-      centerGemstone: record.CenterGemstone,
-      centerGemstoneShape: record.CenterGemstoneShape,
-      width: record.Width,
-      centerDiamondDimension: record.CenterDiamondDimension,
-      weight: record.Weight,
-      gemstoneWeight: record.GemstoneWeight,
-      centerDiamondColor: record.CenterDiamondColor,
-      centerDiamondClarity: record.CenterDiamondClarity,
-      centerDiamondCaratWeight: record.CenterDiamondCaratWeight,
-      ringSize: record.RingSize,
-      price: record.Price,
-      gender: record.Gender,
-      fluorescence: record.Fluorescence,
-      description: record.Description,
-      imageRings: record.ImageRings,
-      imageBrand: record.ImageBrand,
-      inventory: record.Inventory,
+      ...record,
+      ImageRings: record.ImageRings || '',
+      ImageBrand: record.ImageBrand || ''
     });
+    setImageUrl(record.ImageRings || '');
+    setImageUrlBrand(record.ImageBrand || '');
   };
 
   const handleUpdateRings = async (values) => {
     try {
-      values.imageRings = imageUrl || values.imageRings; // Use the uploaded image URL or the existing one
-      values.imageBrand = imageUrlbrand || values.imageBrand; // Use the uploaded image URL or the existing one
-      await axios.put(
-        "http://localhost:8090/products/edit-diamond-rings",
-        values
-      );
-      fetchData(); // Refresh the list
-      setIsEditRingVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-      notification.success({
-        message: "Success",
-        description: "Diamond Ring edited successfully!",
-      });
+      values.ImageRings = imageUrl || values.ImageRings;
+      values.ImageBrand = imageUrlBrand || values.ImageBrand;
+      values.PriceID = selectedPriceID; // Include selected PriceID
+
+      const response = await axios.put(`http://localhost:8090/products/edit-diamond-rings/${id}`, values);
+
+      if (response.status === 200) {
+        fetchData();
+        setIsEditRingVisible(false);
+        form.resetFields();
+        notification.success({
+          message: 'Success',
+          description: 'Diamond Ring edited successfully!',
+        });
+      } else {
+        throw new Error('Failed to update the ring');
+      }
     } catch (error) {
-      console.error("Error updating diamond:", error);
+      console.error('Error updating diamond:', error);
+      notification.error({
+        message: 'Error',
+        description: 'There was an error updating the diamond ring. Please try again.',
+      });
     }
   };
+
 
   const handleCancelEdit = () => {
     setIsEditRingVisible(false);
     form.resetFields();
   };
 
-  const handleUpload = (imageRings) => {
+  const handleUpload = ({ file }) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setImageUrl(e.target.result);
-    };
-    reader.readAsDataURL(imageRings);
-    return false; // Prevent default upload behavior
+    reader.onload = (e) => setImageUrl(e.target.result);
+    if (file && file.originFileObj) {
+      reader.readAsDataURL(file.originFileObj);
+    }
+    return false;
   };
 
-  const handleUploadBrand = (imageBrand) => {
+  const handleUploadBrand = ({ file }) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setImageUrlBrand(e.target.result);
-    };
-    reader.readAsDataURL(imageBrand);
-    return false; // Prevent default upload behavior
+    reader.onload = (e) => setImageUrlBrand(e.target.result);
+    if (file && file.originFileObj) {
+      reader.readAsDataURL(file.originFileObj);
+    }
+    return false;
   };
+
+
+  const fetchPriceID = async (diamondRingsID, materialID, ringSizeID) => {
+    if (diamondRingsID && materialID && ringSizeID) {
+      try {
+        const response = await axios.get(`http://localhost:8090/products/diamond-rings-price/${id}`, {
+          params: { diamondRingsID, materialID, ringSizeID }
+        });
+        return response.data.PriceID;
+      } catch (error) {
+        console.error("Error fetching price ID:", error);
+        return null; // Handle errors as needed
+      }
+    }
+  };
+
 
   if (loading) {
     return <Spin size="large" />;
@@ -172,24 +173,12 @@ function ViewRingDetailPage() {
   return (
     <div className="detail">
       <Descriptions title="Rings Details" className="descriptions">
-        <Descriptions.Item label="Ring Style">
-          {ringDetail?.RingStyle}
-        </Descriptions.Item>
-        <Descriptions.Item label="Name Rings">
-          {ringDetail?.NameRings}
-        </Descriptions.Item>
-        <Descriptions.Item label="Category">
-          {ringDetail?.Category}
-        </Descriptions.Item>
-        <Descriptions.Item label="Brand Name">
-          {ringDetail?.BrandName}
-        </Descriptions.Item>
+        <Descriptions.Item label="Ring Style">{ringDetail?.RingStyle}</Descriptions.Item>
+        <Descriptions.Item label="Name Rings">{ringDetail?.NameRings}</Descriptions.Item>
+        <Descriptions.Item label="Category">{ringDetail?.Category}</Descriptions.Item>
+        <Descriptions.Item label="Brand Name">{ringDetail?.BrandName}</Descriptions.Item>
         <Descriptions.Item label="Image Brand">
-          <img
-            src={ringDetail?.ImageBrand}
-            alt="Bridal"
-            className="brand-image"
-          />
+          <img src={ringDetail?.ImageBrand} alt="Brand" className="brand-image" />
         </Descriptions.Item>
         <Descriptions.Item label="Material">
           <div className="materials-container">
@@ -200,9 +189,7 @@ function ViewRingDetailPage() {
             ))}
           </div>
         </Descriptions.Item>
-        <Descriptions.Item label="Center Gemstone">
-          {ringDetail?.CenterGemstone}
-        </Descriptions.Item>
+        <Descriptions.Item label="Center Gemstone">{ringDetail?.CenterGemstone}</Descriptions.Item>
         <Descriptions.Item label="Price">
           <div className="ring-price-container">
             {ringPrice.map((price) => (
@@ -212,42 +199,19 @@ function ViewRingDetailPage() {
             ))}
           </div>
         </Descriptions.Item>
-
-        <Descriptions.Item label="Inventory">
-          {ringDetail?.Inventory}
-        </Descriptions.Item>
+        <Descriptions.Item label="Inventory">{ringDetail?.Inventory}</Descriptions.Item>
         <Descriptions.Item label="Image Rings">
-          <img
-            src={ringDetail?.ImageRings}
-            alt="Bridal"
-            className="rings-image"
-          />
+          <img src={ringDetail?.ImageRings} alt="Rings" className="rings-image" />
         </Descriptions.Item>
-        <Descriptions.Item label="Center Gemstone Shape">
-          {ringDetail?.CenterGemstoneShape}
-        </Descriptions.Item>
+        <Descriptions.Item label="Center Gemstone Shape">{ringDetail?.CenterGemstoneShape}</Descriptions.Item>
         <Descriptions.Item label="Width">{ringDetail?.Width}</Descriptions.Item>
-        <Descriptions.Item label="Center Diamond Dimension">
-          {ringDetail?.CenterDiamondDimension}
-        </Descriptions.Item>
-        <Descriptions.Item label="CenterDiamond">
-          {ringDetail?.CenterDiamond}
-        </Descriptions.Item>
-        <Descriptions.Item label="Weight">
-          {ringDetail?.Weight}
-        </Descriptions.Item>
-        <Descriptions.Item label="Gemstone Weight">
-          {ringDetail?.GemstoneWeight}
-        </Descriptions.Item>
-        <Descriptions.Item label="Center Diamond Color">
-          {ringDetail?.CenterDiamondColor}
-        </Descriptions.Item>
-        <Descriptions.Item label="Center Diamond Clarity">
-          {ringDetail?.CenterDiamondClarity}
-        </Descriptions.Item>
-        <Descriptions.Item label="Center Diamond Carat Weight">
-          {ringDetail?.CenterDiamondCaratWeight}
-        </Descriptions.Item>
+        <Descriptions.Item label="Center Diamond Dimension">{ringDetail?.CenterDiamondDimension}</Descriptions.Item>
+        <Descriptions.Item label="CenterDiamond">{ringDetail?.CenterDiamond}</Descriptions.Item>
+        <Descriptions.Item label="Weight">{ringDetail?.Weight}</Descriptions.Item>
+        <Descriptions.Item label="Gemstone Weight">{ringDetail?.GemstoneWeight}</Descriptions.Item>
+        <Descriptions.Item label="Center Diamond Color">{ringDetail?.CenterDiamondColor}</Descriptions.Item>
+        <Descriptions.Item label="Center Diamond Clarity">{ringDetail?.CenterDiamondClarity}</Descriptions.Item>
+        <Descriptions.Item label="Center Diamond Carat Weight">{ringDetail?.CenterDiamondCaratWeight}</Descriptions.Item>
         <Descriptions.Item label="Ring Sizes">
           <div className="ring-sizes-container">
             {ringSizes.map((size) => (
@@ -257,17 +221,16 @@ function ViewRingDetailPage() {
             ))}
           </div>
         </Descriptions.Item>
-        <Descriptions.Item label="Gender">
-          {ringDetail?.Gender}
-        </Descriptions.Item>
-        <Descriptions.Item label="Fluorescence">
-          {ringDetail?.Fluorescence}
-        </Descriptions.Item>
-        <Descriptions.Item label="Description">
-          {ringDetail?.Description}
-        </Descriptions.Item>
+        <Descriptions.Item label="Gender">{ringDetail?.Gender}</Descriptions.Item>
+        <Descriptions.Item label="Fluorescence">{ringDetail?.Fluorescence}</Descriptions.Item>
+        <Descriptions.Item label="Description">{ringDetail?.Description}</Descriptions.Item>
       </Descriptions>
-      <Button onClick={() => handleEditRings(ringDetail)}>Edit</Button>
+      <Button
+        type="primary"
+        onClick={() => handleEditRings(ringDetail)}
+      >
+        Edit Ring
+      </Button>
       <Button onClick={() => window.history.back()}>Back</Button>
       <hr />
       <Grid item xs={12} md={6}>
@@ -279,348 +242,161 @@ function ViewRingDetailPage() {
             {feedbackRings.length > 0 ? (
               feedbackRings.map((feedback, index) => (
                 <React.Fragment key={feedback.id}>
-                  <Grid
-                    item
-                    xs={12}
-                    container
-                    alignItems="center"
-                    sx={{ mb: 2 }}
-                  >
-                    {/* Customer Avatar */}
-                    <Grid item xs={2} style={{ marginRight: "-12%" }}>
-                      <Avatar alt={feedback.LastName} src={feedback.Image} />
+                  <Grid item xs={12} container alignItems="center" sx={{ mb: 2 }}>
+                    <Grid item xs={2} style={{ marginRight: "-12px" }}>
+                      <Avatar src={feedback.image} />
                     </Grid>
-                    {/* Feedback Details */}
-                    <Grid item xs={10} sx={{ paddingLeft: "25px" }}>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          fontWeight: "bold",
-                          fontSize: "20px",
-                          mb: 1,
-                        }}
-                      >
-                        {feedback.FirstName} {feedback.LastName}
+                    <Grid item xs={10}>
+                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                        {feedback.name}{" "}
+                        <Rating
+                          name="read-only"
+                          value={feedback.rating}
+                          readOnly
+                          size="small"
+                          sx={{ ml: 1 }}
+                        />
                       </Typography>
-                      <Typography
-                        variant="subtitle2"
-                        sx={{
-                          fontStyle: "italic",
-                          color: "text.secondary",
-                          mb: 1,
-                        }}
-                      >
-                        Evaluation Date:{" "}
-                        {new Date(feedback.EvaluationDate).toLocaleDateString()}
+                      <Typography variant="body2" color="text.secondary">
+                        {feedback.comment}
                       </Typography>
-                      <Rating
-                        name={`rating-${feedback.id}`}
-                        value={feedback.Rating}
-                        readOnly
-                        precision={0.5}
-                        emptyIcon={
-                          <StarIcon
-                            style={{ opacity: 0.55 }}
-                            fontSize="inherit"
-                          />
-                        }
-                      />
-                      <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {new Date(feedback.date).toLocaleDateString()}
+                      </Typography>
                     </Grid>
                   </Grid>
-                  {index < feedbackRings.length - 1 && (
-                    <Divider
-                      variant="middle"
-                      sx={{
-                        my: 2,
-                        borderColor: "rgba(0, 0, 0, 0.12)",
-                      }}
-                    />
-                  )}
-                  {index < feedbackRings.length - 1 && (
-                    <hr
-                      style={{
-                        width: "100%",
-                        borderTop: "1px dashed black",
-                        marginBottom: "16px",
-                      }}
-                    />
-                  )}
+                  {index < feedbackRings.length - 1 && <Divider sx={{ mb: 2 }} />}
                 </React.Fragment>
               ))
             ) : (
-              <Typography variant="subtitle1" sx={{ fontStyle: "italic" }}>
-                No feedback available
-              </Typography>
+              <Typography variant="body2">No feedback available.</Typography>
             )}
           </Grid>
         </Box>
       </Grid>
       <Modal
-        title="Edit Rings"
-        open={isEditRingVisible}
+        title="Edit Diamond Ring"
+        visible={isEditRingVisible}
+        onOk={() => form.submit()}
         onCancel={handleCancelEdit}
-        footer={[
-          <Button key="cancel" onClick={handleCancelEdit}>
-            Cancel
-          </Button>,
-          <Button key="submit" type="primary" onClick={() => form.submit()}>
-            Save
-          </Button>,
-        ]}
+        okText="Update"
       >
-        <Form form={form} onFinish={handleUpdateRings} layout="vertical">
-          <Form.Item
-            name="ringStyle"
-            label="Ring Style"
-            rules={[
-              { required: true, message: "Please input the Ring Style!" },
-            ]}
-          >
-            <Input disabled />
-          </Form.Item>
-          <Form.Item
-            name="nameRings"
-            label="Name Rings"
-            rules={[
-              { required: true, message: "Please input the name Rings!" },
-            ]}
-          >
+        <Form
+          form={form}
+          onFinish={handleUpdateRings}
+          layout="vertical"
+        >
+          <Form.Item name="RingStyle" label="Ring Style">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true, message: "Please input the category!" }]}
-          >
+          <Form.Item name="NameRings" label="Name Rings">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="brandName"
-            label="BrandName"
-            rules={[
-              { required: true, message: "Please input the brand Name!" },
-            ]}
-          >
+          <Form.Item name="Category" label="Category">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="centerGemstone"
-            label="CenterGemstone"
-            rules={[
-              { required: true, message: "Please input the center gemstone!" },
-            ]}
-          >
+          <Form.Item name="BrandName" label="Brand Name">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="centerGemstoneShape"
-            label="CenterGemstoneShape"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center gemstone shape!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="width"
-            label="Width"
-            rules={[{ required: true, message: "Please input the width!" }]}
-          >
-            <InputNumber style={{ width: "100%" }} precision={2} />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondDimension"
-            label="Center Diamond Dimension"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Dimension!",
-              },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="weight"
-            label="Weight"
-            rules={[{ required: true, message: "Please input the weight!" }]}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="gemstoneWeight"
-            label="Gem stone Weight"
-            rules={[
-              { required: true, message: "Please input the gemstone Weight!" },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} precision={2} />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondColor"
-            label="Center Diamond Color"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Color!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondClarity"
-            label="Center Diamond Clarity"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Clarity!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="centerDiamondCaratWeight"
-            label="Center Diamond CaratWeight"
-            rules={[
-              {
-                required: true,
-                message: "Please input the center Diamond Carat Weight!",
-              },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} precision={2} />
-          </Form.Item>
-          <Form.Item
-            name="price"
-            label="Price"
-            rules={[{ required: true, message: "Please input the price!" },
-            { validator: validatePrice }
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="gender"
-            label="Gender"
-            rules={[{ required: true, message: "Please input the gender!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="fluorescence"
-            label="Fluorescence"
-            rules={[
-              { required: true, message: "Please input the fluorescence!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              { required: true, message: "Please input the description!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          {/* <Form.Item name="imageRings" label="ImageRings"
-           rules={[{ required: true, message: "Please input the image Rings!" }]}>
-            <Input />
-          </Form.Item> */}
-          <Form.Item
-            name="imageRings"
-            label="Upload Image Rings"
-            rules={[
-              { required: true, message: "Please upload an image Rings!" },
-            ]}
-          >
+          <Form.Item name="ImageRings" label="Image Rings">
             <Upload
-              listType="picture"
-              beforeUpload={handleUpload}
+              listType="picture-card"
               showUploadList={false}
-              maxCount={1}
+              customRequest={handleUpload}
               accept="image/*"
             >
-              <Button variant="contained" style={{ background: "#fff" }}>
-                <AddPhotoAlternateIcon
-                  style={{ fontSize: "100px", color: "#000" }}
-                />
-              </Button>
+              {imageUrl ? <img src={imageUrl} alt="Ring" style={{ width: '100%' }} /> : <PlusOutlined />}
             </Upload>
           </Form.Item>
-          {imageUrl && (
-            <div style={{ marginTop: 20 }}>
-              <img
-                src={imageUrl}
-                alt="Uploaded"
-                style={{ width: "100%", maxWidth: 400 }}
-              />
-            </div>
-          )}
-          <Form.Item
-            name="imageBrand"
-            label="Upload Image Brand"
-            rules={[
-              { required: true, message: "Please upload an image Brand!" },
-            ]}
-          >
+          <Form.Item name="ImageBrand" label="Image Brand">
             <Upload
-              listType="picture"
-              beforeUpload={handleUploadBrand}
+              listType="picture-card"
               showUploadList={false}
-              maxCount={1}
+              customRequest={handleUploadBrand}
               accept="image/*"
             >
-              <Button variant="contained" style={{ background: "#fff" }}>
-                <AddPhotoAlternateIcon
-                  style={{ fontSize: "100px", color: "#000" }}
-                />
-              </Button>
+              {imageUrlBrand ? <img src={imageUrlBrand} alt="Brand" style={{ width: '100%' }} /> : <PlusOutlined />}
             </Upload>
           </Form.Item>
-          {imageUrlbrand && (
-            <div style={{ marginTop: 20 }}>
-              <img
-                src={imageUrlbrand}
-                alt="Uploaded"
-                style={{ width: "100%", maxWidth: 400 }}
-              />
-            </div>
-          )}
+          <Form.Item name="Price" label="Price" rules={[{ validator: validatePrice }]}>
+            <InputNumber min={1} />
+          </Form.Item>
+          <Form.Item name="Inventory" label="Inventory">
+            <InputNumber min={0} />
+          </Form.Item>
+          <Form.Item name="CenterGemstone" label="Center Gemstone">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterGemstoneShape" label="Center Gemstone Shape">
+            <Input />
+          </Form.Item>
+          <Form.Item name="Width" label="Width">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterDiamondDimension" label="Center Diamond Dimension">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterDiamond" label="Center Diamond">
+            <Input />
+          </Form.Item>
+          <Form.Item name="Weight" label="Weight">
+            <Input />
+          </Form.Item>
+          <Form.Item name="GemstoneWeight" label="Gemstone Weight">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterDiamondColor" label="Center Diamond Color">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterDiamondClarity" label="Center Diamond Clarity">
+            <Input />
+          </Form.Item>
+          <Form.Item name="CenterDiamondCaratWeight" label="Center Diamond Carat Weight">
+            <Input />
+          </Form.Item>
+          <Form.Item name="MaterialID" label="Material">
+            <Select
+              onChange={(value) => {
+                setSelectedMaterialID(value);
+                fetchPriceID(value, selectedRingSizeID); // Fetch PriceID based on MaterialID and RingSizeID
+              }}
+            >
+              {materials.map(material => (
+                <Select.Option key={material.MaterialID} value={material.MaterialID}>
+                  {material.MaterialName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
 
-          <Form.Item
-            name="inventory"
-            label="Inventory"
-            rules={[
-              {
-                required: true,
-                message: "Please input the inventory (1 or 0)!",
-              },
-              {
-                validator: (_, value) => {
-                  if (value === 1 || value === 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Inventory must be either 1 or 0!")
-                  );
-                },
-              },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} />
+          <Form.Item name="RingSizeID" label="Ring Size">
+            <Select
+              onChange={(value) => {
+                setSelectedRingSizeID(value);
+                fetchPriceID(selectedMaterialID, value); // Fetch PriceID based on MaterialID and RingSizeID
+              }}
+            >
+              {ringSizes.map(size => (
+                <Select.Option key={size.RingSizeID} value={size.RingSizeID}>
+                  {size.RingSize}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="Gender" label="Gender">
+            <Input />
+          </Form.Item>
+          <Form.Item name="Fluorescence" label="Fluorescence">
+            <Input />
+          </Form.Item>
+          <Form.Item name="Description" label="Description">
+            <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
       </Modal>
     </div>
   );
-}
+};
 
 export default ViewRingDetailPage;
