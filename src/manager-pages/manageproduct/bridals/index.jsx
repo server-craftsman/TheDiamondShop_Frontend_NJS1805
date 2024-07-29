@@ -388,7 +388,8 @@ function ManageBridalPage() {
         ...values,
         MaterialID: values.MaterialID,
         RingSizeID: values.RingSizeID,
-        ImageBridal: imageData, };
+        ImageBridal: imageData,
+      };
 
       const response = await axios.post(
         "http://localhost:8090/products/add-bridal",
@@ -396,16 +397,16 @@ function ManageBridalPage() {
       );
 
       if (response.status === 200) {
-      fetchData(); // Refresh the list
-      setIsAddBridalVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-      notification.success({
-        message: "Success",
-        description: "Bridals added successfully!",
-      });
-    } else {
-      throw new Error(`Failed with status code ${response.status}`);
-    }
+        fetchData(); // Refresh the list
+        setIsAddBridalVisible(false); // Close the modal
+        form.resetFields(); // Reset the form fields
+        notification.success({
+          message: "Success",
+          description: "Bridals added successfully!",
+        });
+      } else {
+        throw new Error(`Failed with status code ${response.status}`);
+      }
     } catch (error) {
       console.error("Error adding bridals:", error);
       if (error.response) {
@@ -431,13 +432,6 @@ function ManageBridalPage() {
       reader.readAsDataURL(file.originFileObj); // Ensure you're accessing originFileObj
     });
   };
-
-  const validatePrice = (rule, value) => {
-    if (value < 1) {
-      return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
-  }
 
   const columns = [
     {
@@ -491,6 +485,148 @@ function ManageBridalPage() {
     },
   ];
 
+  //=============================Validate==============================//
+
+  const validatePrice = (rule, value) => {
+    if (value < 1) {
+      return Promise.reject("Price must be greater than 1");
+    }
+    return Promise.resolve();
+  };
+
+  const validateBridalsStyle = (rule, value) => {
+    // Check if the value has exactly 10 characters
+    // if (value.length !== 10) {
+    //   return Promise.reject("Bridals Style must be exactly 10 characters long");
+    // }
+
+    // Check if the value has a length between 7 and 10 characters
+    if (value.length < 7 || value.length > 10) {
+      return Promise.reject(
+        "Bridals Style must be between 7 and 10 characters long"
+      );
+    }
+
+    // Check if the first 5 characters are digits
+    const firstPart = value.substring(0, 5);
+    if (!/^\d{5}$/.test(firstPart)) {
+      return Promise.reject("The first 5 characters must be digits");
+    }
+
+    // Check if the hyphen is in the correct position
+    if (value[5] !== "-") {
+      return Promise.reject("The 6th character must be a hyphen");
+    }
+
+    // Check the remaining part after the hyphen
+    const secondPart = value.substring(6);
+    if (!/^([A-Z0-9]+)$/.test(secondPart)) {
+      return Promise.reject(
+        "The characters after the hyphen can be letters (uppercase), numbers."
+      );
+    }
+
+    // Check if there are two consecutive hyphens in the second part
+    if (secondPart.includes("--")) {
+      return Promise.reject(
+        'The "-" signs cannot be placed next to each other'
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateBridalExist = (rule, value) => {
+    // Check if any of the specified fields exist in the fetched data
+    const exists = bridals.some(
+      (item) => item.BridalStyle === value || item.NameBridal === value // || another attribute if have
+    );
+
+    if (exists) {
+      return Promise.reject("The value already exists.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateWeight = (rule, value) => {
+    const Weight = parseFloat(value);
+    if (isNaN(Weight) || Weight < 2 || Weight > 3.6) {
+      return Promise.reject(
+        "Weight must be a decimal number between 2 and 3.6 mm"
+      );
+    }
+    return Promise.resolve();
+  };
+
+  const validateDiamondCaratRange = (rule, value) => {
+    // Split the input value by the dash character
+    const parts = value.split("-");
+
+    // Ensure there are exactly two parts
+    if (parts.length !== 2) {
+      // if (parts.length <10) {
+      return Promise.reject(
+        "Invalid format. Use the format: Decimal 1 - Decimal 2"
+      );
+    }
+
+    // Parse the parts as floating-point numbers
+    const decimal1 = parseFloat(parts[0]);
+    const decimal2 = parseFloat(parts[1]);
+
+    // Validate that both parts are numbers and within the correct range
+    if (
+      isNaN(decimal1) ||
+      isNaN(decimal2) ||
+      decimal1 <= 0 ||
+      decimal1 >= 1 ||
+      decimal2 <= 0 ||
+      decimal2 > 1 ||
+      decimal1 >= decimal2
+    ) {
+      return Promise.reject(
+        "Invalid range. Ensure Decimal 1 < Decimal 2, and both are within (0, 1]"
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateTotalCaratWeight = (rule, value) => {
+    const caratWeight = parseFloat(value);
+    if (isNaN(caratWeight) || caratWeight <= 0 || caratWeight > 5) {
+      return Promise.reject(
+        "Total carat weight must be a decimal number greater than 0 and less than or equal to 5"
+      );
+    }
+    return Promise.resolve();
+  };
+
+
+  const validateTotalDiamond = (rule, value) => {
+    const totalDiamond = parseInt(value, 10);
+    if (!Number.isInteger(totalDiamond) || totalDiamond <= 0 || totalDiamond > 30) {
+      return Promise.reject(
+        "Total Diamond must be a natural number greater than 0 and less than or equal to 30"
+      );
+    }
+    return Promise.resolve();
+  };
+  
+
+  // const validateTotalDiamond = (rule, value) => {
+  //   const totalDiamond = parseInt(value, 10);
+  //   if (isNaN(totalDiamond) || totalDiamond <= 0 || totalDiamond > 30) {
+  //     return Promise.reject(
+  //       "Total Diamond must be an integer greater than 0 and less than or equal to 30"
+  //     );
+  //   }
+  //   return Promise.resolve();
+  // };
+
+  //=========================================================================//
+
   return (
     <>
       <h1>Bridals</h1>
@@ -507,9 +643,11 @@ function ManageBridalPage() {
         <Form form={form} layout="vertical" onFinish={handleAddBridals}>
           <Form.Item
             name="BridalStyle"
-            label="Bridal Style"
+            label="Bridal Style (12345-EX10)"
             rules={[
               { required: true, message: "Please input the Bridal Style!" },
+              { validator: validateBridalsStyle },
+              { validator: validateBridalExist },
             ]}
           >
             <Input />
@@ -519,6 +657,7 @@ function ManageBridalPage() {
             label="Name Bridal"
             rules={[
               { required: true, message: "Please input the Name Bridal!" },
+              { validator: validateBridalExist },
             ]}
           >
             <Input />
@@ -595,8 +734,11 @@ function ManageBridalPage() {
           </Form.Item>
           <Form.Item
             name="Weight"
-            label="Weight"
-            rules={[{ required: true, message: "Please input the weight!" }]}
+            label="Weight (2g - 3.6g)"
+            rules={[
+              { required: true, message: "Please input the weight!" },
+              { validator: validateWeight },
+            ]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
@@ -618,27 +760,30 @@ function ManageBridalPage() {
                 required: true,
                 message: "Please input the diamond Carat Range!",
               },
+              { validator: validateDiamondCaratRange },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="TotalCaratWeight"
-            label="Total Carat Weight"
+            label="Total Carat Weight (0.1)"
             rules={[
               {
                 required: true,
                 message: "Please input the total Carat weight!",
               },
+              { validator: validateTotalCaratWeight },
             ]}
           >
             <InputNumber />
           </Form.Item>
           <Form.Item
             name="TotalDiamond"
-            label="Total Diamond"
+            label="Total Diamond (25)"
             rules={[
               { required: true, message: "Please input the total Diamond!" },
+              { validator: validateTotalDiamond },
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
@@ -685,7 +830,7 @@ function ManageBridalPage() {
             label="Price"
             rules={[
               { required: true, message: "Please input the price!" },
-              // { validator: validatePrice("Price must be greater than 0") },
+              { validator: validatePrice },
             ]}
           >
             <InputNumber style={{ width: "100%" }} />
