@@ -605,7 +605,7 @@ function ManageBridalPage() {
 
 
   const validateTotalDiamond = (rule, value) => {
-    const totalDiamond = parseInt(value, 10);
+    const totalDiamond = Number(value); // Parse the value as a number
     if (!Number.isInteger(totalDiamond) || totalDiamond <= 0 || totalDiamond > 30) {
       return Promise.reject(
         "Total Diamond must be a natural number greater than 0 and less than or equal to 30"
@@ -613,7 +613,6 @@ function ManageBridalPage() {
     }
     return Promise.resolve();
   };
-  
 
   // const validateTotalDiamond = (rule, value) => {
   //   const totalDiamond = parseInt(value, 10);
