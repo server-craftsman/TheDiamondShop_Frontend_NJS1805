@@ -184,74 +184,29 @@ function ManageRingPage() {
     ];
 
     const uploadButtonStyle = {
-        backgroundColor: '#1c1c1c',
-        color: '#fff',
-        // border: '2px dashed #FAAAFF',
-        borderRadius: '10px',
-        padding: '12px 24px',
+        backgroundColor: '#1c1c1c', // Dark background
+        color: '#d4af37', // Gold text color
+        border: '2px solid #d4af37', // Gold border
+        borderRadius: '10px', // Rounded corners
+        padding: '12px 24px', // Padding for a more substantial look
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)', // More pronounced shadow for depth
+        fontFamily: 'Georgia, serif', // Elegant font
+        fontWeight: 'bold',
         fontSize: '16px',
         cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        margin: "0 0 0 40px"
+        transition: 'all 0.3s ease', // Smooth transition for hover effect
     };
 
     const uploadButtonHoverStyle = {
-        backgroundColor: '#fff',
-        color: '#1c1c1c',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
+        backgroundColor: '#d4af37', // Invert colors on hover
+        color: '#1c1c1c', // Dark text on gold background
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)', // Deeper shadow on hover
     };
     const [hovered, setHovered] = React.useState({ imageRings: false, imageBrand: false });
 
-
-    const addButtonStyle = {
-        color: "#fff",
-        backgroundColor: "#1c1c1c",
-        borderRadius: "10px",
-        padding: "10px 20px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
-        fontSize: "16px",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-    };
-
-    const addButtonHoverStyle = {
-        backgroundColor: "#fff",
-        color: "#1c1c1c",
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-    };
-    const [hoveredSubmit, setHoveredSubmit] = React.useState(false);
-
-    //trôn GAY
-    const genderOptions = [
-        "Agender",
-        "Androgyne",
-        "Bigender",
-        "Cisgender",
-        "Gender Fluid",
-        "Gender Nonconforming",
-        "Gender Questioning",
-        "Gender Variant",
-        "Genderqueer",
-        "Intersex",
-        "Non-binary",
-        "Pangender",
-        "Polygender",
-        "Transgender",
-        "Transmasculine",
-        "Transfeminine",
-        "Two-Spirit",
-        "Men",
-        "Women",
-        "Unisex",
-        "Other",
-    ];
     return (
         <>
             <h1>Diamond Ring</h1>
@@ -446,10 +401,10 @@ function ManageRingPage() {
                             { required: true, message: "Please select the gender!" },
                         ]}
                     >
-                        <Select placeholder="Select Gender">
-                            {genderOptions.map((gender) => (
-                                <Option key={gender} value={gender}>{gender}</Option>
-                            ))}
+                        <Select>
+                            <Option value="Men">Men</Option>
+                            <Option value="Women">Women</Option>
+                            <Option value="Unisex">Unisex</Option>
                         </Select>
                     </Form.Item>
                     <Form.Item
@@ -516,78 +471,55 @@ function ManageRingPage() {
                     >
                         <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
-
-
-
-                    <Form layout="vertical">
-                        <Form.Item
+                    <Form.Item
+                        name="imageRings"
+                        label="Rings Image"
+                        valuePropName="fileList"
+                        getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                        rules={[
+                            { required: true, message: "Please upload a rings image!" },
+                        ]}
+                    >
+                        <Upload
                             name="imageRings"
-                            label="Rings Image"
-                            valuePropName="fileList"
-                            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                            rules={[
-                                { required: true, message: "Please upload a rings image!" },
-                            ]}
+                            accept="image/*"
+                            listType="picture-card"
+                            beforeUpload={() => false}
                         >
-                            <Upload
-                                name="imageRings"
-                                accept="image/*"
-                                listType="picture-card"
-                                beforeUpload={() => false}
-                            >
-                                <div
-                                    style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                                    onMouseEnter={() => setHovered({ ...hovered, imageRings: true })}
-                                    onMouseLeave={() => setHovered({ ...hovered, imageRings: false })}
-                                >
-                                    <Button
-                                        style={hovered.imageRings ? { ...uploadButtonStyle, ...uploadButtonHoverStyle } : uploadButtonStyle}
-                                    >
-                                        <AddPhotoAlternateIcon style={{ marginRight: '8px' }} />
-                                        Upload Rings Image
-                                    </Button>
-                                </div>
-                            </Upload>
-                        </Form.Item>
-                        <Form.Item
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Button style={{ color: "#000" }}>
+                                    <AddPhotoAlternateIcon />
+                                    Upload Rings Image
+                                </Button>
+                            </div>
+                        </Upload>
+                    </Form.Item>
+                    <Form.Item
+                        name="imageBrand"
+                        label="Brand Image"
+                        valuePropName="fileList"
+                        getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                        rules={[
+                            { required: true, message: "Please upload a brand image!" },
+                        ]}
+                    >
+                        <Upload
                             name="imageBrand"
-                            label="Brand Image"
-                            valuePropName="fileList"
-                            getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                            rules={[
-                                { required: true, message: "Please upload a brand image!" },
-                            ]}
+                            accept="image/*"
+                            listType="picture-card"
+                            beforeUpload={() => false}
                         >
-                            <Upload
-                                name="imageBrand"
-                                accept="image/*"
-                                listType="picture-card"
-                                beforeUpload={() => false}
-                            >
-                                <div
-                                    style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                                    onMouseEnter={() => setHovered({ ...hovered, imageBrand: true })}
-                                    onMouseLeave={() => setHovered({ ...hovered, imageBrand: false })}
-                                >
-                                    <Button
-                                        style={hovered.imageBrand ? { ...uploadButtonStyle, ...uploadButtonHoverStyle } : uploadButtonStyle}
-                                    >
-                                        <AddPhotoAlternateIcon style={{ marginRight: '8px' }} />
-                                        Upload Brand Image
-                                    </Button>
-                                </div>
-                            </Upload>
-                        </Form.Item>
-                    </Form>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Button style={{ color: "#000" }}>
+                                    <AddPhotoAlternateIcon />
+                                    Upload Brand Image
+                                </Button>
+                            </div>
+                        </Upload>
+                    </Form.Item>
 
                     <Form.Item>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            style={hoveredSubmit ? { ...addButtonStyle, ...addButtonHoverStyle } : addButtonStyle}
-                            onMouseEnter={() => setHoveredSubmit(true)}
-                            onMouseLeave={() => setHoveredSubmit(false)}
-                        >
+                        <Button type="primary" style={{ color: "#fff", backgroundColor: "#000", borderRadius: "10px", padding: "10px" }} htmlType="submit">
                             Add Ring
                         </Button>
                     </Form.Item>
