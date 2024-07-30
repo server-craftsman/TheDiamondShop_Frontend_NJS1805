@@ -583,7 +583,7 @@ function ViewTimepiecesDetailPage() {
   if (loading) {
     return <Spin size="large" />;
   }
-
+  //============================================================================
   const validatePrice = (rule, value) => {
     if (value < 1) {
       return Promise.reject("Price must be greater than 1");
@@ -1023,7 +1023,7 @@ function ViewTimepiecesDetailPage() {
             label="Category"
             rules={[{ required: true, message: "Please input the category!" }]}
           >
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="brandName"

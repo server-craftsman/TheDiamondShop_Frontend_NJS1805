@@ -146,34 +146,8 @@ function ManageRingPage() {
     });
   };
 
-  // From here is time to validate
-  const validateRingExist = (rule, value) => {
-    // Check if any of the specified fields exist in the fetched data
-    const exists = rings.some(
-      (item) => item.RingStyle === value || item.NameRings === value // || another attribute if have
-    );
-
-    if (exists) {
-      return Promise.reject("The value already exists.");
-    }
-
-    return Promise.resolve();
-  };
-
-  const validateNumber = (message) => (rule, value) => {
-    if (value <= 0) {
-      return Promise.reject(message);
-    }
-    return Promise.resolve();
-  };
-
-  const validateStringLength = (maxLength) => (rule, value) => {
-    if (value && value.length > maxLength) {
-      return Promise.reject(`Must be ${maxLength} characters or less`);
-    }
-    return Promise.resolve();
-  };
-
+ 
+//====================================================================//
   const columns = [
     {
       title: "Ring Style",
@@ -248,6 +222,34 @@ function ManageRingPage() {
     imageBrand: false,
   });
 
+
+   //===============From here is time to validate========================//
+   const validateRingExist = (rule, value) => {
+    // Check if any of the specified fields exist in the fetched data
+    const exists = rings.some(
+      (item) => item.RingStyle === value || item.NameRings === value // || another attribute if have
+    );
+
+    if (exists) {
+      return Promise.reject("The value already exists.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateNumber = (message) => (rule, value) => {
+    if (value <= 0) {
+      return Promise.reject(message);
+    }
+    return Promise.resolve();
+  };
+
+  const validateStringLength = (maxLength) => (rule, value) => {
+    if (value && value.length > maxLength) {
+      return Promise.reject(`Must be ${maxLength} characters or less`);
+    }
+    return Promise.resolve();
+  };
   // Define the validateWidth function
   const validateWidth = (rule, value) => {
     const width = parseFloat(value);
@@ -302,7 +304,7 @@ function ManageRingPage() {
     }
     return Promise.resolve();
   };
-
+//====================================================================//
   return (
     <>
       <h1>Diamond Ring</h1>
@@ -345,7 +347,7 @@ function ManageRingPage() {
             label="Category"
             rules={[
               { required: true, message: "Please input the category!" },
-              { validator: validateStringLength(50) },
+              // { validator: validateStringLength(50) },
             ]}
           >
             <Select>
@@ -366,7 +368,7 @@ function ManageRingPage() {
             label="Brand Name"
             rules={[
               { required: true, message: "Please input the brand Name!" },
-              { validator: validateStringLength(50) },
+              // { validator: validateStringLength(50) },
             ]}
           >
             <Select>
