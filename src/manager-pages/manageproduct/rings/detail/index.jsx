@@ -104,14 +104,12 @@ const ViewRingDetailPage = () => {
         ImageRings: ringDetailData.ImageRings || "",
         ImageBrand: ringDetailData.ImageBrand || "",
       });
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
   };
-
 
   const fetchFeedback = async () => {
     try {
@@ -149,13 +147,14 @@ const ViewRingDetailPage = () => {
     console.log("Selected IDs:", {
       selectedMaterialID,
       selectedRingSizeID,
-      selectedPriceID
+      selectedPriceID,
     });
 
     if (!selectedPriceID || !selectedMaterialID || !selectedRingSizeID) {
       notification.error({
         message: "Error",
-        description: "MaterialID, RingSizeID, and PriceID are required to update the ring.",
+        description:
+          "MaterialID, RingSizeID, and PriceID are required to update the ring.",
       });
       return;
     }
@@ -193,9 +192,6 @@ const ViewRingDetailPage = () => {
     }
   };
 
-
-
-
   const handleCancelEdit = () => {
     setIsEditRingVisible(false);
     form.resetFields();
@@ -223,7 +219,7 @@ const ViewRingDetailPage = () => {
     const reader = new FileReader();
     reader.onload = (e) => setImageUrl(e.target.result);
     //  if (file && file.originFileObj) {
-      reader.readAsDataURL(file);
+    reader.readAsDataURL(file);
     //  }
     return false;
   };
@@ -232,15 +228,17 @@ const ViewRingDetailPage = () => {
   const handleUploadImage = ({ file }) => handleUpload(file, setImageUrl);
   const handleUploadBrand = ({ file }) => handleUpload(file, setImageUrlBrand);
 
-
   const fetchPriceID = async (materialID, ringSizeID) => {
     if (id && materialID && ringSizeID) {
       try {
-        const response = await axios.post('http://localhost:8090/products/price-id', {
-          diamondRingsId: id,
-          materialID,
-          ringSizeID,
-        });
+        const response = await axios.post(
+          "http://localhost:8090/products/price-id",
+          {
+            diamondRingsId: id,
+            materialID,
+            ringSizeID,
+          }
+        );
         const fetchedPriceID = response.data.PriceID;
         setSelectedPriceID(fetchedPriceID);
         form.setFieldsValue({ PriceID: fetchedPriceID });
@@ -363,7 +361,9 @@ const ViewRingDetailPage = () => {
           {ringDetail?.CenterGemstone}
         </Descriptions.Item>
         {/* fotmat UI material with ringsize and price */}
-        <Descriptions.Item label={<span className="descriptions-item-label">Material</span>}>
+        <Descriptions.Item
+          label={<span className="descriptions-item-label">Material</span>}
+        >
           <div className="materials-container">
             {materials && materials.length > 0 ? (
               materials.map((material) => (
@@ -376,7 +376,9 @@ const ViewRingDetailPage = () => {
             )}
           </div>
         </Descriptions.Item>
-        <Descriptions.Item label={<span className="descriptions-item-label">Price</span>}>
+        <Descriptions.Item
+          label={<span className="descriptions-item-label">Price</span>}
+        >
           <div className="ring-price-container">
             {ringPrice && ringPrice.length > 0 ? (
               ringPrice.map((price) => (
@@ -389,7 +391,9 @@ const ViewRingDetailPage = () => {
             )}
           </div>
         </Descriptions.Item>
-        <Descriptions.Item label={<span className="descriptions-item-label">Ring Sizes</span>}>
+        <Descriptions.Item
+          label={<span className="descriptions-item-label">Ring Sizes</span>}
+        >
           <div className="ring-sizes-container">
             {ringSizes && ringSizes.length > 0 ? (
               ringSizes.map((size) => (
@@ -449,10 +453,24 @@ const ViewRingDetailPage = () => {
           {ringDetail?.Description}
         </Descriptions.Item>
       </Descriptions>
-      <Button style={{ fontSize: '20px', border: "1px solid", marginRight: "5px", color: "#000" }} type="primary" onClick={() => handleEditRings(ringDetail)}>
+      <Button
+        style={{
+          fontSize: "20px",
+          border: "1px solid",
+          marginRight: "5px",
+          color: "#000",
+        }}
+        type="primary"
+        onClick={() => handleEditRings(ringDetail)}
+      >
         Edit Ring
       </Button>
-      <Button style={{ fontSize: '20px', border: "1px solid", color: "#000" }} onClick={() => window.history.back()}>Back</Button>
+      <Button
+        style={{ fontSize: "20px", border: "1px solid", color: "#000" }}
+        onClick={() => window.history.back()}
+      >
+        Back
+      </Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -787,7 +805,11 @@ const ViewRingDetailPage = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="MaterialID" label="Material">
+          <Form.Item
+            name="MaterialID"
+            label="Material"
+            rules={[{ required: true }]}
+          >
             <Select
               onChange={(value) => {
                 setSelectedMaterialID(value);
@@ -796,14 +818,21 @@ const ViewRingDetailPage = () => {
               value={selectedMaterialID} // Ensure the value is properly set
             >
               {materials.map((material) => (
-                <Select.Option key={material.MaterialID} value={material.MaterialID}>
+                <Select.Option
+                  key={material.MaterialID}
+                  value={material.MaterialID}
+                >
                   {material.MaterialName}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
 
-          <Form.Item name="RingSizeID" label="Ring Size">
+          <Form.Item
+            name="RingSizeID"
+            label="Ring Size"
+            rules={[{ required: true }]}
+          >
             <Select
               onChange={(value) => {
                 setSelectedRingSizeID(value);
@@ -822,7 +851,7 @@ const ViewRingDetailPage = () => {
           <Form.Item
             name="NewPrice"
             label="Price"
-            rules={[{ validator: validatePrice }]}
+            rules={[{ required: true }, { validator: validatePrice }]}
           >
             <InputNumber min={1} />
           </Form.Item>
@@ -850,7 +879,11 @@ const ViewRingDetailPage = () => {
               <Option value="Strong">Strong</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="Description" label="Description">
+          <Form.Item
+            name="Description"
+            label="Description"
+            rules={[{ required: true }]}
+          >
             <Input.TextArea rows={4} />
           </Form.Item>
         </Form>

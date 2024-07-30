@@ -658,9 +658,10 @@ function ViewDiamondDetailPage() {
           <Form.Item
             name="gradingReport"
             label="Grading Report"
-          // rules={[
-          //   { required: true, message: "Please input the grading Report!" },
-          // ]}
+            rules={[{ required: true }]}
+            // rules={[
+            //   { required: true, message: "Please input the grading Report!" },
+            // ]}
           >
             <Input disabled />
           </Form.Item>

@@ -838,6 +838,7 @@ function ManageDiamondPage() {
             // rules={[
             //   { required: true, message: "Please input the grading Report!" },
             // ]}
+            rules={[{ required: true }]}
             initialValue="GIA"
           >
             <Input disabled placeholder="GIA" />

@@ -67,17 +67,11 @@ function ViewBridalDetailPage() {
         materialsResponse,
         ringSizesResponse,
         ringPriceResponse,
-      ] = await Promise.all( [
+      ] = await Promise.all([
         axios.get(`http://localhost:8090/products/bridals/${id}`),
-        axios.get(
-          `http://localhost:8090/products/bridal-material/${id}`
-        ),
-        axios.get(
-          `http://localhost:8090/products/bridal-size/${id}`
-        ),
-        axios.get(
-          `http://localhost:8090/products/bridal-prices/${id}`
-        ),
+        axios.get(`http://localhost:8090/products/bridal-material/${id}`),
+        axios.get(`http://localhost:8090/products/bridal-size/${id}`),
+        axios.get(`http://localhost:8090/products/bridal-prices/${id}`),
       ]);
       const bridalDetailData = brialDetailResponse.data;
       setBridalDetail(brialDetailResponse.data);
@@ -96,7 +90,6 @@ function ViewBridalDetailPage() {
         PriceID: bridalDetailData.PriceID,
         ImageBridal: bridalDetailData.ImageBridal || "",
       });
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -134,18 +127,18 @@ function ViewBridalDetailPage() {
     });
   };
 
-  
   const handleUpdateBridals = async (values) => {
     console.log("Selected IDs:", {
       selectedMaterialID,
       selectedRingSizeID,
-      selectedPriceID
+      selectedPriceID,
     });
 
     if (!selectedPriceID || !selectedMaterialID || !selectedRingSizeID) {
       notification.error({
         message: "Error",
-        description: "MaterialID, RingSizeID, and PriceID are required to update the bridal.",
+        description:
+          "MaterialID, RingSizeID, and PriceID are required to update the bridal.",
       });
       return;
     }
@@ -155,18 +148,21 @@ function ViewBridalDetailPage() {
       values.PriceID = selectedPriceID;
       values.MaterialID = selectedMaterialID;
       values.RingSizeID = selectedRingSizeID;
-      const response = await axios.put(`http://localhost:8090/products/edit-bridal/${id}`, values);
+      const response = await axios.put(
+        `http://localhost:8090/products/edit-bridal/${id}`,
+        values
+      );
       if (response.status === 200) {
-      fetchData(); // Refresh the list
-      setIsEditBridalVisible(false); // Close the modal
-      form.resetFields(); // Reset the form fields
-      notification.success({
-        message: "Success",
-        description: "Bridals edited successfully!",
-      });
-    } else {
-      throw new Error("Failed to update the Bridals");
-    }
+        fetchData(); // Refresh the list
+        setIsEditBridalVisible(false); // Close the modal
+        form.resetFields(); // Reset the form fields
+        notification.success({
+          message: "Success",
+          description: "Bridals edited successfully!",
+        });
+      } else {
+        throw new Error("Failed to update the Bridals");
+      }
     } catch (error) {
       console.error("Error updating bridals:", error);
       notification.error({
@@ -194,11 +190,14 @@ function ViewBridalDetailPage() {
   const fetchPriceID = async (materialID, ringSizeID) => {
     if (id && materialID && ringSizeID) {
       try {
-        const response = await axios.post('http://localhost:8090/products/price-bridal-id', {
-          bridalId: id,
-          materialID,
-          ringSizeID,
-        });
+        const response = await axios.post(
+          "http://localhost:8090/products/price-bridal-id",
+          {
+            bridalId: id,
+            materialID,
+            ringSizeID,
+          }
+        );
         const fetchedPriceID = response.data.PriceID;
         setSelectedPriceID(fetchedPriceID);
         form.setFieldsValue({ PriceID: fetchedPriceID });
@@ -748,7 +747,11 @@ function ViewBridalDetailPage() {
               <Select.Option value="1">1</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="MaterialID" label="Material">
+          <Form.Item
+            name="MaterialID"
+            label="Material"
+            rules={[{ required: true }]}
+          >
             <Select
               onChange={(value) => {
                 setSelectedMaterialID(value);
@@ -757,14 +760,21 @@ function ViewBridalDetailPage() {
               value={selectedMaterialID} // Ensure the value is properly set
             >
               {materials.map((material) => (
-                <Select.Option key={material.MaterialID} value={material.MaterialID}>
+                <Select.Option
+                  key={material.MaterialID}
+                  value={material.MaterialID}
+                >
                   {material.MaterialName}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
 
-          <Form.Item name="RingSizeID" label="Ring Size">
+          <Form.Item
+            name="RingSizeID"
+            label="Ring Size"
+            rules={[{ required: true }]}
+          >
             <Select
               onChange={(value) => {
                 setSelectedRingSizeID(value);
@@ -783,11 +793,10 @@ function ViewBridalDetailPage() {
           <Form.Item
             name="NewPrice"
             label="Price"
-            rules={[{ validator: validatePrice }]}
+            rules={[{ required: true }, { validator: validatePrice }]}
           >
             <InputNumber min={1} />
           </Form.Item>
-
         </Form>
       </Modal>
     </div>
