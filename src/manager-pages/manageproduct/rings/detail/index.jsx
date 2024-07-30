@@ -111,6 +111,7 @@ const ViewRingDetailPage = () => {
     }
   };
 
+
   const fetchFeedback = async () => {
     try {
       if (!user || !user.token) {
@@ -190,12 +191,33 @@ const ViewRingDetailPage = () => {
     }
   };
 
+
+
+
   const handleCancelEdit = () => {
     setIsEditRingVisible(false);
     form.resetFields();
   };
 
-  const handleUpload = ({ file }) => {
+  // const handleUpload = ({ file }) => {
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => setImageUrl(e.target.result);
+  //   if (file && file.originFileObj) {
+  //     reader.readAsDataURL(file.originFileObj);
+  //   }
+  //   return false;
+  // };
+
+  // const handleUploadBrand = ({ file }) => {
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => setImageUrlBrand(e.target.result);
+  //   if (file && file.originFileObj) {
+  //     reader.readAsDataURL(file.originFileObj);
+  //   }
+  //   return false;
+  // };
+
+  const handleUpload = (file, setImageUrl) => {
     const reader = new FileReader();
     reader.onload = (e) => setImageUrl(e.target.result);
     if (file && file.originFileObj) {
@@ -204,14 +226,10 @@ const ViewRingDetailPage = () => {
     return false;
   };
 
-  const handleUploadBrand = ({ file }) => {
-    const reader = new FileReader();
-    reader.onload = (e) => setImageUrlBrand(e.target.result);
-    if (file && file.originFileObj) {
-      reader.readAsDataURL(file.originFileObj);
-    }
-    return false;
-  };
+  // Usage for different types of images
+  const handleUploadImage = ({ file }) => handleUpload(file, setImageUrl);
+  const handleUploadBrand = ({ file }) => handleUpload(file, setImageUrlBrand);
+
 
   const fetchPriceID = async (materialID, ringSizeID) => {
     if (id && materialID && ringSizeID) {
@@ -339,27 +357,50 @@ const ViewRingDetailPage = () => {
             className="brand-image"
           />
         </Descriptions.Item>
-        <Descriptions.Item label="Material">
-          <div className="materials-container">
-            {materials.map((material) => (
-              <div key={material.MaterialID} className="material-item">
-                {material.MaterialName}
-              </div>
-            ))}
-          </div>
-        </Descriptions.Item>
         <Descriptions.Item label="Center Gemstone">
           {ringDetail?.CenterGemstone}
         </Descriptions.Item>
-        <Descriptions.Item label="Price">
-          <div className="ring-price-container">
-            {ringPrice.map((price) => (
-              <div key={price.PriceID} className="ring-price-item">
-                {price.Price}
-              </div>
-            ))}
+        {/* fotmat UI material with ringsize and price */}
+        <Descriptions.Item label={<span className="descriptions-item-label">Material</span>}>
+          <div className="materials-container">
+            {materials && materials.length > 0 ? (
+              materials.map((material) => (
+                <div key={material.MaterialID} className="material-item">
+                  {material.MaterialName}
+                </div>
+              ))
+            ) : (
+              <div className="material-item">No materials available</div>
+            )}
           </div>
         </Descriptions.Item>
+        <Descriptions.Item label={<span className="descriptions-item-label">Price</span>}>
+          <div className="ring-price-container">
+            {ringPrice && ringPrice.length > 0 ? (
+              ringPrice.map((price) => (
+                <div key={price.PriceID} className="ring-price-item">
+                  {price.Price}
+                </div>
+              ))
+            ) : (
+              <div className="ring-price-item">No prices available</div>
+            )}
+          </div>
+        </Descriptions.Item>
+        <Descriptions.Item label={<span className="descriptions-item-label">Ring Sizes</span>}>
+          <div className="ring-sizes-container">
+            {ringSizes && ringSizes.length > 0 ? (
+              ringSizes.map((size) => (
+                <div key={size.RingSizeID} className="ring-size-item">
+                  {size.RingSize}
+                </div>
+              ))
+            ) : (
+              <div className="ring-size-item">No sizes available</div>
+            )}
+          </div>
+        </Descriptions.Item>
+        {/* end point */}
         <Descriptions.Item label="Inventory">
           {ringDetail?.Inventory}
         </Descriptions.Item>
@@ -395,15 +436,7 @@ const ViewRingDetailPage = () => {
         <Descriptions.Item label="Center Diamond Carat Weight">
           {ringDetail?.CenterDiamondCaratWeight}
         </Descriptions.Item>
-        <Descriptions.Item label="Ring Sizes">
-          <div className="ring-sizes-container">
-            {ringSizes.map((size) => (
-              <div key={size.RingSizeID} className="ring-size-item">
-                {size.RingSize}
-              </div>
-            ))}
-          </div>
-        </Descriptions.Item>
+
         <Descriptions.Item label="Gender">
           {ringDetail?.Gender}
         </Descriptions.Item>
@@ -414,10 +447,10 @@ const ViewRingDetailPage = () => {
           {ringDetail?.Description}
         </Descriptions.Item>
       </Descriptions>
-      <Button type="primary" onClick={() => handleEditRings(ringDetail)}>
+      <Button style={{ fontSize: '20px', border: "1px solid", marginRight: "5px", color: "#000" }} type="primary" onClick={() => handleEditRings(ringDetail)}>
         Edit Ring
       </Button>
-      <Button onClick={() => window.history.back()}>Back</Button>
+      <Button style={{ fontSize: '20px', border: "1px solid", color: "#000" }} onClick={() => window.history.back()}>Back</Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -435,30 +468,65 @@ const ViewRingDetailPage = () => {
                     alignItems="center"
                     sx={{ mb: 2 }}
                   >
-                    <Grid item xs={2} style={{ marginRight: "-12px" }}>
-                      <Avatar src={feedback.image} />
+                    {/* Customer Avatar */}
+                    <Grid item xs={2} style={{ marginRight: "-12%" }}>
+                      <Avatar alt={feedback.LastName} src={feedback.Image} />
                     </Grid>
-                    <Grid item xs={10}>
-                      <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                        {feedback.name}{" "}
-                        <Rating
-                          name="read-only"
-                          value={feedback.rating}
-                          readOnly
-                          size="small"
-                          sx={{ ml: 1 }}
-                        />
+                    {/* Feedback Details */}
+                    <Grid item xs={10} sx={{ paddingLeft: "25px" }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: "bold",
+                          fontSize: "20px",
+                          mb: 1,
+                        }}
+                      >
+                        {feedback.FirstName} {feedback.LastName}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {feedback.comment}
+                      <Typography
+                        variant="subtitle2"
+                        sx={{
+                          fontStyle: "italic",
+                          color: "text.secondary",
+                          mb: 1,
+                        }}
+                      >
+                        Evaluation Date:{" "}
+                        {new Date(feedback.EvaluationDate).toLocaleDateString()}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {new Date(feedback.date).toLocaleDateString()}
-                      </Typography>
+                      <Rating
+                        name={`rating-${feedback.id}`}
+                        value={feedback.Rating}
+                        readOnly
+                        precision={0.5}
+                        emptyIcon={
+                          <StarIcon
+                            style={{ opacity: 0.55 }}
+                            fontSize="inherit"
+                          />
+                        }
+                      />
+                      <Typography sx={{ mt: 1 }}>{feedback.Content}</Typography>
                     </Grid>
                   </Grid>
                   {index < feedbackRings.length - 1 && (
-                    <Divider sx={{ mb: 2 }} />
+                    <Divider
+                      variant="middle"
+                      sx={{
+                        my: 2,
+                        borderColor: "rgba(0, 0, 0, 0.12)",
+                      }}
+                    />
+                  )}
+                  {index < feedbackRings.length - 1 && (
+                    <hr
+                      style={{
+                        width: "100%",
+                        borderTop: "1px dashed black",
+                        marginBottom: "16px",
+                      }}
+                    />
                   )}
                 </React.Fragment>
               ))
@@ -528,17 +596,23 @@ const ViewRingDetailPage = () => {
               <Option value="Allison Kaufman">Allison Kaufman</Option>
             </Select>
           </Form.Item>
+
           <Form.Item name="ImageRings" label="Image Rings">
             <Upload
               listType="picture-card"
               showUploadList={false}
-              customRequest={handleUpload}
+              customRequest={handleUploadImage}
               accept="image/*"
+              className="upload-container"
             >
               {imageUrl ? (
-                <img src={imageUrl} alt="Ring" style={{ width: "100%" }} />
+                <img src={imageUrl} alt="Ring" />
               ) : (
-                <PlusOutlined />
+                <div className="upload-placeholder">
+                  <PlusOutlined className="upload-plus-icon" />
+                  <AddPhotoAlternateIcon className="upload-icon" />
+                  <div className="upload-text">Upload Image</div>
+                </div>
               )}
             </Upload>
           </Form.Item>
@@ -548,6 +622,7 @@ const ViewRingDetailPage = () => {
               showUploadList={false}
               customRequest={handleUploadBrand}
               accept="image/*"
+              className="upload-container"
             >
               {imageUrlBrand ? (
                 <img
@@ -556,7 +631,11 @@ const ViewRingDetailPage = () => {
                   style={{ width: "100%" }}
                 />
               ) : (
-                <PlusOutlined />
+                <div className="upload-placeholder">
+                  <PlusOutlined className="upload-plus-icon" />
+                  <AddPhotoAlternateIcon className="upload-icon" />
+                  <div className="upload-text">Upload Image</div>
+                </div>
               )}
             </Upload>
           </Form.Item>
@@ -739,7 +818,7 @@ const ViewRingDetailPage = () => {
           </Form.Item>
 
           <Form.Item
-            name="Price"
+            name="NewPrice"
             label="Price"
             rules={[{ validator: validatePrice }]}
           >

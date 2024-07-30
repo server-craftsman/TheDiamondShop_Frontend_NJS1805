@@ -146,8 +146,8 @@ function ManageRingPage() {
     });
   };
 
- 
-//====================================================================//
+
+  //====================================================================//
   const columns = [
     {
       title: "Ring Style",
@@ -223,8 +223,8 @@ function ManageRingPage() {
   });
 
 
-   //===============From here is time to validate========================//
-   const validateRingExist = (rule, value) => {
+  //===============From here is time to validate========================//
+  const validateRingExist = (rule, value) => {
     // Check if any of the specified fields exist in the fetched data
     const exists = rings.some(
       (item) => item.RingStyle === value || item.NameRings === value // || another attribute if have
@@ -304,11 +304,11 @@ function ManageRingPage() {
     }
     return Promise.resolve();
   };
-//====================================================================//
+  //====================================================================//
   return (
     <>
       <h1>Diamond Ring</h1>
-      <Button type="primary" onClick={() => setIsAddRingVisible(true)}>
+      <Button style={{ color: "#000", fontSize: "20px", border: "1px solid", marginBottom: "3px" }} type="primary" onClick={() => setIsAddRingVisible(true)}>
         Add Ring
       </Button>
       <Table dataSource={rings} columns={columns} rowKey="DiamondRingsID" />

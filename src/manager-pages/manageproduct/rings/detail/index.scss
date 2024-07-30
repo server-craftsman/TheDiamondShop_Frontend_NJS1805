@@ -1,35 +1,143 @@
 .detail {
   font-size: 50px;
-    padding: 20px;
-  }
-  
-  .descriptions {
-    //background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .brand-image,
-  .rings-image {
-    width: 100px;
-    height: auto;
-  }
-  
-  .materials-container,
-  .ring-sizes-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .material-item,
-  .ring-size-item {
-    //background-color: #f0f0f0;
-    padding: 5px 10px;
-    //border-radius: 4px;
-  }
-  
-  button {
-    margin-top: 20px;
-  }
-  
+  padding: 20px;
+}
+
+.descriptions {
+  //background-color: #f9f9f9;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.brand-image,
+.rings-image {
+  width: 100px;
+  height: auto;
+}
+
+.materials-container,
+.ring-sizes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.material-item,
+.ring-size-item {
+  //background-color: #f0f0f0;
+  padding: 5px 10px;
+  //border-radius: 4px;
+}
+
+button {
+  margin-top: 20px;
+}
+//design Luxury
+.materials-container,
+.ring-price-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+//specification oof ring size
+.ring-sizes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Khoảng cách giữa các ô dữ liệu */
+}
+
+.ring-size-item {
+  flex: 1 1 100px; /* Thay đổi 100px thành kích thước tối thiểu bạn muốn */
+  text-align: center; /* Canh giữa nội dung trong ô dữ liệu */
+  padding: 10px; /* Khoảng cách bên trong ô dữ liệu */
+  border: 1px solid #ddd; /* Đường viền của ô dữ liệu */
+  border-radius: 4px; /* Bo tròn góc của ô dữ liệu */
+  background-color: #f9f9f9; /* Màu nền của ô dữ liệu */
+}
+
+.material-item,
+.ring-price-item {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+}
+
+.material-item:hover,
+.ring-size-item:hover,
+.ring-price-item:hover {
+  background-color: #f1f1f1;
+  border-color: #ccc;
+}
+
+.material-item {
+  color: #000000;
+}
+
+.ring-size-item {
+  color: #000000;
+}
+
+.ring-price-item {
+  color: #0056b3;
+}
+
+.descriptions-item-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+//upload image
+.upload-container {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+}
+
+.upload-container:hover {
+  border-color: #010101;
+  background-color: #f1f1f1;
+}
+
+.upload-container img {
+  border-radius: 10px;
+  max-width: 100%;
+  height: auto;
+}
+
+.upload-icon {
+  font-size: 24px;
+  color: #8b4513;
+}
+
+.upload-plus-icon {
+  font-size: 48px;
+  color: #b36b00;
+}
+
+.upload-text {
+  font-size: 16px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
