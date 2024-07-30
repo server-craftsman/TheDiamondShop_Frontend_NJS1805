@@ -179,33 +179,33 @@ function ManageTimepiecesPage() {
     },
   ];
 
-
   const validateTimepiecesStyle = (rule, value) => {
     // Check if value matches the regex pattern
     const regex = /^[A-Z]{2}\d{4}-\d{2}[A-Z]$/;
     if (!regex.test(value)) {
-      return Promise.reject('Invalid Timepieces Style format. It should be in the format XX1234-65X.');
+      return Promise.reject(
+        "Invalid Timepieces Style format. It should be in the format XX1234-65X."
+      );
     }
 
     // Check if value exists in the fetched data
-    const exists = timepieces.some(item => item.TimepiecesStyle === value);
+    const exists = timepieces.some((item) => item.TimepiecesStyle === value);
     if (exists) {
-      return Promise.reject('Timepieces Style already exists.');
+      return Promise.reject("Timepieces Style already exists.");
     }
 
     return Promise.resolve();
   };
 
-  // const validateNameTimepieces = (rule, value) => {
-  //   // Check if value exists in the fetched data
-  //   const exists = timepieces.some(item => item.name === value);
-  //   if (exists) {
-  //     return Promise.reject('Name Timepieces already exists.');
-  //   }
+  const validateNameTimepieces = (rule, value) => {
+    // Check if value exists in the fetched data
+    const exists = timepieces.some((item) => item.NameTimepieces === value);
+    if (exists) {
+      return Promise.reject("Name Timepieces already exists.");
+    }
 
-  //   return Promise.resolve();
-  // };
-
+    return Promise.resolve();
+  };
 
   return (
     <>
@@ -237,7 +237,7 @@ function ManageTimepiecesPage() {
             label="Name Timepieces"
             rules={[
               { required: true, message: "Please input the Name Timepieces!" },
-              // { validator: validateNameTimepieces },
+              { validator: validateNameTimepieces },
             ]}
           >
             <Input />

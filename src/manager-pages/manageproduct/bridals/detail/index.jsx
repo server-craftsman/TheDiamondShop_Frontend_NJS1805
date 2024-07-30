@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Descriptions, Form, Input, InputNumber, Modal, notification, Spin, Upload } from "antd";
-import "./index.scss"
+import {
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  notification,
+  Select,
+  Spin,
+  Upload,
+} from "antd";
+import "./index.scss";
 import { Avatar, Button, Divider, Grid, Typography, Box } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { getAllFeedbacks } from "../../../../pages/feedback-service/getAllFeedbacks";
@@ -24,26 +34,48 @@ function ViewBridalDetailPage() {
   const [feedbackBridal, setFeedbackBridal] = useState([]);
   const { user } = useContext(AuthContext);
 
+  //========used to check exist===============//
+  const [bridals, setBridals] = useState([]);
+  const fetchBridals = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8090/products/bridals"
+      );
+      setBridals(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchBridals();
+  }, []);
+  //=========================================//
+
   useEffect(() => {
     fetchData();
   }, [id]);
 
   const fetchData = async () => {
     try {
-      const brialDetailResponse = await axios.get(`http://localhost:8090/products/bridals/${id}`);
+      const brialDetailResponse = await axios.get(
+        `http://localhost:8090/products/bridals/${id}`
+      );
       setBridalDetail(brialDetailResponse.data);
 
-      const materialsResponse = await axios.get(`http://localhost:8090/products/bridal-material/${id}`);
+      const materialsResponse = await axios.get(
+        `http://localhost:8090/products/bridal-material/${id}`
+      );
       setMaterials(materialsResponse.data);
 
-      const ringSizesResponse = await axios.get(`http://localhost:8090/products/bridal-size/${id}`);
+      const ringSizesResponse = await axios.get(
+        `http://localhost:8090/products/bridal-size/${id}`
+      );
       setRingSizes(ringSizesResponse.data);
 
       const ringPriceResponse = await axios.get(
         `http://localhost:8090/products/bridal-prices/${id}`
       );
       setRingPrice(ringPriceResponse.data);
-
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -99,14 +131,14 @@ function ViewBridalDetailPage() {
 
   const handleUpdateBridals = async (values) => {
     try {
-      values.imageBridal = imageUrl || values.imageBridal; 
+      values.imageBridal = imageUrl || values.imageBridal;
       await axios.put(`http://localhost:8090/products/edit-bridals/`, values);
       fetchData(); // Refresh the list
       setIsEditBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       notification.success({
-        message: 'Success',
-        description: 'Bridals edited successfully!',
+        message: "Success",
+        description: "Bridals edited successfully!",
       });
     } catch (error) {
       console.error("Error updating bridals:", error);
@@ -130,14 +162,146 @@ function ViewBridalDetailPage() {
   if (loading) {
     return <Spin size="large" />;
   }
+  //==============validate=============//
+
+  const validateBridalExist = (rule, value) => {
+    // Check if any of the specified fields exist in the fetched data
+    const exists = bridals
+      .filter(
+        (item) =>
+          !bridalDetail ||
+          (item.BridalStyle !== bridalDetail.BridalStyle &&
+            item.NameBridal !== bridalDetail.NameBridalr)
+      )
+      .some(
+        (item) => item.BridalStyle === value || item.NameBridal === value // || another attribute if have
+      );
+
+    if (exists) {
+      return Promise.reject("The value already exists.");
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateBridalsStyle = (rule, value) => {
+    // Check if the value has exactly 10 characters
+    // if (value.length !== 10) {
+    //   return Promise.reject("Bridals Style must be exactly 10 characters long");
+    // }
+
+    // Check if the value has a length between 7 and 10 characters
+    if (value.length < 7 || value.length > 10) {
+      return Promise.reject(
+        "Bridals Style must be between 7 and 10 characters long"
+      );
+    }
+
+    // Check if the first 5 characters are digits
+    const firstPart = value.substring(0, 5);
+    if (!/^\d{5}$/.test(firstPart)) {
+      return Promise.reject("The first 5 characters must be digits");
+    }
+
+    // Check if the hyphen is in the correct position
+    if (value[5] !== "-") {
+      return Promise.reject("The 6th character must be a hyphen");
+    }
+
+    // Check the remaining part after the hyphen
+    const secondPart = value.substring(6);
+    if (!/^([A-Z0-9]+)$/.test(secondPart)) {
+      return Promise.reject(
+        "The characters after the hyphen can be letters (uppercase), numbers."
+      );
+    }
+
+    // Check if there are two consecutive hyphens in the second part
+    if (secondPart.includes("--")) {
+      return Promise.reject(
+        'The "-" signs cannot be placed next to each other'
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateWeight = (rule, value) => {
+    const Weight = parseFloat(value);
+    if (isNaN(Weight) || Weight < 2 || Weight > 3.6) {
+      return Promise.reject(
+        "Weight must be a decimal number between 2 and 3.6 mm"
+      );
+    }
+    return Promise.resolve();
+  };
+
+  const validateDiamondCaratRange = (rule, value) => {
+    // Split the input value by the dash character
+    const parts = value.split("-");
+
+    // Ensure there are exactly two parts
+    if (parts.length !== 2) {
+      // if (parts.length <10) {
+      return Promise.reject(
+        "Invalid format. Use the format: Decimal 1 - Decimal 2"
+      );
+    }
+
+    // Parse the parts as floating-point numbers
+    const decimal1 = parseFloat(parts[0]);
+    const decimal2 = parseFloat(parts[1]);
+
+    // Validate that both parts are numbers and within the correct range
+    if (
+      isNaN(decimal1) ||
+      isNaN(decimal2) ||
+      decimal1 <= 0 ||
+      decimal1 >= 1 ||
+      decimal2 <= 0 ||
+      decimal2 > 1 ||
+      decimal1 >= decimal2
+    ) {
+      return Promise.reject(
+        "Invalid range. Ensure Decimal 1 < Decimal 2, and both are within (0, 1]"
+      );
+    }
+
+    return Promise.resolve();
+  };
+
+  const validateTotalCaratWeight = (rule, value) => {
+    const caratWeight = parseFloat(value);
+    if (isNaN(caratWeight) || caratWeight <= 0 || caratWeight > 5) {
+      return Promise.reject(
+        "Total carat weight must be a decimal number greater than 0 and less than or equal to 5"
+      );
+    }
+    return Promise.resolve();
+  };
+
+  const validateTotalDiamond = (rule, value) => {
+    const totalDiamond = Number(value); // Parse the value as a number
+    if (
+      !Number.isInteger(totalDiamond) ||
+      totalDiamond <= 0 ||
+      totalDiamond > 30
+    ) {
+      return Promise.reject(
+        "Total Diamond must be a natural number greater than 0 and less than or equal to 30"
+      );
+    }
+    return Promise.resolve();
+  };
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject('Price must be greater than 1');
-      }
-      return Promise.resolve();
-  }
-  
+      return Promise.reject("Price must be greater than 1");
+    }
+    return Promise.resolve();
+  };
+
+  //=======================================//
   return (
     <div className="Detail">
       <Descriptions title="Bridal Details">
@@ -323,26 +487,22 @@ function ViewBridalDetailPage() {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={handleUpdateBridals}
-          layout="vertical"
-        >
-          <Form.Item
+        <Form form={form} onFinish={handleUpdateBridals} layout="vertical">
+          {/* <Form.Item
             name="bridalID"
             label="Bridal ID"
-            rules={[
-              { required: true, message: "Please input the Bridal ID!" },
-            ]}
+            rules={[{ required: true, message: "Please input the Bridal ID!" }]}
           >
-            <Input disabled/>
-          </Form.Item>
+            <Input disabled />
+          </Form.Item> */}
 
           <Form.Item
             name="bridalStyle"
-            label="Bridal Style"
+            label="Bridal Style (12345-EX10)"
             rules={[
               { required: true, message: "Please input the Bridal Style!" },
+              { validator: validateBridalsStyle },
+              { validator: validateBridalExist },
             ]}
           >
             <Input />
@@ -352,6 +512,7 @@ function ViewBridalDetailPage() {
             label="Name Bridal"
             rules={[
               { required: true, message: "Please input the Name Bridal!" },
+              { validator: validateBridalExist },
             ]}
           >
             <Input />
@@ -361,14 +522,16 @@ function ViewBridalDetailPage() {
             label="Category"
             rules={[{ required: true, message: "Please input the Category!" }]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="brandName"
             label="Brand Name"
-            rules={[{ required: true, message: "Please input the Brand Name!" }]}
+            rules={[
+              { required: true, message: "Please input the Brand Name!" },
+            ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="settingType"
@@ -377,14 +540,21 @@ function ViewBridalDetailPage() {
               { required: true, message: "Please input the Setting Type!" },
             ]}
           >
-            <Input />
+            <Select>
+              <Select.Option value="Halo">Halo</Select.Option>
+              <Select.Option value="Three Stone">Three Stone</Select.Option>
+              <Select.Option value="Single Row">Single Row</Select.Option>
+              <Select.Option value="Multi Row">Multi Row</Select.Option>
+              <Select.Option value="Antique">Antique</Select.Option>
+              <Select.Option value="Bypass">Bypass</Select.Option>
+            </Select>
           </Form.Item>
           <Form.Item
             name="gender"
             label="Gender"
             rules={[{ required: true, message: "Please input the Gender!" }]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           {/* <Form.Item
             name="imageBridal"
@@ -427,28 +597,68 @@ function ViewBridalDetailPage() {
             </div>
           )}
 
-          <Form.Item name="weight" label="Weight"
-          rules={[{ required: true, message: "Please input the weight!" }]}>
+          <Form.Item
+            name="weight"
+            label="Weight (2g - 3.6g)"
+            rules={[
+              { required: true, message: "Please input the weight!" },
+              { validator: validateWeight },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="centerDiamond" label="Center Diamond"
-          rules={[{ required: true, message: "Please input the center Diamond!" }]}>
+          <Form.Item
+            name="centerDiamond"
+            label="Center Diamond"
+            rules={[
+              { required: true, message: "Please input the center Diamond!" },
+            ]}
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item
+            name="diamondCaratRange"
+            label="Diamond Carat Range (0,2 - 0,4)"
+            rules={[
+              {
+                required: true,
+                message: "Please input the diamond Carat Range!",
+              },
+              { validator: validateDiamondCaratRange },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="diamondCaratRange" label="Diamond Carat Range"
-          rules={[{ required: true, message: "Please input the diamond Carat Range!" }]}>
+          <Form.Item
+            name="totalCaratweight"
+            label="Total Carat Weight (0.1)"
+            rules={[
+              {
+                required: true,
+                message: "Please input the total Carat weight!",
+              },
+              { validator: validateTotalCaratWeight },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="totalCaratweight" label="Total Carat Weight"
-          rules={[{ required: true, message: "Please input the total Carat weight!" }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="totalDiamond" label="Total Diamond"
-          rules={[{ required: true, message: "Please input the total Diamond!" }]}>
+          <Form.Item
+            name="totalDiamond"
+            label="Total Diamond (25)"
+            rules={[
+              { required: true, message: "Please input the total Diamond!" },
+              { validator: validateTotalDiamond },
+            ]}
+          >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="description" label="Description"
-          rules={[{ required: true, message: "Please input the description!" }]}>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              { required: true, message: "Please input the description!" },
+            ]}
+          >
             <Input />
           </Form.Item>
           {/* <Form.Item name="price" label="Price"
@@ -463,21 +673,31 @@ function ViewBridalDetailPage() {
             rules={[
               {
                 required: true,
-                message: "Please input the inventory (1 or 0)!",
-              },
-              {
-                validator: (_, value) => {
-                  if (value === 1 || value === 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Inventory must be either 1 or 0!")
-                  );
-                },
+                message: "Please input the inventory quantity!",
               },
             ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input the inventory (1 or 0)!",
+            //   },
+            //   {
+            //     validator: (_, value) => {
+            //       if (value === 1 || value === 0) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(
+            //         new Error("Inventory must be either 1 or 0!")
+            //       );
+            //     },
+            //   },
+            // ]}
           >
-            <InputNumber style={{ width: "100%" }}/>
+            {/* <InputNumber style={{ width: "100%" }} /> */}
+            <Select>
+              <Select.Option value="0">0</Select.Option>
+              <Select.Option value="1">1</Select.Option>
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
