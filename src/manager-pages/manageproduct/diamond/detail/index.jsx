@@ -558,7 +558,7 @@ function ViewDiamondDetailPage() {
   if (loading) {
     return <Spin size="large" />;
   }
-
+  //=====================validate diamond==========================//
   const validateCaratWeight = (rule, value) => {
     // Convert the value to a number
     const numValue = parseFloat(value);
@@ -827,16 +827,14 @@ function ViewDiamondDetailPage() {
         ]}
       >
         <Form form={form} onFinish={handleUpdateDiamond} layout="vertical">
-        <Form.Item
+          <Form.Item
             name="diamondID"
             label="Diamond ID"
-            rules={[
-              { required: true, message: "Please input the price!" },
-            ]}
+            rules={[{ required: true, message: "Please input the price!" }]}
           >
             <Input disabled />
           </Form.Item>
-          
+
           <Form.Item
             name="diamondOrigin"
             label="Diamond Origin"
@@ -1046,7 +1044,7 @@ function ViewDiamondDetailPage() {
             label="Gemstone"
             rules={[{ required: true, message: "Please input the gemstone!" }]}
           >
-             <Select>
+            <Select>
               <Select.Option value="Natural, untreated diamond">
                 Natural, untreated diamond
               </Select.Option>
@@ -1068,7 +1066,7 @@ function ViewDiamondDetailPage() {
             //   { required: true, message: "Please input the grading Report!" },
             // ]}
           >
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="descriptors"
@@ -1086,7 +1084,7 @@ function ViewDiamondDetailPage() {
               { required: true, message: "Please input the fluorescence!" },
             ]}
           >
-             <Select>
+            <Select>
               <Select.Option value="NON">NON</Select.Option>
               <Select.Option value="MB">MB</Select.Option>
               <Select.Option value="STG BL">STG BL</Select.Option>
