@@ -84,10 +84,26 @@ const ViewRingDetailPage = () => {
         axios.get(`http://localhost:8090/products/diamond-rings-size/${id}`),
         axios.get(`http://localhost:8090/products/diamond-rings-price/${id}`),
       ]);
-      setRingDetail(ringDetailResponse.data);
+
+      const ringDetailData = ringDetailResponse.data;
+      setRingDetail(ringDetailData);
       setMaterials(materialsResponse.data);
       setRingSizes(ringSizesResponse.data);
       setRingPrice(ringPriceResponse.data);
+
+      // Set IDs for the form
+      setSelectedMaterialID(ringDetailData.MaterialID);
+      setSelectedRingSizeID(ringDetailData.RingSizeID);
+      setSelectedPriceID(ringDetailData.PriceID);
+
+      // Set the form values with fetched data
+      form.setFieldsValue({
+        ...ringDetailData,
+        PriceID: ringDetailData.PriceID,
+        ImageRings: ringDetailData.ImageRings || "",
+        ImageBrand: ringDetailData.ImageBrand || "",
+      });
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -127,10 +143,26 @@ const ViewRingDetailPage = () => {
   };
 
   const handleUpdateRings = async (values) => {
+    console.log("Selected IDs:", {
+      selectedMaterialID,
+      selectedRingSizeID,
+      selectedPriceID
+    });
+
+    if (!selectedPriceID || !selectedMaterialID || !selectedRingSizeID) {
+      notification.error({
+        message: "Error",
+        description: "MaterialID, RingSizeID, and PriceID are required to update the ring.",
+      });
+      return;
+    }
+
     try {
       values.ImageRings = imageUrl || values.ImageRings;
       values.ImageBrand = imageUrlBrand || values.ImageBrand;
-      values.PriceID = selectedPriceID; // Include selected PriceID
+      values.PriceID = selectedPriceID;
+      values.MaterialID = selectedMaterialID;
+      values.RingSizeID = selectedRingSizeID;
 
       const response = await axios.put(
         `http://localhost:8090/products/edit-diamond-rings/${id}`,
@@ -181,19 +213,19 @@ const ViewRingDetailPage = () => {
     return false;
   };
 
-  const fetchPriceID = async (diamondRingsID, materialID, ringSizeID) => {
-    if (diamondRingsID && materialID && ringSizeID) {
+  const fetchPriceID = async (materialID, ringSizeID) => {
+    if (id && materialID && ringSizeID) {
       try {
-        const response = await axios.get(
-          `http://localhost:8090/products/diamond-rings-price/${id}`,
-          {
-            params: { diamondRingsID, materialID, ringSizeID },
-          }
-        );
-        return response.data.PriceID;
+        const response = await axios.post('http://localhost:8090/products/price-id', {
+          diamondRingsId: id,
+          materialID,
+          ringSizeID,
+        });
+        const fetchedPriceID = response.data.PriceID;
+        setSelectedPriceID(fetchedPriceID);
+        form.setFieldsValue({ PriceID: fetchedPriceID });
       } catch (error) {
         console.error("Error fetching price ID:", error);
-        return null; // Handle errors as needed
       }
     }
   };
@@ -680,12 +712,10 @@ const ViewRingDetailPage = () => {
                 setSelectedMaterialID(value);
                 fetchPriceID(value, selectedRingSizeID); // Fetch PriceID based on MaterialID and RingSizeID
               }}
+              value={selectedMaterialID} // Ensure the value is properly set
             >
               {materials.map((material) => (
-                <Select.Option
-                  key={material.MaterialID}
-                  value={material.MaterialID}
-                >
+                <Select.Option key={material.MaterialID} value={material.MaterialID}>
                   {material.MaterialName}
                 </Select.Option>
               ))}
@@ -698,6 +728,7 @@ const ViewRingDetailPage = () => {
                 setSelectedRingSizeID(value);
                 fetchPriceID(selectedMaterialID, value); // Fetch PriceID based on MaterialID and RingSizeID
               }}
+              value={selectedRingSizeID} // Ensure the value is properly set
             >
               {ringSizes.map((size) => (
                 <Select.Option key={size.RingSizeID} value={size.RingSizeID}>
@@ -706,6 +737,7 @@ const ViewRingDetailPage = () => {
               ))}
             </Select>
           </Form.Item>
+
           <Form.Item
             name="Price"
             label="Price"
