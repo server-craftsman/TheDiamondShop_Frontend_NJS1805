@@ -34,6 +34,11 @@ function ViewBridalDetailPage() {
   const [feedbackBridal, setFeedbackBridal] = useState([]);
   const { user } = useContext(AuthContext);
 
+  //fetch id
+  const [selectedMaterialID, setSelectedMaterialID] = useState(null);
+  const [selectedRingSizeID, setSelectedRingSizeID] = useState(null);
+  const [selectedPriceID, setSelectedPriceID] = useState(null);
+
   //========used to check exist===============//
   const [bridals, setBridals] = useState([]);
   const fetchBridals = async () => {
@@ -57,25 +62,41 @@ function ViewBridalDetailPage() {
 
   const fetchData = async () => {
     try {
-      const brialDetailResponse = await axios.get(
-        `http://localhost:8090/products/bridals/${id}`
-      );
+      const [
+        brialDetailResponse,
+        materialsResponse,
+        ringSizesResponse,
+        ringPriceResponse,
+      ] = await Promise.all( [
+        axios.get(`http://localhost:8090/products/bridals/${id}`),
+        axios.get(
+          `http://localhost:8090/products/bridal-material/${id}`
+        ),
+        axios.get(
+          `http://localhost:8090/products/bridal-size/${id}`
+        ),
+        axios.get(
+          `http://localhost:8090/products/bridal-prices/${id}`
+        ),
+      ]);
+      const bridalDetailData = brialDetailResponse.data;
       setBridalDetail(brialDetailResponse.data);
-
-      const materialsResponse = await axios.get(
-        `http://localhost:8090/products/bridal-material/${id}`
-      );
       setMaterials(materialsResponse.data);
-
-      const ringSizesResponse = await axios.get(
-        `http://localhost:8090/products/bridal-size/${id}`
-      );
       setRingSizes(ringSizesResponse.data);
-
-      const ringPriceResponse = await axios.get(
-        `http://localhost:8090/products/bridal-prices/${id}`
-      );
       setRingPrice(ringPriceResponse.data);
+
+      // Set IDs for the form
+      setSelectedMaterialID(bridalDetailData.MaterialID);
+      setSelectedRingSizeID(bridalDetailData.RingSizeID);
+      setSelectedPriceID(bridalDetailData.PriceID);
+
+      // Set the form values with fetched data
+      form.setFieldsValue({
+        ...bridalDetailData,
+        PriceID: bridalDetailData.PriceID,
+        ImageBridal: bridalDetailData.ImageBridal || "",
+      });
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -108,31 +129,34 @@ function ViewBridalDetailPage() {
     setEditingBridal(record);
     setIsEditBridalVisible(true); // Show the modal
     form.setFieldsValue({
-      bridalID: record.BridalID,
-      bridalStyle: record.BridalStyle,
-      nameBridal: record.NameBridal,
-      category: record.Category,
-      brandName: record.BrandName,
-      material: record.Material,
-      settingType: record.SettingType,
-      gender: record.Gender,
-      weight: record.Weight,
-      centerDiamond: record.CenterDiamond,
-      diamondCaratRange: record.DiamondCaratRange,
-      ringSizeRange: record.RingSizeRang,
-      totalCaratweight: record.TotalCaratWeight,
-      totalDiamond: record.TotalDiamond,
-      description: record.Description,
-      imageBridal: record.ImageBridal,
-      imageBrand: record.ImageBrand,
-      inventory: record.Inventory,
+      ...record,
+      ImageBridal: record.ImageBridal || "",
     });
   };
 
+  
   const handleUpdateBridals = async (values) => {
+    console.log("Selected IDs:", {
+      selectedMaterialID,
+      selectedRingSizeID,
+      selectedPriceID
+    });
+
+    if (!selectedPriceID || !selectedMaterialID || !selectedRingSizeID) {
+      notification.error({
+        message: "Error",
+        description: "MaterialID, RingSizeID, and PriceID are required to update the bridal.",
+      });
+      return;
+    }
+
     try {
-      values.imageBridal = imageUrl || values.imageBridal;
-      await axios.put(`http://localhost:8090/products/edit-bridals/`, values);
+      values.ImageBridal = imageUrl || values.ImageBridal;
+      values.PriceID = selectedPriceID;
+      values.MaterialID = selectedMaterialID;
+      values.RingSizeID = selectedRingSizeID;
+      const response = await axios.put(`http://localhost:8090/products/edit-bridal/${id}`, values);
+      if (response.status === 200) {
       fetchData(); // Refresh the list
       setIsEditBridalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
@@ -140,8 +164,16 @@ function ViewBridalDetailPage() {
         message: "Success",
         description: "Bridals edited successfully!",
       });
+    } else {
+      throw new Error("Failed to update the Bridals");
+    }
     } catch (error) {
       console.error("Error updating bridals:", error);
+      notification.error({
+        message: "Error",
+        description:
+          "There was an error updating the bridals. Please try again.",
+      });
     }
   };
 
@@ -150,13 +182,30 @@ function ViewBridalDetailPage() {
     form.resetFields();
   };
 
-  const handleUpload = (imageBridal) => {
+  const handleUpload = (ImageBridal) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       setImageUrl(e.target.result);
     };
-    reader.readAsDataURL(imageBridal);
+    reader.readAsDataURL(ImageBridal);
     return false; // Prevent default upload behavior
+  };
+
+  const fetchPriceID = async (materialID, ringSizeID) => {
+    if (id && materialID && ringSizeID) {
+      try {
+        const response = await axios.post('http://localhost:8090/products/price-bridal-id', {
+          bridalId: id,
+          materialID,
+          ringSizeID,
+        });
+        const fetchedPriceID = response.data.PriceID;
+        setSelectedPriceID(fetchedPriceID);
+        form.setFieldsValue({ PriceID: fetchedPriceID });
+      } catch (error) {
+        console.error("Error fetching price ID:", error);
+      }
+    }
   };
 
   if (loading) {
@@ -488,16 +537,16 @@ function ViewBridalDetailPage() {
         ]}
       >
         <Form form={form} onFinish={handleUpdateBridals} layout="vertical">
-          {/* <Form.Item
-            name="bridalID"
+          <Form.Item
+            name="BridalID"
             label="Bridal ID"
             rules={[{ required: true, message: "Please input the Bridal ID!" }]}
           >
             <Input disabled />
-          </Form.Item> */}
+          </Form.Item>
 
           <Form.Item
-            name="bridalStyle"
+            name="BridalStyle"
             label="Bridal Style (12345-EX10)"
             rules={[
               { required: true, message: "Please input the Bridal Style!" },
@@ -508,7 +557,7 @@ function ViewBridalDetailPage() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="nameBridal"
+            name="NameBridal"
             label="Name Bridal"
             rules={[
               { required: true, message: "Please input the Name Bridal!" },
@@ -518,14 +567,14 @@ function ViewBridalDetailPage() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="category"
+            name="Category"
             label="Category"
             rules={[{ required: true, message: "Please input the Category!" }]}
           >
             <Input disabled />
           </Form.Item>
           <Form.Item
-            name="brandName"
+            name="BrandName"
             label="Brand Name"
             rules={[
               { required: true, message: "Please input the Brand Name!" },
@@ -534,7 +583,7 @@ function ViewBridalDetailPage() {
             <Input disabled />
           </Form.Item>
           <Form.Item
-            name="settingType"
+            name="SettingType"
             label="Setting Type"
             rules={[
               { required: true, message: "Please input the Setting Type!" },
@@ -550,7 +599,7 @@ function ViewBridalDetailPage() {
             </Select>
           </Form.Item>
           <Form.Item
-            name="gender"
+            name="Gender"
             label="Gender"
             rules={[{ required: true, message: "Please input the Gender!" }]}
           >
@@ -567,7 +616,7 @@ function ViewBridalDetailPage() {
           </Form.Item> */}
 
           <Form.Item
-            name="imageBridal"
+            name="ImageBridal"
             label="Upload Image Bridal"
             rules={[
               { required: true, message: "Please upload an image Bridal!" },
@@ -598,7 +647,7 @@ function ViewBridalDetailPage() {
           )}
 
           <Form.Item
-            name="weight"
+            name="Weight"
             label="Weight (2g - 3.6g)"
             rules={[
               { required: true, message: "Please input the weight!" },
@@ -608,7 +657,7 @@ function ViewBridalDetailPage() {
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
-            name="centerDiamond"
+            name="CenterDiamond"
             label="Center Diamond"
             rules={[
               { required: true, message: "Please input the center Diamond!" },
@@ -617,7 +666,7 @@ function ViewBridalDetailPage() {
             <Input disabled />
           </Form.Item>
           <Form.Item
-            name="diamondCaratRange"
+            name="DiamondCaratRange"
             label="Diamond Carat Range (0,2 - 0,4)"
             rules={[
               {
@@ -630,7 +679,7 @@ function ViewBridalDetailPage() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="totalCaratweight"
+            name="TotalCaratWeight"
             label="Total Carat Weight (0.1)"
             rules={[
               {
@@ -643,7 +692,7 @@ function ViewBridalDetailPage() {
             <Input />
           </Form.Item>
           <Form.Item
-            name="totalDiamond"
+            name="TotalDiamond"
             label="Total Diamond (25)"
             rules={[
               { required: true, message: "Please input the total Diamond!" },
@@ -653,7 +702,7 @@ function ViewBridalDetailPage() {
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
-            name="description"
+            name="Description"
             label="Description"
             rules={[
               { required: true, message: "Please input the description!" },
@@ -668,7 +717,7 @@ function ViewBridalDetailPage() {
             <InputNumber style={{width: "100%"}}/>
           </Form.Item> */}
           <Form.Item
-            name="inventory"
+            name="Inventory"
             label="Inventory"
             rules={[
               {
@@ -699,6 +748,46 @@ function ViewBridalDetailPage() {
               <Select.Option value="1">1</Select.Option>
             </Select>
           </Form.Item>
+          <Form.Item name="MaterialID" label="Material">
+            <Select
+              onChange={(value) => {
+                setSelectedMaterialID(value);
+                fetchPriceID(value, selectedRingSizeID); // Fetch PriceID based on MaterialID and RingSizeID
+              }}
+              value={selectedMaterialID} // Ensure the value is properly set
+            >
+              {materials.map((material) => (
+                <Select.Option key={material.MaterialID} value={material.MaterialID}>
+                  {material.MaterialName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="RingSizeID" label="Ring Size">
+            <Select
+              onChange={(value) => {
+                setSelectedRingSizeID(value);
+                fetchPriceID(selectedMaterialID, value); // Fetch PriceID based on MaterialID and RingSizeID
+              }}
+              value={selectedRingSizeID} // Ensure the value is properly set
+            >
+              {ringSizes.map((size) => (
+                <Select.Option key={size.RingSizeID} value={size.RingSizeID}>
+                  {size.RingSize}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="NewPrice"
+            label="Price"
+            rules={[{ validator: validatePrice }]}
+          >
+            <InputNumber min={1} />
+          </Form.Item>
+
         </Form>
       </Modal>
     </div>

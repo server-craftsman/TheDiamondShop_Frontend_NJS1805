@@ -29,6 +29,7 @@ const ViewRingDetailPage = () => {
   const [materials, setMaterials] = useState([]);
   const [ringSizes, setRingSizes] = useState([]);
   const [ringPrice, setRingPrice] = useState([]);
+  const [editingRing, setEditingRing] = useState(null);
   const [isEditRingVisible, setIsEditRingVisible] = useState(false);
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState("");
@@ -133,6 +134,7 @@ const ViewRingDetailPage = () => {
   };
 
   const handleEditRings = (record) => {
+    setEditingRing(record);
     setIsEditRingVisible(true);
     form.setFieldsValue({
       ...record,
@@ -182,7 +184,7 @@ const ViewRingDetailPage = () => {
         throw new Error("Failed to update the ring");
       }
     } catch (error) {
-      console.error("Error updating diamond:", error);
+      console.error("Error updating diamond ring:", error);
       notification.error({
         message: "Error",
         description:
@@ -220,9 +222,9 @@ const ViewRingDetailPage = () => {
   const handleUpload = (file, setImageUrl) => {
     const reader = new FileReader();
     reader.onload = (e) => setImageUrl(e.target.result);
-    if (file && file.originFileObj) {
-      reader.readAsDataURL(file.originFileObj);
-    }
+    //  if (file && file.originFileObj) {
+      reader.readAsDataURL(file);
+    //  }
     return false;
   };
 
