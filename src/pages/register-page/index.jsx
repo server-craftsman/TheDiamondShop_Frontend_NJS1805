@@ -9,6 +9,7 @@ import {
   SmileOutlined,
   EyeInvisibleOutlined,
   EyeTwoTone,
+  ClockCircleOutlined
 } from "@ant-design/icons";
 
 import axios from "axios";
@@ -40,10 +41,10 @@ function RegisterForm() {
 
   const openNotification = () => {
     api.open({
-      message: "Registration Successful",
+      message: "Your Account is processing.",
       description:
-        "You have registered successfully. Please log in to continue.",
-      icon: <SmileOutlined style={{ color: "#108ee9" }} />,
+        "Please check your Email to verify your account!",
+      icon: <ClockCircleOutlined style={{ color: "#108ee9" }} />,
     });
   };
 
