@@ -15,7 +15,10 @@ import moment from "moment";
 const ManageVoucher = () => {
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // State to control modals
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingVoucher, setEditingVoucher] = useState(null);
 
   const [form] = Form.useForm();
@@ -41,7 +44,7 @@ const ManageVoucher = () => {
       await axios.post("http://localhost:8090/vouchers", values);
       message.success("Voucher created successfully");
       fetchVouchers();
-      setIsModalVisible(false);
+      setIsAddModalVisible(false);
       form.resetFields();
     } catch (error) {
       message.error("Failed to create voucher");
@@ -56,7 +59,7 @@ const ManageVoucher = () => {
       );
       message.success("Voucher updated successfully");
       fetchVouchers();
-      setIsModalVisible(false);
+      setIsEditModalVisible(false);
       form.resetFields();
       setEditingVoucher(null);
     } catch (error) {
@@ -66,14 +69,19 @@ const ManageVoucher = () => {
 
   const handleEdit = (record) => {
     setEditingVoucher(record);
-    setIsModalVisible(true);
+    setIsEditModalVisible(true);
     form.setFieldsValue({
       ...record,
       ValidFrom: moment(record.ValidFrom),
       ExpirationDate: moment(record.ExpirationDate),
     });
   };
+  //==============validate=================//
 
+  const disabledPastDate = (current) =>
+    current && current < moment().startOf("day");
+
+  //=======================================//
   const columns = [
     {
       title: "Voucher Name",
@@ -137,7 +145,7 @@ const ManageVoucher = () => {
     <div>
       <Button
         type="primary"
-        onClick={() => setIsModalVisible(true)}
+        onClick={() => setIsAddModalVisible(true)}
         style={{ marginBottom: 16 }}
       >
         New Voucher
@@ -149,23 +157,19 @@ const ManageVoucher = () => {
         rowKey="VoucherID"
       />
 
+      {/* Add Voucher Modal */}
       <Modal
-        title={editingVoucher ? "Edit Voucher" : "New Voucher"}
-        visible={isModalVisible}
+        title="New Voucher"
+        visible={isAddModalVisible}
         onCancel={() => {
-          setIsModalVisible(false);
+          setIsAddModalVisible(false);
           form.resetFields();
-          setEditingVoucher(null);
         }}
         onOk={() => {
           form
             .validateFields()
             .then((values) => {
-              if (editingVoucher) {
-                handleUpdate(values);
-              } else {
-                handleCreate(values);
-              }
+              handleCreate(values);
             })
             .catch((info) => {
               console.log("Validate Failed:", info);
@@ -188,8 +192,9 @@ const ManageVoucher = () => {
             rules={[
               { required: true, message: "Please input the usaged quantity!" },
             ]}
+            initialValue="0"
           >
-            <InputNumber min={0} />
+            <InputNumber disabled placeholder="0" />
           </Form.Item>
           <Form.Item
             name="TotalQuantity"
@@ -213,19 +218,134 @@ const ManageVoucher = () => {
             name="ValidFrom"
             label="Valid From"
             rules={[
-              { required: true, message: "Please select the valid from date!" },
+              {
+                required: true,
+                message: "Please select the valid from date!",
+              },
             ]}
           >
-            <DatePicker />
+            <DatePicker disabledDate={disabledPastDate} />
           </Form.Item>
           <Form.Item
             name="ExpirationDate"
             label="Expiration Date"
             rules={[
-              { required: true, message: "Please select the expiration date!" },
+              {
+                required: true,
+                message: "Please select the expiration date!",
+              },
             ]}
           >
-            <DatePicker />
+            <DatePicker disabledDate={disabledPastDate} />
+          </Form.Item>
+          <Form.Item
+            name="Condition"
+            label="Condition"
+            rules={[{ required: true, message: "Please input the condition!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="Prerequisites"
+            label="Prerequisites"
+            rules={[
+              { required: true, message: "Please input the prerequisites!" },
+            ]}
+          >
+            <InputNumber min={0} />
+          </Form.Item>
+          <Form.Item
+            name="Discount"
+            label="Discount"
+            rules={[{ required: true, message: "Please input the discount!" }]}
+          >
+            <InputNumber min={0} step={0.01} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Voucher Modal */}
+      <Modal
+        title="Edit Voucher"
+        visible={isEditModalVisible}
+        onCancel={() => {
+          setIsEditModalVisible(false);
+          form.resetFields();
+          setEditingVoucher(null);
+        }}
+        onOk={() => {
+          form
+            .validateFields()
+            .then((values) => {
+              handleUpdate(values);
+            })
+            .catch((info) => {
+              console.log("Validate Failed:", info);
+            });
+        }}
+      >
+        <Form form={form} layout="vertical" name="voucherForm">
+          <Form.Item
+            name="VoucherName"
+            label="Voucher Name"
+            rules={[
+              { required: true, message: "Please input the voucher name!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="UsagedQuantity"
+            label="Usaged Quantity"
+            rules={[
+              { required: true, message: "Please input the usaged quantity!" },
+            ]}
+          >
+            <InputNumber disabled min={0} />
+          </Form.Item>
+
+          <Form.Item
+            name="TotalQuantity"
+            label="Total Quantity"
+            rules={[
+              { required: true, message: "Please input the total quantity!" },
+            ]}
+          >
+            <InputNumber min={1} />
+          </Form.Item>
+          <Form.Item
+            name="Type"
+            label="Type"
+            rules={[
+              { required: true, message: "Please input the voucher type!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="ValidFrom"
+            label="Valid From"
+            rules={[
+              {
+                required: true,
+                message: "Please select the valid from date!",
+              },
+            ]}
+          >
+            <DatePicker disabledDate={disabledPastDate} />
+          </Form.Item>
+          <Form.Item
+            name="ExpirationDate"
+            label="Expiration Date"
+            rules={[
+              {
+                required: true,
+                message: "Please select the expiration date!",
+              },
+            ]}
+          >
+            <DatePicker disabledDate={disabledPastDate} />
           </Form.Item>
           <Form.Item
             name="Condition"
