@@ -256,10 +256,10 @@ function ViewTimepiecesDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button onClick={() => handleEditTimepieces(timepiecesDetail)}>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 15px 20px 0" }} onClick={() => handleEditTimepieces(timepiecesDetail)}>
         Edit
       </Button>
-      <Button onClick={() => window.history.back()}>Back</Button>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 0 20px 0" }} onClick={() => window.history.back()}>Back</Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -352,10 +352,10 @@ function ViewTimepiecesDetailPage() {
         open={isEditTimepiecesVisible}
         onCancel={handleCancelEdit}
         footer={[
-          <Button key="cancel" onClick={handleCancelEdit}>
+          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", marginRight: '10px' }} key="cancel" onClick={handleCancelEdit}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={() => form.submit()}>
+          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} key="submit" type="primary" onClick={() => form.submit()}>
             Save
           </Button>,
         ]}

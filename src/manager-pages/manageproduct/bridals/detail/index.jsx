@@ -372,20 +372,18 @@ function ViewBridalDetailPage() {
             style={{ width: "100px", height: "auto" }}
           />
         </Descriptions.Item>
+        <Descriptions.Item label="Image Bridal">
+          <img
+            src={bridalDetail?.ImageBridal}
+            alt="Bridal"
+            style={{ width: "100px", height: "auto" }}
+          />
+        </Descriptions.Item>
         <Descriptions.Item label="Material">
           <div className="materials-container">
             {materials.map((material) => (
               <div key={material.MaterialID} className="material-item">
                 {material.MaterialName}
-              </div>
-            ))}
-          </div>
-        </Descriptions.Item>
-        <Descriptions.Item label="Ring Size Rang">
-          <div className="ring-sizes-container">
-            {ringSizes.map((size) => (
-              <div key={size.RingSizeID} className="ring-size-item">
-                {size.RingSize}
               </div>
             ))}
           </div>
@@ -400,16 +398,20 @@ function ViewBridalDetailPage() {
             ))}
           </div>
         </Descriptions.Item>
+        <Descriptions.Item label="Ring Size Rang">
+          <div className="ring-sizes-container">
+            {ringSizes.map((size) => (
+              <div key={size.RingSizeID} className="ring-size-item">
+                {size.RingSize}
+              </div>
+            ))}
+          </div>
+        </Descriptions.Item>
+
         <Descriptions.Item label="Inventory">
           {bridalDetail?.Inventory}
         </Descriptions.Item>
-        <Descriptions.Item label="Image Bridal">
-          <img
-            src={bridalDetail?.ImageBridal}
-            alt="Bridal"
-            style={{ width: "100px", height: "auto" }}
-          />
-        </Descriptions.Item>
+
         <Descriptions.Item label="SettingType">
           {bridalDetail?.SettingType}
         </Descriptions.Item>
@@ -433,8 +435,8 @@ function ViewBridalDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button onClick={() => handleEditBridals(bridalDetail)}>Edit</Button>
-      <Button onClick={() => window.history.back()}>Back</Button>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 15px 20px 0" }} onClick={() => handleEditBridals(bridalDetail)}>Edit</Button>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 0 20px 0" }} onClick={() => window.history.back()}>Back</Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -527,10 +529,10 @@ function ViewBridalDetailPage() {
         open={isEditBridalVisible}
         onCancel={handleCancelEdit}
         footer={[
-          <Button key="cancel" onClick={handleCancelEdit}>
+          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", marginRight: '10px' }} key="cancel" onClick={handleCancelEdit}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={() => form.submit()}>
+          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} key="submit" type="primary" onClick={() => form.submit()}>
             Save
           </Button>,
         ]}
@@ -724,22 +726,22 @@ function ViewBridalDetailPage() {
                 message: "Please input the inventory quantity!",
               },
             ]}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input the inventory (1 or 0)!",
-            //   },
-            //   {
-            //     validator: (_, value) => {
-            //       if (value === 1 || value === 0) {
-            //         return Promise.resolve();
-            //       }
-            //       return Promise.reject(
-            //         new Error("Inventory must be either 1 or 0!")
-            //       );
-            //     },
-            //   },
-            // ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Please input the inventory (1 or 0)!",
+          //   },
+          //   {
+          //     validator: (_, value) => {
+          //       if (value === 1 || value === 0) {
+          //         return Promise.resolve();
+          //       }
+          //       return Promise.reject(
+          //         new Error("Inventory must be either 1 or 0!")
+          //       );
+          //     },
+          //   },
+          // ]}
           >
             {/* <InputNumber style={{ width: "100%" }} /> */}
             <Select>

@@ -173,7 +173,7 @@ function ManageTimepiecesPage() {
       key: "action",
       render: (text, record) => (
         <Link to={`/timepieces-details/${record.DiamondTimepiecesID}`}>
-          View Details
+          <Button>View Details</Button>
         </Link>
       ),
     },
@@ -210,7 +210,7 @@ function ManageTimepiecesPage() {
   return (
     <>
       <h1>Timepieces</h1>
-      <Button type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
         Add Timepieces
       </Button>
       <Table dataSource={timepieces} columns={columns} rowKey="DiamondID" />
@@ -577,7 +577,7 @@ function ManageTimepiecesPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" htmlType="submit">
               Add Timepieces
             </Button>
           </Form.Item>

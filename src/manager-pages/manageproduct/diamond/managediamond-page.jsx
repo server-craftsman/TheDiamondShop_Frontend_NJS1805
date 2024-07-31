@@ -414,7 +414,7 @@ function ManageDiamondPage() {
 
   const columns = [
     {
-      title: "Diamond ID",
+      title: "No",
       dataIndex: "DiamondID",
       key: "DiamondID",
     },
@@ -469,7 +469,7 @@ function ManageDiamondPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Link to={`/diamonds-detail/${record.DiamondID}`}>View Details</Link>
+        <Link to={`/diamonds-detail/${record.DiamondID}`}><Button>View Details</Button></Link>
       ),
     },
   ];
@@ -564,7 +564,7 @@ function ManageDiamondPage() {
   return (
     <>
       <h1>Diamond</h1>
-      <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" onClick={() => setIsAddModalVisible(true)}>
         Add Diamond
       </Button>
       <Table dataSource={diamonds} columns={columns} rowKey="DiamondID" />
@@ -867,7 +867,7 @@ function ManageDiamondPage() {
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" htmlType="submit">
               Add Diamond
             </Button>
           </Form.Item>

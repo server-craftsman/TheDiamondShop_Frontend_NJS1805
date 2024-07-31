@@ -1,46 +1,57 @@
-import { Button, Empty, Form, Input, Modal, Table } from "antd";
+import { Button, Empty, Form, Input, Modal, Select, Table, DatePicker } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 
 function ManageCertificate() {
   const [certificates, setCertificates] = useState([]);
-  const [isAddCertificateVisible, setIsAddCertificateVisible] = useState(false);
-  const [isEditCertificateVisible, setIsEditCertificateVisible] =
-    useState(false);
+  const [products, setProducts] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingCertificate, setEditingCertificate] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [filteredCertificates, setFilteredCertificates] = useState([]);
 
   useEffect(() => {
-    fetchData();
+    fetchCertificates();
+    fetchProducts();
   }, []);
 
-  const fetchData = async () => {
+  const fetchCertificates = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8090/certificate/lookup"
-      );
+      const response = await axios.get("http://localhost:8090/certificate/lookup");
       setCertificates(response.data);
       setFilteredCertificates(response.data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching certificates:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://localhost:8090/certificate/fetch-products");
+      const processedProducts = [
+        ...response.data.diamonds.map(d => ({ ...d, ProductName: `Diamond ${d.DiamondID}` })),
+        ...response.data.bridals.map(b => ({ ...b, ProductName: `Bridal ${b.BridalID}` })),
+        ...response.data.diamondRings.map(r => ({ ...r, ProductName: `DiamondRings ${r.DiamondRingsID}` })),
+        ...response.data.diamondTimepieces.map(t => ({ ...t, ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID}` }))
+      ];
+      setProducts(processedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
     }
   };
 
   const handleSaveCertificate = async (values) => {
     try {
+      console.log('Form Values:', values); // Check the form values
       if (editingCertificate) {
-        await axios.put(
-          `http://localhost:8090/certificate/update-cert/${editingCertificate.GIAReportNumber}`,
-          values
-        );
+        await axios.put(`http://localhost:8090/certificate/update/${editingCertificate.CertificateID}`, values);
       } else {
-        await axios.put("http://localhost:8090/certificate/add", values);
+        await axios.post("http://localhost:8090/certificate/add", values);
       }
-      fetchData(); // Refresh the list
-      setIsAddCertificateVisible(false); // Close the modal
-      setIsEditCertificateVisible(false);
+      fetchCertificates(); // Refresh the list
+      setIsModalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       setEditingCertificate(null);
     } catch (error) {
@@ -48,32 +59,31 @@ function ManageCertificate() {
     }
   };
 
+
   const handleEditCertificate = (record) => {
     setEditingCertificate(record);
-    setIsEditCertificateVisible(true); // Show the modal
-    form.setFieldsValue(record);
+    setIsModalVisible(true); // Show the modal
+    form.setFieldsValue({
+      ...record,
+      InspectionDate: moment(record.InspectionDate, 'YYYY-MM-DD'), // Ensure date format matches
+    });
   };
 
   const handleSearch = () => {
     const filtered = certificates.filter((certificate) =>
-      certificate.GIAReportNumber.toLowerCase().includes(
-        searchText.toLowerCase()
-      )
+      certificate.GIAReportNumber.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredCertificates(filtered);
   };
 
-  ////delete still have many problem in DB & BE
-  // const handleDeleteCertificate = async (certificateId) => {
-  //   try {
-  //     await axios.delete("http://localhost:8090/certificate/delete", {
-  //       data: { certificateId },
-  //     });
-  //     fetchData(); // Refresh the list
-  //   } catch (error) {
-  //     console.error("Error deleting certificate:", error);
-  //   }
-  // };
+  const handleDeleteCertificate = async (certificateId) => {
+    try {
+      await axios.delete(`http://localhost:8090/certificate/delete/${certificateId}`);
+      fetchCertificates(); // Refresh the list
+    } catch (error) {
+      console.error("Error deleting certificate:", error);
+    }
+  };
 
   const columns = [
     {
@@ -133,6 +143,15 @@ function ManageCertificate() {
       key: "Fluorescence",
     },
     {
+      title: "Product",
+      dataIndex: "ProductID",
+      key: "ProductID",
+      render: (productId) => {
+        const product = products.find(p => p.ProductID === productId);
+        return product ? product.ProductName : "N/A";
+      },
+    },
+    {
       title: "Action",
       key: "action",
       render: (text, record) => (
@@ -140,13 +159,13 @@ function ManageCertificate() {
           <Button type="link" onClick={() => handleEditCertificate(record)}>
             Edit
           </Button>
-          {/* <Button
+          <Button
             type="link"
             danger
             onClick={() => handleDeleteCertificate(record.CertificateID)}
           >
             Delete
-          </Button> */}
+          </Button>
         </div>
       ),
     },
@@ -168,7 +187,10 @@ function ManageCertificate() {
       <div style={{ marginBottom: 16 }}>
         <Button
           type="primary"
-          onClick={() => setIsAddCertificateVisible(true)}
+          onClick={() => {
+            setEditingCertificate(null);
+            setIsModalVisible(true);
+          }}
           style={{ marginLeft: 8 }}
         >
           Add Certificate
@@ -185,10 +207,9 @@ function ManageCertificate() {
       )}
       <Modal
         title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
-        visible={isAddCertificateVisible || isEditCertificateVisible}
+        visible={isModalVisible}
         onCancel={() => {
-          setIsAddCertificateVisible(false);
-          setIsEditCertificateVisible(false);
+          setIsModalVisible(false);
           form.resetFields();
           setEditingCertificate(null);
         }}
@@ -214,10 +235,10 @@ function ManageCertificate() {
             name="InspectionDate"
             label="Inspection Date"
             rules={[
-              { required: true, message: "Please input the Inspection Date!" },
+              { required: true, message: "Please select the Inspection Date!" },
             ]}
           >
-            <Input type="date" />
+            <DatePicker format="YYYY-MM-DD" />
           </Form.Item>
           <Form.Item
             name="ClarityGrade"
@@ -298,6 +319,27 @@ function ManageCertificate() {
             rules={[
               { required: true, message: "Please input the Fluorescence!" },
             ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="ProductID"
+            label="Product"
+            rules={[
+              { required: true, message: "Please select a Product!" },
+            ]}
+          >
+            <Select placeholder="Select a product">
+              {products.map(product => (
+                <Select.Option key={product.ProductID} value={product.ProductID}>
+                  {product.ProductName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="ImageLogoCertificate"
+            label="Image Logo Certificate"
           >
             <Input />
           </Form.Item>

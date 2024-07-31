@@ -457,13 +457,13 @@ const ViewRingDetailPage = () => {
         style={{
           fontSize: "20px",
           border: "1px solid",
-          marginRight: "5px",
+          margin: "0 5px 0 10px",
           color: "#000",
         }}
         type="primary"
         onClick={() => handleEditRings(ringDetail)}
       >
-        Edit Ring
+        Edit
       </Button>
       <Button
         style={{ fontSize: "20px", border: "1px solid", color: "#000" }}

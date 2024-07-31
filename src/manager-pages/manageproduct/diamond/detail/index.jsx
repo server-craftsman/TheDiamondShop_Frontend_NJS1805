@@ -320,8 +320,8 @@ function ViewDiamondDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button onClick={() => handleEditDiamond(diamondDetail)}>Edit</Button>
-      <Button onClick={() => window.history.back()}>Back</Button>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 15px 20px 0" }} onClick={() => handleEditDiamond(diamondDetail)}>Edit</Button>
+      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 0 20px 0" }} onClick={() => window.history.back()}>Back</Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -659,9 +659,9 @@ function ViewDiamondDetailPage() {
             name="gradingReport"
             label="Grading Report"
             rules={[{ required: true }]}
-            // rules={[
-            //   { required: true, message: "Please input the grading Report!" },
-            // ]}
+          // rules={[
+          //   { required: true, message: "Please input the grading Report!" },
+          // ]}
           >
             <Input disabled />
           </Form.Item>

@@ -150,6 +150,11 @@ function ManageRingPage() {
   //====================================================================//
   const columns = [
     {
+      title: "No",
+      dataIndex: "DiamondRingsID",
+      key: "DiamondRingsID",
+    },
+    {
       title: "Ring Style",
       dataIndex: "RingStyle",
       key: "RingStyle",
@@ -190,7 +195,7 @@ function ManageRingPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Link to={`/rings-detail/${record.DiamondRingsID}`}>View Details</Link>
+        <Link to={`/rings-detail/${record.DiamondRingsID}`}><Button>View Details</Button></Link>
       ),
     },
   ];
