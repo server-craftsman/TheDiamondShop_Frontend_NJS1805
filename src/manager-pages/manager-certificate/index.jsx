@@ -55,6 +55,7 @@ function ManageCertificate() {
           ...b,
           ProductName: `Bridal ${b.BridalID}`,
           ProductID: b.BridalID,
+
         })),
         ...response.data.diamondRings.map((r) => ({
           ...r,
@@ -64,7 +65,7 @@ function ManageCertificate() {
         ...response.data.diamondTimepieces.map((t) => ({
           ...t,
           ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID}`,
-          ProductID: t.DiamondTimepiecesID,
+          ProductID: t.DiamondTimepiecesID, // Add ProductID here
         })),
       ];
       setProducts(processedProducts);
