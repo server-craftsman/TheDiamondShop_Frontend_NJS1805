@@ -9,6 +9,7 @@ import {
   Upload,
   Empty,
   message,
+  notification,
 } from "antd";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Button } from "@mui/material";
@@ -20,7 +21,9 @@ const { Option } = Select;
 function ManageCertificate() {
   const [certificates, setCertificates] = useState([]);
   const [products, setProducts] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingCertificate, setEditingCertificate] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -34,7 +37,9 @@ function ManageCertificate() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/certificate/lookup");
+      const response = await axios.get(
+        "http://localhost:8090/certificate/lookup"
+      );
       setCertificates(response.data);
       setFilteredCertificates(response.data);
     } catch (error) {
@@ -44,35 +49,37 @@ function ManageCertificate() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/certificate/fetch-products");
+      const response = await axios.get(
+        "http://localhost:8090/certificate/fetch-products"
+      );
       const allProducts = [
         ...response.data.diamonds.map((d) => ({
           ProductID: d.DiamondID,
           ProductName: `Diamond ${d.DiamondID} - ${d.Cut} ${d.Color} (${d.CaratWeight} ct)`,
-          ProductType: 'Diamond',
+          ProductType: "Diamond",
           UniqueKey: `diamond_${d.DiamondID}_${d.Cut}_${d.Color}`,
-          Attributes: d
+          Attributes: d,
         })),
         ...response.data.bridals.map((b) => ({
           ProductID: b.BridalID,
           ProductName: `Bridal ${b.BridalID} - ${b.NameBridal} ${b.BrandName} (${b.Style})`,
-          ProductType: 'Bridal',
+          ProductType: "Bridal",
           UniqueKey: `bridal_${b.BridalID}_${b.NameBridal}_${b.BrandName}`,
-          Attributes: b
+          Attributes: b,
         })),
         ...response.data.diamondRings.map((r) => ({
           ProductID: r.DiamondRingsID,
           ProductName: `DiamondRing ${r.DiamondRingsID} - ${r.RingStyle} ${r.BrandName} (${r.Material})`,
-          ProductType: 'DiamondRing',
+          ProductType: "DiamondRing",
           UniqueKey: `ring_${r.DiamondRingsID}_${r.RingStyle}_${r.BrandName}`,
-          Attributes: r
+          Attributes: r,
         })),
         ...response.data.diamondTimepieces.map((t) => ({
           ProductID: t.DiamondTimepiecesID,
           ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID} - ${t.TimepiecesStyle} ${t.BrandName} (${t.Model})`,
-          ProductType: 'DiamondTimepiece',
+          ProductType: "DiamondTimepiece",
           UniqueKey: `timepiece_${t.DiamondTimepiecesID}_${t.TimepiecesStyle}_${t.BrandName}`,
-          Attributes: t
+          Attributes: t,
         })),
       ];
       setProducts(allProducts);
@@ -84,7 +91,9 @@ function ManageCertificate() {
   // Save or update certificate logic
   const handleSaveCertificate = async (values) => {
     try {
-      const selectedProduct = products.find((product) => product.ProductID === values.ProductID);
+      const selectedProduct = products.find(
+        (product) => product.ProductID === values.ProductID
+      );
 
       if (!selectedProduct) {
         console.error("Selected product not found:", values.ProductID);
@@ -102,28 +111,52 @@ function ManageCertificate() {
       console.log("Certificate Data to Save:", certificateData);
 
       if (editingCertificate) {
-        await axios.put(`http://localhost:8090/certificate/update-cert/${editingCertificate.CertificateID}`, certificateData);
+        await axios.put(
+          `http://localhost:8090/certificate/update-cert/${editingCertificate.CertificateID}`,
+          certificateData
+        );
       } else {
-        await axios.post("http://localhost:8090/certificate/add", certificateData);
+        await axios.post(
+          "http://localhost:8090/certificate/add",
+          certificateData
+        );
       }
+      notification.success({
+        message: "Success",
+        description: editingCertificate
+          ? "Certificate updated successfully!"
+          : "Certificate added successfully!",
+      });
 
       fetchCertificates(); // Refresh the list
-      setIsModalVisible(false); // Close the modal
+      // setIsModalVisible(false); // Close the modal
+      setIsAddModalVisible(false); // Close the add modal
+      setIsEditModalVisible(false); // Close the edit modal if open
       form.resetFields(); // Reset the form fields
       setPreviewImage(null); // Clear image preview
       setEditingCertificate(null); // Clear editing state
     } catch (error) {
-      console.error("Error saving certificate:", error.response?.data || error.message);
+      console.error(
+        "Error saving certificate:",
+        error.response?.data || error.message
+      );
       message.error("Failed to save certificate");
     }
   };
 
   const handleEditCertificate = (record) => {
     setEditingCertificate(record);
-    setIsModalVisible(true);
+    // setIsModalVisible(true);
+    setIsEditModalVisible(true);
 
-    const productID = record.DiamondID || record.BridalID || record.DiamondRingsID || record.DiamondTimepiecesID;
-    const selectedProduct = products.find((product) => product.ProductID === productID);
+    const productID =
+      record.DiamondID ||
+      record.BridalID ||
+      record.DiamondRingsID ||
+      record.DiamondTimepiecesID;
+    const selectedProduct = products.find(
+      (product) => product.ProductID === productID
+    );
 
     if (selectedProduct) {
       form.setFieldsValue({
@@ -138,9 +171,10 @@ function ManageCertificate() {
   };
 
   const handleSearch = () => {
-    const filtered = certificates.filter((certificate) =>
-      certificate.GIAReportNumber.toLowerCase().includes(searchText.toLowerCase())
-    );
+    const filtered = certificates.filter((certificate) => {
+      const giaReportNumber = certificate.GIAReportNumber || ""; // Default to empty string if undefined
+      return giaReportNumber.toLowerCase().includes(searchText.toLowerCase());
+    });
     setFilteredCertificates(filtered);
   };
 
@@ -153,8 +187,8 @@ function ManageCertificate() {
         img.src = reader.result;
         img.onload = () => {
           // Create a canvas to resize the image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
 
           // Set canvas dimensions (resize to 800x800, adjust as needed)
           canvas.width = 800;
@@ -164,7 +198,7 @@ function ManageCertificate() {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
           // Convert canvas to Base64
-          const resizedImage = canvas.toDataURL('image/jpeg'); // Change to 'image/png' if needed
+          const resizedImage = canvas.toDataURL("image/jpeg"); // Change to 'image/png' if needed
 
           setPreviewImage(resizedImage); // Set image preview URL
           resolve(resizedImage);
@@ -186,10 +220,10 @@ function ManageCertificate() {
   };
 
   const handleProductChange = (selectedUniqueKey) => {
-    const [type, id] = selectedUniqueKey.split('_');
+    const [type, id] = selectedUniqueKey.split("_");
     // Use type and id to process the selected product
-    console.log('Selected Product Type:', type);
-    console.log('Selected Product ID:', id);
+    console.log("Selected Product Type:", type);
+    console.log("Selected Product ID:", id);
   };
 
   const columns = [
@@ -288,10 +322,25 @@ function ManageCertificate() {
     return Promise.resolve();
   };
 
+  const validateCertificatesExistEdit = async (rule, value) => {
+    // Assuming `currentCertificate` contains the information of the certificate being edited
+    if (value === editingCertificate.GIAReportNumber) {
+      return Promise.resolve();
+    }
+
+    const exists = certificates.some((item) => item.GIAReportNumber === value);
+    if (exists) {
+      return Promise.reject("The GIA Report Number already exists.");
+    }
+    return Promise.resolve();
+  };
+
   const validateGIAReportNumber = (rule, value) => {
     const regex = /^GIA\d{1,7}$/;
     if (!regex.test(value)) {
-      return Promise.reject('GIA Report Number must start with "GIA" followed by up to 7 digits (max 10 characters).');
+      return Promise.reject(
+        'GIA Report Number must start with "GIA" followed by up to 7 digits (max 10 characters).'
+      );
     }
     return Promise.resolve();
   };
@@ -299,14 +348,18 @@ function ManageCertificate() {
   const validateCaratWeight = (rule, value) => {
     const numValue = parseFloat(value);
     if (isNaN(numValue) || numValue < 0.1 || numValue > 3.0) {
-      return Promise.reject("The carat weight must be a value between 0.1 and 3.0.");
+      return Promise.reject(
+        "The carat weight must be a value between 0.1 and 3.0."
+      );
     }
     return Promise.resolve();
   };
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}
+      >
         <Input
           placeholder="Search by GIA Report Number"
           value={searchText}
@@ -337,7 +390,8 @@ function ManageCertificate() {
           form.resetFields();
           setEditingCertificate(null);
           setPreviewImage(null);
-          setIsModalVisible(true);
+          // setIsModalVisible(true);
+          setIsAddModalVisible(true);
         }}
       >
         Add Certificate
@@ -351,10 +405,13 @@ function ManageCertificate() {
       ) : (
         <Empty description="No certificates found." />
       )}
+
+      {/* Add Certificate Modal */}
       <Modal
-        title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
-        visible={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
+        // title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
+        title="Add Certificate"
+        open={isAddModalVisible}
+        onCancel={() => setIsAddModalVisible(false)}
         onOk={() => form.submit()}
       >
         <Form form={form} onFinish={handleSaveCertificate}>
@@ -381,16 +438,31 @@ function ManageCertificate() {
             name="ClarityGrade"
             rules={[{ required: true, message: "Clarity Grade is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="IF">IF</Option>
+              <Option value="VVS1">VVS1</Option>
+              <Option value="VVS2">VVS2</Option>
+              <Option value="VS1">VS1</Option>
+              <Option value="VS2">VS2</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Shape and Cutting Style"
             name="ShapeAndCuttingStyle"
             rules={[
-              { required: true, message: "Shape and Cutting Style is required" },
+              {
+                required: true,
+                message: "Shape and Cutting Style is required",
+              },
             ]}
           >
-            <Input />
+            <Select>
+              <Option value="Round">Round</Option>
+              <Option value="Princess">Princess</Option>
+              <Option value="Cushion">Cushion</Option>
+              <Option value="Emerald">Emerald</Option>
+              <Option value="Oval">Oval</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Measurements"
@@ -414,35 +486,60 @@ function ManageCertificate() {
             name="ColorGrade"
             rules={[{ required: true, message: "Color Grade is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="F">F</Option>
+              <Option value="G">G</Option>
+              <Option value="I">I</Option>
+              <Option value="K">K</Option>
+              <Option value="J">J</Option>
+              <Option value="E">E</Option>
+              <Option value="H">H</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Symmetry Grade"
             name="SymmetryGrade"
             rules={[{ required: true, message: "Symmetry Grade is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="Good">Good</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Cut Grade"
             name="CutGrade"
             rules={[{ required: true, message: "Cut Grade is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="N/A">N/A</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Polish Grade"
             name="PolishGrade"
             rules={[{ required: true, message: "Polish Grade is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="Good">Good</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Fluorescence"
             name="Fluorescence"
             rules={[{ required: true, message: "Fluorescence is required" }]}
           >
-            <Input />
+            <Select>
+              <Option value="NON">NON</Option>
+              <Option value="MB">MB</Option>
+              <Option value="STG BL">STG BL</Option>
+              <Option value="FNL BL">FNL BL</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Product"
@@ -459,12 +556,200 @@ function ManageCertificate() {
               onChange={handleProductChange} // Add this line
             >
               {products.map((product) => (
-                <Select.Option key={product.UniqueKey} value={product.UniqueKey}>
+                <Select.Option
+                  key={product.UniqueKey}
+                  value={product.UniqueKey}
+                >
                   {product.ProductName}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
+          <Form.Item label="Certificate Image">
+            <Upload
+              listType="picture-card"
+              showUploadList={false}
+              beforeUpload={(file) => {
+                handleImageUpload(file);
+                return false; // Prevent automatic upload
+              }}
+            >
+              {previewImage ? (
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  style={{ width: "100%" }}
+                />
+              ) : (
+                <div>
+                  <AddPhotoAlternateIcon />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Edit Certificate Modal */}
+      <Modal
+        // title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
+        title="Edit Certificate"
+        open={isEditModalVisible}
+        onCancel={() => setIsEditModalVisible(false)}
+        onOk={() => form.submit()}
+      >
+        <Form form={form} onFinish={handleSaveCertificate}>
+          <Form.Item
+            label="GIA Report Number"
+            name="GIAReportNumber"
+            rules={[
+              { required: true, message: "GIA Report Number is required" },
+              { validator: validateGIAReportNumber },
+              { validator: validateCertificatesExistEdit },
+            ]}
+          >
+            <Input maxLength={10} />
+          </Form.Item>
+          <Form.Item
+            label="Inspection Date"
+            name="InspectionDate"
+            rules={[{ required: true, message: "Inspection Date is required" }]}
+          >
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
+            label="Clarity Grade"
+            name="ClarityGrade"
+            rules={[{ required: true, message: "Clarity Grade is required" }]}
+          >
+            <Select>
+              <Option value="IF">IF</Option>
+              <Option value="VVS1">VVS1</Option>
+              <Option value="VVS2">VVS2</Option>
+              <Option value="VS1">VS1</Option>
+              <Option value="VS2">VS2</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Shape and Cutting Style"
+            name="ShapeAndCuttingStyle"
+            rules={[
+              {
+                required: true,
+                message: "Shape and Cutting Style is required",
+              },
+            ]}
+          >
+            <Select>
+              <Option value="Round">Round</Option>
+              <Option value="Princess">Princess</Option>
+              <Option value="Cushion">Cushion</Option>
+              <Option value="Emerald">Emerald</Option>
+              <Option value="Oval">Oval</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Measurements"
+            name="Measurements"
+            rules={[{ required: true, message: "Measurements are required" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Carat Weight"
+            name="CaratWeight"
+            rules={[
+              { required: true, message: "Carat Weight is required" },
+              { validator: validateCaratWeight },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Color Grade"
+            name="ColorGrade"
+            rules={[{ required: true, message: "Color Grade is required" }]}
+          >
+            <Select>
+              <Option value="F">F</Option>
+              <Option value="G">G</Option>
+              <Option value="I">I</Option>
+              <Option value="K">K</Option>
+              <Option value="J">J</Option>
+              <Option value="E">E</Option>
+              <Option value="H">H</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Symmetry Grade"
+            name="SymmetryGrade"
+            rules={[{ required: true, message: "Symmetry Grade is required" }]}
+          >
+            <Select>
+              <Option value="Good">Good</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Cut Grade"
+            name="CutGrade"
+            rules={[{ required: true, message: "Cut Grade is required" }]}
+          >
+            <Select>
+              <Option value="N/A">N/A</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Polish Grade"
+            name="PolishGrade"
+            rules={[{ required: true, message: "Polish Grade is required" }]}
+          >
+            <Select>
+              <Option value="Good">Good</Option>
+              <Option value="Very Good">Very Good</Option>
+              <Option value="Excellent">Excellent</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="Fluorescence"
+            name="Fluorescence"
+            rules={[{ required: true, message: "Fluorescence is required" }]}
+          >
+            <Select>
+              <Option value="NON">NON</Option>
+              <Option value="MB">MB</Option>
+              <Option value="STG BL">STG BL</Option>
+              <Option value="FNL BL">FNL BL</Option>
+            </Select>
+          </Form.Item>
+          {/* <Form.Item
+            label="Product"
+            name="ProductID"
+            rules={[{ required: true, message: "Please select a product" }]}
+          >
+            <Select
+              showSearch
+              placeholder="Select a product"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+              onChange={handleProductChange} // Add this line
+            >
+              {products.map((product) => (
+                <Select.Option
+                  key={product.UniqueKey}
+                  value={product.UniqueKey}
+                >
+                  {product.ProductName}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item> */}
           <Form.Item label="Certificate Image">
             <Upload
               listType="picture-card"
