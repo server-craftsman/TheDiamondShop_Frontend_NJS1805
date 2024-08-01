@@ -60,6 +60,7 @@ function ManageCertificate() {
           ProductType: "Diamond",
           UniqueKey: `diamond_${d.DiamondID}_${d.Cut}_${d.Color}`,
           Attributes: d,
+          Image: d.Image,
         })),
         ...response.data.bridals.map((b) => ({
           ProductID: b.BridalID,
@@ -67,20 +68,23 @@ function ManageCertificate() {
           ProductType: "Bridal",
           UniqueKey: `bridal_${b.BridalID}_${b.NameBridal}_${b.BrandName}`,
           Attributes: b,
+          Image: b.ImageBridal,
         })),
         ...response.data.diamondRings.map((r) => ({
           ProductID: r.DiamondRingsID,
           ProductName: `DiamondRing ${r.DiamondRingsID} - ${r.RingStyle} ${r.BrandName} (${r.Material})`,
-          ProductType: "DiamondRing",
+          ProductType: "DiamondRings",
           UniqueKey: `ring_${r.DiamondRingsID}_${r.RingStyle}_${r.BrandName}`,
           Attributes: r,
+          Image: r.ImageRings,
         })),
         ...response.data.diamondTimepieces.map((t) => ({
           ProductID: t.DiamondTimepiecesID,
-          ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID} - ${t.TimepiecesStyle} ${t.BrandName} (${t.Model})`,
-          ProductType: "DiamondTimepiece",
+          ProductName: `DiamondTimepiece ${t.DiamondTimepiecesID} - ${t.TimepiecesStyle} ${t.BrandName} (${t.Model})`,
+          ProductType: "DiamondTimepieces",
           UniqueKey: `timepiece_${t.DiamondTimepiecesID}_${t.TimepiecesStyle}_${t.BrandName}`,
           Attributes: t,
+          Image: t.ImageTimepieces,
         })),
       ];
       setProducts(allProducts);
@@ -88,7 +92,6 @@ function ManageCertificate() {
       console.error("Error fetching products:", error);
     }
   };
-
   const handleSaveCertificate = async (values) => {
     try {
       // Extract the numeric part of the ProductID
@@ -318,13 +321,13 @@ function ManageCertificate() {
       render: (text, record) => (
         <div>
           <Link to={`/certificate/${record.CertificateID}`}>View Details</Link>
-          <Button
+          {/* <Button
             style={{ marginBottom: "20px" }}
             type="link"
             onClick={() => handleEditCertificate(record)}
           >
             Edit
-          </Button>
+          </Button> */}
         </div>
       ),
     },
@@ -486,8 +489,9 @@ function ManageCertificate() {
             label="Measurements"
             name="Measurements"
             rules={[{ required: true, message: "Measurements are required" }]}
+            initialValue="10.0x5.0"
           >
-            <Input />
+            <Input disabled placeholder="10.0x5.0"/>
           </Form.Item>
           <Form.Item
             label="Carat Weight(0.1 - 3.0)"
@@ -571,14 +575,22 @@ function ManageCertificate() {
               filterOption={(input, option) =>
                 option.children.toLowerCase().includes(input.toLowerCase())
               }
-              onChange={handleProductChange} // Add this line
+              onChange={handleProductChange}
+              style={{ height: "50px" }}
             >
               {products.map((product) => (
                 <Select.Option
                   key={product.UniqueKey}
                   value={product.UniqueKey}
                 >
-                  {product.ProductName}
+                  <span style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={product.Image}
+                      alt={product.ProductName}
+                      style={{ width: 30, height: 30, marginRight: 8 }}
+                    />
+                    {product.ProductName}
+                  </span>
                 </Select.Option>
               ))}
             </Select>
@@ -672,7 +684,7 @@ function ManageCertificate() {
             name="Measurements"
             rules={[{ required: true, message: "Measurements are required" }]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             label="Carat Weight"

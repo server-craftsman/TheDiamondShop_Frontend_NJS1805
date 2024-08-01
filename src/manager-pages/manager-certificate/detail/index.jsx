@@ -73,7 +73,7 @@ function CertificateDetailPage() {
             {certificate && (
                 <Card>
                     <Row gutter={16}>
-                        <Col span={12}>
+                        <Col span={16}>
                             <Descriptions bordered>
                                 <Descriptions.Item label="Certificate ID">{CertificateID || "N/A"}</Descriptions.Item>
                                 <Descriptions.Item label="GIA Report Number">{GIAReportNumber || "N/A"}</Descriptions.Item>
