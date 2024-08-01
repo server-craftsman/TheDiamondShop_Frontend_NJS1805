@@ -88,15 +88,17 @@ function ManageCertificate() {
     }
   };
 
-  // Save or update certificate logic
   const handleSaveCertificate = async (values) => {
     try {
+      // Extract the numeric part of the ProductID
+      const productIDNumber = values.ProductID.match(/\d+/)[0];
+
       const selectedProduct = products.find(
-        (product) => product.ProductID === values.ProductID
+        (product) => product.ProductID === parseInt(productIDNumber, 10)
       );
 
       if (!selectedProduct) {
-        console.error("Selected product not found:", values.ProductID);
+        console.error("Selected product not found:", productIDNumber);
         message.error("Selected product is invalid.");
         return;
       }
@@ -105,7 +107,7 @@ function ManageCertificate() {
         ...values,
         InspectionDate: values.InspectionDate.format("YYYY-MM-DD"),
         ImageLogoCertificate: previewImage,
-        [`${selectedProduct.ProductType}ID`]: selectedProduct.ProductID,
+        [`${selectedProduct.ProductType}ID`]: parseInt(productIDNumber, 10), // Use numeric ID here
       };
 
       console.log("Certificate Data to Save:", certificateData);
@@ -129,7 +131,6 @@ function ManageCertificate() {
       });
 
       fetchCertificates(); // Refresh the list
-      // setIsModalVisible(false); // Close the modal
       setIsAddModalVisible(false); // Close the add modal
       setIsEditModalVisible(false); // Close the edit modal if open
       form.resetFields(); // Reset the form fields
@@ -146,7 +147,6 @@ function ManageCertificate() {
 
   const handleEditCertificate = (record) => {
     setEditingCertificate(record);
-    // setIsModalVisible(true);
     setIsEditModalVisible(true);
 
     const productID =
@@ -162,7 +162,7 @@ function ManageCertificate() {
       form.setFieldsValue({
         ...record,
         InspectionDate: moment(record.InspectionDate, "YYYY-MM-DD"),
-        ProductID: selectedProduct.ProductID,
+        ProductID: selectedProduct.UniqueKey,
       });
       setPreviewImage(record.ImageLogoCertificate);
     } else {
@@ -220,10 +220,15 @@ function ManageCertificate() {
   };
 
   const handleProductChange = (selectedUniqueKey) => {
-    const [type, id] = selectedUniqueKey.split("_");
-    // Use type and id to process the selected product
-    console.log("Selected Product Type:", type);
-    console.log("Selected Product ID:", id);
+    // Ensure selectedProductID is correctly set in the form
+    const selectedProduct = products.find(
+      (product) => product.UniqueKey === selectedUniqueKey
+    );
+    if (selectedProduct) {
+      form.setFieldsValue({
+        ProductID: selectedUniqueKey,
+      });
+    }
   };
 
   const columns = [
@@ -368,9 +373,10 @@ function ManageCertificate() {
         />
         <Button
           style={{
-            backgroundColor: "#f0c14b",
-            color: "#111",
+            backgroundColor: "#fff",
+            color: "#000",
             borderRadius: "4px",
+            border: "1px solid",
             height: "40px",
           }}
           onClick={handleSearch}
@@ -380,8 +386,9 @@ function ManageCertificate() {
       </div>
       <Button
         style={{
-          backgroundColor: "#f0c14b",
-          color: "#111",
+          backgroundColor: "#fff",
+          color: "#000",
+          border: "1px solid",
           borderRadius: "4px",
           height: "40px",
           marginBottom: "16px",
@@ -396,15 +403,17 @@ function ManageCertificate() {
       >
         Add Certificate
       </Button>
-      {filteredCertificates.length > 0 ? (
-        <Table
-          dataSource={filteredCertificates}
-          columns={columns}
-          rowKey="CertificateID"
-        />
-      ) : (
-        <Empty description="No certificates found." />
-      )}
+      {
+        filteredCertificates.length > 0 ? (
+          <Table
+            dataSource={filteredCertificates}
+            columns={columns}
+            rowKey="CertificateID"
+          />
+        ) : (
+          <Empty description="No certificates found." />
+        )
+      }
 
       {/* Add Certificate Modal */}
       <Modal
@@ -472,7 +481,7 @@ function ManageCertificate() {
             <Input />
           </Form.Item>
           <Form.Item
-            label="Carat Weight"
+            label="Carat Weight(0.1 - 3.0)"
             name="CaratWeight"
             rules={[
               { required: true, message: "Carat Weight is required" },
@@ -775,7 +784,7 @@ function ManageCertificate() {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </div >
   );
 }
 
