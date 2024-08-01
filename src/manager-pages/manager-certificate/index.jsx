@@ -51,18 +51,22 @@ function ManageCertificate() {
         ...response.data.diamonds.map((d) => ({
           ...d,
           ProductName: `Diamond ${d.DiamondID}`,
+          ProductID: d.DiamondID, // Add ProductID here
         })),
         ...response.data.bridals.map((b) => ({
           ...b,
           ProductName: `Bridal ${b.BridalID}`,
+          ProductID: b.BridalID, // Add ProductID here
         })),
         ...response.data.diamondRings.map((r) => ({
           ...r,
           ProductName: `DiamondRings ${r.DiamondRingsID}`,
+          ProductID: r.DiamondRingsID, // Add ProductID here
         })),
         ...response.data.diamondTimepieces.map((t) => ({
           ...t,
           ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID}`,
+          ProductID: t.DiamondTimepiecesID, // Add ProductID here
         })),
       ];
       setProducts(processedProducts);
@@ -469,12 +473,9 @@ function ManageCertificate() {
           >
             <Select placeholder="Select a product">
               {products.map((product) => (
-                <Select.Option
-                  key={product.ProductID}
-                  value={product.ProductID}
-                >
+                <Option key={product.ProductID} value={product.ProductID}>
                   {product.ProductName}
-                </Select.Option>
+                </Option>
               ))}
             </Select>
           </Form.Item>
