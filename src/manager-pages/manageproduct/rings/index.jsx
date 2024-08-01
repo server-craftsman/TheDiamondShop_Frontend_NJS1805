@@ -604,7 +604,7 @@ function ManageRingPage() {
           </Form.Item>
           <Form.Item
             name="Price"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[
               { required: true, message: "Please input the price!" },
               { validator: validateNumber("Price must be greater than 0") },

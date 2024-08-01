@@ -407,7 +407,7 @@ function ManageDiamondPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -647,7 +647,7 @@ function ManageDiamondPage() {
           </Form.Item> */}
           <Form.Item
             name="price"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[
               { required: true, message: "Please input the price!" },
               { validator: validatePrice },

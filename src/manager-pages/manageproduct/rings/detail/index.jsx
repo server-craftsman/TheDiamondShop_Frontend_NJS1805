@@ -126,7 +126,7 @@ const ViewRingDetailPage = () => {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -850,7 +850,7 @@ const ViewRingDetailPage = () => {
 
           <Form.Item
             name="NewPrice"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[{ required: true }, { validator: validatePrice }]}
           >
             <InputNumber min={1} />

@@ -180,7 +180,9 @@ function ManageBridalPage() {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Link to={`/bridals-detail/${record.BridalID}`}><Button>View Details</Button></Link>
+        <Link to={`/bridals-detail/${record.BridalID}`}>
+          <Button>View Details</Button>
+        </Link>
       ),
     },
   ];
@@ -189,7 +191,7 @@ function ManageBridalPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -303,10 +305,13 @@ function ManageBridalPage() {
     return Promise.resolve();
   };
 
-
   const validateTotalDiamond = (rule, value) => {
     const totalDiamond = Number(value); // Parse the value as a number
-    if (!Number.isInteger(totalDiamond) || totalDiamond <= 0 || totalDiamond > 30) {
+    if (
+      !Number.isInteger(totalDiamond) ||
+      totalDiamond <= 0 ||
+      totalDiamond > 30
+    ) {
       return Promise.reject(
         "Total Diamond must be a natural number greater than 0 and less than or equal to 30"
       );
@@ -329,7 +334,11 @@ function ManageBridalPage() {
   return (
     <>
       <h1>Bridals</h1>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" onClick={() => setIsAddBridalVisible(true)}>
+      <Button
+        style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+        type="primary"
+        onClick={() => setIsAddBridalVisible(true)}
+      >
         Add Bridal
       </Button>
       <Table dataSource={bridals} columns={columns} rowKey="BridalID" />
@@ -526,7 +535,7 @@ function ManageBridalPage() {
           </Form.Item>
           <Form.Item
             name="Price"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[
               { required: true, message: "Please input the price!" },
               { validator: validatePrice },
@@ -552,7 +561,11 @@ function ManageBridalPage() {
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" htmlType="submit">
+            <Button
+              style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+              type="primary"
+              htmlType="submit"
+            >
               Add Bridals
             </Button>
           </Form.Item>

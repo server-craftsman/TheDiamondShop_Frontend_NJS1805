@@ -344,7 +344,7 @@ function ViewBridalDetailPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -435,8 +435,28 @@ function ViewBridalDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 15px 20px 0" }} onClick={() => handleEditBridals(bridalDetail)}>Edit</Button>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 0 20px 0" }} onClick={() => window.history.back()}>Back</Button>
+      <Button
+        style={{
+          color: "#000",
+          border: "1px solid",
+          fontSize: "20px",
+          margin: "30px 15px 20px 0",
+        }}
+        onClick={() => handleEditBridals(bridalDetail)}
+      >
+        Edit
+      </Button>
+      <Button
+        style={{
+          color: "#000",
+          border: "1px solid",
+          fontSize: "20px",
+          margin: "30px 0 20px 0",
+        }}
+        onClick={() => window.history.back()}
+      >
+        Back
+      </Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -529,10 +549,24 @@ function ViewBridalDetailPage() {
         open={isEditBridalVisible}
         onCancel={handleCancelEdit}
         footer={[
-          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", marginRight: '10px' }} key="cancel" onClick={handleCancelEdit}>
+          <Button
+            style={{
+              color: "#000",
+              border: "1px solid",
+              fontSize: "20px",
+              marginRight: "10px",
+            }}
+            key="cancel"
+            onClick={handleCancelEdit}
+          >
             Cancel
           </Button>,
-          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} key="submit" type="primary" onClick={() => form.submit()}>
+          <Button
+            style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+            key="submit"
+            type="primary"
+            onClick={() => form.submit()}
+          >
             Save
           </Button>,
         ]}
@@ -726,22 +760,22 @@ function ViewBridalDetailPage() {
                 message: "Please input the inventory quantity!",
               },
             ]}
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: "Please input the inventory (1 or 0)!",
-          //   },
-          //   {
-          //     validator: (_, value) => {
-          //       if (value === 1 || value === 0) {
-          //         return Promise.resolve();
-          //       }
-          //       return Promise.reject(
-          //         new Error("Inventory must be either 1 or 0!")
-          //       );
-          //     },
-          //   },
-          // ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input the inventory (1 or 0)!",
+            //   },
+            //   {
+            //     validator: (_, value) => {
+            //       if (value === 1 || value === 0) {
+            //         return Promise.resolve();
+            //       }
+            //       return Promise.reject(
+            //         new Error("Inventory must be either 1 or 0!")
+            //       );
+            //     },
+            //   },
+            // ]}
           >
             {/* <InputNumber style={{ width: "100%" }} /> */}
             <Select>
@@ -794,7 +828,7 @@ function ViewBridalDetailPage() {
 
           <Form.Item
             name="NewPrice"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[{ required: true }, { validator: validatePrice }]}
           >
             <InputNumber min={1} />

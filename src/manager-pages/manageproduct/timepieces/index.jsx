@@ -101,7 +101,7 @@ function ManageTimepiecesPage() {
 
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -210,7 +210,11 @@ function ManageTimepiecesPage() {
   return (
     <>
       <h1>Timepieces</h1>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" onClick={() => setIsAddTimepiecesVisible(true)}>
+      <Button
+        style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+        type="primary"
+        onClick={() => setIsAddTimepiecesVisible(true)}
+      >
         Add Timepieces
       </Button>
       <Table dataSource={timepieces} columns={columns} rowKey="DiamondID" />
@@ -224,7 +228,7 @@ function ManageTimepiecesPage() {
         <Form form={form} layout="vertical" onFinish={handleAddTimepieces}>
           <Form.Item
             name="timepiecesStyle"
-            label="Timepieces Style"
+            label="Timepieces Style (XX1234-65X)"
             rules={[
               { required: true, message: "Please input the Timepieces Style!" },
               { validator: validateTimepiecesStyle },
@@ -478,7 +482,7 @@ function ManageTimepiecesPage() {
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[
               { required: true, message: "Please input the Price!" },
               { validator: validatePrice },
@@ -577,7 +581,11 @@ function ManageTimepiecesPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} type="primary" htmlType="submit">
+            <Button
+              style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+              type="primary"
+              htmlType="submit"
+            >
               Add Timepieces
             </Button>
           </Form.Item>

@@ -154,7 +154,7 @@ function ViewTimepiecesDetailPage() {
   //============================================================================
   const validatePrice = (rule, value) => {
     if (value < 1) {
-      return Promise.reject("Price must be greater than 1");
+      return Promise.reject("Price must be greater than 0");
     }
     return Promise.resolve();
   };
@@ -256,10 +256,28 @@ function ViewTimepiecesDetailPage() {
         </Descriptions.Item>
         {/* Add more details as per your schema */}
       </Descriptions>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 15px 20px 0" }} onClick={() => handleEditTimepieces(timepiecesDetail)}>
+      <Button
+        style={{
+          color: "#000",
+          border: "1px solid",
+          fontSize: "20px",
+          margin: "30px 15px 20px 0",
+        }}
+        onClick={() => handleEditTimepieces(timepiecesDetail)}
+      >
         Edit
       </Button>
-      <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", margin: "30px 0 20px 0" }} onClick={() => window.history.back()}>Back</Button>
+      <Button
+        style={{
+          color: "#000",
+          border: "1px solid",
+          fontSize: "20px",
+          margin: "30px 0 20px 0",
+        }}
+        onClick={() => window.history.back()}
+      >
+        Back
+      </Button>
       <hr />
       <Grid item xs={12} md={6}>
         <Box mt={4}>
@@ -352,16 +370,30 @@ function ViewTimepiecesDetailPage() {
         open={isEditTimepiecesVisible}
         onCancel={handleCancelEdit}
         footer={[
-          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px", marginRight: '10px' }} key="cancel" onClick={handleCancelEdit}>
+          <Button
+            style={{
+              color: "#000",
+              border: "1px solid",
+              fontSize: "20px",
+              marginRight: "10px",
+            }}
+            key="cancel"
+            onClick={handleCancelEdit}
+          >
             Cancel
           </Button>,
-          <Button style={{ color: "#000", border: "1px solid", fontSize: "20px" }} key="submit" type="primary" onClick={() => form.submit()}>
+          <Button
+            style={{ color: "#000", border: "1px solid", fontSize: "20px" }}
+            key="submit"
+            type="primary"
+            onClick={() => form.submit()}
+          >
             Save
           </Button>,
         ]}
       >
         <Form form={form} onFinish={handleUpdateTimepieces} layout="vertical">
-          <Form.Item
+          {/* <Form.Item
             name="diamondTimepiecesID"
             label="Diamond Timepieces ID"
             rules={[
@@ -369,10 +401,10 @@ function ViewTimepiecesDetailPage() {
             ]}
           >
             <Input disabled />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             name="timepiecesStyle"
-            label="Timepieces Style"
+            label="Timepieces Style (XX1234-65X)"
             rules={[
               { required: true, message: "Please input the Timepieces Style!" },
               { validator: validateTimepiecesStyle },
@@ -599,7 +631,7 @@ function ViewTimepiecesDetailPage() {
             rules={[
               { required: true, message: "Please input the brand Name!" },
             ]}
-          // initialValue="Citizen"
+            // initialValue="Citizen"
           >
             <Input disabled />
           </Form.Item>
@@ -624,7 +656,7 @@ function ViewTimepiecesDetailPage() {
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price"
+            label="Price (greater than 0)"
             rules={[
               { required: true, message: "Please input the price!" },
               { validator: validatePrice },
@@ -686,9 +718,9 @@ function ViewTimepiecesDetailPage() {
           <Form.Item
             name="imageBrand"
             label="Image Brand"
-          // rules={[
-          //   { required: true, message: "Please upload an image Brand!" },
-          // ]}
+            // rules={[
+            //   { required: true, message: "Please upload an image Brand!" },
+            // ]}
           >
             {/* <Upload
               listType="picture"
