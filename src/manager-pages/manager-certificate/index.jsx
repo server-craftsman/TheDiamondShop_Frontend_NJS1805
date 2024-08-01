@@ -295,11 +295,20 @@ function ManageCertificate() {
     },
     {
       title: "Product",
-      dataIndex: "ProductID",
       key: "ProductID",
-      render: (productId) => {
-        const product = products.find((p) => p.ProductID === productId);
-        return product ? product.ProductName : "N/A";
+      render: (record) => {
+        const { BridalID, DiamondTimepiecesID, DiamondRingsID, DiamondID } =
+          record;
+        const ids = [
+          { label: "Bridal", value: BridalID },
+          { label: "Timepieces", value: DiamondTimepiecesID },
+          { label: "Rings", value: DiamondRingsID },
+          { label: "Diamond", value: DiamondID },
+        ]
+          .filter((id) => id.value !== null && id.value !== undefined)
+          .map((id) => `${id.label}: ${id.value}`)
+          .join(", ");
+        return ids || "N/A";
       },
     },
     {
@@ -403,17 +412,15 @@ function ManageCertificate() {
       >
         Add Certificate
       </Button>
-      {
-        filteredCertificates.length > 0 ? (
-          <Table
-            dataSource={filteredCertificates}
-            columns={columns}
-            rowKey="CertificateID"
-          />
-        ) : (
-          <Empty description="No certificates found." />
-        )
-      }
+      {filteredCertificates.length > 0 ? (
+        <Table
+          dataSource={filteredCertificates}
+          columns={columns}
+          rowKey="CertificateID"
+        />
+      ) : (
+        <Empty description="No certificates found." />
+      )}
 
       {/* Add Certificate Modal */}
       <Modal
@@ -784,7 +791,7 @@ function ManageCertificate() {
           </Form.Item>
         </Form>
       </Modal>
-    </div >
+    </div>
   );
 }
 
