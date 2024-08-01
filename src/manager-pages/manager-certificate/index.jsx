@@ -45,66 +45,73 @@ function ManageCertificate() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get("http://localhost:8090/certificate/fetch-products");
-      const processedProducts = [
+      const allProducts = [
         ...response.data.diamonds.map((d) => ({
-          ...d,
-          ProductName: `Diamond ${d.DiamondID}`,
           ProductID: d.DiamondID,
+          ProductName: `Diamond ${d.DiamondID} - ${d.Cut} ${d.Color} (${d.CaratWeight} ct)`,
+          ProductType: 'Diamond',
+          UniqueKey: `diamond_${d.DiamondID}_${d.Cut}_${d.Color}`,
+          Attributes: d
         })),
         ...response.data.bridals.map((b) => ({
-          ...b,
-          ProductName: `Bridal ${b.BridalID}`,
           ProductID: b.BridalID,
-
+          ProductName: `Bridal ${b.BridalID} - ${b.NameBridal} ${b.BrandName} (${b.Style})`,
+          ProductType: 'Bridal',
+          UniqueKey: `bridal_${b.BridalID}_${b.NameBridal}_${b.BrandName}`,
+          Attributes: b
         })),
         ...response.data.diamondRings.map((r) => ({
-          ...r,
-          ProductName: `DiamondRings ${r.DiamondRingsID}`,
           ProductID: r.DiamondRingsID,
+          ProductName: `DiamondRing ${r.DiamondRingsID} - ${r.RingStyle} ${r.BrandName} (${r.Material})`,
+          ProductType: 'DiamondRing',
+          UniqueKey: `ring_${r.DiamondRingsID}_${r.RingStyle}_${r.BrandName}`,
+          Attributes: r
         })),
         ...response.data.diamondTimepieces.map((t) => ({
-          ...t,
-          ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID}`,
-          ProductID: t.DiamondTimepiecesID, // Add ProductID here
+          ProductID: t.DiamondTimepiecesID,
+          ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID} - ${t.TimepiecesStyle} ${t.BrandName} (${t.Model})`,
+          ProductType: 'DiamondTimepiece',
+          UniqueKey: `timepiece_${t.DiamondTimepiecesID}_${t.TimepiecesStyle}_${t.BrandName}`,
+          Attributes: t
         })),
       ];
-      setProducts(processedProducts);
+      setProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
+  // Save or update certificate logic
   const handleSaveCertificate = async (values) => {
     try {
+      const selectedProduct = products.find((product) => product.ProductID === values.ProductID);
+
+      if (!selectedProduct) {
+        console.error("Selected product not found:", values.ProductID);
+        message.error("Selected product is invalid.");
+        return;
+      }
+
       const certificateData = {
         ...values,
         InspectionDate: values.InspectionDate.format("YYYY-MM-DD"),
-        CertificateImage: previewImage,
+        ImageLogoCertificate: previewImage,
+        [`${selectedProduct.ProductType}ID`]: selectedProduct.ProductID,
       };
 
-      const selectedProduct = products.find((product) => product.ProductID === values.ProductID);
-      if (selectedProduct) {
-        if (selectedProduct.DiamondID) {
-          certificateData.DiamondID = selectedProduct.DiamondID;
-        } else if (selectedProduct.BridalID) {
-          certificateData.BridalID = selectedProduct.BridalID;
-        } else if (selectedProduct.DiamondRingsID) {
-          certificateData.DiamondRingsID = selectedProduct.DiamondRingsID;
-        } else if (selectedProduct.DiamondTimepiecesID) {
-          certificateData.DiamondTimepiecesID = selectedProduct.DiamondTimepiecesID;
-        }
-      }
+      console.log("Certificate Data to Save:", certificateData);
 
       if (editingCertificate) {
-        await axios.put(`http://localhost:8090/certificate/update/${editingCertificate.CertificateID}`, certificateData);
+        await axios.put(`http://localhost:8090/certificate/update-cert/${editingCertificate.CertificateID}`, certificateData);
       } else {
         await axios.post("http://localhost:8090/certificate/add", certificateData);
       }
+
       fetchCertificates(); // Refresh the list
       setIsModalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
       setPreviewImage(null); // Clear image preview
-      setEditingCertificate(null);
+      setEditingCertificate(null); // Clear editing state
     } catch (error) {
       console.error("Error saving certificate:", error.response?.data || error.message);
       message.error("Failed to save certificate");
@@ -114,11 +121,20 @@ function ManageCertificate() {
   const handleEditCertificate = (record) => {
     setEditingCertificate(record);
     setIsModalVisible(true);
-    form.setFieldsValue({
-      ...record,
-      InspectionDate: moment(record.InspectionDate, "YYYY-MM-DD"),
-    });
-    setPreviewImage(record.CertificateImage);
+
+    const productID = record.DiamondID || record.BridalID || record.DiamondRingsID || record.DiamondTimepiecesID;
+    const selectedProduct = products.find((product) => product.ProductID === productID);
+
+    if (selectedProduct) {
+      form.setFieldsValue({
+        ...record,
+        InspectionDate: moment(record.InspectionDate, "YYYY-MM-DD"),
+        ProductID: selectedProduct.ProductID,
+      });
+      setPreviewImage(record.ImageLogoCertificate);
+    } else {
+      message.error("Selected product not found.");
+    }
   };
 
   const handleSearch = () => {
@@ -127,21 +143,6 @@ function ManageCertificate() {
     );
     setFilteredCertificates(filtered);
   };
-
-  // const handleImageUpload = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.readAsDataURL(file);
-  //     reader.onload = () => {
-  //       setPreviewImage(reader.result); // Set image preview URL
-  //       resolve(reader.result);
-  //     };
-  //     reader.onerror = (error) => {
-  //       console.error("Error reading file:", error);
-  //       reject(error);
-  //     };
-  //   });
-  // };
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
@@ -184,6 +185,12 @@ function ManageCertificate() {
     });
   };
 
+  const handleProductChange = (selectedUniqueKey) => {
+    const [type, id] = selectedUniqueKey.split('_');
+    // Use type and id to process the selected product
+    console.log('Selected Product Type:', type);
+    console.log('Selected Product ID:', id);
+  };
 
   const columns = [
     {
@@ -268,13 +275,6 @@ function ManageCertificate() {
           >
             Edit
           </Button>
-          {/* <Button
-            type="link"
-            danger
-            onClick={() => handleDeleteCertificate(record.CertificateID)}
-          >
-            Delete
-          </Button> */}
         </div>
       ),
     },
@@ -447,13 +447,21 @@ function ManageCertificate() {
           <Form.Item
             label="Product"
             name="ProductID"
-            rules={[{ required: true, message: "Product is required" }]}
+            rules={[{ required: true, message: "Please select a product" }]}
           >
-            <Select placeholder="Select a product">
+            <Select
+              showSearch
+              placeholder="Select a product"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().includes(input.toLowerCase())
+              }
+              onChange={handleProductChange} // Add this line
+            >
               {products.map((product) => (
-                <Option key={product.ProductID} value={product.ProductID}>
+                <Select.Option key={product.UniqueKey} value={product.UniqueKey}>
                   {product.ProductName}
-                </Option>
+                </Select.Option>
               ))}
             </Select>
           </Form.Item>
