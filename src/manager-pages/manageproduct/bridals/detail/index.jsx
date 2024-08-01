@@ -19,7 +19,7 @@ import { getAllFeedbacks } from "../../../../pages/feedback-service/getAllFeedba
 import { AuthContext } from "../../../../AuthContext";
 import StarIcon from "@mui/icons-material/Star";
 import Rating from "@mui/material/Rating";
-
+const { Option } = Select;
 function ViewBridalDetailPage() {
   const { id } = useParams(); // Assuming you're using React Router for routing
   const [bridalDetail, setBridalDetail] = useState(null);
@@ -27,7 +27,10 @@ function ViewBridalDetailPage() {
   const [materials, setMaterials] = useState([]);
   const [ringSizes, setRingSizes] = useState([]);
   const [ringPrice, setRingPrice] = useState([]);
+  const [materialss, setMaterialss] = useState([]);
+  const [ringSizess, setRingSizess] = useState([]);
   const [isEditBridalVisible, setIsEditBridalVisible] = useState(false);
+  const [isAddPriceVisible, setIsAddPriceVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingBridal, setEditingBridal] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -53,6 +56,8 @@ function ViewBridalDetailPage() {
   };
   useEffect(() => {
     fetchBridals();
+    fetchRingSizeDetails();
+    fetchMaterialDetails();
   }, []);
   //=========================================//
 
@@ -125,6 +130,63 @@ function ViewBridalDetailPage() {
       ...record,
       ImageBridal: record.ImageBridal || "",
     });
+  };
+
+  const fetchMaterialDetails = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8090/products/material-details"
+      );
+      setMaterialss(response.data);
+    } catch (error) {
+      console.error("Error fetching material details:", error);
+      notification.error({
+        message: "Error",
+        description: "Failed to fetch material details.",
+      });
+    }
+  };
+
+  const fetchRingSizeDetails = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8090/products/ring-size-details"
+      );
+      setRingSizess(response.data);
+    } catch (error) {
+      console.error("Error fetching ring size details:", error);
+      notification.error({
+        message: "Error",
+        description: "Failed to fetch ring size details.",
+      });
+    }
+  };
+
+  const addPriceToBridal = async (values) => {
+    const { materialID, ringSizeID, price } = values;
+    try {
+      const response = await axios.post(`http://localhost:8090/products/addPrice/${id}`, {
+        materialID,
+        ringSizeID,
+        price,
+      });
+      if (response.status === 200) {
+        notification.success({
+          message: 'Success',
+          description: 'Price added successfully!',
+        });
+        fetchData(); // Refresh the bridal details after adding the price
+        setIsAddPriceVisible(false); // Close the add price modal
+      } else {
+        throw new Error('Failed to add price');
+      }
+    } catch (error) {
+      console.error('Error adding price:', error);
+      notification.error({
+        message: 'Error',
+        description: 'There was an error adding the price. Please try again.',
+      });
+    }
   };
 
   const handleUpdateBridals = async (values) => {
@@ -446,6 +508,16 @@ function ViewBridalDetailPage() {
       >
         Edit
       </Button>
+      <Button 
+      style={{
+        color: "#000",
+        border: "1px solid",
+        fontSize: "20px",
+        margin: "30px 15px 20px 0",
+      }}
+      onClick={() => setIsAddPriceVisible(true)}>
+        Add Price
+        </Button>
       <Button
         style={{
           color: "#000",
@@ -544,6 +616,58 @@ function ViewBridalDetailPage() {
           </Grid>
         </Box>
       </Grid>
+      <Modal
+        title="Add Price"
+        open={isAddPriceVisible}
+        onCancel={() => setIsAddPriceVisible(false)}
+        footer={null}
+      >
+        <Form
+          form={form}
+          onFinish={addPriceToBridal}
+          layout="vertical"
+        >
+          <Form.Item
+            name="materialID"
+            label="Material"
+            rules={[{ required: true, message: "Please select the material!" }]}
+          >
+            <Select>
+              {materialss.map((material) => (
+                <Option key={material.MaterialID} value={material.MaterialID}>
+                  {material.MaterialName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="ringSizeID"
+            label="Ring Size"
+            rules={[
+              { required: true, message: "Please select the ring size!" },
+            ]}
+          >
+            <Select>
+              {ringSizess.map((size) => (
+                <Option key={size.RingSizeID} value={size.RingSizeID}>
+                  {size.RingSize}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        <Form.Item
+          name="price"
+          label="Price"
+          rules={[{ required: true, message: 'Please enter the Price' }]}
+        >
+          <Input type="number" step="0.01" />
+        </Form.Item>
+          <Button type="primary" htmlType="submit">
+            Add Price
+          </Button>
+        </Form>
+      </Modal>
       <Modal
         title="Edit Bridal"
         open={isEditBridalVisible}
