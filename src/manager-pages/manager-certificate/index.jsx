@@ -15,6 +15,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { Button } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -316,6 +317,7 @@ function ManageCertificate() {
       key: "action",
       render: (text, record) => (
         <div>
+          <Link to={`/certificate/${record.CertificateID}`}>View Details</Link>
           <Button
             style={{ marginBottom: "20px" }}
             type="link"

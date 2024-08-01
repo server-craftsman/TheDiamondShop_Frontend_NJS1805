@@ -1,0 +1,50 @@
+body {
+    font-family: 'Playfair Display', serif;
+    background-color: #f9f9f9;
+  }
+  
+  .ant-typography {
+    color: #333;
+  }
+  
+  .ant-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-descriptions-bordered .ant-descriptions-item-label {
+    background-color: #fafafa;
+    color: #444;
+    font-weight: bold;
+  }
+  
+  .ant-descriptions-bordered .ant-descriptions-item-content {
+    background-color: #fff;
+  }
+  
+  .ant-descriptions-item {
+    padding: 16px;
+  }
+  
+  .ant-btn-link {
+    color: #b8860b;
+  }
+  
+  .title {
+    font-family: 'Merriweather', serif;
+    color: #b8860b;
+  }
+  
+  .image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .image-container img {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  

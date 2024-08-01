@@ -55,6 +55,7 @@ import ManageWarranty from "./manager-pages/manager-warranty/order-warranty";
 import RequestWaranty from "./manager-pages/manager-warranty/request-warranty";
 import ManageEvent from "./manager-pages/manage-promotions/manage-event";
 import EditProfileManager from "./manager-pages/manager-home-page/updateProfile";
+import CertificateDetailPage from "./manager-pages/manager-certificate/detail";
 
 //=========Product Detail Pages==========//
 import DiamondDetail from "./pages/diamond-page/details";
@@ -301,7 +302,10 @@ function App() {
           path: "/feedback-create",
           element: <FeedbackForm />,
         },
-       
+        {
+          path: "/certificate/:CertificateID",
+          element: <CertificateDetailPage />,
+        },
       ],
     },
     //=========Sale page========//
