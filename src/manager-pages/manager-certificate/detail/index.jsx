@@ -209,7 +209,7 @@ function CertificateDetailPage() {
                 onCancel={handleCancel}
             >
                 <EditCertificateForm certificate={certificate} onSave={handleSave} onCancel={handleCancel} />
-            </Modal>
+            </Modal>:
         </div>
     );
 }
