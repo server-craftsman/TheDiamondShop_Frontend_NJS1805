@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react";
 import {
-  Empty,
   Form,
   Input,
   Modal,
@@ -7,12 +7,14 @@ import {
   Table,
   DatePicker,
   Upload,
+  Empty,
+  message,
 } from "antd";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import { Button, colors } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import moment from "moment";
+
 const { Option } = Select;
 
 function ManageCertificate() {
@@ -32,9 +34,7 @@ function ManageCertificate() {
 
   const fetchCertificates = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8090/certificate/lookup"
-      );
+      const response = await axios.get("http://localhost:8090/certificate/lookup");
       setCertificates(response.data);
       setFilteredCertificates(response.data);
     } catch (error) {
@@ -44,25 +44,27 @@ function ManageCertificate() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8090/certificate/fetch-products"
-      );
+      const response = await axios.get("http://localhost:8090/certificate/fetch-products");
       const processedProducts = [
         ...response.data.diamonds.map((d) => ({
           ...d,
           ProductName: `Diamond ${d.DiamondID}`,
+          ProductID: d.DiamondID,
         })),
         ...response.data.bridals.map((b) => ({
           ...b,
           ProductName: `Bridal ${b.BridalID}`,
+          ProductID: b.BridalID,
         })),
         ...response.data.diamondRings.map((r) => ({
           ...r,
           ProductName: `DiamondRings ${r.DiamondRingsID}`,
+          ProductID: r.DiamondRingsID,
         })),
         ...response.data.diamondTimepieces.map((t) => ({
           ...t,
           ProductName: `DiamondTimepieces ${t.DiamondTimepiecesID}`,
+          ProductID: t.DiamondTimepiecesID,
         })),
       ];
       setProducts(processedProducts);
@@ -73,66 +75,114 @@ function ManageCertificate() {
 
   const handleSaveCertificate = async (values) => {
     try {
-      console.log("Form Values:", values); // Check the form values
+      const certificateData = {
+        ...values,
+        InspectionDate: values.InspectionDate.format("YYYY-MM-DD"),
+        CertificateImage: previewImage,
+      };
+
+      const selectedProduct = products.find((product) => product.ProductID === values.ProductID);
+      if (selectedProduct) {
+        if (selectedProduct.DiamondID) {
+          certificateData.DiamondID = selectedProduct.DiamondID;
+        } else if (selectedProduct.BridalID) {
+          certificateData.BridalID = selectedProduct.BridalID;
+        } else if (selectedProduct.DiamondRingsID) {
+          certificateData.DiamondRingsID = selectedProduct.DiamondRingsID;
+        } else if (selectedProduct.DiamondTimepiecesID) {
+          certificateData.DiamondTimepiecesID = selectedProduct.DiamondTimepiecesID;
+        }
+      }
+
       if (editingCertificate) {
-        await axios.put(
-          `http://localhost:8090/certificate/update/${editingCertificate.CertificateID}`,
-          values
-        );
+        await axios.put(`http://localhost:8090/certificate/update/${editingCertificate.CertificateID}`, certificateData);
       } else {
-        await axios.post("http://localhost:8090/certificate/add", values);
+        await axios.post("http://localhost:8090/certificate/add", certificateData);
       }
       fetchCertificates(); // Refresh the list
       setIsModalVisible(false); // Close the modal
       form.resetFields(); // Reset the form fields
-      setPreviewImage(""); // Clear image preview
+      setPreviewImage(null); // Clear image preview
       setEditingCertificate(null);
     } catch (error) {
-      console.error("Error saving certificate:", error);
+      console.error("Error saving certificate:", error.response?.data || error.message);
+      message.error("Failed to save certificate");
     }
   };
 
   const handleEditCertificate = (record) => {
     setEditingCertificate(record);
-    setIsModalVisible(true); // Show the modal
+    setIsModalVisible(true);
     form.setFieldsValue({
       ...record,
-      InspectionDate: moment(record.InspectionDate, "YYYY-MM-DD"), // Ensure date format matches
+      InspectionDate: moment(record.InspectionDate, "YYYY-MM-DD"),
     });
+    setPreviewImage(record.CertificateImage);
   };
 
   const handleSearch = () => {
     const filtered = certificates.filter((certificate) =>
-      certificate.GIAReportNumber.toLowerCase().includes(
-        searchText.toLowerCase()
-      )
+      certificate.GIAReportNumber.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredCertificates(filtered);
   };
+
+  // const handleImageUpload = (file) => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => {
+  //       setPreviewImage(reader.result); // Set image preview URL
+  //       resolve(reader.result);
+  //     };
+  //     reader.onerror = (error) => {
+  //       console.error("Error reading file:", error);
+  //       reject(error);
+  //     };
+  //   });
+  // };
+
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.readAsDataURL(file);
+
       reader.onload = () => {
-        setPreviewImage(reader.result); // Set image preview URL
-        resolve(reader.result);
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          // Create a canvas to resize the image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set canvas dimensions (resize to 800x800, adjust as needed)
+          canvas.width = 800;
+          canvas.height = 800;
+
+          // Draw the image on the canvas
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Convert canvas to Base64
+          const resizedImage = canvas.toDataURL('image/jpeg'); // Change to 'image/png' if needed
+
+          setPreviewImage(resizedImage); // Set image preview URL
+          resolve(resizedImage);
+        };
+
+        img.onerror = (error) => {
+          console.error("Error loading image:", error);
+          reject(error);
+        };
       };
+
       reader.onerror = (error) => {
         console.error("Error reading file:", error);
         reject(error);
       };
+
+      reader.readAsDataURL(file);
     });
   };
-  // const handleDeleteCertificate = async (certificateId) => {
-  //   try {
-  //     await axios.delete(
-  //       `http://localhost:8090/certificate/delete/${certificateId}`
-  //     );
-  //     fetchCertificates(); // Refresh the list
-  //   } catch (error) {
-  //     console.error("Error deleting certificate:", error);
-  //   }
-  // };
+
 
   const columns = [
     {
@@ -149,7 +199,7 @@ function ManageCertificate() {
       title: "Inspection Date",
       dataIndex: "InspectionDate",
       key: "InspectionDate",
-      render: (date) => new Date(date).toLocaleDateString(), // Format date
+      render: (date) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Clarity Grade",
@@ -228,294 +278,206 @@ function ManageCertificate() {
       ),
     },
   ];
-  //================validate====================//
 
-  const validateCertificatesExist = (rule, value) => {
-    // Check if any of the specified fields exist in the fetched data
+  const validateCertificatesExist = async (rule, value) => {
     const exists = certificates.some((item) => item.GIAReportNumber === value);
-
     if (exists) {
-      return Promise.reject("The value already exists.");
+      return Promise.reject("The GIA Report Number already exists.");
     }
-
     return Promise.resolve();
   };
 
   const validateGIAReportNumber = (rule, value) => {
-    // Ensure the value starts with "GIA" and is followed by digits
     const regex = /^GIA\d{1,7}$/;
-
     if (!regex.test(value)) {
-      return Promise.reject(
-        'GIA Report Number must start with "GIA" followed by up to 7 digits (max 10 characters).'
-      );
+      return Promise.reject('GIA Report Number must start with "GIA" followed by up to 7 digits (max 10 characters).');
     }
-
     return Promise.resolve();
   };
 
   const validateCaratWeight = (rule, value) => {
-    // Convert the value to a number
     const numValue = parseFloat(value);
-
-    // Check if the value is a number and between 0.1 and 3.0
     if (isNaN(numValue) || numValue < 0.1 || numValue > 3.0) {
-      return Promise.reject(
-        "The carat weight must be a value between 0.1 and 3.0."
-      );
+      return Promise.reject("The carat weight must be a value between 0.1 and 3.0.");
     }
-
     return Promise.resolve();
   };
 
-  //==============================================//
-
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "16px" }}>
         <Input
           placeholder="Search by GIA Report Number"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
-          style={{ marginBottom: 16, width: 300 }}
+          style={{ marginRight: "8px" }}
         />
-        <Button type="primary" onClick={handleSearch} style={{ marginLeft: 8 }}>
+        <Button
+          style={{
+            backgroundColor: "#f0c14b",
+            color: "#111",
+            borderRadius: "4px",
+            height: "40px",
+          }}
+          onClick={handleSearch}
+        >
           Search
         </Button>
       </div>
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            setEditingCertificate(null);
-            setIsModalVisible(true);
-          }}
-          style={{ marginLeft: 8 }}
-        >
-          Add Certificate
-        </Button>
-      </div>
-      {filteredCertificates.length === 0 ? (
-        <Empty description="No certificate data found" />
-      ) : (
+      <Button
+        style={{
+          backgroundColor: "#f0c14b",
+          color: "#111",
+          borderRadius: "4px",
+          height: "40px",
+          marginBottom: "16px",
+        }}
+        onClick={() => {
+          form.resetFields();
+          setEditingCertificate(null);
+          setPreviewImage(null);
+          setIsModalVisible(true);
+        }}
+      >
+        Add Certificate
+      </Button>
+      {filteredCertificates.length > 0 ? (
         <Table
           dataSource={filteredCertificates}
           columns={columns}
           rowKey="CertificateID"
         />
+      ) : (
+        <Empty description="No certificates found." />
       )}
       <Modal
         title={editingCertificate ? "Edit Certificate" : "Add Certificate"}
         visible={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-          setEditingCertificate(null);
-        }}
-        footer={null}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={() => form.submit()}
       >
-        <Form form={form} layout="vertical" onFinish={handleSaveCertificate}>
-          <Form.Item name="CertificateID" hidden>
-            <Input />
-          </Form.Item>
+        <Form form={form} onFinish={handleSaveCertificate}>
           <Form.Item
-            name="GIAReportNumber"
             label="GIA Report Number"
+            name="GIAReportNumber"
             rules={[
-              {
-                required: true,
-                message: "Please input the GIA Report Number!",
-              },
+              { required: true, message: "GIA Report Number is required" },
               { validator: validateGIAReportNumber },
               { validator: validateCertificatesExist },
             ]}
           >
+            <Input maxLength={10} />
+          </Form.Item>
+          <Form.Item
+            label="Inspection Date"
+            name="InspectionDate"
+            rules={[{ required: true, message: "Inspection Date is required" }]}
+          >
+            <DatePicker />
+          </Form.Item>
+          <Form.Item
+            label="Clarity Grade"
+            name="ClarityGrade"
+            rules={[{ required: true, message: "Clarity Grade is required" }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
-            name="InspectionDate"
-            label="Inspection Date"
-            rules={[
-              { required: true, message: "Please select the Inspection Date!" },
-            ]}
-          >
-            <DatePicker format="YYYY-MM-DD" />
-          </Form.Item>
-          <Form.Item
-            name="ClarityGrade"
-            label="Clarity Grade"
-            rules={[
-              { required: true, message: "Please input the Clarity Grade!" },
-            ]}
-          >
-            <Select>
-              <Option value="IF">IF</Option>
-              <Option value="VVS1">VVS1</Option>
-              <Option value="VVS2">VVS2</Option>
-              <Option value="VS1">VS1</Option>
-              <Option value="VS2">VS2</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="ShapeAndCuttingStyle"
             label="Shape and Cutting Style"
+            name="ShapeAndCuttingStyle"
             rules={[
-              {
-                required: true,
-                message: "Please input the Shape and Cutting Style!",
-              },
+              { required: true, message: "Shape and Cutting Style is required" },
             ]}
           >
-            <Select>
-              <Option value="Round">Round</Option>
-              <Option value="Princess">Princess</Option>
-              <Option value="Cushion">Cushion</Option>
-              <Option value="Emerald">Emerald</Option>
-              <Option value="Oval">Oval</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="Measurements"
             label="Measurements"
-            // rules={[
-            //   { required: true, message: "Please input the Measurements!" },
-            // ]}
-            initialValue="10.0x5.0"
+            name="Measurements"
+            rules={[{ required: true, message: "Measurements are required" }]}
           >
-            <Input disabled placeholder="10.0x5.0" />
+            <Input />
           </Form.Item>
           <Form.Item
+            label="Carat Weight"
             name="CaratWeight"
-            label="Carat Weight (0.1 - 3)"
             rules={[
-              { required: true, message: "Please input the Carat Weight!" },
+              { required: true, message: "Carat Weight is required" },
               { validator: validateCaratWeight },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="ColorGrade"
             label="Color Grade"
-            rules={[
-              { required: true, message: "Please input the Color Grade!" },
-            ]}
+            name="ColorGrade"
+            rules={[{ required: true, message: "Color Grade is required" }]}
           >
-            <Select>
-              <Option value="F">F</Option>
-              <Option value="G">G</Option>
-              <Option value="I">I</Option>
-              <Option value="K">K</Option>
-              <Option value="J">J</Option>
-              <Option value="E">E</Option>
-              <Option value="H">H</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="SymmetryGrade"
             label="Symmetry Grade"
-            rules={[
-              { required: true, message: "Please input the Symmetry Grade!" },
-            ]}
+            name="SymmetryGrade"
+            rules={[{ required: true, message: "Symmetry Grade is required" }]}
           >
-            <Select>
-              <Option value="Good">Good</Option>
-              <Option value="Very Good">Very Good</Option>
-              <Option value="Excellent">Excellent</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="CutGrade"
             label="Cut Grade"
-            rules={[{ required: true, message: "Please input the Cut Grade!" }]}
+            name="CutGrade"
+            rules={[{ required: true, message: "Cut Grade is required" }]}
           >
-            <Select>
-              <Option value="N/A">N/A</Option>
-              <Option value="Very Good">Very Good</Option>
-              <Option value="Excellent">Excellent</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="PolishGrade"
             label="Polish Grade"
-            rules={[
-              { required: true, message: "Please input the Polish Grade!" },
-            ]}
+            name="PolishGrade"
+            rules={[{ required: true, message: "Polish Grade is required" }]}
           >
-            <Select>
-              <Option value="Good">Good</Option>
-              <Option value="Very Good">Very Good</Option>
-              <Option value="Excellent">Excellent</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="Fluorescence"
             label="Fluorescence"
-            rules={[
-              { required: true, message: "Please input the Fluorescence!" },
-            ]}
+            name="Fluorescence"
+            rules={[{ required: true, message: "Fluorescence is required" }]}
           >
-            <Select>
-              <Option value="NON">NON</Option>
-              <Option value="MB">MB</Option>
-              <Option value="STG BL">STG BL</Option>
-              <Option value="FNL BL">FNL BL</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
-            name="ProductID"
             label="Product"
-            rules={[{ required: true, message: "Please select a Product!" }]}
+            name="ProductID"
+            rules={[{ required: true, message: "Product is required" }]}
           >
             <Select placeholder="Select a product">
               {products.map((product) => (
-                <Select.Option
-                  key={product.ProductID}
-                  value={product.ProductID}
-                >
+                <Option key={product.ProductID} value={product.ProductID}>
                   {product.ProductName}
-                </Select.Option>
+                </Option>
               ))}
             </Select>
           </Form.Item>
-
-          <Form.Item
-            name="ImageLogoCertificate"
-            label="Image Logo Certificate"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => (Array.isArray(e) ? e : e && [e.file])}
-            rules={[{ required: true, message: "Please upload the image!" }]}
-          >
+          <Form.Item label="Certificate Image">
             <Upload
-              listType="picture"
-              beforeUpload={() => false} // Prevent automatic upload
-              maxCount={1}
-              onChange={({ fileList }) =>
-                form.setFieldsValue({ ImageLogoCertificate: fileList })
-              }
-              onPreview={(file) => handleImageUpload(file.originFileObj)}
+              listType="picture-card"
+              showUploadList={false}
+              beforeUpload={(file) => {
+                handleImageUpload(file);
+                return false; // Prevent automatic upload
+              }}
             >
-              <Button variant="contained" style={{ background: "#fff" }}>
-                <AddPhotoAlternateIcon
-                  style={{ fontSize: "100px", color: "#000" }}
-                />
-              </Button>
-            </Upload>
-            {previewImage && (
-              <Form.Item>
+              {previewImage ? (
                 <img
                   src={previewImage}
                   alt="Preview"
-                  style={{ width: "400px", height: "auto" }}
+                  style={{ width: "100%" }}
                 />
-              </Form.Item>
-            )}
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {editingCertificate ? "Update Certificate" : "Add Certificate"}
-            </Button>
+              ) : (
+                <div>
+                  <AddPhotoAlternateIcon />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
           </Form.Item>
         </Form>
       </Modal>
