@@ -235,6 +235,11 @@ function ManageCertificate() {
     }
   };
 
+  const disabledDate = (current) => {
+    const endDate = moment().endOf("day");
+    return current && current.isAfter(endDate);
+  };
+
   const columns = [
     {
       title: "Certificate ID",
@@ -452,7 +457,9 @@ function ManageCertificate() {
             name="InspectionDate"
             rules={[{ required: true, message: "Inspection Date is required" }]}
           >
-            <DatePicker />
+            <DatePicker 
+            disabledDate={disabledDate}
+            />
           </Form.Item>
           <Form.Item
             label="Clarity Grade"

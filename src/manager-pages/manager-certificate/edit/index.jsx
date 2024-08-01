@@ -424,7 +424,7 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
                   alt={ring.NameRings}
                   style={{ width: 30, height: 30, marginRight: 8 }}
                 />
-                {ring.ImageRings}{" "}
+                {ring.NameRings}
               </span>
             </Option>
           ))}
@@ -440,7 +440,7 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
                   alt={diamond.DiamondID}
                   style={{ width: 30, height: 30, marginRight: 8 }}
                 />
-                {diamond.DiamondID}{" "}
+                {diamond.StockNumber}{" "}
               </span>
             </Option>
           ))}

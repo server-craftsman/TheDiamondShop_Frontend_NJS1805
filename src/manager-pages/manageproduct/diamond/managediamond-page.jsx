@@ -765,7 +765,7 @@ function ManageDiamondPage() {
           </Form.Item>
           <Form.Item
             name="measurements"
-            label="Measurements"
+            label="Measurements (length x width x depth)"
             rules={[
               { required: true, message: "Please input the measurements!" },
               { validator: validateDiamondMeasurements },

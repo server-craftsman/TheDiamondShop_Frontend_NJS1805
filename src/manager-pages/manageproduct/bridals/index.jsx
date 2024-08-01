@@ -475,7 +475,7 @@ function ManageBridalPage() {
           </Form.Item>
           <Form.Item
             name="TotalCaratWeight"
-            label="Total Carat Weight (0.1)"
+            label="Total Carat Weight (0 - 5.0)"
             rules={[
               {
                 required: true,
@@ -488,7 +488,7 @@ function ManageBridalPage() {
           </Form.Item>
           <Form.Item
             name="TotalDiamond"
-            label="Total Diamond (25)"
+            label="Total Diamond (0 - 30)"
             rules={[
               { required: true, message: "Please input the total Diamond!" },
               { validator: validateTotalDiamond },
