@@ -383,7 +383,14 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
         <Select placeholder="Select Bridal ID">
           {products.bridals.map((bridal) => (
             <Option key={bridal.BridalID} value={bridal.BridalID}>
-              {bridal.Name}
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={bridal.ImageBridal}
+                  alt={bridal.NameBridal}
+                  style={{ width: 30, height: 30, marginRight: 8 }}
+                />
+                {bridal.NameBridal}
+              </span>
             </Option>
           ))}
         </Select>
@@ -395,7 +402,14 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
               key={timepiece.DiamondTimepiecesID}
               value={timepiece.DiamondTimepiecesID}
             >
-              {timepiece.Name}
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={timepiece.ImageTimepieces}
+                  alt={timepiece.NameTimepieces}
+                  style={{ width: 30, height: 30, marginRight: 8 }}
+                />
+                {timepiece.NameTimepieces}
+              </span>
             </Option>
           ))}
         </Select>
@@ -404,7 +418,14 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
         <Select placeholder="Select Diamond Rings ID">
           {products.diamondRings.map((ring) => (
             <Option key={ring.DiamondRingsID} value={ring.DiamondRingsID}>
-              {ring.Name}
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={ring.ImageRings}
+                  alt={ring.NameRings}
+                  style={{ width: 30, height: 30, marginRight: 8 }}
+                />
+                {ring.ImageRings}{" "}
+              </span>
             </Option>
           ))}
         </Select>
@@ -413,7 +434,14 @@ const EditCertificateForm = ({ certificate, onSave, onCancel }) => {
         <Select placeholder="Select Diamond ID">
           {products.diamonds.map((diamond) => (
             <Option key={diamond.DiamondID} value={diamond.DiamondID}>
-              {diamond.Name}
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={diamond.Image}
+                  alt={diamond.DiamondID}
+                  style={{ width: 30, height: 30, marginRight: 8 }}
+                />
+                {diamond.DiamondID}{" "}
+              </span>
             </Option>
           ))}
         </Select>
