@@ -196,12 +196,12 @@ function CertificateDetailPage() {
                     </Row>
                 </Card>
             )}
-            <Button type="primary" onClick={showModal} style={{ marginTop: '20px' }}>
+            <Button type="primary" onClick={showModal} style={{ marginTop: '20px', marginRight: '15px' }}>
                 Edit Certificate
             </Button>
-            <Link to="/manager-certificate" style={{ marginLeft: '10px' }}>
+            <Button type="primary" onClick={showModal} style={{ marginTop: '20px' }}><Link to="/manager-certificate" style={{ marginLeft: '10px' }}>
                 Back to Certificates
-            </Link>
+            </Link></Button>
             <Modal
                 title="Edit Certificate"
                 visible={isModalVisible}
@@ -209,7 +209,7 @@ function CertificateDetailPage() {
                 onCancel={handleCancel}
             >
                 <EditCertificateForm certificate={certificate} onSave={handleSave} onCancel={handleCancel} />
-            </Modal>:
+            </Modal>
         </div>
     );
 }
