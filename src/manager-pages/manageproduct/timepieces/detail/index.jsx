@@ -393,7 +393,7 @@ function ViewTimepiecesDetailPage() {
         ]}
       >
         <Form form={form} onFinish={handleUpdateTimepieces} layout="vertical">
-          {/* <Form.Item
+          <Form.Item
             name="diamondTimepiecesID"
             label="Diamond Timepieces ID"
             rules={[
@@ -401,7 +401,7 @@ function ViewTimepiecesDetailPage() {
             ]}
           >
             <Input disabled />
-          </Form.Item> */}
+          </Form.Item>
           <Form.Item
             name="timepiecesStyle"
             label="Timepieces Style (XX1234-65X)"

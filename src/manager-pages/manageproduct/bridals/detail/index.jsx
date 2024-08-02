@@ -516,7 +516,7 @@ function ViewBridalDetailPage() {
         margin: "30px 15px 20px 0",
       }}
       onClick={() => setIsAddPriceVisible(true)}>
-        Add Price
+        Add More Option
         </Button>
       <Button
         style={{
@@ -617,7 +617,7 @@ function ViewBridalDetailPage() {
         </Box>
       </Grid>
       <Modal
-        title="Add Price"
+        title="Add More Option"
         open={isAddPriceVisible}
         onCancel={() => setIsAddPriceVisible(false)}
         footer={null}
@@ -658,8 +658,8 @@ function ViewBridalDetailPage() {
           </Form.Item>
         <Form.Item
           name="price"
-          label="Price"
-          rules={[{ required: true, message: 'Please enter the Price' }]}
+          label="Price (Greater than 0! )"
+          rules={[{ required: true, message: 'Please enter the Price' }, { validator: validatePrice }]}
         >
           <Input type="number" step="0.01" />
         </Form.Item>

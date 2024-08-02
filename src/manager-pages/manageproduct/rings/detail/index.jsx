@@ -539,7 +539,7 @@ const ViewRingDetailPage = () => {
         }}
         onClick={() => setIsAddPriceVisible(true)}
       >
-        Add Price
+        Add More Option
       </Button>
       <Button
         style={{ fontSize: "20px", border: "1px solid", color: "#000" }}
@@ -633,7 +633,7 @@ const ViewRingDetailPage = () => {
         </Box>
       </Grid>
       <Modal
-        title="Add Price"
+        title="Add More Option"
         open={isAddPriceVisible}
         onCancel={() => setIsAddPriceVisible(false)}
         footer={null}
@@ -670,8 +670,8 @@ const ViewRingDetailPage = () => {
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price"
-            rules={[{ required: true, message: "Please enter the Price" }]}
+            label="Price (Greater than 0! )"
+            rules={[{ required: true, message: "Please enter the Price" }, { validator: validatePrice }]}
           >
             <Input type="number" step="0.01" />
           </Form.Item>
