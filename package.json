@@ -17,7 +17,7 @@
     "@mui/material": "^5.15.20",
     "@paypal/react-paypal-js": "^8.5.0",
     "antd": "^5.18.1",
-    "axios": "^1.7.2",
+    "axios": "^1.8.2",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "browser-image-compression": "^2.0.2",
